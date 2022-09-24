@@ -5,5 +5,5 @@ Joshua Gherman\
 Rhoy Oviedo\ 
 Frank Curry\ 
 Ghabrille Ampo\ 
-David De Girolamo
+David De Girolamo\
 # Refer to Projects tab for Timeline/Task or [Click Me](https://github.com/users/JosephArmas/projects/1)
