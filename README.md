@@ -1,5 +1,5 @@
 # cecs-491A-Team-Big-Data
-Team Lead: Joseph Armas\
+# Team Lead: Joseph Armas\
 <br />
 Team Members:\
 Joshua Gherman <br /> 
