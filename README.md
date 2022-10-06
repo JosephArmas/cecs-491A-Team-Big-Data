@@ -1,4 +1,5 @@
 # cecs-491A-Team-Big-Data
+# [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
 Team Lead: Joseph Armas\
 <br />
 Team Members:\
@@ -17,4 +18,3 @@ David De Girolamo <br />
 * Milestone 1
   * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
 
-# [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
