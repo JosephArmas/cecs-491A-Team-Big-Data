@@ -17,4 +17,4 @@ David De Girolamo <br />
 * Milestone 1
   * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
 
-# [Refer to Projects tab for Timeline/Task or Click Me](https://github.com/users/JosephArmas/projects/1)
+# [Project Backlog](https://github.com/users/JosephArmas/projects/1)
