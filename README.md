@@ -17,4 +17,6 @@ David De Girolamo <br />
 # [Scrum](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum)
 * Milestone 1
   * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
+* Milestone 2
+  * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone2)
 
