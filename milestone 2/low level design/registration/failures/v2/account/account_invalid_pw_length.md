@@ -1,4 +1,4 @@
-# as a user I cannot register to create an account with a passphrase of length 7 
+# As a user I cannot register to create an account with a passphrase of length less than 8 
 ```mermaid
 sequenceDiagram
     actor User

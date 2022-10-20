@@ -1,4 +1,4 @@
-# as a user I cannot register to create an account with a passphrase that consist with special characters out of the scope requirements
+# As a user I cannot register to create an account with a passphrase that consist with special characters out of the scope requirements
 ```mermaid
 sequenceDiagram
     actor User

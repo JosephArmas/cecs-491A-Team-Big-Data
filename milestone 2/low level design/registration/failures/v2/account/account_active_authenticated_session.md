@@ -1,4 +1,4 @@
-# as a user I cannot register to create an account in a different view 
+# As a user I cannot register to create an account if their exist an active session
 ```mermaid
 sequenceDiagram
     actor User

@@ -1,4 +1,4 @@
-# as a user I cannot register to create an account with a existing email 
+# As a user I cannot register to create an account with an existing email 
 ```mermaid
 sequenceDiagram
     actor User

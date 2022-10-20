@@ -1,4 +1,4 @@
-# as a user I cannot reister to create an account without a valid email
+# As a user I cannot reister to create an account without a valid email
 ```mermaid
 sequenceDiagram
     actor User
