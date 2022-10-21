@@ -1,4 +1,4 @@
-# As a user I cannot register to create an account if their exist an active session
+# As a user I cannot register to create an account if there exist an active session
 ```mermaid
 sequenceDiagram
     actor User
