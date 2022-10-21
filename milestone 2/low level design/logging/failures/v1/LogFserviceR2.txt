@@ -1,0 +1,35 @@
+title As a User, I want to request a Service, but the system fails to process the request.
+
+   actor User
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+
+    User->>ServiceUI: Start Service Request
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: DisplayService(Data,User,Title,Msg)
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>ServiceServices: False: The service list is not displayed
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False: Business Rule is invalidated for taking longer than 7 secs
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: Service list attempts to display again
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>User: "Runtime Error. Unable to Display List. \nReloading."
+    deactivate ServiceUI

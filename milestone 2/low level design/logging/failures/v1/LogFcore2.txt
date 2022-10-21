@@ -1,0 +1,22 @@
+title As a User, I want to Log, but I cannot interact with the system.
+
+   actor User
+    participant UI
+    participant EntryPoint
+    participant Manager
+
+    User->>UI: Start Logging
+    activate UI
+    //note over UI: 
+    UI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>Manager:False: Initialize Mangager
+    activate Manager
+
+    Manager-->>EntryPoint: Logging affected User control
+    deactivate Manager
+    EntryPoint-->>UI: Log Attempt Failed
+    deactivate EntryPoint
+    UI-->>User: False
+    deactivate UI

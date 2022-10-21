@@ -1,0 +1,38 @@
+Title As a User, I want data to be recorded accurately on Client and Server end, but data is not recorded properly.
+    actor User
+    participant UI
+    participant EntryPoint
+    participant Manager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>UI: Start Logging
+    activate UI
+    //note over UI: 
+    UI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>Manager:True: Initialize Mangager
+    activate Manager
+   // note over Manager: 
+    Manager->>Services: Validation(User)
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess:UserData(User,Data):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore: User Data Compared
+    activate DataStore
+    //note over DataStore: 
+    DataStore-->>DataAccess: False: Resets to Checkpoint
+    deactivate DataStore
+    DataAccess-->>Services: False
+    deactivate DataAccess
+    Services-->>Manager: No class call
+    deactivate Services
+    Manager-->>EntryPoint:Business Rules Invalidated
+    deactivate Manager
+    EntryPoint-->>UI: False: User is notified
+    deactivate EntryPoint
+    UI-->>User: "Server Error. Reloading"
+    deactivate UI

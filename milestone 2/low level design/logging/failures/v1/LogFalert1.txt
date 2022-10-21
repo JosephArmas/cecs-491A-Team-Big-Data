@@ -1,0 +1,40 @@
+title As a User, I want to recieve Alerts, but I recieved Alerts not meant for me.
+
+   actor User
+    participant AlertUI
+    participant EntryPoint
+    participant AlertManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>AlertUI: Start Alerts
+    activate AlertUI
+    //note over UI: 
+    AlertUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>AlertManager:True: Initialize Mangager
+    activate AlertManager
+   // note over Manager: 
+    AlertManager->>Services: AlertAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: AlertCommands(User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Alerts stored in Backend
+    //note over DataStore
+    activate DataStore
+    DataStore-->>DataAccess:Alert Notifications Returned
+    deactivate DataStore
+    DataAccess-->>Services:False: SendNotification(data:String,User:User)
+    deactivate DataAccess
+    Services->Services: Validation(Data,User):Bool
+    Services-->>AlertManager:True: Alert is resent
+    deactivate Services
+    AlertManager-->>EntryPoint: Pins are displayed inappropriately.
+    deactivate AlertManager
+    EntryPoint-->>AlertUI: Webpage is reloaded.
+    deactivate EntryPoint
+    AlertUI-->>User: False
+    deactivate AlertUI

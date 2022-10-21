@@ -1,0 +1,30 @@
+title As a User, I want to zoom on a map, but the map will not allow me to zoom.
+
+   actor User
+    participant MapUI
+    participant EntryPoint
+    participant MapManager
+    participant Services
+
+    User->>MapUI: Start Viewing Map
+    activate MapUI
+    //note over UI: 
+    MapUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>MapManager:True: Initialize Mangager
+    activate MapManager
+   // note over Manager: 
+    MapManager->>Services: MapAccess(User):Bool
+    activate Services
+  //  note over Services: 
+
+
+    Services-->>MapManager: False: MapAccess Restricted
+    deactivate Services
+    MapManager-->>EntryPoint: Map does not allow zoom access.
+    deactivate MapManager
+    EntryPoint-->>MapUI: Webpage is reloaded.
+    deactivate EntryPoint
+    MapUI-->>User: "Zoom Feature is Unresponsive"
+    deactivate MapUI

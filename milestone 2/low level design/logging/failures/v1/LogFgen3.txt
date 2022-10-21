@@ -1,0 +1,38 @@
+Title As a User, I want to have my data stored, but I communicating directly with the Backend.
+    actor User
+    participant UI
+    participant EntryPoint
+    participant Manager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>UI: Start Logging
+    activate UI
+    //note over UI: 
+    UI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>Manager:True: Initialize Mangager
+    activate Manager
+   // note over Manager: 
+    Manager->>Services: Validation(User)
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess:UserData(User,Data):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:User reaches backend
+    activate DataStore
+    //note over DataStore: 
+    DataStore-->>DataAccess: True: Resets to Checkpoint
+    deactivate DataStore
+    DataAccess-->>Services: Sever Connection to Backend
+    deactivate DataAccess
+    Services-->>Manager: UserRestrict(User)
+    deactivate Services
+    Manager-->>EntryPoint:Business Rules Invalidated
+    deactivate Manager
+    EntryPoint-->>UI: Webpage is reloaded
+    deactivate EntryPoint
+    UI-->>User: "Server Error. Reloading"
+    deactivate UI

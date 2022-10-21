@@ -1,0 +1,35 @@
+title As a User, I want to view a Litter Map, but the map does not display street names or parks.
+
+   actor User
+    participant MapUI
+    participant EntryPoint
+    participant MapManager
+    participant Services
+    participant DataAccess
+
+    User->>MapUI: Start
+    activate MapUI
+    //note over UI: 
+    MapUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>MapManager:True: Initialize Mangager
+    activate MapManager
+   // note over Manager: 
+    MapManager->>Services: MapAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: MaptTools(User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>Services:False: Data Retrieval Error
+    deactivate DataAccess
+    Services-->>MapManager: False: MapAccess Restricted
+    deactivate Services
+    MapManager-->>EntryPoint: Map does not display street names or parks
+    deactivate MapManager
+    EntryPoint-->>MapUI: Webpage is reloaded.
+    deactivate EntryPoint
+    MapUI-->>User: False
+    deactivate MapUI

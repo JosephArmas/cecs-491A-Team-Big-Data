@@ -1,0 +1,31 @@
+title As a User, I want to view the reputation of other users, but I am unable to.
+
+   actor User
+    participant ReputationUI
+    participant EntryPoint
+    participant ReputationManager
+    participant Services
+
+    User->>ReputationUI: Start
+    activate ReputationUI
+    //note over UI: 
+    ReputationUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ReputationManager:True: Initialize Mangager
+    activate ReputationManager
+   // note over Manager: 
+    ReputationManager->>Services: ReputationAccess(User):Bool
+    activate Services
+  //  note over Services: 
+
+    //note over DataAccess: 
+
+    Services-->>ReputationManager:False:User does not have read access to other Users
+    deactivate Services
+    ReputationManager-->>EntryPoint: User has read permission
+    deactivate ReputationManager
+    EntryPoint-->>ReputationUI: False
+    deactivate EntryPoint
+    ReputationUI-->>User: "Reputation is Unavailable Right Now. Please Try Again"
+    deactivate ReputationUI

@@ -1,0 +1,34 @@
+title As an Admin, I want to send alerts, but users do not recieve the alert.
+
+   actor Admin
+    participant AlertAdminUI
+    participant EntryPoint
+    participant AlertAdminManager
+    participant AdminServices
+    participant DataAccess
+    
+    Admin->>AlertAdminUI: Start
+    activate AlertAdminUI
+    //note over UI: 
+    AlertAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>AlertAdminManager:True: Initialize Mangager
+    activate AlertAdminManager
+   // note over Manager: 
+    AlertAdminManager->>AdminServices: AlertAccess(User):Bool
+    activate AdminServices
+  //  note over Services: 
+    AdminServices->>DataAccess: SendNotifcation(data:String,User:User):Bool
+    activate DataAccess
+
+    DataAccess-->>AdminServices:False
+    deactivate DataAccess 
+    AdminServices-->>AlertAdminManager:No Users recieved an Alert
+    deactivate AdminServices
+    AlertAdminManager-->>EntryPoint: False
+    deactivate AlertAdminManager
+    EntryPoint-->>AlertAdminUI: False: Admin is notifified of an Error
+    deactivate EntryPoint
+    AlertAdminUI-->>Admin: "Notification Error. Please Retry Alert"
+    deactivate AlertAdminUI

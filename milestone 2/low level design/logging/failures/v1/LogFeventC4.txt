@@ -1,0 +1,38 @@
+title As a Reputable User, I want to create an event, but the event does not update Attendance preference.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+    participant DataStore
+    User->>EventUI: Start Event Creation
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: ReputableAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: CreateEvent(Data,Title,Msg,Attendance)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Event is created
+    activate DataStore
+    DataStore-->>DataAccess:Event is returned with improper attendance display
+    deactivate DataStore
+    DataAccess-->>EventServices: False
+    deactivate DataAccess
+    EventServices-->>EventManager:False: Event does not reflect User's preferences
+    deactivate EventServices
+    EventManager-->>EntryPoint: False
+    deactivate EventManager
+    EntryPoint-->>EventUI: Users see what the original poster did not want to share.
+    deactivate EntryPoint
+    EventUI-->>User: "Error Updating Attendance Display Preference"
+    deactivate EventUI

@@ -1,0 +1,38 @@
+title As a User, I want to join an event, but the system already has 100 Users attending.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+    participant DataStore
+    User->>EventUI: Start Event Joining
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: EventAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: JoinEvent(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Event is joined
+    activate DataStore
+    DataStore-->>DataAccess:User is removed from the event.
+    deactivate DataStore
+    DataAccess-->>EventServices: True: Event registered User as attending despite reaching capacity.
+    deactivate DataAccess
+    EventServices-->>EventManager:False: The User is removed from the event.
+    deactivate EventServices
+    EventManager-->>EntryPoint: False: User should not have the ability to join the event.
+    deactivate EventManager
+    EntryPoint-->>EventUI: User is shown an error notification
+    deactivate EntryPoint
+    EventUI-->>User: "Process Unable to Join Event.Attendance Limit Has Been Met."
+    deactivate EventUI

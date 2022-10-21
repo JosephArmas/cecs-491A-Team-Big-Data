@@ -1,0 +1,35 @@
+title As a User, I want to upload an image, but the image is of invalid format (not .jpeg or .png).
+
+   actor User
+    participant PictureUI
+    participant EntryPoint
+    participant PictureManager
+    participant PictureServices
+    participant DataAccess
+
+    User->>PictureUI: Start Picture Uploading
+    activate PictureUI
+    //note over UI: 
+    PictureUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PictureManager:True: Initialize Mangager
+    activate PictureManager
+   // note over Manager: 
+    PictureManager->>PictureServices: PictureAccess(User):Bool
+    activate PictureServices
+  //  note over Services: 
+    PictureServices->>DataAccess: PictureUpload(Data,User,Size)
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>PictureServices: False: The User was unable to upload an image
+    deactivate DataAccess
+    PictureServices-->>PictureManager:False: Business rule invalidated since the image was of invalid format\n(not .jpeg or .png).
+    deactivate PictureServices
+    PictureManager-->>EntryPoint: False: The User is allowed to retry PictureUpload() request
+    deactivate PictureManager
+    EntryPoint-->>PictureUI: User is shown an error notification
+    deactivate EntryPoint
+    PictureUI-->>User: "Invalid Format.\nAccepted Images are .JPEG or .PNG."
+    deactivate PictureUI

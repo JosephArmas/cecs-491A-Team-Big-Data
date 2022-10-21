@@ -1,0 +1,38 @@
+title As a Service User, I want to delete my Service, but the system does not delete my service.
+
+   actor ServiceUser
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+    participant DataStore
+    ServiceUser->>ServiceUI: Start Service Deletion
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: DeleteService(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Service is deleted.
+    activate DataStore
+    DataStore-->>DataAccess:Service is removed from datastore
+    deactivate DataStore
+    DataAccess-->>ServiceServices: True: The service is successfully removed from the datastore
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False: The Service still appears in the list of services
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: Data from the DataStore should update the map
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is not shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>ServiceUser: False
+    deactivate ServiceUI

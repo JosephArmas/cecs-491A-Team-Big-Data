@@ -1,0 +1,39 @@
+title As an Admin, I want to view a User Profile, but the profile does not display accurate data.
+
+   actor Admin
+    participant PinAdminUI
+    participant EntryPoint
+    participant PinAdminManager
+    participant AdminServices
+    participant DataAccess
+    participant DataStore
+    Admin->>PinAdminUI: Start
+    activate PinAdminUI
+    //note over UI: 
+    PinAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PinAdminManager:True: Initialize Mangager
+    activate PinAdminManager
+   // note over Manager: 
+    PinAdminManager->>AdminServices: PinAccessAdmin(User):Bool
+    activate AdminServices
+  //  note over Services: 
+    AdminServices->>DataAccess: PinToolsAdmin(User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Admin reaches Backend
+    activate DataStore
+    //note over DataStore: 
+    DataStore->>DataAccess:Data is set as standard.
+    deactivate DataStore
+    DataAccess->>AdminServices:False: Data Deletion invalid
+    deactivate DataAccess
+    AdminServices->>PinAdminManager:False: Pin Access Restricted
+    deactivate AdminServices
+    PinAdminManager-->>EntryPoint: Pins are displayed inappropriately.
+    deactivate PinAdminManager
+    EntryPoint-->>PinAdminUI: Admin is not notified
+    deactivate EntryPoint
+    PinAdminUI-->>Admin:False
+    deactivate PinAdminUI

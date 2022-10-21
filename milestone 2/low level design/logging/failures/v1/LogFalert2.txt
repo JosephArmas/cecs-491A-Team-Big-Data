@@ -1,0 +1,39 @@
+title As a User, I want to recieve Alerts, but I recieve Alerts to pins I did not accept notifications from.
+
+   actor User
+    participant AlertUI
+    participant EntryPoint
+    participant AlertManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>AlertUI: Start Recieve Alerts
+    activate AlertUI
+    //note over UI: 
+    AlertUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>AlertManager:True: Initialize Mangager
+    activate AlertManager
+   // note over Manager: 
+    AlertManager->>Services: AlertAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: AlertCommands(User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Alerts stored in Backend
+    //note over DataStore
+    activate DataStore
+    DataStore-->>DataAccess:Alert Notifications Returned
+    deactivate DataStore
+    DataAccess-->>Services:False: DeleteNotification(data:String,User:User)
+    deactivate DataAccess
+    Services-->>AlertManager:True: Alert is not in user profile
+    deactivate Services
+    AlertManager-->>EntryPoint: Alert are displayed inappropriately.
+    deactivate AlertManager
+    EntryPoint-->>AlertUI: Webpage is reloaded.
+    deactivate EntryPoint
+    AlertUI-->>User: "Previous notification is Invalid.\nApologies for the False Flag."
+    deactivate AlertUI

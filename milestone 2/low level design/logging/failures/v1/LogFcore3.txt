@@ -1,0 +1,39 @@
+title As a System, I want to Log, but the process did not save to the data store.
+
+   actor User
+    participant UI
+    participant EntryPoint
+    participant Manager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>UI: Start Logging
+    activate UI
+    //note over UI: 
+    UI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>Manager:True: Initialize Mangager
+    activate Manager
+   // note over Manager: 
+    Manager->>Services: DataEntry(User,Data,Time,Msg:String)
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: LogData(User,Data,Time,Msg:String):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Log attempt failed
+    //note over DataStore
+    activate DataStore
+    DataStore-->>DataAccess:Logging Process was not saved
+    deactivate DataStore
+    DataAccess-->>Services:False
+    deactivate DataAccess
+    Services-->>Manager:False
+    deactivate Services
+    Manager-->>EntryPoint: False
+    deactivate Manager
+    EntryPoint-->>UI: Log Attempt Failed
+    deactivate EntryPoint
+    UI-->>User: "Runtime Error. Logging Failed"
+    deactivate UI

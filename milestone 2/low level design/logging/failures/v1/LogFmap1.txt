@@ -1,0 +1,22 @@
+title As a User, I want to load the litter map, but the map took longer than 10 seconds to load.
+    actor User
+    participant MapUI
+    participant EntryPoint
+    participant MapManager
+   
+    User->>MapUI: Start Viewing Map
+    activate MapUI
+    //note over UI: 
+    MapUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>MapManager:True: Initialize Mangager
+    activate MapManager
+   // note over Manager: 
+   
+    MapManager-->>EntryPoint:Map Took longer than 10 seconds to Load
+    deactivate MapManager
+    EntryPoint-->>MapUI: Webpage is reloaded
+    deactivate EntryPoint
+    MapUI-->>User: "Server Request Timeout.\nThe Map Failed to Load."
+    deactivate MapUI

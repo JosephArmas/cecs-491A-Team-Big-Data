@@ -1,0 +1,38 @@
+title As a User, I want to add my Service, but the Service does not appear in the list of Services.
+
+   actor User
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+    participant DataStore
+    User->>ServiceUI: Start Service Creation
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: CreateService(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Service is created.
+    activate DataStore
+    DataStore-->>DataAccess:Service is registered
+    deactivate DataStore
+    DataAccess-->>ServiceServices: True: The service is successfully created in the datastore
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False: The Service does not appear in the list of Services
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: Data from the DataStore should update the list
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is not shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>User: False
+    deactivate ServiceUI

@@ -1,0 +1,35 @@
+title As a User, I want to request a Service, but Service shown is out of User's preferred range.
+
+   actor User
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+
+    User->>ServiceUI: Start Service Request
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: DisplayService(Data,User,Title,Msg,Distance)
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>ServiceServices: False: Data Accessed is more than 20 Miles away
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False: Business Rule is invalidated
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: User may retry their Request
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>User: "Display Data is Incorrect. \nReloaing."
+    deactivate ServiceUI

@@ -1,0 +1,23 @@
+title As a User, I want valid text,but the text does not meet Business Requirements
+    actor User
+    participant UI
+    participant EntryPoint
+    participant Manager
+ 
+    User->>UI: Start Web Application
+    activate UI
+    //note over UI: 
+    UI->>EntryPoint: Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>Manager: True: Initialize Mangager
+    activate Manager
+    //note over Manager: 
+   
+
+    Manager-->>EntryPoint: Business Rules invalidated
+    deactivate Manager
+    EntryPoint-->>UI: Web Page is Reloaded
+    deactivate EntryPoint
+    UI-->>User: False
+    deactivate UI

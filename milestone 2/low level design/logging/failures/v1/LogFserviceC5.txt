@@ -1,0 +1,34 @@
+title As a User, I want to add my Service, but the Service Description is over 200 Word Limit.
+
+   actor User
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+    User->>ServiceUI: Start Service Creation
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: CreateService(Data,User:User,Title:String,Msg:String)
+    activate DataAccess
+    //note over DataAccess: 
+    
+    DataAccess-->>ServiceServices: False: The service is not created.
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False: The Service Description is over 200 words
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: User is allowed to modify the data of the service
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>User: "Syntax Error. Description is over 200 Word Limit."
+    deactivate ServiceUI

@@ -1,0 +1,39 @@
+title As a User, I want to view a list of notifications, but the list will not display.
+
+   actor User
+    participant AlertUI
+    participant EntryPoint
+    participant AlertManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>AlertUI: Start View Alerts
+    activate AlertUI
+    //note over UI: 
+    AlertUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>AlertManager:True: Initialize Mangager
+    activate AlertManager
+   // note over Manager: 
+    AlertManager->>Services: AlertAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: ViewAlerts(Data,User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Alerts list are accessed
+    //note over DataStore
+    activate DataStore
+    DataStore-->>DataAccess:Alert Notifications aren't Returned
+    deactivate DataStore
+    DataAccess-->>Services:False: LoadNotification(data:String,User:String)
+    deactivate DataAccess
+    Services->Services: Validation(Data,User):Bool
+    Services-->>AlertManager:True
+    deactivate Services
+    AlertManager-->>EntryPoint: Alerts display correct information.
+    deactivate AlertManager
+    EntryPoint-->>AlertUI: User is notified of an Error
+    deactivate EntryPoint
+    AlertUI-->>User: "Unable to Load Notifications"

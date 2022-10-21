@@ -1,0 +1,35 @@
+title As a User, I want to post Pins, but I am unable to post Pins.
+
+   actor User
+    participant PinUI
+    participant EntryPoint
+    participant PinManager
+    participant Services
+    participant DataAccess
+
+    User->>PinUI: Start Pinning
+    activate PinUI
+    //note over UI: 
+    PinUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PinManager:True: Initialize Mangager
+    activate PinManager
+   // note over Manager: 
+    PinManager->>Services: PinAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: PinTools(User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>Services:False: Data Retrieval Error
+    deactivate DataAccess
+    Services-->>PinManager:False: Pin Access Restricted
+    deactivate Services
+    PinManager-->>EntryPoint: Pins are uninteractable.
+    deactivate PinManager
+    EntryPoint-->>PinUI:  User may retry request.
+    deactivate EntryPoint
+    PinUI-->>User: "Error! Unable to Post Pin.\n Please Try Again"
+    deactivate PinUI

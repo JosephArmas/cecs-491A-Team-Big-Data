@@ -1,0 +1,38 @@
+title As a User, I want to upload an image, but the image is uploaded to another User's pin.
+
+   actor User
+    participant PictureUI
+    participant EntryPoint
+    participant PictureManager
+    participant PictureServices
+    participant DataAccess
+    participant DataStore
+    User->>PictureUI: Start Picture Uploading
+    activate PictureUI
+    //note over UI: 
+    PictureUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PictureManager:True: Initialize Mangager
+    activate PictureManager
+   // note over Manager: 
+    PictureManager->>PictureServices: PictureAccess(User):Bool
+    activate PictureServices
+  //  note over Services: 
+    PictureServices->>DataAccess: PictureUpload(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Picture is uploaded to invalid pin
+    activate DataStore
+    DataStore-->>DataAccess:Picture is deleted
+    deactivate DataStore
+    DataAccess-->>PictureServices: True: The User was able to upload an image
+    deactivate DataAccess
+    PictureServices-->>PictureManager:False: Business rule invalidated since image was uploaded to wrong pin.
+    deactivate PictureServices
+    PictureManager-->>EntryPoint: False
+    deactivate PictureManager
+    EntryPoint-->>PictureUI: User is shown an error notification
+    deactivate EntryPoint
+    PictureUI-->>User: "Posting Issure.\nInvalid Action Performed."
+    deactivate PictureUI

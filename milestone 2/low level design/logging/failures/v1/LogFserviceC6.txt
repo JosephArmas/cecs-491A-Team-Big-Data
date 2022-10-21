@@ -1,0 +1,38 @@
+title As a User, I want to add my Service, but the Service exists outside of California.
+
+   actor User
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+    participant DataStore
+    User->>ServiceUI: Start Service Creation
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: CreateService(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Service is created.
+    activate DataStore
+    DataStore-->>DataAccess:Service is registered in the DataStore
+    deactivate DataStore
+    DataAccess-->>ServiceServices: True: The service is created but User Type is not updated to Service User
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False:Business Rule of User Types is broken.
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: User Type is updated to accurately reflect DataStore.
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is not shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>User: False
+    deactivate ServiceUI

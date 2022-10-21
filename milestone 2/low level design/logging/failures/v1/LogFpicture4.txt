@@ -1,0 +1,38 @@
+title As a User, I want to access my images, but they are not on my User Profile.
+
+   actor User
+    participant PictureUI
+    participant EntryPoint
+    participant PictureManager
+    participant PictureServices
+    participant DataAccess
+    participant DataStore
+    User->>PictureUI: Start Picture Profile
+    activate PictureUI
+    //note over UI: 
+    PictureUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PictureManager:True: Initialize Mangager
+    activate PictureManager
+   // note over Manager: 
+    PictureManager->>PictureServices: PictureAccess(User):Bool
+    activate PictureServices
+  //  note over Services: 
+    PictureServices->>DataAccess: UserProfile(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:User Profile is accessed
+    activate DataStore
+    DataStore-->>DataAccess:Pictures are not shown on the profile
+    deactivate DataStore
+    DataAccess-->>PictureServices: True: The User was able to view their profile
+    deactivate DataAccess
+    PictureServices-->>PictureManager:False: Business rule invalidated since images are not shown.
+    deactivate PictureServices
+    PictureManager-->>EntryPoint: False: The user profile is updated with information from data storage
+    deactivate PictureManager
+    EntryPoint-->>PictureUI: User is shown an error notification
+    deactivate EntryPoint
+    PictureUI-->>User: "Cannot Access Images\nPlease Try Again."
+    deactivate PictureUI

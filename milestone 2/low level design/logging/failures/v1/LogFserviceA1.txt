@@ -1,0 +1,38 @@
+title As an Admin, I want to delete a Service, but the process is never stored.
+
+   actor Admin
+    participant ServiceAdminUI
+    participant EntryPoint
+    participant ServiceAdminManager
+    participant ServiceAdminServices
+    participant DataAccess
+    participant DataStore
+    Admin->>ServiceAdminUI: Start Service Deletion
+    activate ServiceAdminUI
+    //note over UI: 
+    ServiceAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceAdminManager:True: Initialize Mangager
+    activate ServiceAdminManager
+   // note over Manager: 
+    ServiceAdminManager->>ServiceAdminServices: ServiceAccess(User):Bool
+    activate ServiceAdminServices
+  //  note over Services: 
+    ServiceAdminServices->>DataAccess: DeleteService(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Service Deletion is not Processed
+    activate DataStore
+    DataStore-->>DataAccess: The Service is not deleted
+    deactivate DataStore
+    DataAccess-->>ServiceAdminServices: False: The service is not deleted
+    deactivate DataAccess
+    ServiceAdminServices-->>ServiceAdminManager:False: Business Rule is invalidated.\nAdmin Acess is restricted
+    deactivate ServiceAdminServices
+    ServiceAdminManager-->>EntryPoint: False: Admin may retry their DeleteService request
+    deactivate ServiceAdminManager
+    EntryPoint-->>ServiceAdminUI: Admin is shown an error notification
+    deactivate EntryPoint
+    ServiceAdminUI-->>Admin: "Unable to Delete Service. Try Again."
+    deactivate ServiceAdminUI

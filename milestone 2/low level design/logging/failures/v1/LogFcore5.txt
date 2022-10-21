@@ -1,0 +1,39 @@
+title As a System, I want to Log, but previous logs are modifiable.
+
+   actor User
+    participant UI
+    participant EntryPoint
+    participant Manager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>UI: Start Logging
+    activate UI
+    //note over UI: 
+    UI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>Manager:True: Initialize Mangager
+    activate Manager
+   // note over Manager: 
+    Manager->>Services: DataEntry(User,Data,Time,Msg:String)
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: LogData(User,Data,Time,Msg:String):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Previous Logs are overwritten
+    //note over DataStore
+    activate DataStore
+    DataStore-->>DataAccess:Failed Logging Process is recorded
+    deactivate DataStore
+    DataAccess-->>Services:False: Change to Backend is reversed
+    deactivate DataAccess
+    Services-->>Manager:False: Business rule invalidated
+    deactivate Services
+    Manager-->>EntryPoint: False
+    deactivate Manager
+    EntryPoint-->>UI: Log Attempt Failed
+    deactivate EntryPoint
+    UI-->>User: "Overwritten Data. Logging Failed"
+    deactivate UI

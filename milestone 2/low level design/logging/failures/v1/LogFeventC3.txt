@@ -1,0 +1,35 @@
+title As a Reputable User, I want to edit an event, but I am modifying another User's event.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+
+    User->>EventUI: Start Event Creation
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: ReputableAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: ModifyEvent(Data,Title,Msg)
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>EventServices: False: Accessed wrong event. Edited content is restored to checkpoint
+    deactivate DataAccess
+    EventServices-->>EventManager:False: Event should be only be modified by Admin or original User
+    deactivate EventServices
+    EventManager-->>EntryPoint: False
+    deactivate EventManager
+    EntryPoint-->>EventUI: Owner of the edited pin is notified
+    deactivate EntryPoint
+    EventUI-->>User: "An Error Occurred with Your Pin"
+    deactivate EventUI

@@ -1,0 +1,35 @@
+title As a User, I want to request a Service, but the system fails to process the request.
+
+   actor User
+    participant ServiceUI
+    participant EntryPoint
+    participant ServiceManager
+    participant ServiceServices
+    participant DataAccess
+
+    User->>ServiceUI: Start Service Request
+    activate ServiceUI
+    //note over UI: 
+    ServiceUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceManager:True: Initialize Mangager
+    activate ServiceManager
+   // note over Manager: 
+    ServiceManager->>ServiceServices: ServiceAccess(User):Bool
+    activate ServiceServices
+  //  note over Services: 
+    ServiceServices->>DataAccess: RequestService(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>ServiceServices: False: The service is not requested
+    deactivate DataAccess
+    ServiceServices-->>ServiceManager:False: Business Rule is invalidated
+    deactivate ServiceServices
+    ServiceManager-->>EntryPoint: False: User may retry their Request
+    deactivate ServiceManager
+    EntryPoint-->>ServiceUI: User is shown an error notification
+    deactivate EntryPoint
+    ServiceUI-->>User: "Runtime Error. Service Proces Failed to be Requested."
+    deactivate ServiceUI

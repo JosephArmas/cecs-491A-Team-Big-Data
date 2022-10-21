@@ -1,0 +1,38 @@
+title As a Reputable User, I want to create an event, but the event does not appear on the map.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+    participant DataStore
+    User->>EventUI: Start Event Creation
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: ReputableAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: CreateEvent(Data,Msg)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Event is created
+    activate DataStore
+    DataStore-->>DataAccess:True: Event is stored
+    deactivate DataStore
+    DataAccess-->>EventServices: False: Event pin is not created
+    deactivate DataAccess
+    EventServices-->>EventManager:False: Event is not displayed on the map
+    deactivate EventServices
+    EventManager-->>EntryPoint: False: Map will reload to display created pin
+    deactivate EventManager
+    EntryPoint-->>EventUI: Reputable User does not see created Event
+    deactivate EntryPoint
+    EventUI-->>User: False
+    deactivate EventUI

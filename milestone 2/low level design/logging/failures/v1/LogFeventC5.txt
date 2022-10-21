@@ -1,0 +1,38 @@
+title As a User, I have created an event, but I do not have permissions.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+    participant DataStore
+    User->>EventUI: Start Event Creation
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: ReputableAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: CreateEvent(Data,Title,Msg,Attendanc)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Event is created
+    activate DataStore
+    DataStore-->>DataAccess:False: Event should be deleted after creation
+    deactivate DataStore
+    DataAccess-->>EventServices: True: User was able to create an event
+    deactivate DataAccess
+    EventServices-->>EventManager:False: Event was created by Non-Reputable User
+    deactivate EventServices
+    EventManager-->>EntryPoint: False: Business Rule invalidated
+    deactivate EventManager
+    EntryPoint-->>EventUI: Users is notified that an error has occurred.
+    deactivate EntryPoint
+    EventUI-->>User: "Event Creation is Inaccessible to Non-Reputable Users"
+    deactivate EventUI

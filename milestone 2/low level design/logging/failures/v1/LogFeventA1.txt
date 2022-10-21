@@ -1,0 +1,38 @@
+title As an Admin, I want to remove events, but the system does not process the interaction.
+
+   actor User
+    participant EventAdminUI
+    participant EntryPoint
+    participant EventAdminManager
+    participant EventAdminServices
+    participant DataAccess
+    participant DataStore
+    User->>EventAdminUI: Start Event Deletion
+    activate EventAdminUI
+    //note over UI: 
+    EventAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventAdminManager:True: Initialize Mangager
+    activate EventAdminManager
+   // note over Manager: 
+    EventAdminManager->>EventAdminServices: EventAdminAccess(User):Bool
+    activate EventAdminServices
+  //  note over Services: 
+    EventAdminServices->>DataAccess: DeleteEvent(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Event is not Deleted.
+    activate DataStore
+    DataStore-->>DataAccess:Deletion is not reflected in the Data Store.
+    deactivate DataStore
+    DataAccess-->>EventAdminServices: False: The Admin failed to delete the event
+    deactivate DataAccess
+    EventAdminServices-->>EventAdminManager:False: Admin was unable to excersize their right to delete
+    deactivate EventAdminServices
+    EventAdminManager-->>EntryPoint: False
+    deactivate EventAdminManager
+    EntryPoint-->>EventAdminUI: Admin is shown an error notification
+    deactivate EntryPoint
+    EventAdminUI-->>User: "Deletion was unsuccessful. Please Try Again."
+    deactivate EventAdminUI

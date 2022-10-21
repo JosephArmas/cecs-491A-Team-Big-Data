@@ -1,0 +1,34 @@
+title As a User, I want to view Pins, but Pins are displayed with an invalid Color.
+
+   actor User
+    participant PinUI
+    participant EntryPoint
+    participant PinManager
+    participant Services
+    participant DataAccess
+    
+    User->>PinUI: Start Pinning
+    activate PinUI
+    //note over UI: 
+    PinUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PinManager:True: Initialize Mangager
+    activate PinManager
+   // note over Manager: 
+    PinManager->>Services: PinAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: PinTools(User):Bool
+    activate DataAccess
+
+    DataAccess-->>Services:False: Data Retrieval Error
+    deactivate DataAccess
+    Services-->>PinManager:False: Pin Access Restricted
+    deactivate Services
+    PinManager-->>EntryPoint: Pins are displayed inappropriately.
+    deactivate PinManager
+    EntryPoint-->>PinUI: Webpage is reloaded. Pins get their color
+    deactivate EntryPoint
+    PinUI-->>User: False
+    deactivate PinUI

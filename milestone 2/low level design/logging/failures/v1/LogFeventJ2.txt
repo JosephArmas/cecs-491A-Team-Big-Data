@@ -1,0 +1,39 @@
+title As a User, I want to leave an event, but the system does not Log the interaction.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+    participant DataStore
+    User->>EventUI: Start Event Joining
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: EventAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: LeaveEvent(Data,User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:User attempts to leave the event
+    activate DataStore
+    DataStore-->>DataAccess:Event has the User as attending
+    deactivate DataStore
+    DataAccess-->>EventServices: False: User does not successfully leave the event
+    deactivate DataAccess
+    EventServices->EventServices: Validation(Data,User):Bool
+    EventServices-->>EventManager:True: User is valiated as leaving the event
+    deactivate EventServices
+    EventManager-->>EntryPoint: False: System automatically calls LeaveEvent
+    deactivate EventManager
+    EntryPoint-->>EventUI: Users is not shown error notification
+    deactivate EntryPoint
+    EventUI-->>User: False
+    deactivate EventUI

@@ -1,0 +1,38 @@
+title As an Admin, I want to access images, but the system slows due to too many images.
+
+   actor Admin
+    participant PictureAdminUI
+    participant EntryPoint
+    participant PictureAdminManager
+    participant PictureAdminServices
+    participant DataAccess
+    participant DataStore
+    Admin->>PictureAdminUI: Start Picture Viewing
+    activate PictureAdminUI
+    //note over UI: 
+    PictureAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PictureAdminManager:True: Initialize Mangager
+    activate PictureAdminManager
+   // note over Manager: 
+    PictureAdminManager->>PictureAdminServices: PictureAdminAccess(User):Bool
+    activate PictureAdminServices
+  //  note over Services: 
+    PictureAdminServices->>DataAccess: ViewPicture(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:The User's pictures are shown to Admin
+    activate DataStore
+    DataStore-->>DataAccess:All images are able to be viewed by Admin
+    deactivate DataStore
+    DataAccess-->>PictureAdminServices: True: The Admin is able to view pictures
+    deactivate DataAccess
+    PictureAdminServices-->>PictureAdminManager:False: Business rule invalidated since the System is not scaleble.
+    deactivate PictureAdminServices
+    PictureAdminManager-->>EntryPoint: False
+    deactivate PictureAdminManager
+    EntryPoint-->>PictureAdminUI: Admin is not shown an error notification
+    deactivate EntryPoint
+    PictureAdminUI-->>Admin: False
+    deactivate PictureAdminUI

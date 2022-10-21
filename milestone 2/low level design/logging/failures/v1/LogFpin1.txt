@@ -1,0 +1,23 @@
+title As a User, I want to view Pins, but the system displays the Pins inappropriately.
+
+   actor User
+    participant PinUI
+    participant EntryPoint
+    participant PinManager
+ 
+    User->>PinUI: Start Viewing Pins
+    activate PinUI
+    //note over UI: 
+    PinUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PinManager:True: Initialize Mangager
+    activate PinManager
+   // note over Manager: 
+ 
+    PinManager-->>EntryPoint: Pins are displayed inappropriately.
+    deactivate PinManager
+    EntryPoint-->>PinUI: Webpage is reloaded. User can retry Pin request.
+    deactivate EntryPoint
+    PinUI-->>User: "Error Displaying Pin"
+    deactivate PinUI

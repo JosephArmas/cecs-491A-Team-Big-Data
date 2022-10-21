@@ -1,0 +1,38 @@
+title As a User, I want to upload an image, but the image is larger than 9 megabytes.
+
+   actor User
+    participant PictureUI
+    participant EntryPoint
+    participant PictureManager
+    participant PictureServices
+    participant DataAccess
+    participant DataStore
+    User->>PictureUI: Start Picture Uploading
+    activate PictureUI
+    //note over UI: 
+    PictureUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PictureManager:True: Initialize Mangager
+    activate PictureManager
+   // note over Manager: 
+    PictureManager->>PictureServices: PictureAccess(User):Bool
+    activate PictureServices
+  //  note over Services: 
+    PictureServices->>DataAccess: PictureUpload(Data,User,size)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Picture uploaded is larger than 9 megabytes
+    activate DataStore
+    DataStore-->>DataAccess:Picture is deleted
+    deactivate DataStore
+    DataAccess-->>PictureServices: True: The User was able to upload an image
+    deactivate DataAccess
+    PictureServices-->>PictureManager:False: Business rule invalidated since image was larger than 9 megabytes.
+    deactivate PictureServices
+    PictureManager-->>EntryPoint: False: User is allowed to retry PictureUpload()
+    deactivate PictureManager
+    EntryPoint-->>PictureUI: User is shown an error notification
+    deactivate EntryPoint
+    PictureUI-->>User: "File Size Too Big.\nAccepted Sizes are 9MB and Less."
+    deactivate PictureUI

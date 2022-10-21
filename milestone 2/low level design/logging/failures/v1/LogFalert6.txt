@@ -1,0 +1,40 @@
+title As a User, I want to recieve alerts, but I recieve alerts of the wrong type.
+
+   actor User
+    participant AlertUI
+    participant EntryPoint
+    participant AlertManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>AlertUI: Start Receive Alerts
+    activate AlertUI
+    //note over UI: 
+    AlertUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>AlertManager:True: Initialize Mangager
+    activate AlertManager
+   // note over Manager: 
+    AlertManager->>Services: AlertAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: ViewAlerts(Data,User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Alert information retrieved is wrong.
+    //note over DataStore
+    activate DataStore
+    DataStore-->>DataAccess:Alert Notifications of wrong type are returned.
+    deactivate DataStore
+    DataAccess-->>Services:False: SendNotification(data:String,User:User)
+    deactivate DataAccess
+    Services->Services: Validation(Data,User):Bool
+    Services-->>AlertManager:False: Wrong alert is validated
+    deactivate Services
+    AlertManager-->>EntryPoint: Alert preference is revalidated
+    deactivate AlertManager
+    EntryPoint-->>AlertUI: User is notified of an Error
+    deactivate EntryPoint
+    AlertUI-->>User:"Previous notification is Invalid.\nApologies for the False Flag."
+    deactivate AlertUI

@@ -1,0 +1,38 @@
+title As a User, I want to become a Reputable User, but the system did not update my permissions when reaching 4.2 star rating.
+
+   actor User
+    participant ReputationUI
+    participant EntryPoint
+    participant ReputationManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>ReputationUI: Start Logging In
+    activate ReputationUI
+    //note over UI: 
+    ReputationUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ReputationManager:True: Initialize Mangager
+    activate ReputationManager
+   // note over Manager: 
+    ReputationManager->>Services: ReputationAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: UpdateProfile(User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:User Profile is updated
+    activate DataStore
+    DataStore-->>DataAccess:False: Star rating is 4.2
+    deactivate DataStore
+    DataAccess-->>Services:False: User is not updated to a Reputable User
+    deactivate DataAccess
+    Services-->>ReputationManager:False: System will update User status properly
+    deactivate Services
+    ReputationManager-->>EntryPoint: False
+    deactivate ReputationManager
+    EntryPoint-->>ReputationUI: False 
+    deactivate EntryPoint
+    ReputationUI-->>User: False
+    deactivate ReputationUI

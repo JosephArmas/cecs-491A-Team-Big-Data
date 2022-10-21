@@ -1,0 +1,38 @@
+title As an Admin, I want to modify User's Reputation, but I am unable to modify.
+
+   actor User
+    participant ReputationAdminUI
+    participant EntryPoint
+    participant ReputationAdminManager
+    participant AdminServices
+    participant DataAccess
+    participant DataStore
+    User->>ReputationAdminUI: Start
+    activate ReputationAdminUI
+    //note over UI: 
+    ReputationAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ReputationAdminManager:True: Initialize Mangager
+    activate ReputationAdminManager
+   // note over Manager: 
+    ReputationAdminManager->>AdminServices: AdminAccess(User):Bool
+    activate AdminServices
+  //  note over Services: 
+    AdminServices->>DataAccess: ModifyProfile(User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:User Profile is not accessed
+    activate DataStore
+    DataStore-->>DataAccess:False: Profile is not altered
+    deactivate DataStore
+    DataAccess-->>AdminServices: User profile is viewed
+    deactivate DataAccess
+    AdminServices-->>ReputationAdminManager:False: User Profile is unmodified
+    deactivate AdminServices
+    ReputationAdminManager-->>EntryPoint: False: User profile remains unchanged
+    deactivate ReputationAdminManager
+    EntryPoint-->>ReputationAdminUI: Admin sees no change when attempting to modify
+    deactivate EntryPoint
+    ReputationAdminUI-->>User: "Modification to User Failed. Please Try Again."
+    deactivate ReputationAdminUI

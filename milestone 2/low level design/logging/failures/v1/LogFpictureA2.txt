@@ -1,0 +1,38 @@
+title As an Admin, I want to view images, but they take more than 7 seconds to load.
+
+   actor Admin
+    participant PictureAdminUI
+    participant EntryPoint
+    participant PictureAdminManager
+    participant PictureAdminServices
+    participant DataAccess
+    participant DataStore
+    Admin->>PictureAdminUI: Start Picture Viewing
+    activate PictureAdminUI
+    //note over UI: 
+    PictureAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PictureAdminManager:True: Initialize Mangager
+    activate PictureAdminManager
+   // note over Manager: 
+    PictureAdminManager->>PictureAdminServices: PictureAdminAccess(User):Bool
+    activate PictureAdminServices
+  //  note over Services: 
+    PictureAdminServices->>DataAccess: ViewPicture(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:The Admin is unable to view the picture
+    activate DataStore
+    DataStore-->>DataAccess:Image is not returned
+    deactivate DataStore
+    DataAccess-->>PictureAdminServices: False: The Admin was unable to view User's Image
+    deactivate DataAccess
+    PictureAdminServices-->>PictureAdminManager:False: Business rule invalidated since Admin cannot view User's profile.
+    deactivate PictureAdminServices
+    PictureAdminManager-->>EntryPoint: False:The system will automatically try to refresh image list
+    deactivate PictureAdminManager
+    EntryPoint-->>PictureAdminUI: Admin is shown an error notification
+    deactivate EntryPoint
+    PictureAdminUI-->>Admin: "Runtime Error. Reloading."
+    deactivate PictureAdminUI

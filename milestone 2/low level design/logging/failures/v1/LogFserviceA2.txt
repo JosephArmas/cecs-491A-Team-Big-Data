@@ -1,0 +1,38 @@
+title As an Admin, I want to modify a Service, but the modifications are never stored.
+
+   actor Admin
+    participant ServiceAdminUI
+    participant EntryPoint
+    participant ServiceAdminManager
+    participant ServiceAdminServices
+    participant DataAccess
+    participant DataStore
+    Admin->>ServiceAdminUI: Start Service Modification
+    activate ServiceAdminUI
+    //note over UI: 
+    ServiceAdminUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ServiceAdminManager:True: Initialize Mangager
+    activate ServiceAdminManager
+   // note over Manager: 
+    ServiceAdminManager->>ServiceAdminServices: ServiceAccess(User):Bool
+    activate ServiceAdminServices
+  //  note over Services: 
+    ServiceAdminServices->>DataAccess: ModifyService(Data,User,Title,Msg,Distance)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Service Modification is not Processed
+    activate DataStore
+    DataStore-->>DataAccess: The Service is not deleted
+    deactivate DataStore
+    DataAccess-->>ServiceAdminServices: False: The service is not modifiedd
+    deactivate DataAccess
+    ServiceAdminServices-->>ServiceAdminManager:False: Business Rule is invalidated.\nAdmin Access is restricted
+    deactivate ServiceAdminServices
+    ServiceAdminManager-->>EntryPoint: False: Admin may retry their ModifyService request
+    deactivate ServiceAdminManager
+    EntryPoint-->>ServiceAdminUI: Admin is shown an error notification
+    deactivate EntryPoint
+    ServiceAdminUI-->>Admin: "Modification was Unsuccessful. Try Again."
+    deactivate ServiceAdminUI

@@ -1,0 +1,38 @@
+title As a User, I want to report a User, but the report is not stored in the backend.
+
+   actor User
+    participant ReputationUI
+    participant EntryPoint
+    participant ReputationManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>ReputationUI: Start
+    activate ReputationUI
+    //note over UI: 
+    ReputationUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ReputationManager:True: Initialize Mangager
+    activate ReputationManager
+   // note over Manager: 
+    ReputationManager->>Services: ReputationAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: ReportUser(User:String,Score:Int)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Report is sent to Backend
+    activate DataStore
+    DataStore-->>DataAccess:False: Report not saved
+    deactivate DataStore
+    DataAccess-->>Services: The User may retry submitting a report
+    deactivate DataAccess
+    Services-->>ReputationManager:False
+    deactivate Services
+    ReputationManager-->>EntryPoint: User is prompted to try reporting again
+    deactivate ReputationManager
+    EntryPoint-->>ReputationUI: False
+    deactivate EntryPoint
+    ReputationUI-->>User: False
+    deactivate ReputationUI

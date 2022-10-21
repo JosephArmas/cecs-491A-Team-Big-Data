@@ -1,0 +1,38 @@
+title As a User, I want to view my reputation, but my reputation is not reflected properly.
+
+   actor User
+    participant ReputationUI
+    participant EntryPoint
+    participant ReputationManager
+    participant Services
+    participant DataAccess
+    participant DataStore
+    User->>ReputationUI: Start
+    activate ReputationUI
+    //note over UI: 
+    ReputationUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>ReputationManager:True: Initialize Mangager
+    activate ReputationManager
+   // note over Manager: 
+    ReputationManager->>Services: ReputationAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: ViewProfile(User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:User Profile is accessed
+    activate DataStore
+    DataStore-->>DataAccess:False: Profile displays improperly
+    deactivate DataStore
+    DataAccess-->>Services: User profile is viewed
+    deactivate DataAccess
+    Services-->>ReputationManager:False: Stars do not reflect reputation
+    deactivate Services
+    ReputationManager-->>EntryPoint: False: Star rating is reretrieve
+    deactivate ReputationManager
+    EntryPoint-->>ReputationUI: User sees improper star rating 
+    deactivate EntryPoint
+    ReputationUI-->>User: False
+    deactivate ReputationUI

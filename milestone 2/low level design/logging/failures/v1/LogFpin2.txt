@@ -1,0 +1,23 @@
+title As a User, I want to post Pins, but the map is unviewable.
+
+   actor User
+    participant PinUI
+    participant EntryPoint
+    participant PinManager
+   
+    User->>PinUI: Start Pinning
+    activate PinUI
+    //note over UI: 
+    PinUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>PinManager:True: Initialize Mangager
+    activate PinManager
+   // note over Manager: 
+
+    PinManager-->>EntryPoint: Map is not displayed
+    deactivate PinManager
+    EntryPoint-->>PinUI: Webpage is reloaded. 
+    deactivate EntryPoint
+    PinUI-->>User: False
+    deactivate PinUI

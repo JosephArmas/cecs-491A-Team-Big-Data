@@ -1,0 +1,38 @@
+title As a User, I want to join an event, but the system took longer than 7 seconds to process.
+
+   actor User
+    participant EventUI
+    participant EntryPoint
+    participant EventManager
+    participant EventServices
+    participant DataAccess
+    participant DataStore
+    User->>EventUI: Start Event Joining
+    activate EventUI
+    //note over UI: 
+    EventUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>EventManager:True: Initialize Mangager
+    activate EventManager
+   // note over Manager: 
+    EventManager->>EventServices: EventAccess(User):Bool
+    activate EventServices
+  //  note over Services: 
+    EventServices->>DataAccess: JoinEvent(Data,User)
+    activate DataAccess
+    //note over DataAccess: 
+    DataAccess->>DataStore:Event is not Joined in 7 seconds
+    activate DataStore
+    DataStore-->>DataAccess:Event not joined
+    deactivate DataStore
+    DataAccess-->>EventServices: False: Event does not register User as attending
+    deactivate DataAccess
+    EventServices-->>EventManager:False
+    deactivate EventServices
+    EventManager-->>EntryPoint: False: User will be able to reattempt join request
+    deactivate EventManager
+    EntryPoint-->>EventUI: Users is shown error notification
+    deactivate EntryPoint
+    EventUI-->>User: "Process Timed Out. Please Try Again."
+    deactivate EventUI

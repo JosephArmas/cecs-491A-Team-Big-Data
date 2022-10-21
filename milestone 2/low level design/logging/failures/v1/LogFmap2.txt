@@ -1,0 +1,34 @@
+title As a User, I want to view a Litter Map, but the Map has a poor response time of 0.5 seconds.
+    actor User
+    participant MapUI
+    participant EntryPoint
+    participant MapManager
+    participant Services
+    participant DataAccess
+  
+    User->>MapUI: Start View Map
+    activate MapUI
+    //note over UI: 
+    MapUI->>EntryPoint:Logs In(UN:String, PW:String):Bool
+    activate EntryPoint
+    //note over EntryPoint: 
+    EntryPoint->>MapManager:True: Initialize Mangager
+    activate MapManager
+   // note over Manager: 
+    MapManager->>Services: MapAccess(User):Bool
+    activate Services
+  //  note over Services: 
+    Services->>DataAccess: MapTools(User):Bool
+    activate DataAccess
+    //note over DataAccess: 
+
+    DataAccess-->>Services:False: Data Retrieval Error
+    deactivate DataAccess
+    Services-->>MapManager: False: MapAccess Restricted
+    deactivate Services
+    MapManager-->>EntryPoint: Map has 0.5 second or more response time
+    deactivate MapManager
+    EntryPoint-->>MapUI: Webpage is reloaded. Servers increase in scale.
+    deactivate EntryPoint
+    MapUI-->>User: "Server Error. Reloading"
+    deactivate MapUI
