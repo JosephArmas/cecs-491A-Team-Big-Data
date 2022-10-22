@@ -22,5 +22,6 @@ David De Girolamo <br />
 # [Milestone 2](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202)
 * [Low Level Design](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202)
   * [Registration](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202/low%20level%20design/registration)
+  * [Logging](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202/low%20level%20design/logging)
 
 
