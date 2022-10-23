@@ -4,10 +4,13 @@ sequenceDiagram
     actor User
     User ->> UI: create an account
     activate UI
-    UI ->> BuisnessLogic: isValid(pw:string):bool
-    activate BuisnessLogic
-    BuisnessLogic -->> UI: return False 
-    deactivate BuisnessLogic
+    UI ->> Entry Point: accountView(view:obj): obj
+    activate Entry Point
+    Entry Point ->> Manager: isValid(pw:string):bool
+    activate Manager
+    Manager -->> Entry Point: return False 
+    deactivate Manager
+    Entry Point -->> UI: return account view
     UI -->> User: return passphrase valid special characters are: (.,@!-)
     deactivate UI
 ```

@@ -4,9 +4,11 @@ sequenceDiagram
     actor User
     User ->> UI: create an account 
     activate UI 
-    UI ->> BuisnessLogic: isValid(email:string,pw:string): bool
-    activate BuisnessLogic
-    BuisnessLogic ->> Services: fetch(email:string):bool
+    UI ->> Entry Point: accountView(view:obj): obj
+    activate Entry Point
+    Entry Point ->> Manager: isValid(email:string,pw:string): bool
+    activate Manager
+    Manager ->> Services: fetch(email:string):bool
     activate Services
     Services ->> DataAccess: getEmail(email:string):bool 
     activate DataAccess
@@ -16,9 +18,12 @@ sequenceDiagram
     deactivate DataStore
     DataAccess -->> Services: return False
     deactivate DataAccess
-    Services -->> BuisnessLogic: return False
+    Services -->> Manager: return False
     deactivate Services
-    BuisnessLogic -->> UI: return False
-    deactivate BuisnessLogic
+    Manager -->> Entry Point: return False
+    deactivate Manager
+    Entry Point -->> UI: return account view obj
+    deactivate Entry Point
     UI -->> User: return unable to give system wide username
+    deactivate UI
 ```

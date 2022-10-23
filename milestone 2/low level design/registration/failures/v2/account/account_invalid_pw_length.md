@@ -4,11 +4,14 @@ sequenceDiagram
     actor User
     User ->> UI: create an account
     activate UI
-    Note over UI: create an account
-    UI ->> BuisnessLogic: isValid(pw:string):bool
-    activate BuisnessLogic
-    BuisnessLogic -->> UI: return False 
-    deactivate BuisnessLogic
+    UI ->> Entry Point: accountView(view:obj) :obj
+    activate Entry Point
+    Entry Point ->> Manager: isValid(pw:string):bool
+    activate Manager
+    Manager -->> Entry Point: return False 
+    deactivate Manager
+    Entry Point -->> UI: return account view obj
+    deactivate Entry Point
     UI -->> User: return passphrase must be minimum of 8 characters
     deactivate UI
 ```
