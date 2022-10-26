@@ -4,25 +4,26 @@ sequenceDiagram
     actor User
     User ->> UI: create an account
     activate UI
-    UI ->> Entry Point: create an accountView(view:obj): obj
+    UI ->> Entry Point: https request 
     activate Entry Point
     Entry Point ->> Manager: isValid(email:string,pw:string):bool
     activate Manager
-    Manager ->> Services: fetch(email:string):bool
+    Manager ->> Services: EmailExist(email:string):bool
     activate Services
     Services ->> DataAccess: getEmail(e:string):bool 
     activate DataAccess
-    DataAccess ->> DataStore: search(email:string):bool
+    DataAccess ->> DataStore: search(email:string): byte
     activate DataStore
-    DataStore -->> DataAccess: return False
+    DataStore -->> DataAccess: return 1
     deactivate DataStore
-    DataAccess -->> Services: return False
+    DataAccess -->> Services: return True
     deactivate DataAccess
-    Services -->> Manager: return False
+    Services -->> Manager: return True
     deactivate Services
-    Manager -->> Entry Point: return False
+    Manager -->> Entry Point: return True
     deactivate Manager
-    Entry Point -->> UI: return account View obj
-    UI -->> User: return email already exist 
+    Entry Point -->> UI: https response
+    deactivate Entry Point
+    UI -->> User: return email already exist, would you like to use another email 
     deactivate UI
 ```

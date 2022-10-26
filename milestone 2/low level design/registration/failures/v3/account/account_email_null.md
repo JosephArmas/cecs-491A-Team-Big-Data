@@ -1,4 +1,4 @@
-# As a user I cannot reister to create an account without a valid email
+# As a user I cannot reister to create an account inserting a null string
 ```mermaid
 sequenceDiagram
     actor User
@@ -8,6 +8,10 @@ sequenceDiagram
     activate Entry Point
     Entry Point ->> Manager: isValid(email:string):bool
     activate Manager
+    Manager ->> Services: isNull(email:string): bool
+    activate Services
+    Services -->> Manager: return True
+    deactivate Services
     Manager -->> Entry Point: return False
     deactivate Manager
     Entry Point -->> UI: https response
