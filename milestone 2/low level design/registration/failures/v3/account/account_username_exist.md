@@ -1,4 +1,4 @@
-# As a user I cannot register to create an account with an existing 1 
+# As a user I cannot register to create an account with an existing username 
 ```mermaid
 sequenceDiagram
     actor User

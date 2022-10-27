@@ -21,6 +21,8 @@ sequenceDiagram
     Registration Services -->> Registration Manager: return 1
     deactivate Registration Services
     Registration Manager -->> Entry Point: return 1
+    Entry Point ->> Registration Manager: genUsername(usernamge:string): int
+    Registration Manager -->> Entry Point: return 0
     deactivate Registration Manager
     Entry Point -->> UI: return https response 
     deactivate Entry Point
