@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.Client", "TeamBigData.Utification.Client\TeamBigData.Utification.Client.csproj", "{64C68C40-F974-4383-A5BA-DD465146755A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{C4760894-085E-4A7F-91E3-6FCCEF8D3188}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cross-cutting", "Cross-cutting", "{1A1E21E6-B071-446C-B410-1913ACE68416}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{65008136-9E42-462C-A9D8-9B14283F6109}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manager", "Manager", "{96EB3EA2-2C5F-40B7-AAC5-3DF9782B2252}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0CCD53AE-3663-4050-A989-D984702A74E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.Logging", "TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj", "{29CEFB6B-56E3-46B7-A558-12A961BDE26D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.Registration", "TeamBigData.Utification.Registration\TeamBigData.Utification.Registration.csproj", "{15199D80-1B24-4168-A820-B8F15BEA2C91}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{850E623E-5898-4A1E-87D9-24E62C3E60A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64C68C40-F974-4383-A5BA-DD465146755A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64C68C40-F974-4383-A5BA-DD465146755A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64C68C40-F974-4383-A5BA-DD465146755A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64C68C40-F974-4383-A5BA-DD465146755A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29CEFB6B-56E3-46B7-A558-12A961BDE26D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29CEFB6B-56E3-46B7-A558-12A961BDE26D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29CEFB6B-56E3-46B7-A558-12A961BDE26D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29CEFB6B-56E3-46B7-A558-12A961BDE26D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15199D80-1B24-4168-A820-B8F15BEA2C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15199D80-1B24-4168-A820-B8F15BEA2C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15199D80-1B24-4168-A820-B8F15BEA2C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15199D80-1B24-4168-A820-B8F15BEA2C91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{64C68C40-F974-4383-A5BA-DD465146755A} = {C4760894-085E-4A7F-91E3-6FCCEF8D3188}
+		{29CEFB6B-56E3-46B7-A558-12A961BDE26D} = {1A1E21E6-B071-446C-B410-1913ACE68416}
+		{15199D80-1B24-4168-A820-B8F15BEA2C91} = {0CCD53AE-3663-4050-A989-D984702A74E3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E0D8E6B-BD73-4509-B1BE-1E79A9D14D47}
+	EndGlobalSection
+EndGlobal
