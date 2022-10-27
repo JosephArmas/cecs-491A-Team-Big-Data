@@ -4,25 +4,25 @@ sequenceDiagram
     actor User
     User ->> UI: create an account 
     activate UI 
-    UI ->> Entry Point: accountView(view:obj): obj
+    UI ->> Entry Point: https request 
     activate Entry Point
-    Entry Point ->> Manager: isValid(email:string,pw:string): bool
-    activate Manager
-    Manager ->> Services: fetch(email:string):bool
-    activate Services
-    Services ->> DataAccess: getEmail(email:string):bool 
+    Entry Point ->> Registration Manager: isValid(email:string,pw:string): int
+    activate Registration Manager
+    Registration Manager ->> Registration Services: EmailExist(email:string):int
+    activate Registration Services
+    Registration Services ->> DataAccess: getEmail(email:string):int 
     activate DataAccess
-    DataAccess ->> DataStore: insertCredentials(email:string,password:string):bool
-    activate DataStore
-    DataStore -->> DataAccess: return False
-    deactivate DataStore
-    DataAccess -->> Services: return False
+    DataAccess ->> MySQL: insertCredentials(email:string,password:string): byte
+    activate MySQL
+    MySQL -->> DataAccess: return 1
+    deactivate MySQL
+    DataAccess -->> Registration Services: return 1
     deactivate DataAccess
-    Services -->> Manager: return False
-    deactivate Services
-    Manager -->> Entry Point: return False
-    deactivate Manager
-    Entry Point -->> UI: return account view obj
+    Registration Services -->> Registration Manager: return 1
+    deactivate Registration Services
+    Registration Manager -->> Entry Point: return 1
+    deactivate Registration Manager
+    Entry Point -->> UI: return https response 
     deactivate Entry Point
     UI -->> User: return unable to give system wide username
     deactivate UI

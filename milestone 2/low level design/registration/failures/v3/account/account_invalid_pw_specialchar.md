@@ -4,13 +4,13 @@ sequenceDiagram
     actor User
     User ->> UI: create an account
     activate UI
-    UI ->> Entry Point: accountView(view:obj): obj
+    UI ->> Entry Point: https request
     activate Entry Point
-    Entry Point ->> Manager: isValid(pw:string):bool
-    activate Manager
-    Manager -->> Entry Point: return False 
-    deactivate Manager
-    Entry Point -->> UI: return account view
+    Entry Point ->> Registration Manager: isValid(pw:string): int
+    activate Registration Manager
+    Registration Manager -->> Entry Point: return 0 
+    deactivate Registration Manager
+    Entry Point -->> UI: https response
     UI -->> User: return passphrase valid special characters are: (.,@!-)
     deactivate UI
 ```

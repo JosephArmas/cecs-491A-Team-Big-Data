@@ -2,12 +2,11 @@
 ```mermaid
 sequenceDiagram
     actor User
-    User ->> Security: create an account 
+    User ->> UI: create an account 
+    activate UI
+    UI ->> Security: userActive(user:obj): int
     activate Security
-    Security ->> UI: userActive(user:obj): bool
-    activate UI 
-    UI -->> Security: return True 
-    deactivate UI
-    Security -->> User: return user is currently active.
-    deactivate Security
+    Security -->> UI: return 1 
+    UI -->> User: return user is currently active.
+    deactivate UI 
 ```
