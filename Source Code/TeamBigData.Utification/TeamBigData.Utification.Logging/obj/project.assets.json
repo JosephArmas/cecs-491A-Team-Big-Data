@@ -8,23 +8,23 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\ghab\\.nuget\\packages\\": {},
+    "C:\\Users\\David DeGirolamo\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ghab\\source\\repos\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
+      "projectUniqueName": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
       "projectName": "TeamBigData.Utification.Logging",
-      "projectPath": "C:\\Users\\ghab\\source\\repos\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
-      "packagesPath": "C:\\Users\\ghab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ghab\\source\\repos\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\obj\\",
+      "projectPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
+      "packagesPath": "C:\\Users\\David DeGirolamo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\ghab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\David DeGirolamo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
