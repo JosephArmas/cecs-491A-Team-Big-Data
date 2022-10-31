@@ -782,6 +782,9 @@
       "TeamBigData.Utification.Registration/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "TeamBigData.Utification.SQLDataAccess": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/TeamBigData.Utification.Registration.dll": {}
         },
@@ -793,8 +796,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "Microsoft.Data.SqlClient": "5.0.1",
-          "TeamBigData.Utification.Registration": "1.0.0"
+          "Microsoft.Data.SqlClient": "5.0.1"
         },
         "compile": {
           "bin/placeholder/TeamBigData.Utification.SQLDataAccess.dll": {}

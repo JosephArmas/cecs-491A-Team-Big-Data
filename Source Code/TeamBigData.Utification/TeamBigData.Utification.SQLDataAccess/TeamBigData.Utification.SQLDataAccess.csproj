@@ -10,8 +10,4 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TeamBigData.Utification.Registration\TeamBigData.Utification.Registration.csproj" />
-  </ItemGroup>
-
 </Project>

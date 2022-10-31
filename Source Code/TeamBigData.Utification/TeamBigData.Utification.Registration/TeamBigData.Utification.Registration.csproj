@@ -10,4 +10,8 @@
     <Folder Include="Abstraction\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

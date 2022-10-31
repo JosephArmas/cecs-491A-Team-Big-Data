@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TeamBigData.Utification.Registration\TeamBigData.Utification.Registration.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 
 </Project>
