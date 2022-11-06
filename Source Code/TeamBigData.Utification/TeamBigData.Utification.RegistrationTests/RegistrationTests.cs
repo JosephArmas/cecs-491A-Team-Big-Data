@@ -31,10 +31,9 @@ namespace TeamBigData.Utification.Registration.Test
         public void ChecksInvalidUsernameCharacters()
         {
             //Arrange
-            RegistrationServices testServices = new RegistrationServices();
             String username = "daviddg5!";
             //Act
-            bool actual = testServices.IsValidUsername(username);
+            bool actual = Registerer.IsValidUsername(username);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -43,10 +42,9 @@ namespace TeamBigData.Utification.Registration.Test
         public void ChecksTooShortUsername()
         {
             //Arrange
-            RegistrationServices testServices = new RegistrationServices();
             String username = "davidd";
             //Act
-            bool actual = testServices.IsValidUsername(username);
+            bool actual = Registerer.IsValidUsername(username);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -55,10 +53,9 @@ namespace TeamBigData.Utification.Registration.Test
         public void ChecksInvalidPassphraseCharacters()
         {
             //Arrange
-            RegistrationServices testServices = new RegistrationServices();
             String password = "pa$$w*rd";
             //Act
-            bool actual = testServices.IsValidPassword(password);
+            bool actual = Registerer.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -67,10 +64,9 @@ namespace TeamBigData.Utification.Registration.Test
         public void ChecksTooShortPassphrase()
         {
             //Arrange
-            RegistrationServices testServices = new RegistrationServices();
             String password = "123";
             //Act
-            bool actual = testServices.IsValidPassword(password);
+            bool actual = Registerer.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -79,10 +75,9 @@ namespace TeamBigData.Utification.Registration.Test
         public void ChecksInvalidEmailCharacters()
         {
             //Arrange
-            RegistrationServices testServices = new RegistrationServices();
             String email = "pa$$w*rd@yahoo.com";
             //Act
-            bool actual = testServices.IsValidEmail(email);
+            bool actual = Registerer.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -90,32 +85,13 @@ namespace TeamBigData.Utification.Registration.Test
         [TestMethod]
         public void ChecksAtSignInEmail()
         {
+
             //Arrange
-            RegistrationServices testServices = new RegistrationServices();
             String email = "email.email";
             //Act
-            bool actual = testServices.IsValidEmail(email);
+            bool actual = Registerer.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
-        }
-
-        [TestMethod]
-        public void ShouldRegisterWithin5Seconds()
-        {
-            //Arrange
-            Stopwatch stopwatch = new Stopwatch();
-            long expected = 5 * 60000;
-            //TODO: Create Object to start registration process
-
-            //Act
-            stopwatch.Start();
-            //TODO: Run Registration process
-
-            stopwatch.Stop();
-            var actual = stopwatch.ElapsedMilliseconds;
-
-            //Assert
-            Assert.IsTrue(actual < expected);
         }
     }
 }

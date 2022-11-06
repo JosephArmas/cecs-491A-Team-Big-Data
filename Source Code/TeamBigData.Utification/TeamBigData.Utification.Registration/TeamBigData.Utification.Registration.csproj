@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Response\TeamBigData.Utification.ErrorResponse.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 

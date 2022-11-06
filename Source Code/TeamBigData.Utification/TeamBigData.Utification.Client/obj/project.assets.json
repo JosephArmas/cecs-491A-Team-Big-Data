@@ -779,10 +779,21 @@
           }
         }
       },
+      "TeamBigData.Utification.ErrorResponse/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/TeamBigData.Utification.ErrorResponse.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TeamBigData.Utification.ErrorResponse.dll": {}
+        }
+      },
       "TeamBigData.Utification.Registration/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
+          "TeamBigData.Utification.ErrorResponse": "1.0.0",
           "TeamBigData.Utification.SQLDataAccess": "1.0.0"
         },
         "compile": {
@@ -796,7 +807,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "Microsoft.Data.SqlClient": "5.0.1"
+          "Microsoft.Data.SqlClient": "5.0.1",
+          "TeamBigData.Utification.ErrorResponse": "1.0.0"
         },
         "compile": {
           "bin/placeholder/TeamBigData.Utification.SQLDataAccess.dll": {}
@@ -2583,6 +2595,11 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "TeamBigData.Utification.ErrorResponse/1.0.0": {
+      "type": "project",
+      "path": "../Response/TeamBigData.Utification.ErrorResponse.csproj",
+      "msbuildProject": "../Response/TeamBigData.Utification.ErrorResponse.csproj"
     },
     "TeamBigData.Utification.Registration/1.0.0": {
       "type": "project",

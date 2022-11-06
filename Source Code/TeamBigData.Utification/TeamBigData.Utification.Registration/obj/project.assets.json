@@ -779,11 +779,22 @@
           }
         }
       },
+      "TeamBigData.Utification.ErrorResponse/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/TeamBigData.Utification.ErrorResponse.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TeamBigData.Utification.ErrorResponse.dll": {}
+        }
+      },
       "TeamBigData.Utification.SQLDataAccess/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "Microsoft.Data.SqlClient": "5.0.1"
+          "Microsoft.Data.SqlClient": "5.0.1",
+          "TeamBigData.Utification.ErrorResponse": "1.0.0"
         },
         "compile": {
           "bin/placeholder/TeamBigData.Utification.SQLDataAccess.dll": {}
@@ -2571,6 +2582,11 @@
         "version.txt"
       ]
     },
+    "TeamBigData.Utification.ErrorResponse/1.0.0": {
+      "type": "project",
+      "path": "../Response/TeamBigData.Utification.ErrorResponse.csproj",
+      "msbuildProject": "../Response/TeamBigData.Utification.ErrorResponse.csproj"
+    },
     "TeamBigData.Utification.SQLDataAccess/1.0.0": {
       "type": "project",
       "path": "../TeamBigData.Utification.SQLDataAccess/TeamBigData.Utification.SQLDataAccess.csproj",
@@ -2579,6 +2595,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "TeamBigData.Utification.ErrorResponse >= 1.0.0",
       "TeamBigData.Utification.SQLDataAccess >= 1.0.0"
     ]
   },
@@ -2615,6 +2632,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
+            "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\Response\\TeamBigData.Utification.ErrorResponse.csproj": {
+              "projectPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\Response\\TeamBigData.Utification.ErrorResponse.csproj"
+            },
             "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj": {
               "projectPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj"
             }
