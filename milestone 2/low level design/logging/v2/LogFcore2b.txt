@@ -1,0 +1,46 @@
+title As a User, I want to interact, but I cannot interact with the system.
+   actor User
+    participant UI
+    participant EntryPoint
+    participant LoggingManager
+    participant LoggingServices
+    participant LoggingDataAccess
+    participant LoggingDataStore
+    User->>UI: User attempts using the system
+    activate UI
+    //note over UI: LogInData(UN:String,PW:String,Time:Timestamp,\nLevel:Int,Opr:Int,Msg:String,ID,Cat):LogResult
+    
+    UI->>EntryPoint: POST HTTPS Request
+    activate EntryPoint
+    note over EntryPoint: Logging is Triggered
+    EntryPoint->>EntryPoint:EValidation(userEvent:Bool):RC
+    note over EntryPoint: False: 500\nUser operations\nwill return NULL
+    EntryPoint->>LoggingManager:StartLog(time:Timestamp,\n                   level:Int,\n                   opr:User,\n                   msg:String,\n                   ID:Int,\n                   cat:Int)\n                   :EntryLog
+    activate LoggingManager
+   // note over Manager: 
+   LoggingManager->>LoggingManager:ManValidation(startLog,expected):Valid
+    LoggingManager->>LoggingServices: mngrLogCheck(createLog,\n                          managerTime,\n                          cat,\n                          manValidation)
+    activate LoggingServices
+  //  note over Services: 
+  LoggingServices->>LoggingServices:ServValidation(mngrLogCheck,Expected):Valid
+    LoggingServices->>LoggingDataAccess: ServLog(mngrLogCheck,\n               sTime,\n               cat,\n               servValidation)\n               :ServiceLog
+    activate LoggingDataAccess
+    //note over DataAccess: 
+    LoggingDataAccess->>LoggingDataAccess:DataValidation(servLog,expected):Valid
+    LoggingDataAccess->>LoggingDataStore:LogData(servLog,\n               dataTime,\n               cat,\n               tcp:TCP,\n               dataValidation)\n               :LogResult
+    //note over DataStore
+    activate LoggingDataStore
+    note over LoggingDataStore: Logged System Error
+    
+    LoggingDataStore-->>LoggingDataAccess:Returns 0
+    deactivate LoggingDataStore
+    LoggingDataAccess-->>LoggingServices:Return type ServiceLog: False
+    deactivate LoggingDataAccess
+    LoggingServices-->>LoggingManager:Return False
+    deactivate LoggingServices
+    LoggingManager-->>EntryPoint: Return type EntryLog
+    deactivate LoggingManager
+    EntryPoint-->>UI: RC:500
+    deactivate EntryPoint
+    UI-->>User: "System Error. Operation Failed"
+    deactivate UI
