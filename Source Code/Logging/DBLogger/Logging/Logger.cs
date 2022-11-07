@@ -18,6 +18,12 @@ namespace Logging.Implementations
             if (message.GetType() == typeof(string))
             {
                 string msg = message.ToString();
+                if (msg.Contains("SELECT") || msg.Contains("UPDATE") || msg.Contains("DELETE"))
+                {
+                    result.ErrorMessage = "Error: INSERT is the only valid request";
+                    result.IsSuccessful = false;
+                    return result;
+                }
                 if (!(msg.Contains("Info") || msg.Contains("Warning") || msg.Contains("Debug")
                     || msg.Contains("Error")))
                 {
@@ -33,8 +39,12 @@ namespace Logging.Implementations
                     return result;
                 }
             }
-            //Result logReturn = _dao.Execute(message);
-            result.IsSuccessful = true;
+            Result logReturn = _dao.Execute(message);
+            result.IsSuccessful = false;
+            if (logReturn.IsSuccessful)
+            {
+                result.IsSuccessful = true;
+            }
 
             return result;
         }

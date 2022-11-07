@@ -1,5 +1,6 @@
 using DataAccess;
 using Domain;
+using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using System.Data;
 using System.Diagnostics;
@@ -9,8 +10,18 @@ namespace LoggingUnitTest
     [TestClass]
     public class DataAccessTest
     {
+        //CREATE TABLE Loggin
+        //(
+        //LogID int identity,
+        //[DateTime] varchar(50),
+        //LogLevel varchar(10),
+        //Opr varchar(70),
+        //Category varchar(10),
+        //[Message]
+        //varchar(100)
+        //)
         [TestMethod]
-        public void LogMustSaveToDataStore() //If updating the data store make sure to assert each individual column for maximum verification
+        public void DAO_LogMustSaveToDataStore() //If updating the data store make sure to assert each individual column for maximum verification
         {
             //Arrange
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User Id=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
@@ -18,7 +29,7 @@ namespace LoggingUnitTest
             Random rnd = new Random();
             int intmsg = rnd.Next();
             string msg = intmsg.ToString();
-            var insertSql = "INSERT INTO dbo.Logs (Message) VALUES ('" + msg + "')";
+            var insertSql = "INSERT INTO dbo.Loggin ([DateTime],LogLevel,Opr,Category,[Message]) VALUES ('" + DateTime.UtcNow.ToString()+"', 'Info', 'DAO_LogMustSaveToDataStore', 'Data','This is a automated test')";
             //var selectSql = "SELECT [Message] FROM dbo.Logs WHERE Message = '" + msg + "'";
             //Act
             var rows = sysUnderTest.Execute(insertSql);
@@ -31,7 +42,7 @@ namespace LoggingUnitTest
             //Assert.IsTrue(rowsaved.Payload.Equals(msg));
         }
         [TestMethod]
-        public void LogMustBeImmutable()
+        public void DAO_LogMustBeImmutable()
         {
             //Arrange
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User Id=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
@@ -51,13 +62,13 @@ namespace LoggingUnitTest
             Assert.IsTrue(check);
         }
         [TestMethod]
-        public void MustLogWithin5Secs()
+        public void DAO_MustLogWithin5Secs()
         {
             //Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User Id=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var insertSql = "INSERT INTO dbo.Logs (Message) VALUES ('Test')";
+            var insertSql = "INSERT INTO dbo.Loggin ([DateTime],LogLevel,Opr,Category,[Message]) VALUES ('" + DateTime.UtcNow.ToString() + "', 'Debug', 'DAO_MustLogWithin5Secs', 'Data','This is a automated test')";
             //Act
             stopwatch.Start();
             var logResult = sysUnderTest.Execute(insertSql);

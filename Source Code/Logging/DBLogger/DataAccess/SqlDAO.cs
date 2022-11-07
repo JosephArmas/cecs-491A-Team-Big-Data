@@ -20,7 +20,6 @@ namespace DataAccess
                 result.IsSuccessful = false;
                 return result;
             }
-            Console.WriteLine("SqlDAO.Excute functions");
             using (SqlConnection connect = new SqlConnection(_connection.ToString()))
             {
                 connect.Open();
