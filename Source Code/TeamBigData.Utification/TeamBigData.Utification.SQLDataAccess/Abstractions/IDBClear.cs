@@ -9,6 +9,6 @@ namespace TeamBigData.Utification.SQLDataAccess
 {
     public interface IDBClear
     {
-        public Response Clear(String tableName);
+        public Task<Response> Clear(String tableName);
     }
 }

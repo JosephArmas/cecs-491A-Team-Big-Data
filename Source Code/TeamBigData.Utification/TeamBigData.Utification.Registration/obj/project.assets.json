@@ -789,6 +789,16 @@
           "bin/placeholder/TeamBigData.Utification.ErrorResponse.dll": {}
         }
       },
+      "TeamBigData.Utification.Security/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/TeamBigData.Utification.Security.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TeamBigData.Utification.Security.dll": {}
+        }
+      },
       "TeamBigData.Utification.SQLDataAccess/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
@@ -2587,6 +2597,11 @@
       "path": "../Response/TeamBigData.Utification.ErrorResponse.csproj",
       "msbuildProject": "../Response/TeamBigData.Utification.ErrorResponse.csproj"
     },
+    "TeamBigData.Utification.Security/1.0.0": {
+      "type": "project",
+      "path": "../TeamBigData.Utification.Security/TeamBigData.Utification.Security.csproj",
+      "msbuildProject": "../TeamBigData.Utification.Security/TeamBigData.Utification.Security.csproj"
+    },
     "TeamBigData.Utification.SQLDataAccess/1.0.0": {
       "type": "project",
       "path": "../TeamBigData.Utification.SQLDataAccess/TeamBigData.Utification.SQLDataAccess.csproj",
@@ -2596,7 +2611,8 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "TeamBigData.Utification.ErrorResponse >= 1.0.0",
-      "TeamBigData.Utification.SQLDataAccess >= 1.0.0"
+      "TeamBigData.Utification.SQLDataAccess >= 1.0.0",
+      "TeamBigData.Utification.Security >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -2634,6 +2650,9 @@
           "projectReferences": {
             "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\Response\\TeamBigData.Utification.ErrorResponse.csproj": {
               "projectPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\Response\\TeamBigData.Utification.ErrorResponse.csproj"
+            },
+            "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.Security\\TeamBigData.Utification.Security.csproj": {
+              "projectPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.Security\\TeamBigData.Utification.Security.csproj"
             },
             "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj": {
               "projectPath": "C:\\Users\\David DeGirolamo\\Documents\\GitHub\\cecs-491A-Team-Big-Data\\Source Code\\TeamBigData.Utification\\TeamBigData.Utification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj"

@@ -9,6 +9,6 @@ namespace TeamBigData.Utification.SQLDataAccess
 {
     public interface IDBDeleter
     {
-        public Response Delete(String tableName, String[] collumnNames, String[] values);
+        public Task<Response> Delete(String tableName, String[] collumnNames, String[] values);
     }
 }

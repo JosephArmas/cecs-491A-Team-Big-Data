@@ -14,35 +14,35 @@ namespace TeamBigData.Utification.RegistrationTests
     public class RegistrationIntegrationTest
     {
         [TestMethod]
-        public void ShouldAddUserToDB()
+        public async Task ShouldAddUserToDB()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
             Registerer testRegister = new Registerer(testDBO);
             String password = "password";
-            String email = "dwaviddg@yahoo.com";
+            String email = "daviddg@yahoo.com";
             //Act
-            testDBO.Clear("dbo.TestUsers");
-            var actual = testRegister.InsertUser("dbo.TestUsers", email, password);
+            await testDBO.Clear("dbo.TestUsers");
+            var actual = await testRegister.InsertUser("dbo.TestUsers", email, password);
             //Assert
             Assert.IsTrue(actual.isSuccessful);
         }
 
         [TestMethod]
-        public void ClearTestUsersWorks()
+        public async Task ClearTestUsersWorks()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
             //Act
-            var actual = testDBO.Clear("dbo.TestUsers");
+            var actual = await testDBO.Clear("dbo.TestUsers");
             //Assert
             Assert.IsTrue(actual.isSuccessful);
         }
 
         [TestMethod]
-        public void CatchesDuplicateEmail()
+        public async Task CatchesDuplicateEmail()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
@@ -51,15 +51,15 @@ namespace TeamBigData.Utification.RegistrationTests
             String password = "password";
             String email = "daviddg5@yahoo.com";
             //Act
-            testDBO.Clear("dbo.TestUsers");
-            testRegister.InsertUser("dbo.TestUsers", email, password);
-            var actual = testRegister.InsertUser("dbo.TestUsers", email, password);
+            await testDBO.Clear("dbo.TestUsers");
+            await testRegister.InsertUser("dbo.TestUsers", email, password);
+            var actual = await testRegister.InsertUser("dbo.TestUsers", email, password);
             //Assert
             Assert.IsTrue(actual.errorMessage.Contains("Email"));
         }
 
         [TestMethod]
-        public void ShouldRegisterWithin5Seconds()
+        public async Task ShouldRegisterWithin5Seconds()
         {
             //Arrange
             Stopwatch stopwatch = new Stopwatch();
@@ -73,7 +73,7 @@ namespace TeamBigData.Utification.RegistrationTests
             //Act
             testDBO.Clear("dbo.TestUsers");
             stopwatch.Start();
-            var result = testRegister.InsertUser("dbo.TestUsers", email, password);
+            var result = await testRegister.InsertUser("dbo.TestUsers", email, password);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,9 @@ namespace TeamBigData.Utification.SQLDataAccess
             _connectionString = connectionString;
         }
 
-        public Response Insert(String tableName, String[] values)
+        public Task<Response> Insert(String tableName, String[] values)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -48,12 +50,14 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
-                return result;
+                tcs.SetResult(result);
+                return tcs.Task;
             }
         }
 
-        public Response Insert(String tableName, String[] collumnNames, String[] values)
+        public Task<Response> Insert(String tableName, String[] collumnNames, String[] values)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -90,12 +94,14 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
-                return result;
+                tcs.SetResult(result);
+                return tcs.Task;
             }
         }
 
-        public Response Clear(String tableName)
+        public Task<Response> Clear(String tableName)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
@@ -120,12 +126,14 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
-                return result;
+                tcs.SetResult(result);
+                return tcs.Task;
             }
         }
 
-        public Response Delete(String tableName, String[] collumnNames, String[] values)
+        public Task<Response> Delete(String tableName, String[] collumnNames, String[] values)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
@@ -165,7 +173,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
-                return result;
+                tcs.SetResult(result);
+                return tcs.Task;
             }
         }
     }

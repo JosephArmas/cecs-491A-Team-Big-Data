@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.ErrorResponse;
-using System.Text.RegularExpressions;
+using TeamBigData.Utification.Security;
 
 namespace TeamBigData.Utification.Registration
 {
@@ -36,7 +37,7 @@ namespace TeamBigData.Utification.Registration
                 return false;
         }
 
-        public Response InsertUser(String tableName, String email, String password)
+        public async Task<Response> InsertUser(String tableName, String email, String password)
         {
             Response result = new Response();
             result.isSuccessful = false;
@@ -64,10 +65,8 @@ namespace TeamBigData.Utification.Registration
                 {
                     username += "--";
                 }
-                {
-                    String[] values = { username, password, email };
-                    result = _dbo.Insert(tableName, values);
-                }
+                String[] values = { username, SecureHasher.HashString(password), email };
+                result = await _dbo.Insert(tableName, values).ConfigureAwait(false);
             }
             else if(!IsValidEmail(email))
             {

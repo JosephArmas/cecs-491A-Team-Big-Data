@@ -794,13 +794,24 @@
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "TeamBigData.Utification.ErrorResponse": "1.0.0",
-          "TeamBigData.Utification.SQLDataAccess": "1.0.0"
+          "TeamBigData.Utification.SQLDataAccess": "1.0.0",
+          "TeamBigData.Utification.Security": "1.0.0"
         },
         "compile": {
           "bin/placeholder/TeamBigData.Utification.Registration.dll": {}
         },
         "runtime": {
           "bin/placeholder/TeamBigData.Utification.Registration.dll": {}
+        }
+      },
+      "TeamBigData.Utification.Security/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/TeamBigData.Utification.Security.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TeamBigData.Utification.Security.dll": {}
         }
       },
       "TeamBigData.Utification.SQLDataAccess/1.0.0": {
@@ -2605,6 +2616,11 @@
       "type": "project",
       "path": "../TeamBigData.Utification.Registration/TeamBigData.Utification.Registration.csproj",
       "msbuildProject": "../TeamBigData.Utification.Registration/TeamBigData.Utification.Registration.csproj"
+    },
+    "TeamBigData.Utification.Security/1.0.0": {
+      "type": "project",
+      "path": "../TeamBigData.Utification.Security/TeamBigData.Utification.Security.csproj",
+      "msbuildProject": "../TeamBigData.Utification.Security/TeamBigData.Utification.Security.csproj"
     },
     "TeamBigData.Utification.SQLDataAccess/1.0.0": {
       "type": "project",

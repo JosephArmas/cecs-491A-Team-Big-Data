@@ -9,6 +9,6 @@ namespace TeamBigData.Utification.SQLDataAccess
 {
     public interface IDBInserter
     {
-        public Response Insert(String tableName, String[] values);
+        public Task<Response> Insert(String tableName, String[] values);
     }
 }
