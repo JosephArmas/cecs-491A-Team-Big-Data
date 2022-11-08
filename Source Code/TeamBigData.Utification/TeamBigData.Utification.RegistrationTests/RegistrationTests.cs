@@ -8,32 +8,12 @@ namespace TeamBigData.Utification.Registration.Test
     {
 
         [TestMethod]
-        public void ShouldCreateUserObjectWithParameters()
-        {
-            //Arrange
-            var expected = typeof(User);
-            String username = "daviddg";
-            String password = "password";
-            String email = "david.degirolamo@student.csulb.edu";
-
-            //Act
-            User actual = new User(username, password, email);
-
-            //Assert
-            Assert.IsNotNull(actual);
-            Assert.IsTrue(expected == actual.GetType());
-            Assert.AreEqual(actual.GetUsername(), username);
-            Assert.AreEqual(actual.GetPassword(), password);
-            Assert.AreEqual(actual.GetEmail(), email);
-        }
-
-        [TestMethod]
         public void ChecksInvalidPassphraseCharacters()
         {
             //Arrange
             String password = "pa$$w*rd";
             //Act
-            bool actual = Registerer.IsValidPassword(password);
+            bool actual = AccountManager.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -44,7 +24,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String password = "123";
             //Act
-            bool actual = Registerer.IsValidPassword(password);
+            bool actual = AccountManager.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -55,7 +35,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String email = "pa$$w*rd@yahoo.com";
             //Act
-            bool actual = Registerer.IsValidEmail(email);
+            bool actual = AccountManager.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -67,7 +47,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String email = "email.email";
             //Act
-            bool actual = Registerer.IsValidEmail(email);
+            bool actual = AccountManager.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }

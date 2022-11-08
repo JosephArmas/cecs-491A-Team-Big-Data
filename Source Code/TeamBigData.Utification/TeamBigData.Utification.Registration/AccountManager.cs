@@ -10,11 +10,11 @@ using TeamBigData.Utification.Security;
 
 namespace TeamBigData.Utification.Registration
 {
-    public class Registerer
+    public class AccountManager
     {
         private readonly IDBInserter _dbo;
 
-        public Registerer(IDBInserter dbo)
+        public AccountManager(IDBInserter dbo)
         {
             _dbo = dbo;
         }

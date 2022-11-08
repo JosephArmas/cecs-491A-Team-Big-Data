@@ -4,7 +4,7 @@ using TeamBigData.Utification.SQLDataAccess;
 
 var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
 SqlDAO testDBO = new SqlDAO(connectionString);
-Registerer testRegister = new Registerer(testDBO);
+AccountManager testRegister = new AccountManager(testDBO);
 String password = "password";
 String email = "daviddg@yahoo.com";
 //Act

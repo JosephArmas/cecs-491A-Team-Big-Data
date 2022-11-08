@@ -19,7 +19,7 @@ namespace TeamBigData.Utification.RegistrationTests
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            Registerer testRegister = new Registerer(testDBO);
+            AccountManager testRegister = new AccountManager(testDBO);
             String password = "password";
             String email = "daviddg@yahoo.com";
             //Act
@@ -47,7 +47,7 @@ namespace TeamBigData.Utification.RegistrationTests
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            Registerer testRegister = new Registerer(testDBO);
+            AccountManager testRegister = new AccountManager(testDBO);
             String password = "password";
             String email = "daviddg5@yahoo.com";
             //Act
@@ -66,7 +66,7 @@ namespace TeamBigData.Utification.RegistrationTests
             long expected = 5 * 60000;
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            Registerer testRegister = new Registerer(testDBO);
+            AccountManager testRegister = new AccountManager(testDBO);
             String username = "daviddg5";
             String password = "password";
             String email = "daviddg5@yahoo.com";
