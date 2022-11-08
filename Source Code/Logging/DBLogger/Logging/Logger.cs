@@ -11,11 +11,17 @@ namespace Logging.Implementations
         {
             _dao = dao;
         }
-        public Result Log(object message)
+        public async Task<Result> Log(object message)
         {
             Result result = new Result();
             //Validation
-            if (message.GetType() == typeof(string))
+            if (message == null) 
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No object was given to log";
+                return result;
+            }
+            if (_dao.GetType() == typeof(string))
             {
                 string msg = message.ToString();
                 if (msg.Contains("SELECT") || msg.Contains("UPDATE") || msg.Contains("DELETE"))
@@ -39,7 +45,7 @@ namespace Logging.Implementations
                     return result;
                 }
             }
-            Result logReturn = _dao.Execute(message);
+            Result logReturn = await _dao.Execute(message).ConfigureAwait(false);
             result.IsSuccessful = false;
             if (logReturn.IsSuccessful)
             {

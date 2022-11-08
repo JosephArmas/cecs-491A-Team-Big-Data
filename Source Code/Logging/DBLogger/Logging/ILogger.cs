@@ -4,6 +4,6 @@ namespace Logging.Abstractions
 {
     public interface ILogger
     {
-        Result Log(object message);
+        Task<Result> Log(object message);
     }
 }

@@ -11,14 +11,16 @@ namespace DataAccess
             _connection = connectionString;
         }
 
-        public Result Execute(object req)
+        public Task<Result> Execute(object req)
         {
+            var tcs = new TaskCompletionSource<Result>();
             Result result = new Result();
             if (req.GetType() != typeof(string)) //Verifies if the parameter matches the acceptable string format type
             {
                 result.ErrorMessage = "Error: input parameter for SqlDAO not of type string";
                 result.IsSuccessful = false;
-                return result;
+                tcs.SetResult(result);
+                return tcs.Task;
             }
             using (SqlConnection connect = new SqlConnection(_connection.ToString()))
             {
@@ -34,7 +36,8 @@ namespace DataAccess
             {
                 result.IsSuccessful = false;
             }
-            return result;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
     }
 }

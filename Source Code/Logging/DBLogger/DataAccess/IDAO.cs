@@ -4,6 +4,6 @@ namespace DataAccess
 {
     public interface IDAO
     {
-        Result Execute(object req);
+        Task<Result> Execute(object req);
     }
 }

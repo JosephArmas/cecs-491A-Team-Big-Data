@@ -38,7 +38,7 @@ namespace LoggingUnitTest
             //Assert.IsTrue(rows == 1);
             //Console.WriteLine(msg);
             //Console.WriteLine(rowsaved. + "==" + msg);
-            Assert.IsTrue(rows.IsSuccessful);
+            Assert.IsTrue(rows.Result.IsSuccessful);
             //Assert.IsTrue(rowsaved.Payload.Equals(msg));
         }
         [TestMethod]
@@ -78,7 +78,7 @@ namespace LoggingUnitTest
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(actual >= 0);
-            Assert.IsTrue(logResult.IsSuccessful);
+            Assert.IsTrue(logResult.Result.IsSuccessful);
         }
         [TestMethod]
         public void TestMethod1()
