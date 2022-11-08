@@ -27,10 +27,10 @@ namespace TeamBigData.Utification.SQLDataAccess
                 var insertSql = "INSERT INTO " + tableName + " values(";
                 foreach (String s in values)
                 {
-                    insertSql = insertSql + @"'" + s + @"', ";
+                    insertSql += @"'" + s + @"', ";
                 }
                 insertSql = insertSql.Remove(insertSql.Length - 2);
-                insertSql = insertSql + ");";
+                insertSql += ");";
                 try
                 {
                     var command = new SqlCommand(insertSql, connection);
@@ -65,13 +65,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                     insertSql = insertSql + c + ", ";
                 }
                 insertSql = insertSql.Remove(insertSql.Length - 2);
-                insertSql = insertSql + ");" + " values(";
+                insertSql += ");" + " values(";
                 foreach (String s in values)
                 {
-                    insertSql = insertSql + @"'" + s + @"', ";
+                    insertSql += @"'" + s + @"', ";
                 }
-                insertSql.Remove(insertSql.Length - 2);
-                insertSql = insertSql + ");";
+                insertSql = insertSql.Remove(insertSql.Length - 2);
+                insertSql += ");";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {

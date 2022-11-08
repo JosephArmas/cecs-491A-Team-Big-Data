@@ -28,28 +28,6 @@ namespace TeamBigData.Utification.Registration.Test
         }
 
         [TestMethod]
-        public void ChecksInvalidUsernameCharacters()
-        {
-            //Arrange
-            String username = "daviddg5!";
-            //Act
-            bool actual = Registerer.IsValidUsername(username);
-            //Assert
-            Assert.IsFalse(actual);
-        }
-
-        [TestMethod]
-        public void ChecksTooShortUsername()
-        {
-            //Arrange
-            String username = "davidd";
-            //Act
-            bool actual = Registerer.IsValidUsername(username);
-            //Assert
-            Assert.IsFalse(actual);
-        }
-
-        [TestMethod]
         public void ChecksInvalidPassphraseCharacters()
         {
             //Arrange

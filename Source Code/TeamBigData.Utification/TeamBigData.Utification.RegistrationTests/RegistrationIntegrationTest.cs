@@ -20,18 +20,17 @@ namespace TeamBigData.Utification.RegistrationTests
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
             Registerer testRegister = new Registerer(testDBO);
-            String username = "daviddg5";
             String password = "password";
             String email = "dwaviddg@yahoo.com";
             //Act
             testDBO.Clear("dbo.TestUsers");
-            var actual = testRegister.InsertUser("dbo.TestUsers", username, password, email);
+            var actual = testRegister.InsertUser("dbo.TestUsers", email, password);
             //Assert
             Assert.IsTrue(actual.isSuccessful);
         }
 
         [TestMethod]
-        public void ClearTestUsersWork()
+        public void ClearTestUsersWorks()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
@@ -43,44 +42,20 @@ namespace TeamBigData.Utification.RegistrationTests
         }
 
         [TestMethod]
-        public void CatchesPrimaryKeyFault()
+        public void CatchesDuplicateEmail()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
             Registerer testRegister = new Registerer(testDBO);
-            String username = "daviddg5";
             String password = "password";
             String email = "daviddg5@yahoo.com";
-            String username2 = "daviddg10";
             //Act
             testDBO.Clear("dbo.TestUsers");
-            testRegister.InsertUser("dbo.TestUsers", username, password, email);
-            var actual = testRegister.InsertUser("dbo.TestUsers", username2, password, email);
+            testRegister.InsertUser("dbo.TestUsers", email, password);
+            var actual = testRegister.InsertUser("dbo.TestUsers", email, password);
             //Assert
             Assert.IsTrue(actual.errorMessage.Contains("Email"));
-        }
-
-
-        [TestMethod]
-        public void CatchesCandidateKeyFault()
-        {
-            //Arrange
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO testDBO = new SqlDAO(connectionString);
-            Registerer testRegister = new Registerer(testDBO);
-            Console.WriteLine(testDBO);
-            Console.WriteLine(testRegister);
-            String username = "daviddg5";
-            String password = "password";
-            String email = "daviddg5@yahoo.com";
-            String email2 = "daviddg@yahoo.com";
-            //Act
-            testDBO.Clear("dbo.TestUsers");
-            testRegister.InsertUser("dbo.TestUsers", username, password, email);
-            var actual = testRegister.InsertUser("dbo.TestUsers", username, password, email2);
-            //Assert
-            Assert.IsTrue(actual.errorMessage.Contains("Username"));
         }
 
         [TestMethod]
@@ -98,7 +73,7 @@ namespace TeamBigData.Utification.RegistrationTests
             //Act
             testDBO.Clear("dbo.TestUsers");
             stopwatch.Start();
-            var result = testRegister.InsertUser("dbo.TestUsers", username, password, email);
+            var result = testRegister.InsertUser("dbo.TestUsers", email, password);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 

@@ -18,15 +18,6 @@ namespace TeamBigData.Utification.Registration
             _dbo = dbo;
         }
         
-        public static bool IsValidUsername(String username)
-        {
-            Regex usernameAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.-]*$");
-            if (usernameAllowedCharacters.IsMatch(username) && username.Length >= 8)
-                return true;
-            else
-                return false;
-        }
-        
         public static bool IsValidPassword(String password)
         {
             Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!-]*$");
@@ -39,20 +30,44 @@ namespace TeamBigData.Utification.Registration
         public static bool IsValidEmail(String email)
         {
             Regex emailAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.-]*$");
-            if (emailAllowedCharacters.IsMatch(email) && email.Contains('@'))
+            if (emailAllowedCharacters.IsMatch(email) && email.Contains('@') && (!email.StartsWith("@")))
                 return true;
             else
                 return false;
         }
 
-        public Response InsertUser(String tableName, String username, String password, String email)
+        public Response InsertUser(String tableName, String email, String password)
         {
             Response result = new Response();
             result.isSuccessful = false;
-            if (IsValidUsername(username) && IsValidPassword(password) && IsValidEmail(email))
+            String username = "";
+            if (IsValidPassword(password) && IsValidEmail(email))
             {
-                String[] values = {username, password, email};
-                result = _dbo.Insert(tableName, values);
+                username = email.Remove(email.LastIndexOf('@'));
+                Random rng = new Random();
+                int randomNumber = rng.Next(10000);
+                username += "-";
+                if (randomNumber < 10)
+                {
+                    username = username + "000";
+                }
+                else if (randomNumber < 100)
+                {
+                    username += "00";
+                }
+                else if (randomNumber < 1000)
+                {
+                    username += "0";
+                }
+                username += randomNumber.ToString();
+                if (username.Length < 8)
+                {
+                    username += "--";
+                }
+                {
+                    String[] values = { username, password, email };
+                    result = _dbo.Insert(tableName, values);
+                }
             }
             else if(!IsValidEmail(email))
             {
@@ -62,17 +77,21 @@ namespace TeamBigData.Utification.Registration
             {
                 result.errorMessage = "Invalid passphrase provided. Retry again or contact system administrator";
             }
+
+            if(!result.isSuccessful)
+            {
+                if (result.errorMessage.Contains("Violation of PRIMARY KEY"))
+                {
+                    result.errorMessage = "Email already linked to an account, please pick a new email";
+                }
+                else if (result.errorMessage.Contains("Violation of UNIQUE KEY"))
+                {
+                    result.errorMessage = "Unable to assign username. Retry again or contact system administrator";
+                }
+            }
             else
             {
-                result.errorMessage = "Invalid username provided. Retry again or contact system administrator";
-            }
-            if (result.errorMessage.Contains("Violation of PRIMARY KEY"))
-            {
-                result.errorMessage = "Email already linked to an account, please pick a new email";
-            }
-            else if (result.errorMessage.Contains("Violation of UNIQUE KEY"))
-            {
-                result.errorMessage = "Username taken, please pick a new username";
+                result.errorMessage = "Account created successfully, your username is " + username;
             }
             //If the Error message isn't one of these it return the entire error message from the dbo
             return result;
