@@ -2,6 +2,7 @@
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : IDBInserter, IDBDeleter, IDBClear
+    public class SqlDAO : IDBInserter, IDBDeleter, IDBClear, IDAO
     {
         private String _connectionString;
 
@@ -172,6 +173,33 @@ namespace TeamBigData.Utification.SQLDataAccess
                 catch (Exception e)
                 {
                     result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+        public Task<Response> Execute(object req)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            if (req.GetType() != typeof(string)) //Verifies if the parameter matches the acceptable string format type
+            {
+                result.errorMessage = "Error: input parameter for SqlDAO not of type string";
+                result.isSuccessful = false;
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+            using (SqlConnection connect = new SqlConnection(_connectionString.ToString()))
+            {
+                connect.Open();
+                var resu = (new SqlCommand(req.ToString(), connect)).ExecuteNonQuery();
+                if (resu == 1)
+                {
+                    result.isSuccessful = true;
+                }
+                else
+                {
+                    result.isSuccessful = false;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
