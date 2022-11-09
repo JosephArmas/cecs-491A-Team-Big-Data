@@ -2,6 +2,7 @@
 using MainMenu;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging;
+using TeamBigData.Utification.ManagerLayer;
 
 class Program
 {
@@ -50,6 +51,13 @@ class Program
                     break;
                 case 6:
                     Menu.clearMenu();
+                    Console.WriteLine("To create a new Account, please enter your email");
+                    String email = Console.ReadLine();
+                    Console.WriteLine("Please enter your new password");
+                    String password = Console.ReadLine();
+                    var manager = new Manager();
+                    var result = manager.InsertUser(email, password);
+                    Console.WriteLine(result.errorMessage);
                     break;
                 case 7:
                     Menu.clearMenu();

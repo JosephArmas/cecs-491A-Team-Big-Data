@@ -14,7 +14,7 @@ namespace MainMenu
             Console.WriteLine("[3] Create a pin");
             Console.WriteLine("[4] Create a Service");
             Console.WriteLine("[5] Request a Service");
-            Console.WriteLine("[6] ");
+            Console.WriteLine("[6] Create a New Account");
             Console.WriteLine("[7] ");
             Console.WriteLine("[8] ");
             Console.WriteLine("[9] Clear the logs");
