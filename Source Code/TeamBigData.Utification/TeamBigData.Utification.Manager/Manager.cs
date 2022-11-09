@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Registration;
 using TeamBigData.Utification.SQLDataAccess;
 namespace TeamBigData.Utification.ManagerLayer
@@ -18,7 +19,7 @@ namespace TeamBigData.Utification.ManagerLayer
             response = accountManager.InsertUser("dbo.Users", email, password).Result;
             stopwatch.Stop();
             String insertSql;
-            var logger = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
+            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             if (response.isSuccessful)
             {
                 String username = response.errorMessage.Substring(47);
@@ -35,7 +36,7 @@ namespace TeamBigData.Utification.ManagerLayer
             {
                 insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Error'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Error in Creating Account')";
             }
-            logger.Execute(insertSql);
+            var logRes = logger.Log(insertSql);
             return response;
         }
     }
