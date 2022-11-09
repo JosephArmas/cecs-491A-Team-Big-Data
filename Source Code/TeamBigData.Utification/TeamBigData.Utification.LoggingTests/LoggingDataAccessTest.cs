@@ -15,7 +15,7 @@ namespace TeamBigData.Utification.LoggingTest
         {
             //Arrange
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var insertSql = "INSERT INTO dbo.Loggem (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info','SYSTEM','" + DateTime.UtcNow.ToString() + "', 'DAO_LogMustSaveToDataStore', 'Data','This is a automated test')";
+            var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info','SYSTEM','" + DateTime.UtcNow.ToString() + "', 'DAO_LogMustSaveToDataStore', 'Data','This is a automated test')";
             //Act
             var rows = sysUnderTest.Execute(insertSql);
             //Assert
@@ -26,7 +26,7 @@ namespace TeamBigData.Utification.LoggingTest
         {
             //Arrange
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var updateSql = "UPDATE dbo.Loggem SET Message = 'Updated' WHERE LogID = 1";
+            var updateSql = "UPDATE dbo.Logs SET Message = 'Updated' WHERE LogID = 1";
             bool check = false; //A check value used to determine if the Command successfully recieves an error.
             //Act
             try
@@ -48,7 +48,7 @@ namespace TeamBigData.Utification.LoggingTest
             var stopwatch = new Stopwatch();
             var expected = 5;
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var insertSql = "INSERT INTO dbo.Loggem (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (2, 'Info','SYSTEM','" + DateTime.UtcNow.ToString() + "', 'DAO_MustLogWithin5Secs', 'Business','This is a automated test for finding if it took longer than 5 seconds')";
+            var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (2, 'Info','SYSTEM','" + DateTime.UtcNow.ToString() + "', 'DAO_MustLogWithin5Secs', 'Business','This is a automated test for finding if it took longer than 5 seconds')";
             //Act
             stopwatch.Start();
             var logResult = sysUnderTest.Execute(insertSql);
