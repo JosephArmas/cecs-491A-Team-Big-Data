@@ -19,6 +19,17 @@ namespace TeamBigData.Utification.Registration.Test
         }
 
         [TestMethod]
+        public void AllowSpacesInPassword()
+        {
+            //Arrange
+            String password = "pass word";
+            //Act
+            bool actual = AccountManager.IsValidPassword(password);
+            //Assert
+            Assert.IsTrue(actual);
+        }
+
+        [TestMethod]
         public void ChecksTooShortPassphrase()
         {
             //Arrange

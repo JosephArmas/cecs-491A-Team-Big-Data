@@ -21,7 +21,7 @@ namespace TeamBigData.Utification.Registration
         
         public static bool IsValidPassword(String password)
         {
-            Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!-]*$");
+            Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!\s-]*$");
             if (passwordAllowedCharacters.IsMatch(password) && password.Length >= 8)
                 return true;
             else
