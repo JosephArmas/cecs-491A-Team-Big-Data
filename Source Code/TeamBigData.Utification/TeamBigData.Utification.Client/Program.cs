@@ -19,57 +19,35 @@ class Program
         {
             Menu.displayMenu();
             input = Console.ReadLine();
-
-            switch (Int32.Parse(input))
+            if (input == null)
             {
-                case 0:
-                    repeat = false;
-                    break;
-                case 1:
-                    Menu.clearMenu();
-                    break;
-                case 2:
-                    Menu.clearMenu();
-                    break;
-                case 3:
-                    Menu.clearMenu();
-                    Console.WriteLine();
-                    break;
-                case 4:
-                    Menu.clearMenu();
-                    Console.WriteLine("Hello, World!");
-                    var test = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User Id=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-                    var log = new Logger(test);
-                    var finale = log.Log("INSERT INTO dbo.Logs (Message) VALUES ('" + DateTime.UtcNow.ToString() + " / This is an automated test Info View')");
-                    if (finale.Result.isSuccessful == false && finale.Result.errorMessage != null)
-                    {
-                        Console.WriteLine(finale.Result.errorMessage);
-                    }
-                    break;
-                case 5:
-                    Menu.clearMenu();
-                    break;
-                case 6:
-                    Menu.clearMenu();
-                    Console.WriteLine("To create a new Account, please enter your email");
-                    String email = Console.ReadLine();
-                    Console.WriteLine("Please enter your new password");
-                    String password = Console.ReadLine();
-                    var manager = new Manager();
-                    var result = manager.InsertUser(email, password);
-                    Console.WriteLine(result.errorMessage);
-                    break;
-                case 7:
-                    Menu.clearMenu();
-                    break;
-                case 8:
-                    Menu.clearMenu();
-                    break;
-                case 9:
-                    Menu.clearMenu();
-                    Console.WriteLine();
-                    //Yes
-                    break;
+                Menu.clearMenu();
+                Console.WriteLine("Invalid input");
+            }
+            else
+            {
+                switch (Int32.Parse(input))
+                {
+                    case 0:
+                        repeat = false;
+                        break;
+                    case 1:
+                        Menu.clearMenu();
+                        Console.WriteLine("To create a new Account, please enter your email");
+                        String email = Console.ReadLine();
+                        Console.WriteLine("Please enter your new password");
+                        String password = Console.ReadLine();
+                        var manager = new Manager();
+                        var result = manager.InsertUser(email, password);
+                        Console.WriteLine(result.errorMessage);
+                        break;
+                    case 2:
+                        Menu.clearMenu();
+                        break;
+                    case 3:
+                        Menu.clearMenu();
+                        break;
+                }
             }
         } while (repeat);
     }
