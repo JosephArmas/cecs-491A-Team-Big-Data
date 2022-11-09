@@ -71,7 +71,7 @@ namespace TeamBigData.Utification.RegistrationTests
             String password = "password";
             String email = "daviddg5@yahoo.com";
             //Act
-            testDBO.Clear("dbo.TestUsers");
+            await testDBO.Clear("dbo.TestUsers");
             stopwatch.Start();
             var result = await testRegister.InsertUser("dbo.TestUsers", email, password);
             stopwatch.Stop();
