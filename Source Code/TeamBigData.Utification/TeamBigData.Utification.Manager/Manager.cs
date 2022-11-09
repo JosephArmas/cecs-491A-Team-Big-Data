@@ -17,13 +17,18 @@ namespace TeamBigData.Utification.ManagerLayer
             stopwatch.Start();
             response = accountManager.InsertUser("dbo.Users", email, password).Result;
             stopwatch.Stop();
-            if(stopwatch.ElapsedMilliseconds > 5000 && response.isSuccessful)
+            String username = response.errorMessage.Substring(47);
+            var logger = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
+            var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data',";
+            if (stopwatch.ElapsedMilliseconds > 5000)
             {
-                String username = response.errorMessage.Substring(47);
-                var logger = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-                var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning'," + email+",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data','Creating an a Account Took Longer than 5 Seconds')";
-                logger.Execute(insertSql);
+                insertSql += "'Creating an a Account Took Longer than 5 Seconds')";
             }
+            else if(response.isSuccessful)
+            {
+                insertSql += "'Account Created Successfully')";
+            }
+            logger.Execute(insertSql);
             return response;
         }
     }

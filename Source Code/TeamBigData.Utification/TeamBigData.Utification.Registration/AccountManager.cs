@@ -37,6 +37,32 @@ namespace TeamBigData.Utification.Registration
                 return false;
         }
 
+        public static String GenerateUsername(String email)
+        {
+            String username = email.Remove(email.LastIndexOf('@'));
+            Random rng = new Random();
+            int randomNumber = rng.Next(10000);
+            username += "-";
+            if (randomNumber < 10)
+            {
+                username = username + "000";
+            }
+            else if (randomNumber < 100)
+            {
+                username += "00";
+            }
+            else if (randomNumber < 1000)
+            {
+                username += "0";
+            }
+            username += randomNumber.ToString();
+            if (username.Length < 8)
+            {
+                username += "--";
+            }
+            return username;
+        }
+
         public async Task<Response> InsertUser(String tableName, String email, String password)
         {
             Response result = new Response();
@@ -44,27 +70,7 @@ namespace TeamBigData.Utification.Registration
             String username = "";
             if (IsValidPassword(password) && IsValidEmail(email))
             {
-                username = email.Remove(email.LastIndexOf('@'));
-                Random rng = new Random();
-                int randomNumber = rng.Next(10000);
-                username += "-";
-                if (randomNumber < 10)
-                {
-                    username = username + "000";
-                }
-                else if (randomNumber < 100)
-                {
-                    username += "00";
-                }
-                else if (randomNumber < 1000)
-                {
-                    username += "0";
-                }
-                username += randomNumber.ToString();
-                if (username.Length < 8)
-                {
-                    username += "--";
-                }
+                username = GenerateUsername(email);
                 String[] values = { username, SecureHasher.HashString(password), email };
                 result = await _dbo.Insert(tableName, values).ConfigureAwait(false);
             }
