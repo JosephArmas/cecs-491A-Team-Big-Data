@@ -43,15 +43,5 @@ namespace TeamBigData.Utification.LoggingTests
             Console.WriteLine(logResult.Result.errorMessage);
             Assert.IsFalse(logResult.Result.isSuccessful);
         }
-        [TestMethod]
-        public void SQL_VarCharLimit()
-        {
-            //Arrange
-            Assert.IsFalse(false);
-            //var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User Id=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-
-            //Act
-            Assert.IsFalse(false);
-        }
     }
 }
