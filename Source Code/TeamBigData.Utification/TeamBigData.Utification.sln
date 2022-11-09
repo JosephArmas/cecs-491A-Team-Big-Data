@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.3.32819.101
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Client", "TeamBigData.Utification.Client\TeamBigData.Utification.Client.csproj", "{64C68C40-F974-4383-A5BA-DD465146755A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "TeamBigData.Utification.Domain\Domain.csproj", "{D4A7CF4D-FAEC-48F0-9C0E-1BEC0726B0B1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{C4760894-085E-4A7F-91E3-6FCCEF8D3188}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging", "TeamBigData.Utification.Logging\Logging.csproj", "{5509D596-722E-4B77-B914-07E98AD72E33}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cross-cutting", "Cross-cutting", "{1A1E21E6-B071-446C-B410-1913ACE68416}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.SqlDataAccess", "TeamBigData.Utification.DataAccess\TeamBigData.Utification.SqlDataAccess.csproj", "{DBBD57DE-88C1-41A4-A95C-31369BE2AC7C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{65008136-9E42-462C-A9D8-9B14283F6109}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manager", "Manager", "{96EB3EA2-2C5F-40B7-AAC5-3DF9782B2252}"
 EndProject
@@ -18,7 +18,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Registration", "TeamBigData.Utification.Registration\TeamBigData.Utification.Registration.csproj", "{15199D80-1B24-4168-A820-B8F15BEA2C91}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{850E623E-5898-4A1E-87D9-24E62C3E60A2}"
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggingUnitTest", "TeamBigData.Utification.LoggingUnitTest\LoggingUnitTest.csproj", "{1978195B-D301-4FB3-B52B-86C57449ADF6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.RegistrationTests", "TeamBigData.Utification.RegistrationTests\TeamBigData.Utification.RegistrationTests.csproj", "{EBD8C3E6-BD53-4E83-BD36-73D29207A731}"
 EndProject
@@ -58,26 +57,6 @@ Global
 		{047D85C2-FF61-4E7F-B47D-6C2496705E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{047D85C2-FF61-4E7F-B47D-6C2496705E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{047D85C2-FF61-4E7F-B47D-6C2496705E6D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B183403-6C3B-47F9-A9F3-6C5AA8498A82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B183403-6C3B-47F9-A9F3-6C5AA8498A82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B183403-6C3B-47F9-A9F3-6C5AA8498A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B183403-6C3B-47F9-A9F3-6C5AA8498A82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4A7CF4D-FAEC-48F0-9C0E-1BEC0726B0B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4A7CF4D-FAEC-48F0-9C0E-1BEC0726B0B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4A7CF4D-FAEC-48F0-9C0E-1BEC0726B0B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4A7CF4D-FAEC-48F0-9C0E-1BEC0726B0B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5509D596-722E-4B77-B914-07E98AD72E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5509D596-722E-4B77-B914-07E98AD72E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5509D596-722E-4B77-B914-07E98AD72E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5509D596-722E-4B77-B914-07E98AD72E33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBBD57DE-88C1-41A4-A95C-31369BE2AC7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBBD57DE-88C1-41A4-A95C-31369BE2AC7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBBD57DE-88C1-41A4-A95C-31369BE2AC7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBBD57DE-88C1-41A4-A95C-31369BE2AC7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1978195B-D301-4FB3-B52B-86C57449ADF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1978195B-D301-4FB3-B52B-86C57449ADF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1978195B-D301-4FB3-B52B-86C57449ADF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1978195B-D301-4FB3-B52B-86C57449ADF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +70,6 @@ Global
 		{047D85C2-FF61-4E7F-B47D-6C2496705E6D} = {1A1E21E6-B071-446C-B410-1913ACE68416}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1BAF098F-F20F-4C9D-B98E-7A782B988823}
+		SolutionGuid = {8E0D8E6B-BD73-4509-B1BE-1E79A9D14D47}
 	EndGlobalSection
 EndGlobal

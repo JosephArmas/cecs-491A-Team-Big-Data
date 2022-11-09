@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:Source Code/TeamBigData.Utification/TeamBigData.Utification.SQLDataAccess/TeamBigData.Utification.SQLDataAccess.csproj
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-========
-<Project Sdk="Microsoft.NET.Sdk">
->>>>>>>> logging:Source Code/TeamBigData.Utification/TeamBigData.Utification.DataAccess/TeamBigData.Utification.SqlDataAccess.csproj
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -15,11 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<<< HEAD:Source Code/TeamBigData.Utification/TeamBigData.Utification.SQLDataAccess/TeamBigData.Utification.SQLDataAccess.csproj
     <ProjectReference Include="..\Response\TeamBigData.Utification.ErrorResponse.csproj" />
-========
-    <ProjectReference Include="..\TeamBigData.Utification.Domain\Domain.csproj" />
->>>>>>>> logging:Source Code/TeamBigData.Utification/TeamBigData.Utification.DataAccess/TeamBigData.Utification.SqlDataAccess.csproj
   </ItemGroup>
 
 </Project>

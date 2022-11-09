@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "15199d80-1b24-4168-a820-b8f15bea2c91": {
+      "ProjectGuid": "15199d80-1b24-4168-a820-b8f15bea2c91",
+      "DisplayName": "TeamBigData.Utification.Registration",
+      "ColorIndex": 0
+    },
+    "29cefb6b-56e3-46b7-a558-12a961bde26d": {
+      "ProjectGuid": "29cefb6b-56e3-46b7-a558-12a961bde26d",
+      "DisplayName": "TeamBigData.Utification.Logging",
+      "ColorIndex": 1
+    },
+    "64c68c40-f974-4383-a5ba-dd465146755a": {
+      "ProjectGuid": "64c68c40-f974-4383-a5ba-dd465146755a",
+      "DisplayName": "TeamBigData.Utification.Client",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}
