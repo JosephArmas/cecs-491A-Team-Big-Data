@@ -17,16 +17,23 @@ namespace TeamBigData.Utification.ManagerLayer
             stopwatch.Start();
             response = accountManager.InsertUser("dbo.Users", email, password).Result;
             stopwatch.Stop();
-            String username = response.errorMessage.Substring(47);
+            String insertSql;
             var logger = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data',";
-            if (stopwatch.ElapsedMilliseconds > 5000)
+            if (response.isSuccessful)
             {
-                insertSql += "'Creating an a Account Took Longer than 5 Seconds')";
+                String username = response.errorMessage.Substring(47);
+                if (stopwatch.ElapsedMilliseconds > 5000)
+                {
+                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Took Longer than 5 Seconds')";
+                }
+                else
+                {
+                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Successful')";
+                }
             }
-            else if(response.isSuccessful)
+            else
             {
-                insertSql += "'Account Created Successfully')";
+                insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Error'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Error in Creating Account')";
             }
             logger.Execute(insertSql);
             return response;
