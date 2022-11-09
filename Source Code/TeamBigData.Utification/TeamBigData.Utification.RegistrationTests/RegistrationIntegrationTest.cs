@@ -5,14 +5,37 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Microsoft.Data.SqlClient;
 using TeamBigData.Utification.Registration;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.ManagerLayer;
 
 namespace TeamBigData.Utification.RegistrationTests
 {
     [TestClass]
     public class RegistrationIntegrationTest
     {
+        [TestMethod]
+        public async Task CreatesLogWhenRegistering()
+        {
+            var userConnection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var logConnection = new SqlConnection(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
+            logConnection.Open();
+            var manager = new Manager();
+            SqlDAO testDBO = new SqlDAO(userConnection);
+            var countSql = "SELECT COUNT(LogID) From dbo.Logs";
+            var testLog = new SqlCommand(countSql, logConnection);
+            var expected = 1;
+            //Act
+            int before = (int)testLog.ExecuteScalar();
+            await testDBO.Clear("dbo.Users");
+            var result = manager.InsertUser("davidg@yahoo.com", "password");
+            int after = (int)testLog.ExecuteScalar();
+            logConnection.Close();
+            Assert.AreEqual(expected, after - before);
+            Assert.IsTrue(result.isSuccessful);
+        }
+
         [TestMethod]
         public async Task ShouldAddUserToDB()
         {
