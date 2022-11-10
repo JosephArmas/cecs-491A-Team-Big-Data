@@ -1,0 +1,47 @@
+title As a User, I want to access protected information, but I am not authenticated
+   actor User
+    participant UI
+    participant EntryPoint
+    participant LoggingManager
+    participant LoggingServices
+    participant LoggingDataAccess
+    participant LoggingDataStore
+    User->>UI: User wants access
+    activate UI
+    //note over UI: LogInData(UN:String,PW:String,Time:Timestamp,\nLevel:Int,Opr:Int,Msg:String,ID,Cat):LogResult
+    
+    UI->>EntryPoint:POST HTTPS Request
+    activate EntryPoint
+    //note left of EntryPoint:Login Process
+    //note over EntryPoint: Logging is Triggered
+    EntryPoint->>EntryPoint:ValidResponse(userEvent:Bool):RC
+    //note over EntryPoint: True: 200
+    EntryPoint-->>LoggingManager:StartLog(time:Timestamp,\n                   level:Int,\n                   opr:User,\n                   msg:String,\n                   ID:Int,\n                   cat:Int)\n                   :EntryLog
+    activate LoggingManager
+   // note over Manager: 
+   note left of LoggingManager: User wants Validation
+    LoggingManager->>LoggingManager:ManValidation(startLog:EntryLog,\n                       expected:EntryLog)\n                       :Valid
+    LoggingManager-->>LoggingServices: mngrLogCheck(createLog:EntryLog,\n                          managerTime:TimeStamp,\n                          cat:Int,\n                          manValidation:Valid)\n                         :ManLog
+    activate LoggingServices
+  //  note over Services: 
+  LoggingServices->>LoggingServices:ServValidation(mngrLogCheck:ManLog,\n                        Expected:ManLog)\n                        :Valid
+LoggingServices-->>LoggingDataAccess: ServLog(mngrLogCheck:ManLog,\n               sTime:TimeStamp,\n               cat:Int,\n               servValidation:Valid)\n               :ServiceLog
+    activate LoggingDataAccess
+    //note over DataAccess: 
+    LoggingDataAccess->>LoggingDataAccess:DataValidation(servLog:ServiceLog,\n                        expected:ServiceLog)\n                        :Valid
+    LoggingDataAccess-->>LoggingDataStore:TCP connection
+    //note over DataStore
+    activate LoggingDataStore
+    //note over LoggingDataStore: User event is logged
+    LoggingDataStore-->>LoggingDataAccess:Returns 2
+    deactivate LoggingDataStore
+    LoggingDataAccess-->>LoggingServices:Return type ServiceLog: False
+    deactivate LoggingDataAccess
+    LoggingServices-->>LoggingManager: Return ManLog: False
+    deactivate LoggingServices
+    LoggingManager-->>EntryPoint: Return type EntryLog: False
+    deactivate LoggingManager
+    EntryPoint-->>UI: Response Code: 400
+    deactivate EntryPoint
+    UI-->>User: User Event is not Logged
+    deactivate UI
