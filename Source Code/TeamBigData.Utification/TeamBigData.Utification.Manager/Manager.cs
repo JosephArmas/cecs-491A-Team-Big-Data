@@ -25,16 +25,16 @@ namespace TeamBigData.Utification.ManagerLayer
                 String username = response.errorMessage.Substring(47);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
-                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Took Longer than 5 Seconds')";
+                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning', '" + email + "' ,'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Took Longer than 5 Seconds')";
                 }
                 else
                 {
-                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Successful')";
+                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info', '" + email + "' ,'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Successful')";
                 }
             }
             else
             {
-                insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Error'," + email + ",'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Error in Creating Account')";
+                insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Error', '" + email + "' ,'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Error in Creating Account')";
             }
             var logRes = logger.Log(insertSql);
             return response;
