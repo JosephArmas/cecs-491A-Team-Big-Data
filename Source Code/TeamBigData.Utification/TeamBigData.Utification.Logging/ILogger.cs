@@ -4,6 +4,6 @@ namespace TeamBigData.Utification.Logging
 { 
     public interface ILogger
     {
-    Task<Response> Log(object message);
+    Task<Response> Log(String message);
     }
 }

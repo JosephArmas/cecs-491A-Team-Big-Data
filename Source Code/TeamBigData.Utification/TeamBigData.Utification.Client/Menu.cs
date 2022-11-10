@@ -1,4 +1,5 @@
 ﻿using System;
+//Adapted from CECS 475 Phuong Nguyen
 
 namespace MainMenu
 {
@@ -10,8 +11,7 @@ namespace MainMenu
         public static void displayMenu()
         {
             Console.WriteLine("[1] Create a New Account");
-            Console.WriteLine("[2] Logout");
-            Console.WriteLine("[3] Create a pin");
+            Console.WriteLine("[2] Create a pin");
             Console.WriteLine("[0] exit");
         }
 
