@@ -11,7 +11,7 @@ namespace TeamBigData.Utification.Logging
         {
             _dao = dao;
         }
-        public async Task<Response> Log(object message)
+        public async Task<Response> Log(String message)
         {
             Response result = new Response();
             //Validation
@@ -21,7 +21,7 @@ namespace TeamBigData.Utification.Logging
                 result.errorMessage = "No object was given to log";
                 return result;
             }
-            string msg = message.ToString();
+            string msg = message;
             if (msg.Contains("SELECT") || msg.Contains("UPDATE") || msg.Contains("DELETE"))
             {
                 result.errorMessage = "Error: INSERT is the only valid request";
