@@ -9,7 +9,7 @@
 	participant "<size:20>Utification DS" as Utification DS
 
 	activate User
-	note over User:  <size:20>User device has no authenticated user
+	note over User:  <size:20>Using Success Case 1 as Pre-Conditions
     User->>Console:  <size:20>User wants to log in
     activate Console
     Console->>Security Manager:  <size:20>var secManager = new SecurityManager(); 
