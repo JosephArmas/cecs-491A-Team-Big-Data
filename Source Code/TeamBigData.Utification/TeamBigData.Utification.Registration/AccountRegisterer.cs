@@ -8,13 +8,13 @@ using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Security;
 
-namespace TeamBigData.Utification.Registration
+namespace TeamBigData.Utification.AccountServices
 {
-    public class AccountManager
+    public class AccountRegisterer
     {
         private readonly IDBInserter _dbo;
 
-        public AccountManager(IDBInserter dbo)
+        public AccountRegisterer(IDBInserter dbo)
         {
             _dbo = dbo;
         }
@@ -39,6 +39,7 @@ namespace TeamBigData.Utification.Registration
 
         public static String GenerateUsername(String email)
         {
+            /*
             String username = email.Remove(email.LastIndexOf('@'));
             Random rng = new Random();
             int randomNumber = rng.Next(10000);
@@ -61,6 +62,9 @@ namespace TeamBigData.Utification.Registration
                 username += "--";
             }
             return username;
+            */
+            return email;
+            //TODO: pick 1 method
         }
 
         public async Task<Response> InsertUser(String tableName, String email, String password)
@@ -71,7 +75,7 @@ namespace TeamBigData.Utification.Registration
             if (IsValidPassword(password) && IsValidEmail(email))
             {
                 username = GenerateUsername(email);
-                String[] values = { username, SecureHasher.HashString(password), email };
+                String[] values = { username, SecureHasher.HashString(username, password), email };
                 result = await _dbo.Insert(tableName, values).ConfigureAwait(false);
             }
             else if(!IsValidEmail(email))

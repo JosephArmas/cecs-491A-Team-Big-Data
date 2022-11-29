@@ -5,11 +5,11 @@ namespace TeamBigData.Utification.Security
 {
     public class SecureHasher
     {
-        public static String HashString(String message)
+        public static String HashString(String key, String message)
         {
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            HashAlgorithm sha = SHA256.Create();
-            byte[] hash = sha.ComputeHash(messageBytes);
+            byte[] hash = HMACSHA512.HashData(keyBytes, messageBytes);
             String hashedMessage = BitConverter.ToString(hash);
             return hashedMessage;
         }

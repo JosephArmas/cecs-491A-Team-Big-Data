@@ -10,7 +10,7 @@ using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : IDBInserter, IDBDeleter, IDBClear, IDAO
+    public class SqlDAO : IDBInserter, IDBDeleter, IDBClear, IDBCounter, IDAO
     {
         private String _connectionString;
 
@@ -178,6 +178,81 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
         }
+
+        public Task<Response> Count(String tableName, String countedCollumn, String[] collumnNames, String[] values)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName + " WHERE ";
+                if (collumnNames.Length == values.Length)
+                {
+                    for (int i = 0; i < collumnNames.Length; i++)
+                    {
+                        if (i != collumnNames.Length - 1)
+                        {
+                            countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"' and ";
+                        }
+                        else
+                        {
+                            countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"';";
+                        }
+                    }
+                }
+                else
+                {
+                    result.errorMessage = "There must be an equal ammount of collumnNames and values";
+                }
+                try
+                {
+                    var command = new SqlCommand(countSql, connection);
+                    result.data = command.ExecuteScalar();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> CountAll(String tableName, String countedCollumn)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName;
+                try
+                {
+                    var command = new SqlCommand(countSql, connection);
+                    result.data = command.ExecuteScalar();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
         public Task<Response> Execute(object req)
         {
             var tcs = new TaskCompletionSource<Response>();

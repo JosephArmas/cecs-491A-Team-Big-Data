@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
-using TeamBigData.Utification.Registration;
+using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.ManagerLayer;
 
@@ -18,20 +18,19 @@ namespace TeamBigData.Utification.RegistrationTests
         [TestMethod]
         public async Task CreatesLogWhenRegistering()
         {
+            //Arrange
             var userConnection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var logConnection = new SqlConnection(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            logConnection.Open();
+            var logConnection = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=False";
             var manager = new Manager();
             SqlDAO testDBO = new SqlDAO(userConnection);
-            var countSql = "SELECT COUNT(LogID) From dbo.Logs";
-            var testLog = new SqlCommand(countSql, logConnection);
+            SqlDAO logDBO = new SqlDAO(logConnection);
             var expected = 1;
             //Act
-            int before = (int)testLog.ExecuteScalar();
+            int before = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
             await testDBO.Clear("dbo.Users");
-            var result = manager.InsertUser("davidg@yahoo.com", "password");
-            int after = (int)testLog.ExecuteScalar();
-            logConnection.Close();
+            var result = manager.InsertUser("daviddg@yahoo.com", "password");
+            int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
+            //Assert
             Assert.AreEqual(expected, after - before);
             Assert.IsTrue(result.isSuccessful);
         }
@@ -42,7 +41,7 @@ namespace TeamBigData.Utification.RegistrationTests
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountManager testRegister = new AccountManager(testDBO);
+            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
             String password = "password";
             String email = "daviddg@yahoo.com";
             //Act
@@ -70,7 +69,7 @@ namespace TeamBigData.Utification.RegistrationTests
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountManager testRegister = new AccountManager(testDBO);
+            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
             String password = "password";
             String email = "daviddg5@yahoo.com";
             //Act
@@ -89,7 +88,7 @@ namespace TeamBigData.Utification.RegistrationTests
             long expected = 5 * 60000;
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountManager testRegister = new AccountManager(testDBO);
+            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
             String username = "daviddg5";
             String password = "password";
             String email = "daviddg5@yahoo.com";
