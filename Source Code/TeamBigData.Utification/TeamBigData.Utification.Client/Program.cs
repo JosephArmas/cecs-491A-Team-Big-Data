@@ -18,7 +18,7 @@ class Program
     {
         bool repeat = true;
         string input;
-        string username = null;
+        var userManager = new Manager();
 
         do
         {
@@ -38,13 +38,12 @@ class Program
                         break;
                     case 1:
                         Menu.clearMenu();
-                        if(username == null)
+                        if(userManager.IsAuthenticated())
                         {
                             Console.WriteLine("To create a new Account, please enter your email");
                             String email = Console.ReadLine();
                             Console.WriteLine("Please enter your new password");
                             String userPassword = Console.ReadLine();
-                            var userManager = new Manager();
                             var response = userManager.InsertUser(email, userPassword);
                             Console.WriteLine(response.errorMessage);
                         }
@@ -55,7 +54,7 @@ class Program
                         break;
                     case 2:
                         Menu.clearMenu();
-                        if(username == null)
+                        if(!userManager.IsAuthenticated())
                         {
 
                             Console.WriteLine("Please enter your Username");
@@ -64,12 +63,15 @@ class Program
                             String password = Console.ReadLine();
                             var encryptor = new Encryptor();
                             var encryptedPassword = encryptor.encryptString(password);
-                            var manager = new Manager();
-                            var result = manager.AuthenticateUser(loginUsername, encryptedPassword, encryptor);
+                            var result = userManager.VerifyUser(loginUsername, encryptedPassword, encryptor);
                             Console.WriteLine(result.errorMessage);
-                            if (result.isSuccessful)
+                            if(result.isSuccessful)
                             {
-                                username = loginUsername;
+                                Console.WriteLine("Please Enter This Password to Finish Authentication");
+                                Console.WriteLine(userManager.SendOTP());
+                                var otp = Console.ReadLine();
+                                var result2 = userManager.ReceiveOTP(otp);
+                                Console.WriteLine(result2.errorMessage);
                             }
                         }
                         else

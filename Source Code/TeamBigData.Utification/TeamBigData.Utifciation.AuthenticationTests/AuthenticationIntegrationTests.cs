@@ -8,6 +8,8 @@ using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.ManagerLayer;
 using TeamBigData.Utification.Security;
 using TeamBigData.Utification.SQLDataAccess;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
 
 namespace TeamBigData.Utification.AuthenticationTests
 {
@@ -53,9 +55,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = manager.AuthenticateUser(username, digest, encryptor);
+            result = manager.VerifyUser(username, digest, encryptor);
+            manager.ReceiveOTP(manager.SendOTP());
             //Assert
             Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue(manager.IsAuthenticated());
         }
 
         [TestMethod]
@@ -70,8 +74,12 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            manager.AuthenticateUser(username, digest, encryptor);
-            result = manager.AuthenticateUser(username, digest, encryptor);
+            manager.VerifyUser(username, digest, encryptor);
+            manager.ReceiveOTP(manager.SendOTP());
+            //Verify User is truly authenticated
+            Assert.IsTrue(manager.IsAuthenticated());
+
+            result = manager.VerifyUser(username, digest, encryptor);
             //Assert
             Assert.IsFalse(result.isSuccessful);
             Assert.AreEqual(result.errorMessage, expected);
@@ -88,8 +96,9 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            manager.AuthenticateUser(username, digest, encryptor);
-            result = manager.LogOut(username);
+            manager.VerifyUser(username, digest, encryptor);
+            manager.ReceiveOTP(manager.SendOTP());
+            result = manager.LogOut();
             //Assert
             Assert.IsTrue(result.isSuccessful);
         }
@@ -102,7 +111,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var manager = new Manager();
             var expected = "Error you are not logged in";
             //Act
-            result = manager.LogOut("daviddg@yahoo.com");
+            result = manager.LogOut();
             //Assert
             Assert.IsFalse(result.isSuccessful);
             Assert.AreEqual(expected, result.errorMessage);
@@ -113,17 +122,17 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var expected = "Incorrect OTP entered";
             var manager = new Manager();
             var encryptor = new Encryptor();
             var username = "daviddg@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = manager.AuthenticateUser(username, digest, encryptor);
+            manager.VerifyUser(username, digest, encryptor);
+            result = manager.ReceiveOTP("wrong OTP");
             //Assert
             Assert.IsFalse(result.isSuccessful);
-            Assert.AreEqual(result.errorMessage, expected);
+            Assert.IsFalse(manager.IsAuthenticated());
         }
 
         [TestMethod]
@@ -138,10 +147,31 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = manager.AuthenticateUser(username, digest, encryptor);
+            result = manager.VerifyUser(username, digest, encryptor);
             //Assert
             Assert.IsFalse(result.isSuccessful);
             Assert.AreEqual(result.errorMessage, expected);
+        }
+
+        [TestMethod]
+        public void OTPExpiresAfter2Minutes()
+        {
+            //Arrange
+            var result = new Response();
+            var manager = new Manager();
+            var encryptor = new Encryptor();
+            var username = "daviddg@yahoo.com";
+            var password = "password";
+            var expected = "OTP Expired, Please Authenticate Again";
+            //Act
+            var digest = encryptor.encryptString(password);
+            manager.VerifyUser(username, digest, encryptor);
+            Thread.Sleep(120000);//Wait 2 Minutes
+            result = manager.ReceiveOTP(manager.SendOTP());
+            //Assert
+            Assert.AreEqual(expected, result.errorMessage);
+            Assert.IsFalse(result.isSuccessful);
+            Assert.IsFalse(manager.IsAuthenticated());
         }
     }
 }

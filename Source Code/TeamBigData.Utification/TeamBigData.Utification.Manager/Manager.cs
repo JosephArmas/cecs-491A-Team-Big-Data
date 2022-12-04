@@ -11,11 +11,11 @@ namespace TeamBigData.Utification.ManagerLayer
 {
     public class Manager
     {
-        private String? _username;
+        private UserAccount? _user;
 
         public Manager()
         {
-            _username = null;
+            _user = null;
         }
         public Response InsertUser(String email, String password)
         {
@@ -50,10 +50,10 @@ namespace TeamBigData.Utification.ManagerLayer
             return response;
         }
 
-        public Response AuthenticateUser(String username, byte[] encryptedPassword, Encryptor encryptor)
+        public Response VerifyUser(String username, byte[] encryptedPassword, Encryptor encryptor)
         {
             var result = new Response();
-            if(_username == null)
+            if(_user == null || !_user.IsVerified())
             {
                 var hasher = new SecureHasher();
                 var password = encryptor.decryptString(encryptedPassword);
@@ -64,13 +64,7 @@ namespace TeamBigData.Utification.ManagerLayer
                 result = authenticator.VerifyUser("dbo.Users", username, hashedPassword).Result;
                 if (result.isSuccessful)
                 {
-                    /*var otpResult = ReceiveOTP().Result;
-                    if (otpResult.isSuccessful)
-                    {
-                        _username = username;
-                    }
-                    result = otpResult;*/
-                    _username = username;
+                    _user = new UserAccount(username);
                 }
             }
             else
@@ -81,22 +75,14 @@ namespace TeamBigData.Utification.ManagerLayer
             return result;
         }
 
-        public Response LogOut(String username)
+        public Response LogOut()
         {
             var response = new Response();
-            if(_username != null)
+            if(_user != null && _user.IsVerified())
             {
-                if (_username.Equals(username))
-                {
-                    _username = null;
-                    response.isSuccessful = true;
-                    response.errorMessage = "You have been Successfully Logged Out";
-                }
-                else
-                {
-                    response.isSuccessful = false;
-                    response.errorMessage = "Error your username doesn't match";
-                }
+                _user = null;
+                response.isSuccessful = true;
+                response.errorMessage = "You have been Successfully Logged Out";
             }
             else
             {
@@ -105,58 +91,45 @@ namespace TeamBigData.Utification.ManagerLayer
             }
             return response;
         }
-/*
-        public Task<Response> ReceiveOTP()
-        {
 
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            result.isSuccessful = false;
-            var otp = "";
-            var rng = new Random();
-            for(int i = 0; i < 8; i++)
+        public String SendOTP()
+        {
+            if(_user != null)
             {
-                var random = rng.Next(0, 61);//62 valid characters 10 digits + 26 lowercase + 26 uppercase letters
-                if(random < 10) //offsett the numbers to get the ascii values
-                {
-                    random += 48; //digits start at 48
-                }
-                else if(random > 10 && random < 36)
-                {
-                    random += 55; //uppercase starts at 65 - 10 = 55 offset
-                }
-                else
-                {
-                    random += 61; //lowercase starts at 97 - 36 = 61 offset
-                }
-                otp += (char)random;
-            }
-            Console.WriteLine("Please enter " + otp);
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-            var enteredOtp = Console.ReadLine();
-            watch.Stop();
-            if(watch.ElapsedMilliseconds > 120000)
-            {
-                result.isSuccessful = false;
-                result.errorMessage = "You took to long to enter the One Time Password, Please Try Again";
+                return _user.GetOTP();
             }
             else
             {
-                if (enteredOtp.Equals(otp))
-                {
-                    result.isSuccessful = true;
-                    result.errorMessage = "You are Successfully Authenticated";
-                }
-                else
-                {
-                    result.isSuccessful = false;
-                    result.errorMessage = "Incorrect OTP entered";
-                }
+                return "Error No User";
             }
-            tcs.SetResult(result);
-            return tcs.Task;
         }
-*/
+
+        public Response ReceiveOTP(String otp)
+        {
+            var result = new Response();
+            result.isSuccessful = false;
+            if(_user != null)
+            {
+                result = _user.VerifyOTP(otp);
+            }
+            else
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "Error Please Verify your Credentials before verifying your OTP";
+            }
+            return result;
+        }
+
+        public bool IsAuthenticated()
+        {
+            if(_user == null)
+            {
+                return false;
+            }
+            else
+            {
+                return _user.IsVerified();
+            }
+        }
     }
 }
