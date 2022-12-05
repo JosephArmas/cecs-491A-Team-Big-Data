@@ -13,6 +13,8 @@ David De Girolamo <br />
   * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
 * Milestone 2
   * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone2)
+* Milestone 3
+  * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone3)
 # [RFP](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/RFP)
 * includes all versions of RFP
 # [Milestone 1](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%201)
