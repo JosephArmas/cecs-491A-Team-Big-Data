@@ -1,0 +1,105 @@
+title As an Authorized User, I want access to protected functionality, so that I may perform the functionality.
+
+   actor User
+    participant Console
+ 
+    participant SecurityManager
+    
+   
+    participant AuthorizationServices
+    participant SqlDAO
+    participant TokenAccessLevel
+    participant Results
+    participant UserProfile
+    
+    note over User: User has been authenticated
+    User->>Console: User wants to see User Profile table
+    activate Console
+    
+    Console->>Results: var result = Results();
+    activate Results
+    Results->>Results: {\n     int _result;\n     string _message;\n}
+    
+    Results-->>Console: return Results instance
+    deactivate Results
+    
+    
+   Console->>UserProfile: var userProfile = new UserProfile();
+   activate UserProfile
+   UserProfile->> UserProfile: userProfile.SetUsername(userAccount().GetUsername);
+   UserProfile-->>Console: return UserProfile
+   deactivate UserProfile
+   
+   Console->>SecurityManager:IAuthorization AuthZSecMan = new SecurityManager();
+   activate SecurityManager
+   SecurityManager->>SecurityManager:{\nprivate string _username,\nprivate int _userRole,\nprivate string _firstName,\nprivate string _lastName,\nprivate int _age,\nprivate string _address\n}
+   SecurityManager-->>Console:return SecurityManager instance
+   deactivate SecurityManager
+
+    Console->>SecurityManager: AuthZSecMan.GetResult(result)
+    
+    activate SecurityManager
+    SecurityManager->>UserProfile:result = userProfile.GetProfile(userProfile);
+    activate UserProfile
+    UserProfile-->>SecurityManager:return userProfile
+    deactivate UserProfile
+    SecurityManager->>Results:var result = Results();
+    activate Results
+    Results->>Results: {\n     int _result;\n     string _message;\n}
+    
+    Results-->>SecurityManager: return Results instance
+    deactivate Results
+    
+    SecurityManager->>SecurityManager:if(result.GetResult()!=1){\nresult.SetMessage("No user profile exists.");\nreturn result;\n}
+    SecurityManager-->>Console: return result
+    deactivate SecurityManager
+    Console->>Console:if(result.GetResult()!=1){\nConsole.Writeline(result.GetMessage);\nreturn;\n}
+    Console->>SecurityManager:SecurityManager.Login(userName:String,password:String):Results
+    activate SecurityManager
+    SecurityManager->>Results:var result = new Results()
+   // note over Manager: 
+   activate Results
+   Results->>Results:  {\n     int _result;\n     string _message;\n}
+   Results-->SecurityManager: return Results instance
+   deactivate Results
+   SecurityManager->>UserProfile: var AuthenticatedUser = new UserProfile()
+   activate UserProfile
+   UserProfile->>UserProfile:UserProfile.IsValid()
+   
+   //note right of UserAccount: System.Security.Principal
+   UserProfile-->>SecurityManager:Authorized User is in system
+   deactivate UserProfile
+   
+   
+    SecurityManager->>AuthorizationServices:var authRServices = new AuthoriazationService(connectionString);
+    activate AuthorizationServices
+    AuthorizationServices->>AuthorizationServices:private variable SecureString _connectionString =\n #User Profile connection string
+    AuthorizationServices-->>SecurityManager: AuthorizationService instance
+    deactivate AuthorizationServices
+    SecurityManager->>AuthorizationServices:AuthenticatedUser.CheckRole(SecureString)
+    activate AuthorizationServices
+    AuthorizationServices->>SqlDAO: AuthenticatedUser.HasRole(role:USER)
+    activate SqlDAO
+    SqlDAO->>SqlDAO:AuthenticatedUser.IsValid()
+    SqlDAO->>Results:var result = new Results()
+   // note over Manager: 
+   activate Results
+   Results->>Results:  {\n     int _result;\n     string _message;\n}
+   Results-->>SqlDAO: return Results instance
+   deactivate Results
+   SqlDAO->>SqlDAO:if(result.GetResult()!=1){\nresult.SetMessage("User does not have Role");\nreturn result;\n}
+    
+    SqlDAO-->>AuthorizationServices:return result
+    deactivate SqlDAO
+    AuthorizationServices->>AuthorizationServices:if(result = 0){\nAuthenticatedUser.SetRole(0);\nreturn AuthenticatedUser.Role()\n}\nelse(result = 1)\n{\nAuthenticatedUser.SetRole(1);\nreturn AuthenticatedUser.Role()\n}\nelse(result = 2)\n{\nAuthenticatedUser.SetRole(2);\nreturn AuthenticatedUser.Role()\n}\nelse(result = 3)\n{\nAuthenticatedUser.SetRole(3);\nreturn AuthenticatedUser.Role()\n}\nelse(result = 4)\n{\nAuthenticatedUser.SetRole(4);\nreturn AuthenticatedUser.Role()\n}\nelse(result = 5)\n{\nAuthenticatedUser.SetRole(5);\nreturn AuthenticatedUser.Role()\n}\nelse(result = 6)\n{\nAuthenticatedUser.SetRole(6);\nreturn AuthenticatedUser.Role()\n}
+    AuthorizationServices-->>SecurityManager:return AuthenticatedUser.Role()
+    deactivate AuthorizationServices
+    
+
+
+    SecurityManager-->>Console: Return Results
+    deactivate SecurityManager
+   
+  
+    Console-->>User: User Performs Operation
+    deactivate Console
