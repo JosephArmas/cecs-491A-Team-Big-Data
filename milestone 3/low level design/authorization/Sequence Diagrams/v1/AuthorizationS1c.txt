@@ -1,0 +1,65 @@
+title As an Authorized User, I want access to protected functionality, so that I may perform the functionality.
+
+   actor User
+    participant UI
+    participant EntryPoint
+    participant SecurityManager
+    participant Results
+    participant UserAccount
+    participant AuthorizationServices
+    participant TokenAccessLevel
+    
+    
+
+    User->>UI: User enters View
+    activate UI
+    
+    UI->>EntryPoint:POST Console request
+    activate EntryPoint
+
+    EntryPoint->>SecurityManager:var SecManager = new SecurityManager()
+    activate SecurityManager
+    SecurityManager->>SecurityManager:SecurityManager()
+    SecurityManager-->>EntryPoint: return SecurityManager instance
+    deactivate SecurityManager
+    EntryPoint->>SecurityManager:SecurityManager.Login(userName:String,password:String):Results
+    activate SecurityManager
+    SecurityManager->>Results:var Result = new Results()
+   // note over Manager: 
+   activate Results
+   Results->>Results: Result.IsSuccessful(Int)\nResult.ErrorMessage(String)
+   Results-->SecurityManager: return Result
+   deactivate Results
+   SecurityManager->>UserAccount: var AuthenticatedUser = new UserAccount()
+   activate UserAccount
+   UserAccount->>UserAccount:UserAccount.IsValid()
+   
+   //note right of UserAccount: System.Security.Principal
+   UserAccount-->>SecurityManager:Authorized User is in system
+   deactivate UserAccount
+   
+    SecurityManager->>UserAccount: AuthenticatedUser.HasClaim(functionality:String):Results
+    
+
+    UserAccount->>AuthorizationServices:AuthenticatedUser.GetClaims(functionality:String):TokenAccessLevel
+    activate AuthorizationServices
+  //  note over Services: 
+  
+  AuthorizationServices->>TokenAccessLevel: TokenAccessLevel(enum)
+  activate TokenAccessLevel
+  TokenAccessLevel->>TokenAccessLevel:{\nAllAccess:,\nRead,\nWrite\n}
+  TokenAccessLevel-->>AuthorizationServices:Return TokenAccessLevel Instance
+  AuthorizationServices->>AuthorizationServices:TokenAccessLevel.AllAccess()
+  deactivate TokenAccessLevel
+
+    AuthorizationServices-->>UserAccount: Return TokenAccessLevel
+    deactivate AuthorizationServices
+    UserAccount-->SecurityManager:Return Results
+    deactivate UserAccount
+    SecurityManager-->SecurityManager:Result.IsSuccessful()
+    SecurityManager-->>EntryPoint: Return Results
+    deactivate SecurityManager
+    EntryPoint-->>UI: Response Code: 200
+    deactivate EntryPoint
+    UI-->>User: User Performs Operation
+    deactivate UI
