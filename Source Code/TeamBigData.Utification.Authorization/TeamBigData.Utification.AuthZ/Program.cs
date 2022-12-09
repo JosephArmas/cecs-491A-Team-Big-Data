@@ -20,13 +20,14 @@ namespace TeamBigData.Utification.Authorization // Note: actual namespace depend
                 {
                     if (!menu.DisplayMenu(ref userAccount, ref userProfile))
                         return;
-                }   
-                else if (((IPrincipal)userProfile).IsInRole("Regular User"))
-                {
-                    if (!menu.DisplayMenu(ref userAccount, ref userProfile))
-                        return;
                 }
-                else if (((IPrincipal)userProfile).IsInRole("Admin User")) 
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Unauthorized access to view");
+                    return;
+                }
+                if (((IPrincipal)userProfile).IsInRole("Regular User"))
                 {
                     if (!menu.DisplayMenu(ref userAccount, ref userProfile))
                         return;
@@ -34,7 +35,18 @@ namespace TeamBigData.Utification.Authorization // Note: actual namespace depend
                 else
                 {
                     Console.Clear();
-                    Console.WriteLine("Error user has no role...\nExiting Utification...");
+                    Console.WriteLine("Unauthorized access to view");
+                    return;
+                }
+                if (((IPrincipal)userProfile).IsInRole("Admin User")) 
+                {
+                    if (!menu.DisplayMenu(ref userAccount, ref userProfile))
+                        Console.WriteLine("Unauthorized access to view");
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Unauthorized access to view");
                     return;
                 }
             }

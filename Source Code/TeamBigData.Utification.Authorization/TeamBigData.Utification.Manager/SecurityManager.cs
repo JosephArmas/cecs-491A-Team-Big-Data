@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
@@ -41,9 +42,15 @@ namespace TeamBigData.Utification.Manager
             //var logRes = logger.Log(insertSql);
             return response;
         }
-        public Response GetUserProfileTable(List<UserProfile> list)
+        public Response GetUserProfileTable(List<UserProfile> list, UserProfile userProfile)
         {
             var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
             var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
             list = selectDAO.GetUserProfileTable();

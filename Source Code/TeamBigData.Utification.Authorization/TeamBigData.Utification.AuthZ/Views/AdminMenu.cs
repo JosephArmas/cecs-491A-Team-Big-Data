@@ -39,7 +39,7 @@ namespace TeamBigData.Utification.Authorization.Views
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
-                    response = secManager.GetUserProfileTable(list);
+                    response = secManager.GetUserProfileTable(list, userProfile);
                     Console.WriteLine("Printing out User Profile Table");
                     for (int i = 0; i < list.Count; i++)
                         Console.WriteLine(((UserProfile)list[i]).ToString());
