@@ -1,15 +1,13 @@
-﻿
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstraction;
 
-namespace TeamBigData.Utification.SecurityManager
+namespace TeamBigData.Utification.Manager
 {
     public class SecurityManager
     {
-        public SecurityManager() { }
         // InsertUser needs to be worked on
         public Response InsertUser(String email, String password)
         {

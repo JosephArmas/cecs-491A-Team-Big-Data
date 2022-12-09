@@ -5,7 +5,7 @@ namespace TeamBigData.Utification.Models
     public class UserAccount
     {
         public int UserAccountID { get; private set; }
-        public string UserName { get; private set; }
+        public string Username { get; private set; }
         public string Password { get; private set; }
         public DateTime OTP
         {

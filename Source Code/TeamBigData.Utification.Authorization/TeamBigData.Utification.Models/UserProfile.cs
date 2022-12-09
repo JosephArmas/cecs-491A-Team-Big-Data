@@ -10,20 +10,31 @@ namespace TeamBigData.Utification.Models
 {
     public class UserProfile : MyIPrincipal
     {
+        public string Id { get; set; }
+        public string Username { get; set; }
         public string Fullname { get; set; }
-        public int age { get; set; }
+        public int Age { get; set; }
         public string Birthday { get; set; }
-        public IIdentity Identity { get; private set; }
-        public string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string UserName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsInRole(string role) { if (role == Role) return true; return false; }
-        public string Role { get; set; }
-
-        public UserProfile() { }
-        public UserProfile(string email)
+        public IIdentity? Identity { get; private set; }
+        bool IPrincipal.IsInRole(string role)
         {
-            this.Identity = new GenericIdentity(email);
-            Role = "Anonymous User";
+            if (this.Identity.AuthenticationType != role)
+            {
+                return false;
+            }
+            return true;
+        }
+        public UserProfile(string userName)
+        {
+            this.Identity = new GenericIdentity(userName, "Anonymous User");
+        }
+        public UserProfile(GenericIdentity identity)
+        {
+            this.Identity = identity;
+        }
+        public string ToString()
+        {
+            return "ID: " + Id + ",   Username: " + Username + ",   Fullname: " + Fullname + ",   Age: " + Age + ",   Birthday: " + Birthday + ",   Role: " + Identity.AuthenticationType ;
         }
     }
 }

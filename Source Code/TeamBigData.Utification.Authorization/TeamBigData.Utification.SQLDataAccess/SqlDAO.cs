@@ -40,28 +40,27 @@ namespace TeamBigData.Utification.SQLDataAccess
             throw new NotImplementedException();
         }
 
-        public Task<Response> SelectTable(List<object> list, object req)
+        public List<UserProfile> GetUserProfileTable()
         {
-            var tcs = new TaskCompletionSource<Response>();
-            Response result = new Response();
-            if (req.GetType()!=typeof(string))
-            {
-                result.errorMessage = "Error: input parameter for SqlDAO not of type string";
-                result.isSuccessful = false;
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
+            List<UserProfile> list = new List<UserProfile>();
+            string sqlStatement = "SELECT * FROM dbo.UserProfile";
             using (SqlConnection connect = new SqlConnection(ConnectionString))
             {
                 connect.Open();
-                using (var reader = (new SqlCommand(req.ToString(), connect)).ExecuteReader())
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
                 {
                     // read through all rows
                     while (reader.Read())
                     {
-                        var userProfile = new UserProfile();
+                        var userProfile = new UserProfile("");
 
-                        int ordinal = reader.GetOrdinal("UserName");
+                        int ordinal = reader.GetOrdinal("Role");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userProfile = new UserProfile(new GenericIdentity("",reader.GetString(ordinal)));
+                        }
+
+                        ordinal = reader.GetOrdinal("UserName");
                         if (!reader.IsDBNull(ordinal)) {
                             userProfile.UserName = reader.GetString(ordinal);
                         }
@@ -77,26 +76,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                         {
                             userProfile.Birthday =  reader.GetString(ordinal);
                         }
-
-                        ordinal = reader.GetOrdinal("Role");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userProfile.Role = reader.GetString(ordinal);
-                        }
-
                         list.Add(userProfile);
-                    }
-                    // check if read through all rows
-                    if (reader.Read())
-                    {
-                        result.isSuccessful = false;
-                        result.errorMessage = "Failed to read all rows";
                     }
                     reader.Close();
                 }
-                tcs.SetResult(result);
-                return tcs.Task;
+                connect.Close();
             }
+            return list;
         }
     }
 }

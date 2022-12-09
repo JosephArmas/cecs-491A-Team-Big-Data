@@ -10,6 +10,6 @@ namespace TeamBigData.Utification.Models.Abstraction
     interface MyIPrincipal : IPrincipal
     {
         string Id { get; set; }
-        string UserName { get; set; }
+        string Username { get; set; }
     }
 }
