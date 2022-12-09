@@ -62,7 +62,7 @@ namespace TeamBigData.Utification.SQLDataAccess
 
                         ordinal = reader.GetOrdinal("UserName");
                         if (!reader.IsDBNull(ordinal)) {
-                            userProfile.UserName = reader.GetString(ordinal);
+                            userProfile.Username = reader.GetString(ordinal);
                         }
 
                         ordinal = reader.GetOrdinal("FullName");
