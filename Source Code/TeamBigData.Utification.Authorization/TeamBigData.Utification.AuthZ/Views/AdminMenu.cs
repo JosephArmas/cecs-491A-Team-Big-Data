@@ -40,6 +40,14 @@ namespace TeamBigData.Utification.Authorization.Views
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
                     response = secManager.GetUserProfileTable(list, userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        return false;
+                    }
                     Console.WriteLine("Printing out User Profile Table");
                     for (int i = 0; i < list.Count; i++)
                         Console.WriteLine(((UserProfile)list[i]).ToString());
