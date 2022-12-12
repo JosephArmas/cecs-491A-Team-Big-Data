@@ -74,6 +74,14 @@ namespace TeamBigData.Utification.ManagerLayer
             }
             return result;
         }
+        /*private Response AuthZSecMan(string username, int userRole, string firstName, string lastName, int age, string address)
+        {
+            var response = new Response();
+            if (_username != null)
+            {
+
+            }
+        }*/
 
         public Response LogOut()
         {
