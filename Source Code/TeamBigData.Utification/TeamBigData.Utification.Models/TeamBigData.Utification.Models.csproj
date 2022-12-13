@@ -8,8 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Response\TeamBigData.Utification.ErrorResponse.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Security\TeamBigData.Utification.Security.csproj" />
   </ItemGroup>
 
 </Project>

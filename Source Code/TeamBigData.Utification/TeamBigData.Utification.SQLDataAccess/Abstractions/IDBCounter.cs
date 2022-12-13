@@ -7,8 +7,8 @@ using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public interface IDBClear
+    public  interface IDBCounter
     {
-        public Task<Response> Clear(String tableName);
+        public Task<Response> Count(String tableName, String countedCollumn, String[] collumnNames, String[] parameters);
     }
 }

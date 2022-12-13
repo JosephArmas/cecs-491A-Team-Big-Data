@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using TeamBigData.Utification.SQLDataAccess;
+﻿using System.Text.RegularExpressions;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Security;
+using TeamBigData.Utification.SQLDataAccess;
 
-namespace TeamBigData.Utification.Registration
+namespace TeamBigData.Utification.AccountServices
 {
-    public class AccountManager
+    public class AccountRegisterer
     {
-        private readonly IDBInserter _dbo;
+        private readonly IDBUserInserter _dbo;
 
-        public AccountManager(IDBInserter dbo)
+        public AccountRegisterer(IDBUserInserter dbo)
         {
             _dbo = dbo;
         }
-        
+
         public static bool IsValidPassword(String password)
         {
             Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!\s-]*$");
@@ -39,51 +34,32 @@ namespace TeamBigData.Utification.Registration
 
         public static String GenerateUsername(String email)
         {
-            String username = email.Remove(email.LastIndexOf('@'));
-            Random rng = new Random();
-            int randomNumber = rng.Next(10000);
-            username += "-";
-            if (randomNumber < 10)
-            {
-                username = username + "000";
-            }
-            else if (randomNumber < 100)
-            {
-                username += "00";
-            }
-            else if (randomNumber < 1000)
-            {
-                username += "0";
-            }
-            username += randomNumber.ToString();
-            if (username.Length < 8)
-            {
-                username += "--";
-            }
-            return username;
+            return email;
         }
 
-        public async Task<Response> InsertUser(String tableName, String email, String password)
+        public async Task<Response> InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
         {
             Response result = new Response();
             result.isSuccessful = false;
             String username = "";
+            String password = encryptor.decryptString(encryptedPassword);
             if (IsValidPassword(password) && IsValidEmail(email))
             {
                 username = GenerateUsername(email);
-                String[] values = { username, SecureHasher.HashString(password), email };
-                result = await _dbo.Insert(tableName, values).ConfigureAwait(false);
+                var digest = SecureHasher.HashString(username, password);
+                var user = new UserAccount(username, digest);
+                result = await _dbo.InsertUser(user).ConfigureAwait(false);
             }
-            else if(!IsValidEmail(email))
+            else if (!IsValidEmail(email))
             {
                 result.errorMessage = "Invalid email provided. Retry again or contact system administrator";
             }
-            else if(!IsValidPassword(password))
+            else if (!IsValidPassword(password))
             {
                 result.errorMessage = "Invalid passphrase provided. Retry again or contact system administrator";
             }
 
-            if(!result.isSuccessful)
+            if (!result.isSuccessful)
             {
                 if (result.errorMessage.Contains("Violation of PRIMARY KEY"))
                 {
