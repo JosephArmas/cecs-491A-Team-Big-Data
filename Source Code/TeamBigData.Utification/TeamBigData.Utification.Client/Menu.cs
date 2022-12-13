@@ -12,7 +12,8 @@ namespace MainMenu
         {
             Console.WriteLine("[1] Create a New Account");
             Console.WriteLine("[2] Login to an Account");
-            Console.WriteLine("[3] Create a pin");
+            Console.WriteLine("[3] Logout of an Account");
+            Console.WriteLine("[4] Create a pin");
             Console.WriteLine("[0] exit");
         }
 

@@ -6,65 +6,126 @@ using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.Security;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
+using TeamBigData.Utification.Models;
+using System.Collections;
 
 namespace TeamBigData.Utification.ManagerLayer
 {
     public class Manager
     {
-        private UserAccount? _user;
+        private UserProfile? _user;
+        private String _otp;
+        private DateTime _otpCreated;
+        private Boolean _otpVerified;
 
         public Manager()
         {
             _user = null;
         }
-        public Response InsertUser(String email, String password)
+
+        public Response InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
         {
             var response = new Response();
             Stopwatch stopwatch = new Stopwatch();
             response.isSuccessful = false;
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlDAO = new SqlDAO(connectionString);
+            IDBUserInserter sqlDAO = new SqlDAO(connectionString);
             var accountManager = new AccountRegisterer(sqlDAO);
             stopwatch.Start();
-            response = accountManager.InsertUser("dbo.Users", email, password).Result;
+            response = accountManager.InsertUser(email, encryptedPassword, encryptor).Result;
             stopwatch.Stop();
-            String insertSql;
+            Log log;
             var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             if (response.isSuccessful)
             {
                 String username = response.errorMessage.Substring(47);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
-                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Warning', '" + email + "' ,'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Took Longer than 5 Seconds')";
+                    log = new Log(1, "Warning", email, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
                 }
                 else
                 {
-                    insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info', '" + email + "' ,'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Account Registration Successful')";
+                    log = new Log(1, "Info", email, "Manager.InsertUser()", "Data", "Account Registration Succesful");
                 }
             }
             else
             {
-                insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Error', '" + email + "' ,'" + DateTime.UtcNow.ToString() + "', 'Manager.InsertUser()', 'Data', 'Error in Creating Account')";
+                log = new Log(1, "Error", email, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
-            var logRes = logger.Log(insertSql);
+            logger.Log(log);
+            var result2 = sqlDAO.InsertUserProfile(new UserProfile(email)).Result;
             return response;
         }
 
         public Response VerifyUser(String username, byte[] encryptedPassword, Encryptor encryptor)
         {
             var result = new Response();
-            if(_user == null || !_user.IsVerified())
+            if(_user == null)
             {
+                var logConnectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
+                var logDAO = new SqlDAO(logConnectionString);
+                ILogger logger = new Logger(logDAO);
+                Log log;
                 var hasher = new SecureHasher();
                 var password = encryptor.decryptString(encryptedPassword);
-                var hashedPassword = SecureHasher.HashString(username, password);
-                var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-                IDBCounter testDBO = new SqlDAO(connectionString);
-                var authenticator = new AccountAuthenticator(testDBO);
-                result = authenticator.VerifyUser("dbo.Users", username, hashedPassword).Result;
-                if (result.isSuccessful)
+                if(!AccountRegisterer.IsValidPassword(password) || !AccountRegisterer.IsValidEmail(username))
                 {
-                    _user = new UserAccount(username);
+                    result.isSuccessful = false;
+                    result.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
+                    return result;
+                }
+                var hashedPassword = SecureHasher.HashString(username, password);
+                var user = new UserAccount(username, hashedPassword);
+                var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+                var userDao = new SqlDAO(connectionString);
+                result = userDao.GetUser(user).Result;
+                if(result.isSuccessful)
+                {
+                    _user = result.data as UserProfile;
+                    var hash = SecureHasher.HashString(DateTime.Now.Ticks, username);
+                    _otp = hash.Substring(0, 16).Replace("-", "");
+                    _otpCreated = DateTime.Now;
+                    Console.WriteLine("Please enter the OTP to finish Authentication");
+                    Console.WriteLine(_otp);
+                    log = new Log(2, "Info", username, "Authentication", "Data", "Successfull Logged In");
+                    logger.Log(log);
+                    result.isSuccessful = true;
+                }
+                else
+                {
+                    if(result.errorMessage.Equals("Error: Invalid Username or Password"))
+                    {
+                        log = new Log(2, "Warning", username, "Authentication", "Data", "Insuccessful Log In Attempt");
+                        logger.Log(log);
+                        result.isSuccessful = false;
+                        result.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
+                        var attemptsResult = logDAO.GetLoginAttempts(username).Result;
+                        var attempts = attemptsResult.data as ArrayList;
+                        if (attemptsResult.isSuccessful)
+                        {
+                            int n = attempts.Count;
+                            int i = 0;
+                            int failedAttempts = 0;
+                            while (i < n)
+                            {
+                                if (attempts[i].Equals("Warning"))
+                                {
+                                    failedAttempts++;
+                                }
+                                else
+                                {
+                                    failedAttempts = 0;
+                                }
+                                i++;
+                            }
+                            if (failedAttempts > 2)
+                            {
+                                var disabler = new AccountDisabler(userDao);
+                                disabler.DisableAccount(username);
+                                result.errorMessage = "You have failed to login 3 times in 24 hours, your account will now be disabled";
+                            }
+                        }
+                    }
                 }
             }
             else
@@ -75,10 +136,37 @@ namespace TeamBigData.Utification.ManagerLayer
             return result;
         }
 
+        public Response VerifyOTP(String enteredOTP)
+        {
+            var result = new Response();
+            var currentTime = DateTime.Now;
+            if (enteredOTP.Equals(_otp))
+            {
+                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //1200000000 ticks in 2 minutes
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "You have successfully logged in";
+                    result.data = _user;
+                    _otpVerified = true;
+                }
+                else
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "You did not enter in the OTP within 2 minutes, Please try again";
+                }
+            }
+            else
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "Error: The Entered in OTP doesn't match";
+            }
+            return result;
+        }
+
         public Response LogOut()
         {
             var response = new Response();
-            if(_user != null && _user.IsVerified())
+            if(_user != null)
             {
                 _user = null;
                 response.isSuccessful = true;
@@ -92,43 +180,15 @@ namespace TeamBigData.Utification.ManagerLayer
             return response;
         }
 
-        public String SendOTP()
-        {
-            if(_user != null)
-            {
-                return _user.GetOTP();
-            }
-            else
-            {
-                return "Error No User";
-            }
-        }
-
-        public Response ReceiveOTP(String otp)
-        {
-            var result = new Response();
-            result.isSuccessful = false;
-            if(_user != null)
-            {
-                result = _user.VerifyOTP(otp);
-            }
-            else
-            {
-                result.isSuccessful = false;
-                result.errorMessage = "Error Please Verify your Credentials before verifying your OTP";
-            }
-            return result;
-        }
-
         public bool IsAuthenticated()
         {
-            if(_user == null)
+            if (_user is null)
             {
                 return false;
             }
             else
             {
-                return _user.IsVerified();
+                return _otpVerified;
             }
         }
     }

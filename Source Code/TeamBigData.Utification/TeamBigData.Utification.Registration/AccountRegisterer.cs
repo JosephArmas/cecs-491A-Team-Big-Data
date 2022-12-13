@@ -12,9 +12,9 @@ namespace TeamBigData.Utification.AccountServices
 {
     public class AccountRegisterer
     {
-        private readonly IDBInserter _dbo;
+        private readonly IDBUserInserter _dbo;
 
-        public AccountRegisterer(IDBInserter dbo)
+        public AccountRegisterer(IDBUserInserter dbo)
         {
             _dbo = dbo;
         }
@@ -39,44 +39,21 @@ namespace TeamBigData.Utification.AccountServices
 
         public static String GenerateUsername(String email)
         {
-            /*
-            String username = email.Remove(email.LastIndexOf('@'));
-            Random rng = new Random();
-            int randomNumber = rng.Next(10000);
-            username += "-";
-            if (randomNumber < 10)
-            {
-                username = username + "000";
-            }
-            else if (randomNumber < 100)
-            {
-                username += "00";
-            }
-            else if (randomNumber < 1000)
-            {
-                username += "0";
-            }
-            username += randomNumber.ToString();
-            if (username.Length < 8)
-            {
-                username += "--";
-            }
-            return username;
-            */
             return email;
-            //TODO: pick 1 method
         }
 
-        public async Task<Response> InsertUser(String tableName, String email, String password)
+        public async Task<Response> InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
         {
             Response result = new Response();
             result.isSuccessful = false;
             String username = "";
+            String password = encryptor.decryptString(encryptedPassword);
             if (IsValidPassword(password) && IsValidEmail(email))
             {
                 username = GenerateUsername(email);
-                String[] values = { username, SecureHasher.HashString(username, password), email };
-                result = await _dbo.Insert(tableName, values).ConfigureAwait(false);
+                var digest = SecureHasher.HashString(username, password);
+                var user = new UserAccount(username, digest);
+                result = await _dbo.InsertUser(user).ConfigureAwait(false);
             }
             else if(!IsValidEmail(email))
             {

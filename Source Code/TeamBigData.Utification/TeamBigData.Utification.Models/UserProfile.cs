@@ -15,6 +15,26 @@ namespace TeamBigData.Utification.AccountServices
         private String _address;
         private String _birthday;
 
+        public UserProfile(string username)
+        {
+            _username = username;
+            _firstName = "";
+            _lastName = "";
+            _email = username;
+            _address = "";
+            _birthday = "";
+        }
+
+        public UserProfile(string username, string firstName, string lastName, string email, string address, string birthday)
+        {
+            _username = username;
+            _firstName = firstName;
+            _lastName = lastName;
+            _email = email;
+            _address = address;
+            _birthday = birthday;
+        }
+
         public String GetUsername()
         {
             return _username;
@@ -30,8 +50,8 @@ namespace TeamBigData.Utification.AccountServices
             return _lastName;
         }
 
-        public String GetEmail() 
-        { 
+        public String GetEmail()
+        {
             return _email;
         }
 
@@ -40,8 +60,8 @@ namespace TeamBigData.Utification.AccountServices
             return _address;
         }
 
-        public String GetBirthday() 
-        { 
+        public String GetBirthday()
+        {
             return _birthday;
         }
 
@@ -50,7 +70,7 @@ namespace TeamBigData.Utification.AccountServices
             _username = username;
         }
 
-        public void SetFirstName(String firstName) 
+        public void SetFirstName(String firstName)
         {
             _firstName = firstName;
         }
@@ -60,13 +80,13 @@ namespace TeamBigData.Utification.AccountServices
             _lastName = lastName;
         }
 
-        public void SetEmail(String email) 
-        { 
+        public void SetEmail(String email)
+        {
             _email = email;
         }
 
-        public void SetAddress(String address) 
-        { 
+        public void SetAddress(String address)
+        {
             _address = address;
         }
 

@@ -55,9 +55,13 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
+            StringWriter writer = new StringWriter();
+            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
-            manager.ReceiveOTP(manager.SendOTP());
+            var message = writer.ToString();
+            manager.VerifyOTP(message);
             //Assert
+            Assert.AreEqual(message, "hello");
             Assert.IsTrue(result.isSuccessful);
             Assert.IsTrue(manager.IsAuthenticated());
         }
@@ -74,8 +78,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            manager.VerifyUser(username, digest, encryptor);
-            manager.ReceiveOTP(manager.SendOTP());
+            StringWriter writer = new StringWriter();
+            Console.SetOut(writer);
+            result = manager.VerifyUser(username, digest, encryptor);
+            var message = writer.ToString();
+            manager.VerifyOTP(message);
             //Verify User is truly authenticated
             Assert.IsTrue(manager.IsAuthenticated());
 
@@ -96,8 +103,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            manager.VerifyUser(username, digest, encryptor);
-            manager.ReceiveOTP(manager.SendOTP());
+            StringWriter writer = new StringWriter();
+            Console.SetOut(writer);
+            result = manager.VerifyUser(username, digest, encryptor);
+            var message = writer.ToString();
+            manager.VerifyOTP(message);
             result = manager.LogOut();
             //Assert
             Assert.IsTrue(result.isSuccessful);
@@ -128,8 +138,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            manager.VerifyUser(username, digest, encryptor);
-            result = manager.ReceiveOTP("wrong OTP");
+            StringWriter writer = new StringWriter();
+            Console.SetOut(writer);
+            result = manager.VerifyUser(username, digest, encryptor);
+            var message = writer.ToString();
+            manager.VerifyOTP(message);
             //Assert
             Assert.IsFalse(result.isSuccessful);
             Assert.IsFalse(manager.IsAuthenticated());
@@ -147,7 +160,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
+            StringWriter writer = new StringWriter();
+            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
+            var message = writer.ToString();
+            manager.VerifyOTP(message);
             //Assert
             Assert.IsFalse(result.isSuccessful);
             Assert.AreEqual(result.errorMessage, expected);
@@ -165,9 +182,12 @@ namespace TeamBigData.Utification.AuthenticationTests
             var expected = "OTP Expired, Please Authenticate Again";
             //Act
             var digest = encryptor.encryptString(password);
-            manager.VerifyUser(username, digest, encryptor);
-            Thread.Sleep(120000);//Wait 2 Minutes
-            result = manager.ReceiveOTP(manager.SendOTP());
+            StringWriter writer = new StringWriter();
+            Console.SetOut(writer);
+            result = manager.VerifyUser(username, digest, encryptor);
+            var message = writer.ToString();
+            manager.VerifyOTP(message);
+            //Thread.Sleep(120000);//Wait 2 Minutes
             //Assert
             Assert.AreEqual(expected, result.errorMessage);
             Assert.IsFalse(result.isSuccessful);

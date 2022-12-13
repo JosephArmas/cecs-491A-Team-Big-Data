@@ -4,6 +4,7 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.ManagerLayer;
 using TeamBigData.Utification.Security;
+using TeamBigData.Utification.Models;
 using System.Text;
 using System.ComponentModel;
 //Adapted from CECS 475 Phuong Nguyen
@@ -38,13 +39,15 @@ class Program
                         break;
                     case 1:
                         Menu.clearMenu();
-                        if(userManager.IsAuthenticated())
+                        if(!userManager.IsAuthenticated())
                         {
                             Console.WriteLine("To create a new Account, please enter your email");
                             String email = Console.ReadLine();
                             Console.WriteLine("Please enter your new password");
                             String userPassword = Console.ReadLine();
-                            var response = userManager.InsertUser(email, userPassword);
+                            var encryptor = new Encryptor();
+                            var encryptedPassword = encryptor.encryptString(userPassword);
+                            var response = userManager.InsertUser(email, encryptedPassword, encryptor);
                             Console.WriteLine(response.errorMessage);
                         }
                         else
@@ -64,14 +67,37 @@ class Program
                             var encryptor = new Encryptor();
                             var encryptedPassword = encryptor.encryptString(password);
                             var result = userManager.VerifyUser(loginUsername, encryptedPassword, encryptor);
-                            Console.WriteLine(result.errorMessage);
                             if(result.isSuccessful)
                             {
-                                Console.WriteLine("Please Enter This Password to Finish Authentication");
-                                Console.WriteLine(userManager.SendOTP());
-                                var otp = Console.ReadLine();
-                                var result2 = userManager.ReceiveOTP(otp);
-                                Console.WriteLine(result2.errorMessage);
+                                String otp = Console.ReadLine();
+                                var otpResult = userManager.VerifyOTP(otp);
+                                Console.WriteLine(otpResult.errorMessage);
+                                Boolean tryAgain = true;
+                                string response;
+                                while (tryAgain && !otpResult.isSuccessful)
+                                {
+                                    Console.WriteLine("Please Try Again");
+                                    otp = Console.ReadLine();
+                                    otpResult = userManager.VerifyOTP(otp);
+                                    Console.WriteLine(otpResult.errorMessage);
+                                    if (!otpResult.isSuccessful)
+                                    {
+                                        Console.WriteLine("Would you like to try again (y/n)");
+                                        response = Console.ReadLine();
+                                        if (response.Equals("y"))
+                                        {
+                                            tryAgain = true;
+                                        }
+                                        else
+                                        {
+                                            tryAgain = false;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine(result.errorMessage);
                             }
                         }
                         else
@@ -81,9 +107,14 @@ class Program
                         break;
                     case 3:
                         Menu.clearMenu();
+                        var result3 = userManager.LogOut();
+                        Console.WriteLine(result3.errorMessage);
+                        break;
+                    case 4:
+                        Menu.clearMenu();
                         var pinLogger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-                        var logResult = pinLogger.Log("INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (4, 'Info','SYSTEM','" + 
-                            DateTime.UtcNow.ToString() + "', 'CreatePin', 'View','This is a automated test for finding if it took longer than 5 seconds')");
+                        var log = new Log(4, "Info", "SYSTEM", "CreatePin", "View", "This is a automated test for finding if it took longer than 5 seconds");
+                        var logResult = pinLogger.Log(log);
                         if (logResult.Result.isSuccessful)
                         {
                             Console.WriteLine("Pin has been created");

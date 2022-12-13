@@ -12,14 +12,16 @@ namespace TeamBigData.Utification.AccountServices
     public class UserAccount
     {
         private String _username;
+        private String _password;
         private String _otp;
         private DateTime _otpCreated;
         private bool _verified;
 
-        public UserAccount(String username)
+        public UserAccount(String username, String password)
         {
             _verified = false;
             _username = username;
+            _password = password;
             _otpCreated = DateTime.Now;
             var hash = SecureHasher.HashString(_otpCreated.Ticks, username);
             _otp = hash.Substring(0, 16).Replace("-", "").Replace(" ", "");
@@ -28,6 +30,11 @@ namespace TeamBigData.Utification.AccountServices
         public String GetUsername()
         {
             return _username;
+        }
+
+        public String GetPassword()
+        {
+            return _password;
         }
 
         public String GetOTP()
@@ -40,8 +47,8 @@ namespace TeamBigData.Utification.AccountServices
             return _otpCreated;
         }
 
-        public bool IsVerified() 
-        { 
+        public bool IsVerified()
+        {
             return _verified;
         }
 
