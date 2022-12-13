@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using TeamBigData.Utification.SQLDataAccess;
+﻿using System.Text.RegularExpressions;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Security;
+using TeamBigData.Utification.SQLDataAccess;
 
 namespace TeamBigData.Utification.AccountServices
 {
@@ -18,7 +13,7 @@ namespace TeamBigData.Utification.AccountServices
         {
             _dbo = dbo;
         }
-        
+
         public static bool IsValidPassword(String password)
         {
             Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!\s-]*$");
@@ -55,16 +50,16 @@ namespace TeamBigData.Utification.AccountServices
                 var user = new UserAccount(username, digest);
                 result = await _dbo.InsertUser(user).ConfigureAwait(false);
             }
-            else if(!IsValidEmail(email))
+            else if (!IsValidEmail(email))
             {
                 result.errorMessage = "Invalid email provided. Retry again or contact system administrator";
             }
-            else if(!IsValidPassword(password))
+            else if (!IsValidPassword(password))
             {
                 result.errorMessage = "Invalid passphrase provided. Retry again or contact system administrator";
             }
 
-            if(!result.isSuccessful)
+            if (!result.isSuccessful)
             {
                 if (result.errorMessage.Contains("Violation of PRIMARY KEY"))
                 {

@@ -17,21 +17,6 @@ namespace TeamBigData.Utification.AuthenticationTests
     public class AuthenticationIntegrationTests
     {
         [TestMethod]
-        public void CanCheckDataStore()
-        {
-            //Arrange
-            var connection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var dbo = new SqlDAO(connection);
-            var expected = 1;
-            //Act
-            var result = dbo.CountAll("dbo.Users", "username");
-            Console.Write(result.Result.errorMessage);
-            //Assert
-            Assert.IsTrue(result.Result.isSuccessful);
-            Assert.AreEqual((int)result.Result.data, expected);
-        }
-
-        [TestMethod]
         public void CanEncryptAndDecrypt()
         {
             //Arrange
@@ -51,17 +36,14 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "daviddg@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            StringWriter writer = new StringWriter();
-            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
-            var message = writer.ToString();
-            manager.VerifyOTP(message);
+            var message = manager.SendOTP();
+            var result2 = manager.VerifyOTP(message);
             //Assert
-            Assert.AreEqual(message, "hello");
             Assert.IsTrue(result.isSuccessful);
             Assert.IsTrue(manager.IsAuthenticated());
         }
@@ -74,19 +56,37 @@ namespace TeamBigData.Utification.AuthenticationTests
             var expected = "Error You are already Logged In";
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "daviddg@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            StringWriter writer = new StringWriter();
-            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
-            var message = writer.ToString();
-            manager.VerifyOTP(message);
+            var message = manager.SendOTP();
+            var result2 = manager.VerifyOTP(message);
             //Verify User is truly authenticated
             Assert.IsTrue(manager.IsAuthenticated());
 
             result = manager.VerifyUser(username, digest, encryptor);
+            //Assert
+            Assert.IsFalse(result.isSuccessful);
+            Assert.AreEqual(result.errorMessage, expected);
+        }
+
+        [TestMethod]
+        public void FailsWhenInvalidCredentials()
+        {
+            //Arrange
+            var result = new Response();
+            var expected = "Invalid username or password provided. Retry again or contact system administrator";
+            var manager = new Manager();
+            var encryptor = new Encryptor();
+            var username = "testUser@yahoo.com";
+            var password = "wrongPassword";
+            //Act
+            var digest = encryptor.encryptString(password);
+            result = manager.VerifyUser(username, digest, encryptor);
+            var message = manager.SendOTP();
+            var result2 = manager.VerifyOTP(message);
             //Assert
             Assert.IsFalse(result.isSuccessful);
             Assert.AreEqual(result.errorMessage, expected);
@@ -99,15 +99,13 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "daviddg@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            StringWriter writer = new StringWriter();
-            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
-            var message = writer.ToString();
-            manager.VerifyOTP(message);
+            var message = manager.SendOTP();
+            var result2 = manager.VerifyOTP(message);
             result = manager.LogOut();
             //Assert
             Assert.IsTrue(result.isSuccessful);
@@ -134,40 +132,15 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "daviddg@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            StringWriter writer = new StringWriter();
-            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
-            var message = writer.ToString();
-            manager.VerifyOTP(message);
+            var result2 = manager.VerifyOTP("wrongOTP");
             //Assert
-            Assert.IsFalse(result.isSuccessful);
+            Assert.IsFalse(result2.isSuccessful);
             Assert.IsFalse(manager.IsAuthenticated());
-        }
-
-        [TestMethod]
-        public void FailsWhenInvalidCredentials()
-        {
-            //Arrange
-            var result = new Response();
-            var expected = "Invalid Username or Password";
-            var manager = new Manager();
-            var encryptor = new Encryptor();
-            var username = "david@yahoo.com";
-            var password = "password";
-            //Act
-            var digest = encryptor.encryptString(password);
-            StringWriter writer = new StringWriter();
-            Console.SetOut(writer);
-            result = manager.VerifyUser(username, digest, encryptor);
-            var message = writer.ToString();
-            manager.VerifyOTP(message);
-            //Assert
-            Assert.IsFalse(result.isSuccessful);
-            Assert.AreEqual(result.errorMessage, expected);
         }
 
         [TestMethod]
@@ -177,20 +150,18 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "daviddg@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             var expected = "OTP Expired, Please Authenticate Again";
             //Act
             var digest = encryptor.encryptString(password);
-            StringWriter writer = new StringWriter();
-            Console.SetOut(writer);
             result = manager.VerifyUser(username, digest, encryptor);
-            var message = writer.ToString();
-            manager.VerifyOTP(message);
-            //Thread.Sleep(120000);//Wait 2 Minutes
+            var message = manager.SendOTP();
+            Thread.Sleep(120000);//Wait 2 Minutes
+            var result2 = manager.VerifyOTP(message);
             //Assert
-            Assert.AreEqual(expected, result.errorMessage);
-            Assert.IsFalse(result.isSuccessful);
+            Assert.AreEqual(expected, result2.errorMessage);
+            Assert.IsFalse(result2.isSuccessful);
             Assert.IsFalse(manager.IsAuthenticated());
         }
     }

@@ -69,6 +69,8 @@ class Program
                             var result = userManager.VerifyUser(loginUsername, encryptedPassword, encryptor);
                             if(result.isSuccessful)
                             {
+                                Console.WriteLine("Please Enter the OTP to finish Authentication");
+                                Console.Write(userManager.SendOTP());
                                 String otp = Console.ReadLine();
                                 var otpResult = userManager.VerifyOTP(otp);
                                 Console.WriteLine(otpResult.errorMessage);

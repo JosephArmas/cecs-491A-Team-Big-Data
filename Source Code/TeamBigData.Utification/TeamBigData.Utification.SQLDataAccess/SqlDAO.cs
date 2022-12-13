@@ -136,10 +136,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
-                    if (rows > 0)
-                    {
-                        result.isSuccessful = true;
-                    }
+                    result.isSuccessful = true;
                 }
                 catch (SqlException s)
                 {
@@ -154,10 +151,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
-                    if (rows > 0)
-                    {
-                        result.isSuccessful = true;
-                    }
+                    result.isSuccessful = true;
                 }
                 catch (SqlException s)
                 {

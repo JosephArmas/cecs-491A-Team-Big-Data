@@ -85,8 +85,6 @@ namespace TeamBigData.Utification.ManagerLayer
                     var hash = SecureHasher.HashString(DateTime.Now.Ticks, username);
                     _otp = hash.Substring(0, 16).Replace("-", "");
                     _otpCreated = DateTime.Now;
-                    Console.WriteLine("Please enter the OTP to finish Authentication");
-                    Console.WriteLine(_otp);
                     log = new Log(2, "Info", username, "Authentication", "Data", "Successfull Logged In");
                     logger.Log(log);
                     result.isSuccessful = true;
@@ -136,13 +134,24 @@ namespace TeamBigData.Utification.ManagerLayer
             return result;
         }
 
+        public String SendOTP()
+        {
+            return _otp;
+        }
+
         public Response VerifyOTP(String enteredOTP)
         {
             var result = new Response();
+            if(_otp == null)
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "Please Authenticate before entering an otp";
+                return result;
+            }
             var currentTime = DateTime.Now;
             if (enteredOTP.Equals(_otp))
             {
-                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //1200000000 ticks in 2 minutes
+                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //12000000000 ticks in 2 minutes
                 {
                     result.isSuccessful = true;
                     result.errorMessage = "You have successfully logged in";
@@ -152,7 +161,7 @@ namespace TeamBigData.Utification.ManagerLayer
                 else
                 {
                     result.isSuccessful = false;
-                    result.errorMessage = "You did not enter in the OTP within 2 minutes, Please try again";
+                    result.errorMessage = "OTP Expired, Please Authenticate Again";
                 }
             }
             else
