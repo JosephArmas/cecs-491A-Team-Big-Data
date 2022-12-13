@@ -85,6 +85,7 @@ namespace TeamBigData.Utification.ManagerLayer
                     var hash = SecureHasher.HashString(DateTime.Now.Ticks, username);
                     _otp = hash.Substring(0, 16).Replace("-", "");
                     _otpCreated = DateTime.Now;
+                    _otpVerified = false;
                     log = new Log(2, "Info", username, "Authentication", "Data", "Successfull Logged In");
                     logger.Log(log);
                     result.isSuccessful = true;

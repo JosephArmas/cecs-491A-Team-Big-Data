@@ -33,7 +33,6 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             var result = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
-            testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
             int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
             //Assert
             Assert.AreEqual(expected, after - before);
@@ -49,10 +48,10 @@ namespace TeamBigData.Utification.RegistrationTests
             AccountRegisterer testRegister = new AccountRegisterer(testDBO);
             var manager = new Manager();
             //Act
+            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var actual = manager.InsertUser("testUser2@yahoo.com", encryptedPassword, encryptor);
-            testDBO.DeleteUser(new UserProfile("testUser2@yahoo.com"));
+            var actual = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
             //Assert
             Assert.IsTrue(actual.isSuccessful);
         }
@@ -71,7 +70,6 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptedPassword = encryptor.encryptString("password");
             manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
             var actual = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
-            testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
             //Assert
             Assert.IsTrue(actual.errorMessage.Contains("Email"));
         }
@@ -93,7 +91,6 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptedPassword = encryptor.encryptString("password");
             var result = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
             stopwatch.Stop();
-            testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
             var actual = stopwatch.ElapsedMilliseconds;
 
             //Assert

@@ -36,9 +36,13 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "authTestUser@yahoo.com";
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var enabler = new AccountDisabler(userDao);
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
+            enabler.EnableAccount("testUser@yahoo.com");
             var digest = encryptor.encryptString(password);
             result = manager.VerifyUser(username, digest, encryptor);
             var message = manager.SendOTP();
@@ -52,13 +56,17 @@ namespace TeamBigData.Utification.AuthenticationTests
         public void CantLoginWhileAlreadyLoggedIn()
         {
             //Arrange
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var enabler = new AccountDisabler(userDao);
             var result = new Response();
             var expected = "Error You are already Logged In";
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "authTestUser@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
+            enabler.EnableAccount("testUser@yahoo.com");
             var digest = encryptor.encryptString(password);
             result = manager.VerifyUser(username, digest, encryptor);
             var message = manager.SendOTP();
@@ -77,14 +85,22 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var enabler = new AccountDisabler(userDao);
             var expected = "Invalid username or password provided. Retry again or contact system administrator";
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "authTestUser@yahoo.com";
-            var password = "wrongPassword";
+            var username = "testUser@yahoo.com";
+            var password = "password";
+            var password2 = "wrongPassword";
             //Act
+            enabler.EnableAccount("testUser@yahoo.com");
             var digest = encryptor.encryptString(password);
-            result = manager.VerifyUser(username, digest, encryptor);
+            manager.VerifyUser(username, digest, encryptor);
+            manager.LogOut();
+            var digest2 = encryptor.encryptString(password2);
+            result = manager.VerifyUser(username, digest2, encryptor);
             var message = manager.SendOTP();
             var result2 = manager.VerifyOTP(message);
             //Assert
@@ -96,12 +112,16 @@ namespace TeamBigData.Utification.AuthenticationTests
         public void SuccessfullyLogout()
         {
             //Arrange
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var enabler = new AccountDisabler(userDao);
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "authTestUser@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
+            enabler.EnableAccount("testUser@yahoo.com");
             var digest = encryptor.encryptString(password);
             result = manager.VerifyUser(username, digest, encryptor);
             var message = manager.SendOTP();
@@ -132,7 +152,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "authTestUser@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
@@ -150,7 +170,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "authTestUser@yahoo.com";
+            var username = "testUser@yahoo.com";
             var password = "password";
             var expected = "OTP Expired, Please Authenticate Again";
             //Act
@@ -163,6 +183,48 @@ namespace TeamBigData.Utification.AuthenticationTests
             Assert.AreEqual(expected, result2.errorMessage);
             Assert.IsFalse(result2.isSuccessful);
             Assert.IsFalse(manager.IsAuthenticated());
+        }
+
+        [TestMethod]
+        public void AccountDisabledAfter3FailedAttempts()
+        {
+            //Arrange
+            var result = new Response();
+            var manager = new Manager();
+            var encryptor = new Encryptor();
+            var username = "testUser@yahoo.com";
+            var password = "wrongPassword";
+            var expected = "You have failed to login 3 times in 24 hours, your account will now be disabled";
+            //Act
+            var digest = encryptor.encryptString(password);
+            manager.VerifyUser(username, digest, encryptor);
+            manager.VerifyUser(username, digest, encryptor);
+            result = manager.VerifyUser(username, digest, encryptor);
+            //Assert
+            Assert.AreEqual(expected, result.errorMessage);
+            Assert.IsFalse(result.isSuccessful);
+            Assert.IsFalse(manager.IsAuthenticated());
+        }
+
+        [TestMethod]
+        public void AccountEnablingWorks()
+        {
+            //Arrange
+            var manager = new Manager();
+            var encryptor = new Encryptor();
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var enabler = new AccountDisabler(userDao);
+            var username = "testUser@yahoo.com";
+            var password = "password";
+            //Act
+            var result = enabler.EnableAccount("testUser@yahoo.com").Result;
+            var digest = encryptor.encryptString(password);
+            var result2 = manager.VerifyUser(username, digest, encryptor);
+            //Assert
+            Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue(result2.isSuccessful);
+
         }
     }
 }
