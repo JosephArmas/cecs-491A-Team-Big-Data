@@ -36,7 +36,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "authTestUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
@@ -56,7 +56,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var expected = "Error You are already Logged In";
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "authTestUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
@@ -80,7 +80,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var expected = "Invalid username or password provided. Retry again or contact system administrator";
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "authTestUser@yahoo.com";
             var password = "wrongPassword";
             //Act
             var digest = encryptor.encryptString(password);
@@ -99,7 +99,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "authTestUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
@@ -132,7 +132,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "authTestUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
@@ -150,7 +150,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var manager = new Manager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "authTestUser@yahoo.com";
             var password = "password";
             var expected = "OTP Expired, Please Authenticate Again";
             //Act

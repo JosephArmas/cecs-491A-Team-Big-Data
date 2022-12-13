@@ -1,6 +1,6 @@
 CREATE TABLE dbo.UserProfiles
 (
-username varchar(20),
+username varchar(50),
 firstname varchar(20),
 lastname varchar(50),
 email varchar(50),
