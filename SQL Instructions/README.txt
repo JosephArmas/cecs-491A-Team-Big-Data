@@ -1,4 +1,7 @@
-STEP 1. Create 2 SQL Databases
+Instructions for Microsoft SQL Server Manager Studio
+
+STEP 1. Create 2 SQL Databases	
+	Right Click Databases folder and create new database
 	First is named TeamBigData.Utification.Logs
 	Second is named TeamBigData.Utification.Users
 Step 2. Creaing an AppUser Login
