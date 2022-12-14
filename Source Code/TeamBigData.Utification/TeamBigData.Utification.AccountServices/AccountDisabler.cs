@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TeamBigData.Utification.SQLDataAccess;
-using TeamBigData.Utification.ErrorResponse;
-using Azure.Identity;
+﻿using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
 {
@@ -24,7 +18,7 @@ namespace TeamBigData.Utification.AccountServices
             result.isSuccessful = false;
             var updateSql = "Update dbo.Users Set \"disabled\" = 1 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
-            if((int)result.data == 1)
+            if ((int)result.data == 1)
             {
                 result.isSuccessful = true;
                 result.errorMessage = username + " has been Successfully disabled";
@@ -32,11 +26,11 @@ namespace TeamBigData.Utification.AccountServices
             else
             {
                 result.isSuccessful = false;
-                if((int)result.data > 1)
+                if ((int)result.data > 1)
                 {
                     result.errorMessage = "Oops multiple accounts disabled";
                 }
-                else if((int)result.data == 0)
+                else if ((int)result.data == 0)
                 {
                     result.errorMessage = "Account doesnt exist";
                 }

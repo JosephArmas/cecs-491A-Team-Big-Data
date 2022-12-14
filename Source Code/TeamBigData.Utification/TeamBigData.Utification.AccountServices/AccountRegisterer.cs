@@ -1,15 +1,21 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Security;
-using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.Models;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
 {
     public class AccountRegisterer
     {
-        private readonly IDBUserInserter _dbo;
+        private readonly IDBInserter _dbo;
 
-        public AccountRegisterer(IDBUserInserter dbo)
+        public AccountRegisterer(IDBInserter dbo)
         {
             _dbo = dbo;
         }

@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TeamBigData.Utification.Models
+﻿namespace TeamBigData.Utification.Models
 {
+    /// <summary>
+    /// Logs format
+    /// </summary>
     public class Log
     {
-        private int _correlationID;
-        private string _logLevel;
-        private string _user;
-        private string _event;
-        private string _category;
-        private string _message;
+        public int _correlationID { get; private set; }
+        public string _logLevel { get; private set; }
+        public string _user { get; private set; }
+        public string _event { get; private set; }
+        public string _category { get; private set; }
+        public string _message { get; private set; }
 
         public Log(int correlationID, string logLevel, string user, string eventName, string category, string message)
         {
@@ -22,66 +19,6 @@ namespace TeamBigData.Utification.Models
             _user = user;
             _event = eventName;
             _category = category;
-            _message = message;
-        }
-
-        public int GetCorrelationID()
-        {
-            return _correlationID;
-        }
-
-        public string GetLogLevel()
-        {
-            return _logLevel;
-        }
-
-        public string GetUser()
-        {
-            return _user;
-        }
-
-        public string GetEvent()
-        {
-            return _event;
-        }
-
-        public string GetCategory()
-        {
-            return _category;
-        }
-
-        public string GetMessage()
-        {
-            return _message;
-        }
-
-        public void SetCorrelationID(int correlationID)
-        {
-            _correlationID = correlationID;
-        }
-
-        public void SetLogLevel(string logLevel)
-        {
-            _logLevel = logLevel;
-        }
-
-        public void SetUser(string user)
-        {
-            _user = user;
-        }
-
-        public void SetEvent(string eventName)
-        {
-            _event = eventName;
-        }
-
-        public void SetCategory(string category)
-        {
-            _category = category;
-        }
-
-        public void SetMessage(string message)
-        {
             _message = message;
         }
     }

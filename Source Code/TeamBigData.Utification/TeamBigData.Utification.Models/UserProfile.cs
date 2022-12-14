@@ -1,98 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using TeamBigData.Utification.Models.Abstraction;
 
-namespace TeamBigData.Utification.AccountServices
+namespace TeamBigData.Utification.Models
 {
-    public class UserProfile
+    public class UserProfile : IMyIPrincipal
     {
-        private String _username;
-        private String _firstName;
-        private String _lastName;
-        private String _email;
-        private String _address;
-        private String _birthday;
+        public String _username { get; private set; }
+        public String _firstName { get; private set; }
+        public String _lastName { get; private set; }
+        public int _age { get; private set; }
+        public String _email { get; private set; }
+        public String _address { get; private set; }
+        public DateTime _birthday { get; private set; }
+        public IIdentity? Identity { get; private set; }
 
+        bool IPrincipal.IsInRole(string role)
+        {
+            if (this.Identity.AuthenticationType != role)
+            {
+                return false;
+            }
+            return true;
+        }
         public UserProfile(string username)
         {
             _username = username;
             _firstName = "";
             _lastName = "";
+            _age = 0;
             _email = username;
             _address = "";
-            _birthday = "";
+            _birthday = new DateTime();
+            Identity = new GenericIdentity(username, "Anonymous User");
         }
 
-        public UserProfile(string username, string firstName, string lastName, string email, string address, string birthday)
+        public UserProfile(string username, string role)
+        {
+            _username = username;
+            _firstName = "";
+            _lastName = "";
+            _age = 0;
+            _email = username;
+            _address = "";
+            _birthday = new DateTime();
+            Identity = new GenericIdentity(username, role);
+        }
+
+        public UserProfile(string username, string firstName, string lastName, int age, string email, string address, DateTime birthday, GenericIdentity identity)
         {
             _username = username;
             _firstName = firstName;
             _lastName = lastName;
+            _age = age;
             _email = email;
             _address = address;
             _birthday = birthday;
+            Identity = identity;
         }
-
-        public String GetUsername()
+        public UserProfile(GenericIdentity identity)
         {
-            return _username;
+            this.Identity = identity;
         }
-
-        public String GetFirstName()
+        public string ToString()
         {
-            return _firstName;
-        }
-
-        public String GetLastName()
-        {
-            return _lastName;
-        }
-
-        public String GetEmail()
-        {
-            return _email;
-        }
-
-        public String GetAddress()
-        {
-            return _address;
-        }
-
-        public String GetBirthday()
-        {
-            return _birthday;
-        }
-
-        public void SetUsername(String username)
-        {
-            _username = username;
-        }
-
-        public void SetFirstName(String firstName)
-        {
-            _firstName = firstName;
-        }
-
-        public void SetLastName(String lastName)
-        {
-            _lastName = lastName;
-        }
-
-        public void SetEmail(String email)
-        {
-            _email = email;
-        }
-
-        public void SetAddress(String address)
-        {
-            _address = address;
-        }
-
-        public void SetBirthday(String birthday)
-        {
-            _birthday = birthday;
+            return ",   Username: " + _username + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
         }
     }
 }

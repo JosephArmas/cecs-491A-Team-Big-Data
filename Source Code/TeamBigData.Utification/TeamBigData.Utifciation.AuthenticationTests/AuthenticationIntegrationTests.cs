@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.AccountServices;
-using TeamBigData.Utification.ManagerLayer;
-using TeamBigData.Utification.Security;
+using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 
@@ -34,10 +35,10 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
+            IDAO userDao = new SqlDAO(connectionString);
             var enabler = new AccountDisabler(userDao);
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -61,7 +62,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var enabler = new AccountDisabler(userDao);
             var result = new Response();
             var expected = "Error You are already Logged In";
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -89,7 +90,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var userDao = new SqlDAO(connectionString);
             var enabler = new AccountDisabler(userDao);
             var expected = "Invalid username or password provided. Retry again or contact system administrator";
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -116,7 +117,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var userDao = new SqlDAO(connectionString);
             var enabler = new AccountDisabler(userDao);
             var result = new Response();
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -136,7 +137,7 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var expected = "Error you are not logged in";
             //Act
             result = manager.LogOut();
@@ -150,7 +151,7 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -168,7 +169,7 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -190,7 +191,7 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "wrongPassword";
@@ -210,10 +211,10 @@ namespace TeamBigData.Utification.AuthenticationTests
         public void AccountEnablingWorks()
         {
             //Arrange
-            var manager = new Manager();
+            var manager = new SecurityManager();
             var encryptor = new Encryptor();
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
+            IDAO userDao = new SqlDAO(connectionString);
             var enabler = new AccountDisabler(userDao);
             var username = "testUser@yahoo.com";
             var password = "password";
@@ -224,7 +225,6 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Assert
             Assert.IsTrue(result.isSuccessful);
             Assert.IsTrue(result2.isSuccessful);
-
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Models;
 using System.Diagnostics;

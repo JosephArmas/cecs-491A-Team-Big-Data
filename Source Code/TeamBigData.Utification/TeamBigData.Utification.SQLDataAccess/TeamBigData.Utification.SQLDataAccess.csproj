@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Response\TeamBigData.Utification.ErrorResponse.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
   </ItemGroup>
 
 </Project>
