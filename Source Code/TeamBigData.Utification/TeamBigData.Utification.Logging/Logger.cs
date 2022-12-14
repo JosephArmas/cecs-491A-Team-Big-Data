@@ -1,9 +1,10 @@
-﻿using TeamBigData.Utification.SQLDataAccess;
-using TeamBigData.Utification.ErrorResponse;
+﻿using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Logging.Abstraction;
+using TeamBigData.Utification.Models;
+using TeamBigData.Utitification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.Logging
 {
-
     public class Logger : ILogger
     {
         private readonly IDAO _dao;
@@ -11,42 +12,35 @@ namespace TeamBigData.Utification.Logging
         {
             _dao = dao;
         }
-        public async Task<Response> Log(String message)
+        public async Task<Response> Log(Log log)
         {
             Response result = new Response();
             //Validation
-            if (message == null)
-            {
-                result.isSuccessful = false;
-                result.errorMessage = "No object was given to log";
-                return result;
-            }
-            string msg = message;
-            if (msg.Contains("SELECT") || msg.Contains("UPDATE") || msg.Contains("DELETE"))
-            {
-                result.errorMessage = "Error: INSERT is the only valid request";
-                result.isSuccessful = false;
-                return result;
-            }
-            if (!(msg.Contains("Info") || msg.Contains("Warning") || msg.Contains("Debug")
-                || msg.Contains("Error")))
+            if (!(log._logLevel.Equals("Info") || log._logLevel.Equals("Warning") || log._logLevel.Equals("Debug")
+                || log._logLevel.Equals("Error")))
             {
                 result.errorMessage = "Error: The log did not contain a proper log level";
                 result.isSuccessful = false;
                 return result;
             }
-            if (!(msg.Contains("View") || msg.Contains("Business")
-                    || msg.Contains("Server") || msg.Contains("Data") || msg.Contains("Data Store")))
+            if (!(log._category.Equals("View") || log._category.Equals("Business")
+                    || log._category.Equals("Server") || log._category.Equals("Data") || log._category.Equals("Data Store")))
             {
                 result.errorMessage = "Error: The log did not contain a proper category";
                 result.isSuccessful = false;
                 return result;
             }
-            Response logReturn = await _dao.Execute(message).ConfigureAwait(false);
+            String insertSql = "Insert into dbo.Logs (CorrelationID, LogLevel, \"User\", Event, Category, Message) values (" + log._correlationID + ", '" + log._logLevel +
+                "', '" + log._user + "', '" + log._event + "', '" + log._category + "', '" + log._message + "');";
+            Response logReturn = await _dao.Execute(insertSql).ConfigureAwait(false);
             result.isSuccessful = false;
             if (logReturn.isSuccessful)
             {
                 result.isSuccessful = true;
+            }
+            else
+            {
+                result.errorMessage = logReturn.errorMessage;
             }
 
             return result;
