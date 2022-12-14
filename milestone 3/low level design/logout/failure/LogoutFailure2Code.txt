@@ -1,8 +1,8 @@
-title Logout Success
+title Logout Failure: Timeout
 
 participant User
 participant Program
-
+participant SecurityManager
 participant RegularView
 participant Response
 participant UserProfile
@@ -11,6 +11,8 @@ activate User
 box over User: User device is an authenticated user\nand logged in
 User->>Program: User wants to logout
 activate Program
+Program->>SecurityManager: StartStopwatch(expected:int):bool
+activate SecurityManager
 Program->>UserProfile: if(((IPrincipal)userProfile).IsInRole("Regular User")):bool;
 UserProfile-->>Program: Return True
 Program->>RegularView: menu = new RegularView():IView;
@@ -32,8 +34,10 @@ activate UserProfile
 UserProfile->>UserProfile:Public UserProfile():UserProfile
 UserProfile-->>RegularView: Return UserProfile instance
 deactivate UserProfile
-RegularView-->User: Console.WriteLine("Logout successfully");
+RegularView-->User: Console.WriteLine('' '');
 RegularView-->Program:Return response;
 deactivate RegularView
 Program->>Program:if(response.isSuccessful && response.errormessage == '' '')
-Program->>User:User is sent to homepage\nas an anonymous user
+SecurityManager->>SecurityManager: if(Stopwatch>expected){\nreturn false\n}
+SecurityManager-->>Program:Return false;
+Program->>User:User is not sent to homepage\n and is an anonymous user

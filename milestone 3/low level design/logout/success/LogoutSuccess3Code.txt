@@ -1,0 +1,38 @@
+title Logout Success
+
+participant User
+participant Program
+participant AdminView
+participant Response
+participant UserProfile
+
+activate User
+box over User: User device is an authenticated user\nand logged in
+User->>Program: User wants to logout
+activate Program
+Program->>UserProfile: if(((IPrincipal)userProfile).IsInRole("Admin User")):bool;
+UserProfile-->>Program: Return True
+Program->>AdminView: menu = new AdminView():IView;
+activate AdminView
+AdminView->>AdminView: public AdminView();
+AdminView-->>Program: Return AdminView instance
+deactivate AdminView
+Program->>AdminView: menu.DisplayMenu(ref userAccount:UserAccount, ref userProfile:UserProfile):Response
+activate AdminView
+AdminView->>Response:response = new Response():Response;
+activate Response
+Response->>Response:public Response() {\n     isSuccessful = false;\n     errorMessage = "\";\n     data = 0;\n}
+Response-->>AdminView: Return Response Instance
+deactivate Response
+AdminView-->>User: Console.WriteLine("Welcome Regular User");\nConsole.WriteLine("---------MENU---------");\nConsole.WriteLine("[1] LogOut");\nConsole.WriteLine("[0] exit");\nConsole.WriteLine("Enter 0-1");
+User->>AdminView: User enters [1] Logout
+AdminView->>UserProfile: userProfile = new UserProfile(""):UserProfile
+activate UserProfile
+UserProfile->>UserProfile:Public UserProfile():UserProfile
+UserProfile-->>AdminView: Return UserProfile instance
+deactivate UserProfile
+AdminView-->User: Console.WriteLine("Logout successfully");
+AdminView-->Program:Return response;
+deactivate AdminView
+Program->>Program:if(response.isSuccessful && response.errormessage == '' '')
+Program->>User:User is sent to homepage\nas an anonymous user
