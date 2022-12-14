@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 
 namespace TeamBigData.Utification.LogoutTests

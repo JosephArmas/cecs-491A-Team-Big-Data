@@ -37,19 +37,19 @@ namespace TeamBigData.Utification.AuthorizationTests
                 pass = true;
             else
                 pass = false;
-            Console.WriteLine("Anonymous User wants to see Anonymouse View: " + pass);
+            Console.WriteLine("Anonymous User wants to see Anonymous View: " + pass);
             Assert.IsTrue(pass);
             if (!logResultAdmin.isSuccessful && logResultAdmin.errorMessage == "")
                 pass = true;
             else
                 pass = false;
-            Console.WriteLine("Admin User wants to see Anonymouse View: " + pass);
+            Console.WriteLine("Admin User wants to see Anonymous View: " + pass);
             Assert.IsFalse(pass);
             if (!logResultRegular.isSuccessful && logResultRegular.errorMessage == "")
                 pass = true;
             else
                 pass = false;
-            Console.WriteLine("Regular User wants to see Anonymouse View: " + pass);
+            Console.WriteLine("Regular User wants to see Anonymous View: " + pass);
             Assert.IsFalse(pass);
         }
 
@@ -71,9 +71,9 @@ namespace TeamBigData.Utification.AuthorizationTests
             Console.SetIn(new StringReader("1"));
             var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
             //Assert
-            Console.WriteLine("Anonymous User wants to see Anonymouse View: " + logResultAnonymous);
-            Console.WriteLine("Admin User wants to see Anonymouse View: " + logResultAdmin);
-            Console.WriteLine("Regular User wants to see Anonymouse View: " + logResultRegular);
+            Console.WriteLine("Anonymous User wants to see Anonymous View: " + logResultAnonymous);
+            Console.WriteLine("Admin User wants to see Anonymous View: " + logResultAdmin);
+            Console.WriteLine("Regular User wants to see Anonymous View: " + logResultRegular);
             Assert.IsTrue(logResultAdmin.isSuccessful);
             Assert.IsFalse(logResultAnonymous.isSuccessful);
             Assert.IsFalse(logResultRegular.isSuccessful);
@@ -96,9 +96,9 @@ namespace TeamBigData.Utification.AuthorizationTests
             Console.SetIn(new StringReader("1"));
             var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
             //Assert
-            Console.WriteLine("Anonymous User wants to see Anonymouse View: " + logResultAnonymous);
-            Console.WriteLine("Admin User wants to see Anonymouse View: " + logResultAdmin);
-            Console.WriteLine("Regular User wants to see Anonymouse View: " + logResultRegular);
+            Console.WriteLine("Anonymous User wants to see Anonymous View: " + logResultAnonymous);
+            Console.WriteLine("Admin User wants to see Anonymous View: " + logResultAdmin);
+            Console.WriteLine("Regular User wants to see Anonymous View: " + logResultRegular);
             Assert.IsTrue(logResultRegular.isSuccessful);
             Assert.IsFalse(logResultAdmin.isSuccessful);
             Assert.IsFalse(logResultAnonymous.isSuccessful);

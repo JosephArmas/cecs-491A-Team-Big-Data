@@ -75,11 +75,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             Assert.IsFalse(result2.isSuccessful);
             Assert.IsFalse(securityManager.IsAuthenticated());
         }
-        /*
-         * Basically what you want to do is log in to an account that is already on the database. 
-         * That account is disabled so the code for checking for disabled will likely be somewhere in the business layer.
-         * However, since we are not carrying over the disabled variable, we have to do this in SQLDAO likely. Then return the error from there
-         */
+
         [TestMethod]
         public void CantLoginWhenDisabled() 
         {
@@ -95,13 +91,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var digest = encryptor.encryptString(password);
             result = securityManager.VerifyUser(username, digest, encryptor).Result;
-            var message = securityManager.SendOTP();
-            var result2 = securityManager.VerifyOTP(message);
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert
-            Assert.IsTrue(result.isSuccessful);
-            Assert.IsTrue(securityManager.IsAuthenticated());
+            Assert.IsTrue(result.errorMessage == "Error: Account disabled. Perform account recovery or contact system admin");
+            Assert.IsFalse(result.isSuccessful);
         }
 
         [TestMethod]
@@ -119,13 +113,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var digest = encryptor.encryptString(password);
             result = securityManager.VerifyUser(username, digest, encryptor).Result;
-            var message = securityManager.SendOTP();
-            var result2 = securityManager.VerifyOTP(message);
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert
-            Assert.IsTrue(result.isSuccessful);
-            Assert.IsTrue(securityManager.IsAuthenticated());
+            Assert.IsTrue(result.errorMessage == "Error: Account disabled. Perform account recovery or contact system admin");
+            Assert.IsFalse(result.isSuccessful);
         }
     }
 }

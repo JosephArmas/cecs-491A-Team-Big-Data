@@ -35,12 +35,10 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
-                    Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();
                     if (!response.isSuccessful)
                     {
-                        Console.Clear();
                         Console.WriteLine(response.errorMessage);
                         Console.WriteLine("Press Enter to exit...");
                         Console.ReadLine();

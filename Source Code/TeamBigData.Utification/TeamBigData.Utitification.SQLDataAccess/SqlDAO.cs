@@ -192,7 +192,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         else
                         {
                             result.isSuccessful = false;
-                            result.errorMessage = "Error: Your account is currently disabled, contact an admin to re-enable it";
+                            result.errorMessage = "Error: Account disabled. Perform account recovery or contact system admin";
                         }
                     }
                     else
