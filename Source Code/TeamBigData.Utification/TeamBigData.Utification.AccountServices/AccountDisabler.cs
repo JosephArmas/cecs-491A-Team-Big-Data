@@ -1,5 +1,5 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utitification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
 {

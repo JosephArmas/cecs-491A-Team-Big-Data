@@ -1,9 +1,9 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
-using Microsoft.Identity.Client;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
-using System.Data;
-using System.Diagnostics;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.Logging;
+using TeamBigData.Utification.Models;
+using System.Diagnostics;
 
 namespace TeamBigData.Utification.LoggingTest
 {
@@ -14,12 +14,12 @@ namespace TeamBigData.Utification.LoggingTest
         public void DAO_LogMustSaveToDataStore() //If updating the data store make sure to assert each individual column for maximum verification
         {
             //Arrange
-            var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (1, 'Info','SYSTEM','" + DateTime.UtcNow.ToString() + "', 'DAO_LogMustSaveToDataStore', 'Data','This is a automated test')";
+            var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var log = new Log(1, "Info", "SYSTEM", "DAO_LogMustSaveToDataStore", "Data", "This is a automated test");
             //Act
-            var rows = sysUnderTest.Execute(insertSql);
+            var rows = sysUnderTest.Log(log).Result;
             //Assert
-            Assert.IsTrue(rows.Result.isSuccessful);
+            Assert.IsTrue(rows.isSuccessful);
         }
         [TestMethod]
         public void DAO_LogMustBeImmutable()
@@ -29,36 +29,28 @@ namespace TeamBigData.Utification.LoggingTest
             var updateSql = "UPDATE dbo.Logs SET Message = 'Updated' WHERE LogID = 1";
             bool check = false; //A check value used to determine if the Command successfully recieves an error.
             //Act
-            try
-            {
-                var rows = sysUnderTest.Execute(updateSql);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("A " + ex.GetType().ToString() + " has occured."); // Catches the exception to the ability to update on this user account. A error is a positive result
-                check = true;
-            }
+            var rows = sysUnderTest.Execute(updateSql).Result;
             //Assert
-            Assert.IsTrue(check);
+            Assert.IsFalse(rows.isSuccessful);
         }
         [TestMethod]
         public void DAO_MustLogWithin5Secs()
         {
             //Arrange
             var stopwatch = new Stopwatch();
-            var expected = 5;
-            var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            var insertSql = "INSERT INTO dbo.Logs (CorrelationID,LogLevel,[User],[DateTime],[Event],Category,[Message]) VALUES (2, 'Info','SYSTEM','" + DateTime.UtcNow.ToString() + "', 'DAO_MustLogWithin5Secs', 'Business','This is a automated test for finding if it took longer than 5 seconds')";
+            var expected = 5000;
+            var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var log = new Log(2, "Info", "SYSTEM", "DAO_MustLogWithin5Secs", "Business", "This is a automated test for finding if it took longer than 5 seconds");
             //Act
             stopwatch.Start();
-            var logResult = sysUnderTest.Execute(insertSql);
+            var logResult = sysUnderTest.Log(log).Result;
             stopwatch.Stop();
-            var actual = stopwatch.ElapsedMilliseconds / 1000; //Turn ms to seconds
+            var actual = stopwatch.ElapsedMilliseconds;
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(actual >= 0);
-            Assert.IsTrue(logResult.Result.isSuccessful);
+            Assert.IsTrue(logResult.isSuccessful);
         }
     }
 }

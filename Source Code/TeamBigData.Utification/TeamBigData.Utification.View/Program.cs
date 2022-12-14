@@ -46,6 +46,11 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                         return;
                     }
                 }
+                else
+                {
+                    Console.WriteLine("Error Bad Role");
+                    break;
+                }
             }
         }
     }

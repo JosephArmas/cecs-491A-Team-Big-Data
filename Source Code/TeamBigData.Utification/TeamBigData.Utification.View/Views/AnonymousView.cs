@@ -1,4 +1,6 @@
-﻿using System.Security.Principal;
+﻿using System.Security.Cryptography;
+using System.Security.Principal;
+using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
@@ -14,6 +16,7 @@ namespace TeamBigData.Utification.View.Views
         public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
         {
             Response response = new Response();
+            SecurityManager securityManager = new SecurityManager();
             if (!(((IPrincipal)userProfile).IsInRole("Anonymous User")))
             {
                 response.isSuccessful = false;
@@ -36,11 +39,39 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
-                    SecurityManager securityManager = new SecurityManager();
-                    response = securityManager.Register(ref userAccount,ref userProfile);
+                    Console.WriteLine("To create a new Account, please enter your email");
+                    String email = Console.ReadLine();
+                    Console.WriteLine("Please enter your new password");
+                    String userPassword = Console.ReadLine();
+                    var encryptor = new Encryptor();
+                    var encryptedPassword = encryptor.encryptString(userPassword);
+                    response = securityManager.InsertUser(email, encryptedPassword, encryptor);
                     break;
 
                 case 2:
+                    Console.WriteLine("Please enter your username");
+                    String username = Console.ReadLine();
+                    Console.WriteLine("Plese enter your password");
+                    String password = Console.ReadLine();
+                    var encryptor2 = new Encryptor();
+                    var encryptedPassword2 = encryptor2.encryptString(password);
+                    response = securityManager.VerifyUser(username, encryptedPassword2, encryptor2);
+                    if(response.isSuccessful)
+                    {
+                        Console.WriteLine("Please enter the OTP to finish Authentication");
+                        Console.WriteLine(securityManager.SendOTP());
+                        string enteredOtp = Console.ReadLine();
+                        response = securityManager.VerifyOTP(enteredOtp);
+                        if(response.isSuccessful)
+                        {
+                            Console.WriteLine("You have been Successfully Authenticated");
+                            userProfile = response.data as UserProfile;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(response.errorMessage);
+                    }
                     break;
                 default:
                     break;

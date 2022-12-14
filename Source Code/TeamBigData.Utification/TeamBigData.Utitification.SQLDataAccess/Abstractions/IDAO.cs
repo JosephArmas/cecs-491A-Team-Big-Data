@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.ErrorResponse;
 
-namespace TeamBigData.Utitification.SQLDataAccess.Abstractions
+namespace TeamBigData.Utification.SQLDataAccess.Abstractions
 {
     public interface IDAO
     {

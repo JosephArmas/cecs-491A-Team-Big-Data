@@ -1,7 +1,7 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utitification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.Logging
 {

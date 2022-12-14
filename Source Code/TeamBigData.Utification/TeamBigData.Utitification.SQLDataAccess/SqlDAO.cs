@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utitification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 
-namespace TeamBigData.Utitification.SQLDataAccess
+namespace TeamBigData.Utification.SQLDataAccess
 {
     public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter
     {
@@ -165,7 +165,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
         public Task<Response> GetUser(UserAccount user)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var list = new Object[7];
+            var list = new Object[8];
             Response result = new Response();
             result.isSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
@@ -173,7 +173,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select dbo.users.username, \"disabled\", firstname, lastname, dbo.userprofiles.email, \"address\", " +
-                    "birthday from dbo.Users left join dbo.UserProfiles on (dbo.Users.username = dbo.UserProfiles.username)" +
+                    "birthday, role from dbo.Users left join dbo.UserProfiles on (dbo.Users.username = dbo.UserProfiles.username)" +
                     " Where dbo.Users.username = '" + user._username + "' AND " + "password = '" + user._password + "'";
                 try
                 {
@@ -185,7 +185,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         reader.GetValues(list);
                         if ((int)list[1] == 0)
                         {
-                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], 21, (string)list[4], (string)list[5], ((DateTime)list[6]), new GenericIdentity("User"));
+                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], 21, (string)list[4], (string)list[5], ((DateTime)list[6]), new GenericIdentity((string)list[7]));
                             result.data = userProfile;
                         }
                         else

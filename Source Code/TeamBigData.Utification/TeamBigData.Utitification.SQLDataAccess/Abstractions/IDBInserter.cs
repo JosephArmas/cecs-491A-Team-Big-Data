@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 
-namespace TeamBigData.Utitification.SQLDataAccess.Abstractions
+namespace TeamBigData.Utification.SQLDataAccess.Abstractions
 {
     public interface IDBInserter
     {

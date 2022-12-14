@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utitification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
 {

@@ -7,8 +7,8 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utitification.SQLDataAccess;
-using TeamBigData.Utitification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -23,8 +23,10 @@ namespace TeamBigData.Utification.Manager
         {
             _user = null;
         }
+        /*
         public Response Register(ref UserAccount userAccount, ref UserProfile userProfile)
         {
+        //Moved to View
             Response response = new Response();
             Console.WriteLine("To create a new Account, please enter your email");
             String email = Console.ReadLine();
@@ -38,7 +40,7 @@ namespace TeamBigData.Utification.Manager
             response = InsertUser(email, encryptedPassword, encryptor);
             return response;
         } 
-        
+        */
         public Response InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
         {
             var response = new Response();
