@@ -494,11 +494,8 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         String userName = "";
                         String password = "";
                         String otp = "";
-                        int age = 0;
-                        String email = "";
-                        String address = "";
-                        String birthday = "";
-                        String role = "";
+                        String otpCreated = DateTime.Now.Ticks.ToString();
+                        bool verified = false;
 
                         int ordinal = reader.GetOrdinal("Username");
                         if (!reader.IsDBNull(ordinal))
@@ -506,32 +503,27 @@ namespace TeamBigData.Utitification.SQLDataAccess
                             userName = reader.GetString(ordinal);
                         }
 
-                        ordinal = reader.GetOrdinal("Role");
+                        ordinal = reader.GetOrdinal("Password");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            role = reader.GetString(ordinal);
+                            password = reader.GetString(ordinal);
                         }
-                        ordinal = reader.GetOrdinal("First Name");
+                        ordinal = reader.GetOrdinal("OTP");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            firstName = reader.GetString(ordinal);
+                            otp = reader.GetString(ordinal);
                         }
-                        ordinal = reader.GetOrdinal("Last Name");
+                        ordinal = reader.GetOrdinal("OTP Created");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            lastName = reader.GetString(ordinal);
+                            otpCreated = reader.GetString(ordinal);
                         }
-                        ordinal = reader.GetOrdinal("Address");
+                        ordinal = reader.GetOrdinal("Verified");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            address = reader.GetString(ordinal);
+                            verified = reader.GetBoolean(ordinal);
                         }
-                        ordinal = reader.GetOrdinal("Birthday");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            birthday = reader.GetString(ordinal);
-                        }
-                        userProfile = new UserProfile(userName, firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
+                        userAccount = new UserAccount(userName, password, otp, otpCreated, verified);
                     }
                     reader.Close();
                 }

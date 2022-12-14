@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Security.Principal;
+using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging;
@@ -22,7 +23,22 @@ namespace TeamBigData.Utification.Manager
         {
             _user = null;
         }
-
+        public Response Register(ref UserAccount userAccount, ref UserProfile userProfile)
+        {
+            Response response = new Response();
+            Console.WriteLine("To create a new Account, please enter your email");
+            String email = Console.ReadLine();
+            Console.WriteLine("Please enter your new password");
+            String userPassword = Console.ReadLine();
+            var encryptor = new Encryptor();
+            var encryptedPassword = encryptor.encryptString(userPassword);
+            var connection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            IDBInserter insert = new SqlDAO(connection);
+            AccountRegisterer accountRegisterer = new AccountRegisterer(insert);
+            response = InsertUser(email, encryptedPassword, encryptor);
+            return response;
+        } 
+        
         public Response InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
         {
             var response = new Response();

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Principal;
+using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Models;
 using TeamBigData.Utification.View.Abstraction;
 
 namespace TeamBigData.Utification.View.Views
@@ -38,7 +36,10 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
+                    SecurityManager securityManager = new SecurityManager();
+                    response = securityManager.Register(ref userAccount,ref userProfile);
                     break;
+
                 case 2:
                     break;
                 default:

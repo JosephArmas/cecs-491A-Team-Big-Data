@@ -1,9 +1,8 @@
-﻿using System;
-using System.Security.Principal;
-//using TeamBigData.Utification.Authorization.Views;
-//using TeamBigData.Utification.AuthZ.Abstraction;
-//using TeamBigData.Utification.ErrorResponse;
-//using TeamBigData.Utification.Models;
+﻿using System.Security.Principal;
+using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Models;
+using TeamBigData.Utification.View.Abstraction;
+using TeamBigData.Utification.View.Views;
 
 namespace TeamBigData.Utification // Note: actual namespace depends on the project name.
 {
@@ -12,8 +11,8 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
         static void Main(string[] args)
         {
             var response = new Response();
-            UserAccount userAccount = new UserAccount();
-            UserProfile userProfile = new UserProfile("Anonymous User");
+            UserAccount userAccount = new UserAccount("","");
+            UserProfile userProfile = new UserProfile("");
             IView menu = new AnonymousView();
             while (true)
             {
