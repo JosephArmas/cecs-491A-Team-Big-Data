@@ -1,0 +1,15 @@
+STEP 1. Create 2 SQL Databases
+	First is named TeamBigData.Utification.Logs
+	Second is named TeamBigData.Utification.Users
+Step 2. Creating an AppUser in the Logs Database
+	Open The Logs Database
+	Right Security and Create new User
+	Click Memberships on the left and make them a db_reader
+	Enter in the SQL query GRANT INSERT on dbo.Logs to AppUser
+Step 3. Creating the Tables
+	Execute the LogsDDL into the Logs Database
+	Execute the UsersDDL into the Users Database
+	Execute the UserProfilesDDL into the Users Database
+	*Very important to execute Users then UserProfiles, it has a foreign key constraint
+
+*No manual data has to be inputed for testing, but you have to run Registration Tests before Authentication Tests for it to populate the database

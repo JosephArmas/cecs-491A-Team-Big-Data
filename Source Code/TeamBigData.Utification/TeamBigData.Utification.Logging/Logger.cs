@@ -1,7 +1,8 @@
-﻿using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utitification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess;
 
 namespace TeamBigData.Utification.Logging
 {
@@ -16,22 +17,22 @@ namespace TeamBigData.Utification.Logging
         {
             Response result = new Response();
             //Validation
-            if (!(log._logLevel.Equals("Info") || log._logLevel.Equals("Warning") || log._logLevel.Equals("Debug")
-                || log._logLevel.Equals("Error")))
+            if (!(log.GetLogLevel().Equals("Info") || log.GetLogLevel().Equals("Warning") || log.GetLogLevel().Equals("Debug")
+                || log.GetLogLevel().Equals("Error")))
             {
                 result.errorMessage = "Error: The log did not contain a proper log level";
                 result.isSuccessful = false;
                 return result;
             }
-            if (!(log._category.Equals("View") || log._category.Equals("Business")
-                    || log._category.Equals("Server") || log._category.Equals("Data") || log._category.Equals("Data Store")))
+            if (!(log.GetCategory().Equals("View") || log.GetCategory().Equals("Business")
+                    || log.GetCategory().Equals("Server") || log.GetCategory().Equals("Data") || log.GetCategory().Equals("Data Store")))
             {
                 result.errorMessage = "Error: The log did not contain a proper category";
                 result.isSuccessful = false;
                 return result;
             }
-            String insertSql = "Insert into dbo.Logs (CorrelationID, LogLevel, \"User\", Event, Category, Message) values (" + log._correlationID + ", '" + log._logLevel +
-                "', '" + log._user + "', '" + log._event + "', '" + log._category + "', '" + log._message + "');";
+            String insertSql = "Insert into dbo.Logs (CorrelationID, LogLevel, \"User\", Event, Category, Message) values (" + log.GetCorrelationID() + ", '" + log.GetLogLevel() +
+                "', '" + log.GetUser() + "', '" + log.GetEvent() + "', '" + log.GetCategory() + "', '" + log.GetMessage() + "');";
             Response logReturn = await _dao.Execute(insertSql).ConfigureAwait(false);
             result.isSuccessful = false;
             if (logReturn.isSuccessful)

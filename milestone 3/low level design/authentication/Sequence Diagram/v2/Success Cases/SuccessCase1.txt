@@ -1,0 +1,72 @@
+sequenceDiagram
+    activate User
+    Note over User: User device has no authenticated user
+    User->>+Console: User wants to log in
+    Console->>+Security Manager: var secManager = new SecurityManager();
+    Security Manager->>Security Manager: SecurityManager();
+    Security Manager-->>-Console: return SecurityManager instance
+    Console->>+Results: var result = new Results()
+    Results->>Results: Results()
+    Results-->>-Console: return Results instance
+    Console->>+Security Manager: result = secManager.isActive()
+    Security Manager->>+Authentication Service: var authNService = new AuthenticationService();
+    participant Results
+    participant SqlDAO
+    Authentication Service->>+User Account: var authNUser = new UserAccount();
+    User Account->>User Account: UserAccount();
+    User Account-->>-Authentication Service: return Users instance
+    Authentication Service->>Authentication Service: AuthenticationService(authNUser)    
+    Authentication Service-->>-Security Manager: return Authentication Service instance
+    Security Manager->>+Results: var result = new Results();
+    Results->>Results: Results();
+    Results-->>-Security Manager: return Results instance
+    Security Manager->>+Authentication Service: if(authNService.getUsername() == null) result.IsSuccessful = 0 else result.IsSuccessful = 1
+    Authentication Service->>Authentication Service: getUsername();
+    Authentication Service-->>-Security Manager: return result
+    Security Manager-->>-Console: return result
+    Console->>Console: if (result.IsSuccessful) Console.WriteLine("User is already logged in.") else Console.WriteLine("Enter username:")
+    Console->>Console: int count = 0
+    loop while(count < 9)
+    Console-->>-User: Console.WriteLine("Enter Username: ");
+    User->>+Console: User enters username
+    Console->>Console: string userName = Console.ReadLine();
+    loop for (count = 0: count < userName.Length: count++)
+    Console->>Console:  if ((int)userName[count] < 45 || ((int)userName[count] > 46 && (int)userName[count] < 48) || ((int)userName[count] > 57 && (int)userName[count] < 64) || ((int)userName[count] > 90 && (int)userName[count] < 97) || (int)userName[count] > 122) Console.WriteLine("Username has invalid values, Try again.") count = 0 break
+    end
+    end
+    Console->>+Security Manager: result = secManager.checkUser(string userName)
+    Security Manager->>+Authentication Service: string tempUser = authNService.getUsername(string userName);
+    Authentication Service->>+SqlDAO: var sqlDAO = new SqlDAO(string connectionString);
+    SqlDAO->>SqlDAO: SqlDao(string connectionString)
+    SqlDAO-->>-Authentication Service: return SqlDAO instance
+    Authentication Service->>+User Account: var authNUser = new UserAccount();
+    User Account->>User Account: UserAccount();
+    User Account-->>-Authentication Service: return Users instance
+    Authentication Service->>+SqlDAO: authNUser = sqlDAO.getUser(string userName): UserAccount
+    SqlDAO->>+Utification DS: 
+    Utification DS->>Utification DS: Select * from User where Username == userName 
+    Utification DS-->>-SqlDAO: return row
+    SqlDAO->>+User Account: var tempUser = new UserAccount(string[] row);
+    User Account->>User Account: UserAccount(string[] row);
+    User Account-->>-SqlDAO: return User Account instance 
+    SqlDAO-->>-Authentication Service: return User Account instance
+    Authentication Service-->>-Security Manager: return getUsername(userName)
+    Security Manager->>Security Manager: if (tempUser == null) result.IsSuccessful = 0 else result.IsSuccessful = 1
+    Security Manager-->>-Console: return result
+    Console->>Console: if(result.IsSuccessful) Console.WriteLine("Enter password") else Console.WriteLine("No valid user, try again.") return
+    Console-->>-User: Console.WriteLine("Enter password");
+    User->>+Console: User enters password
+    Console->>Console: string password = Console.ReadLine();
+    Console->>+Security Manager: result = secManager.authenticate(string userName, string password)
+    Security Manager->>+Authentication Service: string salt = authNService.getSalt(string userName)
+    Authentication Service->>Authentication Service: getSalt()
+    Authentication Service-->>-Security Manager: return salt string
+    Security Manager->>Security Manager: string digest = HMACSHA384.HashData(password.GetBytes(), salt.GetBytes())
+    Security Manager->>+Authentication Service: string userDigest = authNService.getDigest()
+    Authentication Service->>Authentication Service: getDigest();
+    Authentication Service-->>-Security Manager: return authNUser.digest
+    Security Manager->>Security Manager: if (digest == userDigest) result.IsSuccesful = 1 else result.IsSuccessful = 0
+    Security Manager-->>-Console: return result
+    Console->>Console: if(result.IsSuccessful) Console.WriteLine("Welcome Authenticated User.") else Console.WriteLine("Not a valid User.") 
+    Console-->>-User: Console.WriteLine("Welcome Authenticated User.");
+    deactivate User

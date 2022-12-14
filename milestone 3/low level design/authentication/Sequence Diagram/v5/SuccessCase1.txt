@@ -1,0 +1,106 @@
+title This is a title
+
+participant User
+participant Program
+participant Manager
+participant Encryptor
+participant Secure Hasher
+participant Account Authenticator
+participant SqlDAO
+participant Response
+
+activate User
+box over User: User device has no authenticated user
+User->>Program: User wants to login
+activate Program
+Program->>Program: string username = null;
+Program->>Program: if(username != null) {\n     Console.WriteLine(You are Already Logged In, \n          Please Log Out Before Logging In again);
+Program-->>User: Console.WriteLine("Please enter your Username: ");
+User->Program: User enters valid username
+Program->>Program: string loginUsername = Console.ReadLine();
+Program-->>User: Console.WriteLine("Please enter your  Password: ");
+User->>Program: User enters valid password
+Program->>Program: string password = Console.ReadLine();
+Program->>Encryptor: var encryptor = new Encryptor();
+activate Encryptor
+Encryptor->>Encryptor:public Encryptor() {\n     using (var aes = Aes.Create()) {\n          aed.GenerateIV();\n          aes.GenerateKey();\n          _iv = aes.IV;\n          _key = aes.Key;\n     }\n}
+Encryptor->>Program: return Encyptor instance
+deactivate Encryptor
+Program->>Encryptor: var encryptedPassword = encryptor.encryptString(password);
+activate Encryptor
+Encryptor->>Encryptor:public byte[] encryptString (String message) {\n     byte[] messageBytes = Encoding.UTF8.GetBytes(message);\n     byte[] encrypted;\n     using (var aes = Aes.Create()) {\n          aes.Key =_key;\n          aes.IV = _iv;\n          using (var encryptor = aes.CreateEncryptor()) {\n               using (var memoryStream = new MemoryStream()) {\n                    using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write)) {\n                         using (var streamWriter = new StreamWriter(cryptoStream)) {\n                             streamWriter.Write(message);\n                         encrypted = memoryStream.ToArray();\n                    }\n                }\n           }\n      }\n}
+Encryptor-->>Program: return streamReader.ReadToEnd();
+deactivate Encryptor
+Program->>Manager: var manager = new Manager();
+activate Manager
+Manager->>Manager: public Manager() {\n     _username = null;\n}
+Manager-->>Program: return Manager instance
+deactivate Manager
+Program->>Manager: var result = manager.AuthenticateUser(loginUsername, encryptedPassword, encryptor);
+activate Manager
+Manager->>Response: var result = new Response();
+activate Response
+Response->>Response:public Response() {\n     isSuccessful = false;\n     errorMessage = "\";\n     data = 0;\n}
+Response-->>Manager: return Result instance
+deactivate Response
+Manager->>Manager: if(_username != null) {\n     result.isSuccessful = false;\n     result.errorMessage = "Error You are Already logged in.");\n     return result;\n}
+Manager->>Secure Hasher: var hasher = new SecureHasher();
+activate Secure Hasher
+Secure Hasher->>Secure Hasher: public SecureHasher() {}
+Secure Hasher-->>Manager: return Secure Hasher instance
+deactivate Secure Hasher
+Manager->>Encryptor: var password = encryptor.decryptString(encryptedPassword);
+activate Encryptor
+Encryptor->>Encryptor: public String decryptString(byte[] message) {\n     using (var aes = Aes.Create()) {\n          aes.Key = _key;\n          aes.IV = _iv;\n          using (var decryptor = aes.CreateDecryptor()) {\n               using (var memoryStream = new MemoryStream(message)) {\n                    using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read)) {\n                         using (var streamReader = new StreamReader(cryptoStream)) {\n                              return streamReader.ReadToEnd();\n                         }\n                    }\n               }\n          }\n     }\n}
+Encryptor-->>Manager: return streamReader.ReadToEnd();
+deactivate Encryptor
+Manager->>Secure Hasher: var hashedPassword = SecureHasher.HashString(username, password);
+activate Secure Hasher
+Secure Hasher->>Secure Hasher: public static String HashString(String key, String message) {\n     byte[] keyBytes = Encoding.UTF8.GetBytes(key);\n     byte[] messageBytes = Encoding.UTF8.GetBytes(message);\n     byte[] hash = HMACSHA512.HashData(keyBytes, messageBytes);\n     String hashedMessage = BitConverter.ToString(hash);\n     return hashedMessage;\n}
+Secure Hasher-->>Manager: return hashedMessage;
+deactivate Secure Hasher
+Manager->>Manager: var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+Manager->>SqlDAO: IDBCounter testDBO = new SqlDAO(connectionString);
+activate SqlDAO
+SqlDAO->>SqlDAO: public SqlDAO(String connectionString) {\n     _connectionString = connectionString;\n}
+SqlDAO-->>Manager: return SqlDAO instance 
+deactivate SqlDAO
+Manager->>Account Authenticator: var authenticator = new AccountAuthenticator(testDBO);
+activate Account Authenticator
+Account Authenticator->>Account Authenticator: public AccountAuthenticator(IDBCounter dbo) {\n _dbo = dbo;\n}
+Account Authenticator-->>Manager: return Account Authentication instance
+deactivate Account Authenticator
+Manager->>Account Authenticator: result = authenticator.VerifyUser("dbo.Users", username, hashedPassword).Result
+activate Account Authenticator
+Account Authenticator->>Response: var result = new Response();
+activate Response
+Response->>Response:public Response() {\n     isSuccessful = false;\n     errorMessage = "\";\n     data = 0;\n}
+Response-->>Account Authenticator: return Response instance
+deactivate Response
+Account Authenticator->>Account Authenticator: String[] collumns = { "username", "password};\nString[] values = { username, passwordDigest );
+Account Authenticator->>SqlDAO: result = await _dbo.Count(tableName, "username", collumns, values).ConfigureAwait(false);
+activate SqlDAO
+SqlDAO->>SqlDAO: var tcs = new TaskCompletionSource<Response>();
+SqlDAO->>Response: var result = new Response();
+activate Response
+Response->>Response: public Response() {\n     isSuccessful = false;\n     errorMessage = "\";\n     data = 0;\n}
+Response-->>SqlDAO: return Response instance
+deactivate Response
+SqlDAO->>SqlDAO: using (var connection = new SqlConnection(_connectionString)) {\n     connection.Open();\n     var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName + " WHERE ";\n     if (collumnNames.Length == values.Length) {\n          for (int i = 0; i < collumnNames.Length; i++) {\n            <size:11>if (i != collumnNames.Length - 1) {\n                    countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"' and ";\n               }\n               else {\n                    countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"';";\n               }\n           }\n      }\n     else {\n          result.errorMessage = "There must be an equal ammount of collumnNames and values";\n     }\n     try {\n          var command = new SqlCommand(countSql, connection);\n          result.data = command.ExecuteScalar();\n          result.isSuccessful = true;\n     }
+SqlDAO->>Utification DB: result.data = command.ExecutreScalar();
+activate Utification DB
+Utification DB->>Utification DB: SELECT COUNT(countedColumn) FROM UserAccount Where collumnNames = values
+Utification DB-->>SqlDAO: return;
+deactivate Utification DB
+SqlDAO->>SqlDAO:catch (SqlException s) {\n          result.errorMessage = s.Message;\n     }\n     catch (Exception e) {\n          result.errorMessage = e.Message;\n     }\n     tcs.SetResult(result);\n     return tcs.Task;\n}
+SqlDAO-->>Account Authenticator: return result;
+deactivate SqlDAO
+Account Authenticator->>Account Authenticator: if ((int)result.data > 1) {\n     result.isSuccessful = false;\n     result.errorMessage = "Error: more than 1 user matched";\n}\nelse if ((int)result.data == 0) {\n     result.isSuccessful = false;\n     result.errorMessage = "Invalid Username or Password";\n}\nelse if ((int)result.data == 1) {\n     result.isSuccessful = true;\n     result.errorMessage = "You have Validated Your Credentials";\n}\nreturn result;
+Account Authenticator-->>Manager: return result;
+deactivate Account Authenticator
+Manager->>Manager: if (result.isSuccessful) {\n     _username = username;\n}\nreturn result;
+Manager-->>Program: return result;
+deactivate Manager
+Program->>Program: if (result.isSuccessful) {\n     username = loginUsername;\n}\nConsole.WriteLine(result.errorMessage);
+Program-->>User: Console.WriteLine("You have Validated Your Credentials");
+Program->>

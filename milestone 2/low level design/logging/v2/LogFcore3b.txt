@@ -1,0 +1,53 @@
+title As a System, I want to Log, but the process did not save to the data store.
+
+   actor User
+    participant UI
+    participant EntryPoint
+    participant LoggingManager
+    participant LoggingServices
+    participant LoggingDataAccess
+    participant LoggingDataStore
+    User->>UI: Start System Event
+    activate UI
+    //note over UI: 
+    
+    UI->>EntryPoint:POST HTTPS Request
+    activate EntryPoint
+    //note over EntryPoint: 
+    note over EntryPoint: Logging is Triggered
+    EntryPoint->>EntryPoint:ValidResponse(userEvent:Bool):RC
+    note over EntryPoint: True: 200
+    EntryPoint->>LoggingManager:StartLog(time:Timestamp,\n                   level:Int,\n                   opr:User,\n                   msg:String,\n                   ID:Int,\n                   cat:Int)\n                   :EntryLog
+    activate LoggingManager
+   // note over Manager: 
+   LoggingManager->>LoggingManager:ManValidation(startLog,expected):Valid
+    LoggingManager->>LoggingServices: mngrLogCheck(createLog,\n                          managerTime,\n                          cat,\n                          manValidation)
+    activate LoggingServices
+  //  note over Services: 
+  LoggingServices->>LoggingServices:ServValidation(mngrLogCheck,Expected):Valid
+    LoggingServices->>LoggingDataAccess: ServLog(mngrLogCheck,\n               sTime,\n               cat,\n               servValidation)\n               :ServiceLog
+    activate LoggingDataAccess
+    //note over DataAccess: 
+    LoggingDataAccess->>LoggingDataAccess:DataValidation(servLog,expected):Valid
+    LoggingDataAccess->>LoggingDataStore:LogData(servLog,\n               dataTime,\n               cat,\n               tcp:TCP,\n               dataValidation)\n               :LogResult
+    //note over DataStore
+    activate LoggingDataStore
+    note over LoggingDataStore: Logging Process was not saved in DataStore
+    LoggingDataStore-->>LoggingDataAccess:Returns 0
+    //deactivate LoggingDataStore
+    LoggingDataAccess-->>LoggingServices:Return type ServiceLog: False
+    LoggingServices->>LoggingDataAccess:LogError(Time,Level,Opr,Msg,ID,Cat):LogResult
+    LoggingDataAccess->>LoggingDataStore:LogData(logError,\n               dataTime,\n               cat,\n               tcp:TCP,\n               dataValidation)\n               :LogResult
+    note over LoggingDataStore: Error Logged
+    LoggingDataStore-->>LoggingDataAccess:Return 1
+    deactivate LoggingDataStore
+    LoggingDataAccess-->>LoggingServices: Return type LogResult: True
+    deactivate LoggingDataAccess
+    LoggingServices-->>LoggingManager:False
+    deactivate LoggingServices
+    LoggingManager-->>EntryPoint: False
+    deactivate LoggingManager
+    EntryPoint-->>UI: RC:500
+    deactivate EntryPoint
+    UI-->>User: "Process Not Saved. Logging Failed"
+    deactivate UI

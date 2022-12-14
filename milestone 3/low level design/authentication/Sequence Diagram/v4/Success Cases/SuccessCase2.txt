@@ -1,0 +1,27 @@
+	participant "<size:20>User" as User
+	participant "<size:20>Console" as Console
+	participant "<size:20>Security Manager" as Security Manager
+	participant "<size:20>Authentication Service" as Authentication Service
+	participant "<size:20>Logger" as Logger
+	participant "<size:20>SqlDAO" as SqlDAO
+	participant "<size:20>Results" as Results
+	participant "<size:20>User Account" as User Account
+	participant "<size:20>Utification DS" as Utification DS
+
+	activate User
+	note over User:  <size:20>Using Success Case 1 as Pre-Conditions
+    User->>Console:  <size:20>User wants to log in
+    activate Console
+    Console->>Security Manager: <size:20>result = secManager.isActive();
+    activate Security Manager
+    Security Manager->>Results: <size:20> var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Security Manager: <size:20>return Results instance
+    deactivate Results
+    Security Manager->>Security Manager: <size:20>if(_authenticatedUser.GetUsername() == null) {\n          result.SetResult(0);\n          result.SetMessage("No active User.");\n}\nelse {\n          result.SetResult(1);\n          result.SetMessage(\"\");\n}
+    Security Manager-->>Console: <size:20>return result;
+    deactivate Security Manager
+    	Console->>Console: <size:20>if(result.GetResult() == 1) {\n          Console.WriteLine("User is already logged in.");\n          return;\n}\nelse if(result.GetResult() == 0)\n          Console.WriteLine("Enter username: ");
+	box over User: <size:20>User is already authenticated
+	Console-->>User: <size:20>Console.WriteLine("User is already logged in.");

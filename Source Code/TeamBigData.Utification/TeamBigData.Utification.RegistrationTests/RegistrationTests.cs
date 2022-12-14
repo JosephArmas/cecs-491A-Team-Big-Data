@@ -1,4 +1,4 @@
-using TeamBigData.Utification.Registration;
+using TeamBigData.Utification.AccountServices;
 using System.Diagnostics;
 
 namespace TeamBigData.Utification.Registration.Test
@@ -13,7 +13,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String password = "pa$$w*rd";
             //Act
-            bool actual = AccountManager.IsValidPassword(password);
+            bool actual = AccountRegisterer.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -24,7 +24,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String password = "pass word";
             //Act
-            bool actual = AccountManager.IsValidPassword(password);
+            bool actual = AccountRegisterer.IsValidPassword(password);
             //Assert
             Assert.IsTrue(actual);
         }
@@ -35,7 +35,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String password = "123";
             //Act
-            bool actual = AccountManager.IsValidPassword(password);
+            bool actual = AccountRegisterer.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -46,7 +46,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String email = "pa$$w*rd@yahoo.com";
             //Act
-            bool actual = AccountManager.IsValidEmail(email);
+            bool actual = AccountRegisterer.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -58,7 +58,7 @@ namespace TeamBigData.Utification.Registration.Test
             //Arrange
             String email = "email.email";
             //Act
-            bool actual = AccountManager.IsValidEmail(email);
+            bool actual = AccountRegisterer.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }

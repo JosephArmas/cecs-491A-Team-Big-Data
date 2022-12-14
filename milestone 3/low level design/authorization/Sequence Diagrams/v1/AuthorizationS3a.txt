@@ -1,0 +1,41 @@
+title As an Authorized User, I want access to protected functionality, so that I may perform Write operations.
+   actor User
+    participant UI
+    participant EntryPoint
+    participant AuthorizationManager
+    participant AuthorizationHandler
+    participant AuthorizationServices
+
+    User->>UI: User enters View
+    activate UI
+    
+    UI->>EntryPoint:POST Console request
+    activate EntryPoint
+
+    EntryPoint->>AuthorizationManager:*Authentication*
+    activate AuthorizationManager
+   // note over Manager: 
+   AuthorizationManager->>AuthorizationHandler:AuthorizedUser(email:String)
+   activate AuthorizationH
+   note right of Program.cs: System.Security.Principal
+   Program.cs-->>AuthorizationManager:Authorized User is in system
+   
+    AuthorizationManager->>Program.cs: HasClaim(functionality:String):bool
+    
+
+    Program.cs->>AuthorizationServices:AuthorizedUser.GetClaims(functionality:String)
+    activate AuthorizationServices
+  //  note over Services: 
+  
+
+    AuthorizationServices-->>AuthorizeHandler: Return TokenAccessLevel.Write
+    deactivate AuthorizationServices
+    Program.cs-->>AuthorizationManager:Return True
+    deactivate Program.cs
+    AuthorizationManager-->AuthorizationManager:result.IsSuccessful()
+    AuthorizationManager-->>EntryPoint: Return True
+    deactivate AuthorizationManager
+    EntryPoint-->>UI: Response Code: 200
+    deactivate EntryPoint
+    UI-->>User: View is changed for User
+    deactivate UI

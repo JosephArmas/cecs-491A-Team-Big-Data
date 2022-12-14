@@ -1,0 +1,50 @@
+title Overall Registration (Success) Diagram
+actor User
+participant Security
+participant RegistrationUI
+participant EntryPoint
+participant Manager
+participant Services
+participant DataAccess
+participant DataStore
+
+User ->> Security:     Accesses Google Chrome 104.x+ 
+activate Security
+Security ->> RegistrationUI: userActive(user:obj):bool
+activate RegistrationUI
+RegistrationUI --> Security:return False (No preexisting sessions that are active)
+deactivate RegistrationUI
+Security ->> RegistrationUI: HTTPS Request for Account Creation
+activate RegistrationUI
+RegistrationUI ->> EntryPoint: accountView(view:obj):obj
+activate EntryPoint
+EntryPoint ->> Manager: isValid(email:String, password:String):bool 
+activate Manager
+Manager ->> Services: fetch(email:String):bool
+activate Services
+Services ->> DataAccess: getEmail(email:string):bool
+activate DataAccess
+DataAccess ->> DataStore: search(email:String):bool
+activate DataStore
+DataStore --> DataAccess: return False (No prexisting emails in the DataStore)
+deactivate DataStore
+DataAccess ->> DataStore: searchUser(email:String):bool
+activate DataStore
+DataStore --> DataAccess:   return False (No prexisting usernames in the Datastore)
+deactivate DataStore
+DataAccess ->> DataStore: newCredentials(email:String, password:String):bool
+activate DataStore
+DataStore --> DataAccess:return True (Inserts new credentials into DataStore provided by the user)
+deactivate DataStore
+DataAccess --> Services: return True
+deactivate DataAccess
+Services --> Manager: return True
+deactivate Services
+Manager --> EntryPoint: return True
+deactivate Manager
+EntryPoint --> RegistrationUI: return account view obj 
+deactivate EntryPoint
+RegistrationUI --> Security:              HTTPS returns display message 'Account creation successful'       
+deactivate RegistrationUI
+Security --> User:       Username is provided back to the user    
+deactivate Security

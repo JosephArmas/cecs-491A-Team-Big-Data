@@ -1,0 +1,44 @@
+title Successful Registration
+
+actor User
+participant UI
+
+User ->> UI: Accesses Google Chrome v104.x Browser
+activate UI
+participant Entry Point
+UI ->> UI: Checks cookies for active session
+UI ->> Entry Point: HTTPS Request to Register a New Account
+activate Entry Point
+Entry Point ->> RegManager: sendInput(email: String, password: String): Response
+activate RegManager
+participant Registration Services
+RegManager ->> Registration Services: insertUser(email: String, password: String): Response
+activate Registration Services
+participant Security
+participant Data Access
+participant MySQL
+Registration Services ->> Registration Services: isValidEmail(email: String): bool
+Registration Services ->> Registration Services: isValidPassword(password: String): bool
+Registration Services ->> Registration Services:generateUsername(email: String): String
+Registration Services ->> Security: hashString(password: String): String
+activate Security
+Security -->>Registration Services: return Hashed Password
+deactivate Security
+Registration Services ->> Data Access: insert(tablename: String, values: String[]): Response
+
+activate Data Access
+Data Access ->> MySQL: insertSQL
+activate MySQL
+
+MySQL -->> Data Access: return columns affected
+deactivate MySQL
+Data Access -->> Registration Services: return Response
+deactivate Data Access
+Registration Services -->> RegManager: return Response
+deactivate Registration Services
+RegManager -->> Entry Point: return Response
+deactivate RegManager
+Entry Point -->> UI: return HTTPS response: code 200
+deactivate Entry Point
+UI -->> User: return "Account successfully created"
+deactivate UI

@@ -1,0 +1,10 @@
+sequenceDiagram
+    activate User
+    Note over User: Using success case 1 as Pre-conditions
+    User->>+Console: User wants to log in
+    Console->>+Security Manager: secManager.isActive(): results
+    Security Manager->>Security Manager: if(authNService.getUsername() == null) result.IsSuccessful = false else result.IsSuccessful = true
+    Security Manager-->>-Console: return result
+    Console->>Console: if (secManager.isActive() == 1) Console.WriteLine("User is already logged in.") else Console.WriteLine("Enter username:")
+    Console-->>-User: Console.WriteLine("User is already logged in.");
+    deactivate User

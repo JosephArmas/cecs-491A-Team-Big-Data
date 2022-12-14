@@ -1,0 +1,198 @@
+	participant "<size:20>User" as User
+	participant "<size:20>Console" as Console
+	participant "<size:20>Security Manager" as Security Manager
+	participant "<size:20>Authentication Service" as Authentication Service
+	participant "<size:20>Logger" as Logger
+	participant "<size:20>SqlDAO" as SqlDAO
+	participant "<size:20>Results" as Results
+	participant "<size:20>User Account" as User Account
+	participant "<size:20>Utification DS" as Utification DS
+
+	activate User
+	note over User:  <size:20>User device has no authenticated user
+    User->>Console:  <size:20>User wants to log in
+    activate Console
+    Console->>Security Manager:  <size:20>var secManager = new SecurityManager(); 
+    activate Security Manager
+    Security Manager->>User Account: <size:20>private var _authenticatedUser = new UserAccount();
+    activate User Account
+    User Account->>User Account: <size:20>{\n     private string _username = null;\n     private byte[] _digest = null;\n     private string _salt = null;\n     private var _otp = null\n     private _trials = 0;\n     private bool _disabled = false;\n     private byte[] _secretKey = new Byte[64];\n     using(RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())\n          rng.GetBytes(_secretKey);\n}
+    User Account-->>Security Manager: <size:20>return User Account instance
+    deactivate User Account
+    Security Manager-->>Console: <size:20>return SecurityManager instance
+    deactivate Security Manager
+    Console->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Console: <size:20>return Results instance
+    deactivate Results
+    Console->>Security Manager: <size:20>result = secManager.isActive();
+    activate Security Manager
+    Security Manager->>Results: <size:20> var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Security Manager: <size:20>return Results instance
+    deactivate Results
+    Security Manager->>Security Manager: <size:20>if(_authenticatedUser.GetUsername() == null) {\n          result.SetResult(0);\n          result.SetMessage("No active User.");\n}\nelse {\n          result.SetResult(1);\n          result.SetMessage(\"\");\n}
+    Security Manager-->>Console: <size:20>return result;
+    deactivate Security Manager
+    Console->>Console: <size:20>if(result.GetResult() == 1) {\n          Console.WriteLine("User is already logged in.");\n          return;\n}\nelse if(result.GetResult() == 0)\n          Console.WriteLine("Enter username: ");
+	Console->>Console: <size:20>int count = 0;
+    loop 
+    note over Console: <size:20>while(count < 9)
+    Console-->>User: <size:20>Console.WriteLine("Enter Username: ");
+    User->>Console: <size:20>User enters username
+    Console->>Console: <size:20>string userName = Console.ReadLine();
+    loop 
+    note over Console: <size:20>for (count = 0; count < userName.Length; count++)
+    Console->>Console:<size:20>if (userName.Length < 8 ||\n    (int)userName[count] < 45 ||\n   ((int)userName[count] > 46 && (int)userName[count] < 48) ||\n   ((int)userName[count] > 57 && (int)userName[count] < 64) ||\n   ((int)userName[count] > 90 && (int)userName[count] < 97) ||\n   (int)userName[count] > 122) {\n          Console.WriteLine("Username has invalid values, Try again.");\n          count = 0;\n          break;\n   }      
+    end
+    end
+    Console->>Security Manager: <size:20>result = secManager.ValidateUser(userName)
+    activate Security Manager
+    Security Manager->>Results: <size:20> var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Security Manager: <size:20>return Results instance
+    deactivate Results
+    Security Manager->>Security Manager: <size:20>string connectionString = # connection to user account database;
+    Security Manager->>Authentication Service: <size:20>var authNService = new AuthenticationService(connectionString);
+    activate Authentication Service
+    Authentication Service->>Authentication Service: <size:20>string asLoggerConnection = #Logs table connection string
+    Authentication Service->>SqlDAO:  <size:20>var _sqlDAO = new SqlDAO(connectionString);
+    activate SqlDAO
+    SqlDAO->>SqlDAO: <size:20>{\n     private SecureString _connectionString = connectionString;\n}
+    SqlDAO-->>Authentication Service: <size:20>return SqlDAO instance
+    deactivate SqlDAO
+    Authentication Service->>Logger: <size:20>private var _asLogger = new Logger(_sqlDAO);
+    activate Logger
+    Logger->>Logger: <size:20>{\n     private var _dao = sqlDAO;\n}
+    Logger-->>Authentication Service: <size:20>return Logger instance
+    deactivate Logger
+    Authentication Service-->>Security Manager: <size:20>return Authentication Service instance
+    deactivate Authentication Service
+    Security Manager->>User Account: <size:20>_authenticatedUser.SetUser(userName);
+    activate User Account
+    User Account->>User Account: <size:20>_username = userName;
+    User Account-->>Security Manager: <size:20> return;
+    deactivate User Account
+    Security Manager->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results:<size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Security Manager: <size:20>return Results instance
+    deactivate Results
+    Security Manager->>Authentication Service:<size:20>result = authNService.GetUser(_authenticationUser);
+    activate Authentication Service
+    Authentication Service->>Authentication Service:<size:20>string sqlInsert = #INSERT SQL command to insert user attempt into logs table 
+    Authentication Service->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Authentication Service: <size:20>return Results instance
+    deactivate Results
+    Authentication Service->>Logger: <size:20>result = _asLogger.Log(sqlInsert);
+    activate Logger
+    Logger->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>Logger: <size:20>return Results instance
+    deactivate Results
+    Logger->>SqlDAO: <size:20>result = await _dao.Execute(sqlInsert).ConfigureAwait(false);
+    activate SqlDAO
+    SqlDAO->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}
+    Results-->>SqlDAO: <size:20>return Results instance
+    deactivate Results
+    SqlDAO->>SqlDAO: <size:20>int temp;
+	SqlDAO->>SqlDAO:<size:20>SqlConnection connect = new SqlConection(_connectionString.ToString());
+    SqlDAO->>Utification DS: <size:20>temp = (new SqlCommand(sqlInsert.ToString(), connect)).ExecuteNonQuery();
+    activate Utification DS
+    Utification DS->>Utification DS: <size:20>INSERT INTO Logs values(username, timestamp)
+    Utification DS-->>SqlDAO: <size:20>return temp;
+    deactivate Utification DS
+    SqlDAO->>SqlDAO: <size:20>if(temp) {\n          result.SetResult(1);\nelse {\n          result.SetResult(2);\n          result.SetMessage( "Invalid username or password provided. Retry again or contact system admin");
+    SqlDAO-->>Logger: <size:20>return result;
+    deactivate SqlDAO
+    Logger-->>Authentication Service: <size:20>return result;
+    deactivate Logger
+    Authentication Service->>Authentication Service: <size:20>if(result.GetResult() != 1) {\n          Console.WriteLine( "Invalid username or password provided. Retry again or contact system admin");\n          return result;\n}
+    Authentication Service->>Authentication Service: <size:20>string connectionString = #User account table string
+    Authentication Service->>SqlDAO: <size:20>var sqlDAO = new  SqlDAO(connectionString);
+    activate SqlDAO
+    SqlDAO->>SqlDAO: <size:20>{\n     private SecureString _connectionString = connection;\n}
+    SqlDAO->>Authentication Service: <size:20>return SqlDAO instance
+    deactivate SqlDAO
+    Authentication Service->>Authentication Service:<size:20>string sqlSelect = #Select sql command to get user using the username
+    Authentication Service->>User Account:<size:20>var user = new UserAccount();
+    activate User Account
+    User Account->>User Account:<size:20>{\n     private string _username = row.username;\n     private string _digest = row.digest;\n     private string _salt = row.salt;\n     private var _otp = row.otp\n     private _trials = 0;\n     private bool _disabled = row.diabled;\n}
+    User Account-->>Authentication Service: <size:20>return User Account instance
+    Authentication Service->>SqlDAO:<size:20>user = sqlDAO.Execute(sqlSelect);
+    activate SqlDAO
+    SqlDAO->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;     \n}   
+    Results-->>SqlDAO: <size:20>return Results instance
+    deactivate Results
+    SqlDAO->>SqlDAO: <size:20>SqlConnection connect = new SqlConnection(_connectionString.ToString());
+    SqlDAO->>Utification DS: <size:20>#code to get a user from User Account table
+    activate Utification DS
+    Utification DS->>Utification DS: <size:20>Select userName \nfrom User Account
+    Utification DS-->>SqlDAO: <size:20>return row
+    deactivate Utification DS
+    SqlDAO->>User Account: <size:20>var user = new UserAccount(row);
+    activate User Account
+    User Account->>User Account:<size:20>{\n     private string _username = row.username;\n     private string _digest = row.digest;\n     private string _salt = row.salt;\n     private var _otp = row.otp\n     private _trials = 0;\n     private bool _disabled = row.diabled;\n}
+    User Account-->>SqlDAO: <size:20>return User Account instance
+    deactivate User Account
+    SqlDAO-->>Authentication Service: <size:20>return User Account instance
+    deactivate SqlDAO
+    Authentication Service->>Authentication Service:<size:20>if(user.GetUsername == null) {\n          result.SetResult(0);\n          result.SetMessage("Invalid username or password provided. Retry again or contact system admin");\n          _authenticationUser.AddTrial();\n}\nelse if(user.IsDisabled()) {\n          result.SetResult(0);\n          result.SetMessage("Account disabled. Perform account recovery or contact system admin"\nelse\n{\n          result.SetResult(1);\n          result.SetMessage(\"\");\n}
+    Authentication Service-->>Security Manager: <size:20>return result;    
+    deactivate Authentication Service
+    Security Manager-->>Console: <size:20>return result
+    deactivate Security Manager
+    Console->>Console: <size:20>string otp;
+    Console->>Console: <size:20>if(result.GetResult() != 1) {\n          Console.WriteLine(result.GetResult());\n          return;\n}\nelse\n          otp = secManager.GetOTP();
+    Console->>Security Manager: <size:20>otp = secManger.GetOTP();
+    activate Security Manager
+    Security Manager->>User Account: <size:20>_authenticatedUser.GenerateOTP();
+    activate User Account
+    User Account->>User Account: <size:20> _otp = \/\/generate otp
+    User Account->>Security Manager:<size:20>return _otp;
+    deactivate User Account
+    Security Manager->>Console: <size:20>return _authenticatedUser._otp;
+    deactivate Security Manager
+    Console-->>User: <size:20>Console.WriteLine("Generated otp: " + otp);\nConsole.WriteLine("Enter otp: ");
+    User->>Console: <size:20>User enters otp
+    Console->>Console: <size:20>otp = Console.ReadLine();
+    Console->>Security Manager: <size:20>result = secManager.ValidateOTP(otp);
+    activate Security Manager
+    Security Manager->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;\n}
+    Results-->>Security Manager: <size:20>return Results instance
+    deactivate Results
+    Security Manager->>Security Manager: <size:20>if(otp == _authenticatedUser.GetOTP()) {\n          result.SetResult(1);\n          result.SetMessage(\"\");\n          _authenticatedUser.GenerateOTP();\n}\nelse {\n          result.SetResult(0);\n          result.SetMessage("Invalid username or password provided. Retry again or contact system admin");\n          _authenticationUser.AddTrial();\n}
+    Security Manager->>User Account: <size:20>_authenticatedUser.GenerateOTP();
+    activate User Account
+    User Account->>User Account: <size:20>_otp = \/\/generate otp
+    User Account->>Security Manager: <size:20> return _otp;
+    Security Manager->>Console: <size:20>return result;
+    deactivate Security Manager
+    Console->>Console: <size:20>if(result.GetResult() == 1)\n          Console.WriteLine("Enter password: ");\nelse\n          Console.WriteLine(result.GetMessage());
+    Console-->>User: <size:20>Console.WriteLine("Enter password: ");
+    User->>Console: <size:20>User enters password
+    Console->>Console: <size:20>string password = Console.ReadLine();
+    Console->>Security Manager: <size:20>result = secManager.ValidatePassword(password);
+    activate Security Manager
+    Security Manager->>Results: <size:20>var result = new Results();
+    activate Results
+    Results->>Results: <size:20>{\n     private int _isSuccessful;\n     private string _errorMessage;\n}
+    Results-->>Security Manager: <size:20>return Results instance
+    deactivate Results
+    Security Manager->>Security Manager: <size:20>string temp = password + _authenticatedUser.GetSalt();\nHMACSHA512 hmac = new HMACSHA512(_secretKey);\nbyte[] digest =  hmac.ComputeHash(temp.getBytes());
+    Security Manager->>Security Manager: <size:20>if(digest == _authenticatedUser.GetDigest())\n{\n          result.SetResult(1);\n          result.SetMessage(\"\");\n}\nelse\n{\n          _authenticationUser.AddTrial();\n          result.SetResult(0);\n          result.SetMessage("Invalid username or password provided. Retry again or contact system admin");\n}
+    Security Manager-->>Console: <size:20>return result;
+    Console->>Console: <size:20>if(result.GetResult())\n          Console.WriteLine("Welcome to User's home view");\nelse\n          Console.WriteLine(result.GetMessage());
+   Console-->>User: <size:20>Console.WriteLine("Welcom to User's home view");

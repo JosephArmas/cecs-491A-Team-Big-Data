@@ -1,0 +1,42 @@
+title As an Authorized User, I want access to protected functionality, so that I may have Read access.
+   actor User
+   actor User
+    participant UI
+    participant EntryPoint
+    participant AuthorizationManager
+    participant AuthorizationHandler
+    participant AuthorizationServices
+
+    User->>UI: User enters View
+    activate UI
+    
+    UI->>EntryPoint:GET Console request
+    activate EntryPoint
+
+    EntryPoint->>AuthorizationManager:ValidateUser(encryptedPayload:String):bool
+    activate AuthorizationManager
+   // note over Manager: 
+   AuthorizationManager->>AuthorizationHandler:AuthorizedUser(email:String):User
+   activate AuthorizationHandler
+   note right of AuthorizationHandler: System.Security.Principal
+   AuthorizationHandler-->>AuthorizationManager:Authorized User is in system
+   
+    AuthorizationManager->>AuthorizationHandler: User.HasClaim(functionality:String):bool
+    
+
+    AuthorizationHandler->>AuthorizationServices:User.GetClaims(functionality:String)TokenAccessLevel
+    activate AuthorizationServices
+  //  note over Services: 
+  
+
+    AuthorizationServices-->>AuthorizationHandler: Return Read access
+    deactivate AuthorizationServices
+    AuthorizationHandler-->>AuthorizationManager:Return True
+    deactivate AuthorizationHandler
+    AuthorizationManager-->AuthorizationManager:result.IsSuccessful()
+    AuthorizationManager-->>EntryPoint: Return True
+    deactivate AuthorizationManager
+    EntryPoint-->>UI: Response Code: 200
+    deactivate EntryPoint
+    UI-->>User: View is changed for User
+    deactivate UI
