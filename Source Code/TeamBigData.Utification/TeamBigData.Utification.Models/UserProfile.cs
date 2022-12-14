@@ -56,7 +56,7 @@ namespace TeamBigData.Utification.Models
         }
         public string ToString()
         {
-            return ",   Username: " + _username + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + _identity.AuthenticationType;
+            return ",   Username: " + _username + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
         }
     }
 }

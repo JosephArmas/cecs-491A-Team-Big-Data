@@ -14,13 +14,13 @@ namespace TeamBigData.Utification.View.Views
         public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
         {
             Response response = new Response();
-            if (!(((IPrincipal)userProfile).IsInRole("Anonymous User")))
+            if (!((IPrincipal)userProfile).IsInRole("Anonymous User"))
             {
                 response.isSuccessful = false;
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            Console.WriteLine("Welcome Anonymouse User");
+            Console.WriteLine("Welcome Anonymous User");
             Console.WriteLine("------------MENU------------");
             Console.WriteLine("[1] Create a New Account");
             Console.WriteLine("[2] Login");
@@ -36,8 +36,8 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
-                    SecurityManager securityManager = new SecurityManager();
-                    response = securityManager.Register(ref userAccount,ref userProfile);
+                    //SecurityManager securityManager = new SecurityManager();
+                    //response = securityManager.Register(ref userAccount,ref userProfile);
                     break;
 
                 case 2:

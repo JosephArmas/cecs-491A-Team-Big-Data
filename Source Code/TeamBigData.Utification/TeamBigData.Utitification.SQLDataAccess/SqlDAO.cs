@@ -185,8 +185,9 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         reader.GetValues(list);
                         if ((int)list[1] == 0)
                         {
-                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], (string)list[4], (string)list[5], ((DateTime)list[6]).ToString());
-                            result.data = userProfile;
+                                                             //string username, string firstName, string lastName, int age, string email, string address, string birthday, GenericIdentity identity
+                            //var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], (string)list[4], (string)list[5], ((DateTime)list[6]).ToString());
+                            //result.data = userProfile;
                         }
                         else
                         {

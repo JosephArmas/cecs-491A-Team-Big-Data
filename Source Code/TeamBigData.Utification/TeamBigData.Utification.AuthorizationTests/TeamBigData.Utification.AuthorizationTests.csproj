@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TeamBigData.Utification.AccountServices\TeamBigData.Utification.AccountServices.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.View\TeamBigData.Utification.View.csproj" />
   </ItemGroup>
 
 </Project>

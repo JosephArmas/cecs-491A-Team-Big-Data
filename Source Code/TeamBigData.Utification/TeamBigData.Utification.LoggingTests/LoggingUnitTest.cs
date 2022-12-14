@@ -1,6 +1,6 @@
-using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utitification.SQLDataAccess;
 
 namespace TeamBigData.Utification.LoggingTests
 {
@@ -12,7 +12,8 @@ namespace TeamBigData.Utification.LoggingTests
         public void SQL_LogHasWrongLogLevel() //Possible needs to be made async
         {
             //Arrange
-            var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            String connection = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
+            var sysUnderTest = new Logger(new SqlDAO(connection));
             var log = new Log(1, "Trace", "SYSTEM", "DAO_LogMustSaveToDataStore", "Data", "This is a automated test");
             //Act
             var logResult = sysUnderTest.Log(log);
