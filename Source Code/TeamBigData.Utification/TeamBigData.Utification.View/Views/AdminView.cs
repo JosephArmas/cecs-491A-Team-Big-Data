@@ -38,6 +38,24 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
+                    Console.Clear();
+                    SecurityManager secManagerAcc = new SecurityManager();
+                    List<UserAccount> listAcc = new List<UserAccount>();
+                    response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("Printing out User Account Table");
+                    for (int i = 0; i < listAcc.Count; i++)
+                        Console.WriteLine(((UserAccount)listAcc[i]).ToString());
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
                     break;
                 case 2:
                     Console.Clear();
@@ -60,8 +78,42 @@ namespace TeamBigData.Utification.View.Views
                     Console.ReadLine();
                     break;
                 case 3:
+                    Console.Clear();
+                    SecurityManager secManagerEnable = new SecurityManager();
+                    Console.WriteLine("Please Enter the name of the User to be re-enabled");
+                    String disUser = Console.ReadLine();
+                    response = secManagerEnable.EnableAccount(disUser,userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("User account was successfully re-enabled");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
                     break;
                 case 4:
+                    Console.Clear();
+                    SecurityManager secManagerLogout = new SecurityManager();
+                    response = secManagerLogout.LogOut();
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("Successfully logged out");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
+                    return response;
+                    break;
                 default:
                     break;
             }

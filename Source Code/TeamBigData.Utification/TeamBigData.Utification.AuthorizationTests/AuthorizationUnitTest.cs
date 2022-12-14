@@ -32,11 +32,11 @@ namespace TeamBigData.Utification.AuthorizationTests
         public void CheckRoleRegular()
         {
             //Arrange
-            var sysUnderTest = new UserProfile(new GenericIdentity("username", "Admin User"));
+            var sysUnderTest = new UserProfile(new GenericIdentity("username", "Regular User"));
             //Act
-            var logResult = ((IPrincipal)sysUnderTest).IsInRole("Admin User");
+            var logResult = ((IPrincipal)sysUnderTest).IsInRole("Regular User");
             //Assert
-            Console.WriteLine("Is an Admin User: " + logResult);
+            Console.WriteLine("Is an Regular User: " + logResult);
             Assert.IsTrue(logResult);
         }
     }

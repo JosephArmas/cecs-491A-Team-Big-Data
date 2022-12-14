@@ -1,5 +1,6 @@
 ﻿using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.View.Abstraction;
 
@@ -34,7 +35,22 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
-
+                    Console.Clear();
+                    SecurityManager secManagerLogout = new SecurityManager();
+                    response = secManagerLogout.LogOut();
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("Successfully logged out");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
+                    break;
                 default:
                     break;
             }

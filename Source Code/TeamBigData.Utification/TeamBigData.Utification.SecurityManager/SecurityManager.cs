@@ -215,7 +215,7 @@ namespace TeamBigData.Utification.Manager
             else
             {
                 result.isSuccessful = false;
-                result.errorMessage = "Error: The Entered in OTP doesn't match";
+                result.errorMessage = "Invalid username or password provided. Retry again or contact system administrator if issue persists";
             }
             return result;
         }
@@ -227,7 +227,7 @@ namespace TeamBigData.Utification.Manager
             {
                 _user = null;
                 response.isSuccessful = true;
-                response.errorMessage = "You have been Successfully Logged Out";
+                response.errorMessage = "Logout successfully";
             }
             else
             {
@@ -278,6 +278,22 @@ namespace TeamBigData.Utification.Manager
             IDBSelecter selectDAO = new SqlDAO(connection);
             list = selectDAO.SelectUserAccountTable();
             response.isSuccessful = true;
+            return response;
+        }
+        public Response EnableAccount(String disabledUser, UserProfile userProfile)
+        {
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var enabler = new AccountDisabler(userDao);
+            var enableTask = enabler.EnableAccount(disabledUser).Result;
+            response = enableTask;
             return response;
         }
     }
