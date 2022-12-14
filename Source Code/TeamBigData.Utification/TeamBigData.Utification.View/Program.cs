@@ -20,21 +20,30 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                 {
                     menu = new AnonymousView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
-                    if (!response.isSuccessful)
+                    if (!response.isSuccessful && response.errorMessage == "")
                     {
-                        if (response.errorMessage!="")
-                        {
-                            Console.Clear();
-                            Console.WriteLine(response.errorMessage);
-                            return;
-                        }
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        return;
+                    }
+                    if (!response.isSuccessful && response.errorMessage != "")
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        return;
                     }
                 }
                 else if (((IPrincipal)userProfile).IsInRole("Regular User"))
                 {
                     menu = new RegularView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
-                    if (response.errorMessage != "")
+                    if (!response.isSuccessful && response.errorMessage == "")
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        return;
+                    }
+                    if (!response.isSuccessful && response.errorMessage != "")
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
@@ -45,7 +54,13 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                 {
                     menu = new AdminView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
-                    if (response.errorMessage != "")
+                    if (!response.isSuccessful && response.errorMessage == "")
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        return;
+                    }
+                    if (!response.isSuccessful && response.errorMessage != "")
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);

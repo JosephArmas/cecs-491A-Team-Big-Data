@@ -32,7 +32,7 @@ namespace TeamBigData.Utification.View.Views
             switch (Int32.Parse(input))
             {
                 case 0:
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("Logging Out User...\nExiting Utification...");
                     response.isSuccessful = false;
                     response.errorMessage = "";

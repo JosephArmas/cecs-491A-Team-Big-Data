@@ -83,7 +83,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "tmp@email.com";
             var password = "password";
             var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(1, "Info", "SYSTEM", "CantLoginWhenDisabled", "Data", "This is a automated test");
@@ -105,7 +105,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
+            var username = "tmp@email.com";
             var password = "password";
             var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(1, "Error", "WrongInfo", "CantLoginWhenDisabledLogFail", "View", "This is a automated test");
