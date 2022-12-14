@@ -33,7 +33,7 @@ namespace TeamBigData.Utification.View.Views
             switch (Int32.Parse(input))
             {
                 case 0:
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("Exiting Utification...");
                     response.isSuccessful = false;
                     response.errorMessage = "";

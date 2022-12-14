@@ -31,13 +31,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Cry
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AccountServices", "TeamBigData.Utification.AccountServices\TeamBigData.Utification.AccountServices.csproj", "{F7AE8B84-47C4-4620-A30B-29ACD8902C4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBAuthorizationTests", "..\TeamBigData.Utification.Authorization(JoshTests)\AuthorizationTests\TeamBAuthorizationTests.csproj", "{39A9BA1E-0B3F-4375-8221-1A356B41EDA9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AuthenticationTests", "TeamBigData.Utifciation.AuthenticationTests\TeamBigData.Utification.AuthenticationTests.csproj", "{17E0D059-1129-45A6-BD8E-111E643AF0A0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.LoggingTests", "TeamBigData.Utification.LoggingTests\TeamBigData.Utification.LoggingTests.csproj", "{070F49BD-807D-4986-B551-33788F82B133}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.RegistrationTests", "TeamBigData.Utification.RegistrationTests\TeamBigData.Utification.RegistrationTests.csproj", "{071C0D75-158B-48A8-B9AF-007341BD81BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.AuthorizationTests", "TeamBigData.Utification.AuthorizationTests\TeamBigData.Utification.AuthorizationTests.csproj", "{C73972E1-BC76-4461-B445-C24B78BF0D2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.AuthenticationTests", "TeamBigData.Utification.AuthenticationTests\TeamBigData.Utification.AuthenticationTests.csproj", "{29E797FF-331D-4101-8637-97CD457E18BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,14 +77,6 @@ Global
 		{F7AE8B84-47C4-4620-A30B-29ACD8902C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7AE8B84-47C4-4620-A30B-29ACD8902C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7AE8B84-47C4-4620-A30B-29ACD8902C4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39A9BA1E-0B3F-4375-8221-1A356B41EDA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39A9BA1E-0B3F-4375-8221-1A356B41EDA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39A9BA1E-0B3F-4375-8221-1A356B41EDA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39A9BA1E-0B3F-4375-8221-1A356B41EDA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17E0D059-1129-45A6-BD8E-111E643AF0A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17E0D059-1129-45A6-BD8E-111E643AF0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17E0D059-1129-45A6-BD8E-111E643AF0A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17E0D059-1129-45A6-BD8E-111E643AF0A0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{070F49BD-807D-4986-B551-33788F82B133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{070F49BD-807D-4986-B551-33788F82B133}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{070F49BD-807D-4986-B551-33788F82B133}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -93,6 +85,14 @@ Global
 		{071C0D75-158B-48A8-B9AF-007341BD81BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{071C0D75-158B-48A8-B9AF-007341BD81BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{071C0D75-158B-48A8-B9AF-007341BD81BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C73972E1-BC76-4461-B445-C24B78BF0D2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C73972E1-BC76-4461-B445-C24B78BF0D2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C73972E1-BC76-4461-B445-C24B78BF0D2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C73972E1-BC76-4461-B445-C24B78BF0D2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29E797FF-331D-4101-8637-97CD457E18BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29E797FF-331D-4101-8637-97CD457E18BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29E797FF-331D-4101-8637-97CD457E18BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29E797FF-331D-4101-8637-97CD457E18BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,10 +106,10 @@ Global
 		{76451ED3-D845-47DC-96EA-4C8BD2F90C0B} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
 		{2A188429-1F20-4C90-843F-A0AE722BA293} = {3365193A-4AD7-4316-9605-2B9E666A6988}
 		{F7AE8B84-47C4-4620-A30B-29ACD8902C4D} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
-		{39A9BA1E-0B3F-4375-8221-1A356B41EDA9} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
-		{17E0D059-1129-45A6-BD8E-111E643AF0A0} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 		{070F49BD-807D-4986-B551-33788F82B133} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 		{071C0D75-158B-48A8-B9AF-007341BD81BB} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
+		{C73972E1-BC76-4461-B445-C24B78BF0D2D} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
+		{29E797FF-331D-4101-8637-97CD457E18BA} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3DAF13A-2974-4087-87BE-B77C46741866}

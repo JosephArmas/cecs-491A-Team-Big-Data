@@ -22,37 +22,38 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
                     if (!response.isSuccessful)
                     {
-                        Console.Clear();
-                        Console.WriteLine(response.errorMessage);
+                        if (response.errorMessage!="")
+                        {
+                            Console.Clear();
+                            Console.WriteLine(response.errorMessage);
+                            return;
+                        }
                         return;
                     }
                 }
-                else if (((IPrincipal)userProfile).IsInRole("Regular User"))
+                if (((IPrincipal)userProfile).IsInRole("Regular User"))
                 {
                     menu = new RegularView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
-                    if (!response.isSuccessful)
+                    if (response.errorMessage != "")
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
                         return;
                     }
+                    return;
                 }
-                else if (((IPrincipal)userProfile).IsInRole("Admin User"))
+                if (((IPrincipal)userProfile).IsInRole("Admin User"))
                 {
                     menu = new AdminView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
-                    if (!response.isSuccessful)
+                    if (response.errorMessage != "")
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
                         return;
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Error Bad Role: " + userProfile.Identity.Name);
-                    break;
+                    return;
                 }
             }
         }
