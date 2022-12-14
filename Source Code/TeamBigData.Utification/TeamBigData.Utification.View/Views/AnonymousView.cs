@@ -17,7 +17,7 @@ namespace TeamBigData.Utification.View.Views
         {
             Response response = new Response();
             SecurityManager securityManager = new SecurityManager();
-            if (!(((IPrincipal)userProfile).IsInRole("Anonymous User")))
+            if (!((IPrincipal)userProfile).IsInRole("Anonymous User"))
             {
                 response.isSuccessful = false;
                 response.errorMessage = "Unauthorized access to view";
@@ -55,7 +55,7 @@ namespace TeamBigData.Utification.View.Views
                     String password = Console.ReadLine();
                     var encryptor2 = new Encryptor();
                     var encryptedPassword2 = encryptor2.encryptString(password);
-                    response = securityManager.VerifyUser(username, encryptedPassword2, encryptor2);
+                    response = securityManager.VerifyUser(username, encryptedPassword2, encryptor2).Result;
                     if(response.isSuccessful)
                     {
                         Console.WriteLine("Please enter the OTP to finish Authentication");

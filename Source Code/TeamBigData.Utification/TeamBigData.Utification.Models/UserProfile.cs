@@ -39,6 +39,18 @@ namespace TeamBigData.Utification.Models
             Identity = new GenericIdentity(username, "Anonymous User");
         }
 
+        public UserProfile(string username, string role)
+        {
+            _username = username;
+            _firstName = "";
+            _lastName = "";
+            _age = 0;
+            _email = username;
+            _address = "";
+            _birthday = new DateTime();
+            Identity = new GenericIdentity(username, role);
+        }
+
         public UserProfile(string username, string firstName, string lastName, int age, string email, string address, DateTime birthday, GenericIdentity identity)
         {
             _username = username;

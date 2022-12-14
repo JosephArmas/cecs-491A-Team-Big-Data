@@ -18,6 +18,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
             {
                 if (((IPrincipal)userProfile).IsInRole("Anonymous User"))
                 {
+                    menu = new AnonymousView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
                     if (!response.isSuccessful)
                     {
@@ -26,8 +27,9 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                         return;
                     }
                 }
-                if (((IPrincipal)userProfile).IsInRole("Regular User"))
+                else if (((IPrincipal)userProfile).IsInRole("Regular User"))
                 {
+                    menu = new RegularView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
                     if (!response.isSuccessful)
                     {
@@ -36,8 +38,9 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                         return;
                     }
                 }
-                if (((IPrincipal)userProfile).IsInRole("Admin User"))
+                else if (((IPrincipal)userProfile).IsInRole("Admin User"))
                 {
+                    menu = new AdminView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
                     if (!response.isSuccessful)
                     {
@@ -48,7 +51,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                 }
                 else
                 {
-                    Console.WriteLine("Error Bad Role");
+                    Console.WriteLine("Error Bad Role: " + userProfile.Identity.Name);
                     break;
                 }
             }

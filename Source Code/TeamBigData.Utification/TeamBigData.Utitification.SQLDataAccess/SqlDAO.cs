@@ -58,9 +58,9 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var insertSql = "INSERT into dbo.UserProfiles(username, firstname, lastname, email, \"address\", birthday) values('" +
+                var insertSql = "INSERT into dbo.UserProfiles(username, firstname, lastname, email, \"address\", birthday, role) values('" +
                     user._username + "', '" + user._firstName + "', '" + user._lastName + "', '" + user._email + "', '" +
-                    user._address + "', '" + user._birthday + "')";
+                    user._address + "', '" + user._birthday + "', '" + user.Identity.AuthenticationType + "')";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
@@ -185,7 +185,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                         reader.GetValues(list);
                         if ((int)list[1] == 0)
                         {
-                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], 21, (string)list[4], (string)list[5], ((DateTime)list[6]), new GenericIdentity((string)list[7]));
+                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], 21, (string)list[4], 
+                                (string)list[5], ((DateTime)list[6]), new GenericIdentity((string)list[0], (string)list[7]));
                             result.data = userProfile;
                         }
                         else

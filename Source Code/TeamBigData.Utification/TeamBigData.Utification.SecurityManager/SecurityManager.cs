@@ -71,12 +71,14 @@ namespace TeamBigData.Utification.Manager
                 log = new Log(1, "Error", email, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
             logger.Log(log);
-            var result2 = sqlDAO.InsertUserProfile(new UserProfile(email)).Result;
+            var result2 = sqlDAO.InsertUserProfile(new UserProfile(email, "Regular User")).Result;
+            Console.WriteLine(result2.errorMessage);
             return response;
         }
 
-        public Response VerifyUser(String username, byte[] encryptedPassword, Encryptor encryptor)
+        public async Task<Response> VerifyUser(String username, byte[] encryptedPassword, Encryptor encryptor)
         {
+            var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
             if (_user == null)
             {
@@ -96,13 +98,11 @@ namespace TeamBigData.Utification.Manager
                 var user = new UserAccount(username, hashedPassword);
                 var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                 var userDao = new SqlDAO(connectionString);
-                result = userDao.GetUser(user).Result;
+                result = await userDao.GetUser(user);
                 if (result.isSuccessful)
                 {
                     _user = result.data as UserProfile;
-                    var hash = SecureHasher.HashString(DateTime.Now.Ticks, username);
-                    _otp = hash.Substring(0, 16).Replace("-", "");
-                    _otpCreated = DateTime.Now;
+                    GenerateOTP();
                     log = new Log(2, "Info", username, "Authentication", "Data", "Successfull Logged In");
                     logger.Log(log);
                     result.isSuccessful = true;
@@ -149,7 +149,37 @@ namespace TeamBigData.Utification.Manager
                 result.isSuccessful = false;
                 result.errorMessage = "Error You are already Logged In";
             }
+            tcs.SetResult(result);
             return result;
+        }
+
+        public void GenerateOTP()
+        {
+            var random = new Random();
+            int count = 0;
+            while (count < 10)
+            {
+                int character = random.Next(3);
+                // 0-9
+                if (character == 0)
+                {
+                    _otp = _otp + random.Next(9).ToString();
+                    count++;
+                }
+                // a-z
+                if (character == 1)
+                {
+                    _otp = _otp + (char)random.Next(97, 123);
+                    count++;
+                }
+                // A-Z
+                if (character == 2)
+                {
+                    _otp = _otp + (char)random.Next(65, 91);
+                    count++;
+                }
+            }
+            _otpCreated = DateTime.Now;
         }
 
         public String SendOTP()
