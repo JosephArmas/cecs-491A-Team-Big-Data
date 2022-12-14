@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{F44C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AccountServices", "TeamBigData.Utification.Registration\TeamBigData.Utification.AccountServices.csproj", "{15199D80-1B24-4168-A820-B8F15BEA2C91}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ErrorResponse", "TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj", "{4D0E90DA-19E0-4ADB-AB15-8345E51F2243}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Models", "TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj", "{2FF3E210-C0F5-4C92-8891-0FA761406BF5}"
@@ -36,10 +34,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.RegistrationTests", "TeamBigData.Utification.RegistrationTests\TeamBigData.Utification.RegistrationTests.csproj", "{83847332-26C1-44F5-858C-5BA3CA6313AC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBAuthorizationTests", "..\TeamBigData.Utification.Authorization\AuthorizationTests\TeamBAuthorizationTests.csproj", "{39A9BA1E-0B3F-4375-8221-1A356B41EDA9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ManagerLayer", "TeamBigData.Utification.Manager\TeamBigData.Utification.ManagerLayer.csproj", "{33F342DA-DED0-42DF-AFE0-387AC4A0A75E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AuthenticationTests", "TeamBigData.Utifciation.AuthenticationTests\TeamBigData.Utification.AuthenticationTests.csproj", "{7186D6B4-76BB-4E4F-B281-A279725EA2DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

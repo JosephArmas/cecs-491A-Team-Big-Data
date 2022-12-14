@@ -6,11 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
-using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.Registration;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.ManagerLayer;
-using Azure.Identity;
-using TeamBigData.Utification.Security;
 
 namespace TeamBigData.Utification.RegistrationTests
 {
@@ -20,21 +18,20 @@ namespace TeamBigData.Utification.RegistrationTests
         [TestMethod]
         public async Task CreatesLogWhenRegistering()
         {
-            //Arrange
             var userConnection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var logConnection = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=False";
+            var logConnection = new SqlConnection(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
+            logConnection.Open();
             var manager = new Manager();
             SqlDAO testDBO = new SqlDAO(userConnection);
-            SqlDAO logDBO = new SqlDAO(logConnection);
+            var countSql = "SELECT COUNT(LogID) From dbo.Logs";
+            var testLog = new SqlCommand(countSql, logConnection);
             var expected = 1;
             //Act
-            int before = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
-            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString("password");
-            var result = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
-            int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
-            //Assert
+            int before = (int)testLog.ExecuteScalar();
+            await testDBO.Clear("dbo.Users");
+            var result = manager.InsertUser("davidg@yahoo.com", "password");
+            int after = (int)testLog.ExecuteScalar();
+            logConnection.Close();
             Assert.AreEqual(expected, after - before);
             Assert.IsTrue(result.isSuccessful);
         }
@@ -45,13 +42,24 @@ namespace TeamBigData.Utification.RegistrationTests
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
-            var manager = new Manager();
+            AccountManager testRegister = new AccountManager(testDBO);
+            String password = "password";
+            String email = "daviddg@yahoo.com";
             //Act
-            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString("password");
-            var actual = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
+            await testDBO.Clear("dbo.TestUsers");
+            var actual = await testRegister.InsertUser("dbo.TestUsers", email, password);
+            //Assert
+            Assert.IsTrue(actual.isSuccessful);
+        }
+
+        [TestMethod]
+        public async Task ClearTestUsersWorks()
+        {
+            //Arrange
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            SqlDAO testDBO = new SqlDAO(connectionString);
+            //Act
+            var actual = await testDBO.Clear("dbo.TestUsers");
             //Assert
             Assert.IsTrue(actual.isSuccessful);
         }
@@ -62,14 +70,13 @@ namespace TeamBigData.Utification.RegistrationTests
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
-            var manager = new Manager();
+            AccountManager testRegister = new AccountManager(testDBO);
+            String password = "password";
+            String email = "daviddg5@yahoo.com";
             //Act
-            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString("password");
-            manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
-            var actual = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
+            await testDBO.Clear("dbo.TestUsers");
+            await testRegister.InsertUser("dbo.TestUsers", email, password);
+            var actual = await testRegister.InsertUser("dbo.TestUsers", email, password);
             //Assert
             Assert.IsTrue(actual.errorMessage.Contains("Email"));
         }
@@ -79,17 +86,17 @@ namespace TeamBigData.Utification.RegistrationTests
         {
             //Arrange
             Stopwatch stopwatch = new Stopwatch();
-            long expected = 5 * 1000;
-            var manager = new Manager();
+            long expected = 5 * 60000;
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
+            AccountManager testRegister = new AccountManager(testDBO);
+            String username = "daviddg5";
+            String password = "password";
+            String email = "daviddg5@yahoo.com";
             //Act
-            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
+            await testDBO.Clear("dbo.TestUsers");
             stopwatch.Start();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString("password");
-            var result = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
+            var result = await testRegister.InsertUser("dbo.TestUsers", email, password);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
