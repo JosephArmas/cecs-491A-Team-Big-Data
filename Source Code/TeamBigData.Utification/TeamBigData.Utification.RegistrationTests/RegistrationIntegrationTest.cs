@@ -49,10 +49,10 @@ namespace TeamBigData.Utification.RegistrationTests
             AccountRegisterer testRegister = new AccountRegisterer(testDBO);
             var manager = new SecurityManager();
             //Act
-            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
+            await testDBO.DeleteUser(new UserProfile("disabledUser@yahoo.com"));
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var actual = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
+            var actual = manager.InsertUser("disabledUser@yahoo.com", encryptedPassword, encryptor);
             //Assert
             Assert.IsTrue(actual.isSuccessful);
         }
