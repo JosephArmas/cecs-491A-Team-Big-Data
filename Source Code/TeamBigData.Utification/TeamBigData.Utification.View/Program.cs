@@ -28,10 +28,9 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                             Console.WriteLine(response.errorMessage);
                             return;
                         }
-                        return;
                     }
                 }
-                if (((IPrincipal)userProfile).IsInRole("Regular User"))
+                else if (((IPrincipal)userProfile).IsInRole("Regular User"))
                 {
                     menu = new RegularView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
@@ -41,9 +40,8 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                         Console.WriteLine(response.errorMessage);
                         return;
                     }
-                    return;
                 }
-                if (((IPrincipal)userProfile).IsInRole("Admin User"))
+                else if (((IPrincipal)userProfile).IsInRole("Admin User"))
                 {
                     menu = new AdminView();
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
@@ -53,6 +51,10 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                         Console.WriteLine(response.errorMessage);
                         return;
                     }
+                }
+                else
+                {
+                    Console.WriteLine("huh");
                     return;
                 }
             }

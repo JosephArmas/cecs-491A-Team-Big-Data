@@ -35,16 +35,7 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case 1:
-                    SecurityManager secManagerLogout = new SecurityManager();
-                    response = secManagerLogout.LogOut();
-                    if (!response.isSuccessful)
-                    {
-                        Console.WriteLine(response.errorMessage);
-                        Console.WriteLine("Press Enter to exit...");
-                        Console.ReadLine();
-                        response.isSuccessful = false;
-                        return response;
-                    }
+                    userProfile = new UserProfile("");
                     Console.WriteLine("Successfully logged out");
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
