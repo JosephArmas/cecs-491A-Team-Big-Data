@@ -185,7 +185,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         reader.GetValues(list);
                         if ((int)list[1] == 0)
                         {
-                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], (string)list[4], (string)list[5], ((DateTime)list[6]).ToString());
+                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], 21, (string)list[4], (string)list[5], ((DateTime)list[6]), new GenericIdentity("User"));
                             result.data = userProfile;
                         }
                         else
@@ -374,7 +374,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         int age = 0;
                         String email = "";
                         String address = "";
-                        String birthday = "";
+                        DateTime birthday = new DateTime();
                         String role = "";
 
                         int ordinal = reader.GetOrdinal("Username");
@@ -406,7 +406,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         ordinal = reader.GetOrdinal("Birthday");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            birthday = reader.GetString(ordinal);
+                            birthday = reader.GetDateTime(ordinal);
                         }
                         var userProfile = new UserProfile(userName,firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
                         list.Add(userProfile);
@@ -436,7 +436,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         int age = 0;
                         String email = "";
                         String address = "";
-                        String birthday = "";
+                        DateTime birthday = new DateTime();
                         String role = "";
 
                         int ordinal = reader.GetOrdinal("Username");
@@ -468,7 +468,7 @@ namespace TeamBigData.Utitification.SQLDataAccess
                         ordinal = reader.GetOrdinal("Birthday");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            birthday = reader.GetString(ordinal);
+                            birthday = reader.GetDateTime(ordinal);
                         }
                         userProfile = new UserProfile(userName, firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
                     }

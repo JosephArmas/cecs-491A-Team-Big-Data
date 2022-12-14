@@ -16,7 +16,7 @@ namespace TeamBigData.Utification.Models
         public int _age { get; private set; }
         public String _email { get; private set; }
         public String _address { get; private set; }
-        public String _birthday { get; private set; }
+        public DateTime _birthday { get; private set; }
         public IIdentity? Identity { get; private set; }
 
         bool IPrincipal.IsInRole(string role)
@@ -35,11 +35,11 @@ namespace TeamBigData.Utification.Models
             _age = 0;
             _email = username;
             _address = "";
-            _birthday = "";
+            _birthday = new DateTime();
             Identity = new GenericIdentity(username, "Anonymous User");
         }
 
-        public UserProfile(string username, string firstName, string lastName, int age, string email, string address, string birthday, GenericIdentity identity)
+        public UserProfile(string username, string firstName, string lastName, int age, string email, string address, DateTime birthday, GenericIdentity identity)
         {
             _username = username;
             _firstName = firstName;
@@ -56,7 +56,7 @@ namespace TeamBigData.Utification.Models
         }
         public string ToString()
         {
-            return ",   Username: " + _username + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + _identity.AuthenticationType;
+            return ",   Username: " + _username + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
         }
     }
 }
