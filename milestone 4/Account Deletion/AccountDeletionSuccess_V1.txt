@@ -1,0 +1,47 @@
+title Account Deletion Success
+
+#participants
+participant User
+participant User Interface
+participant Manager
+participant DataAccess
+participant Response
+participant DataStore
+
+activate User
+	box over User: User is an authenticated user
+	User->User Interface: User wants to\ndelete their account 
+    activate User Interface
+    	User Interface->User Interface: DeletionConfirmation():bool
+    	User Interface-->User: Console.WriteLine("Are you sure you wish to delete this account?")
+    	User->User Interface: User confirms that they want to delete the account
+        User Interface->User Interface:if(DeletionConfirmation() == True)
+    	User Interface->Manager: var delManager = new Manager()
+        activate Manager
+        	Manager-->User Interface: return delManager
+        deactivate Manager
+        User Interface->Manager:delManager.DeleteAccInfo(Username:String):Response
+        activate Manager
+        	Manager->DataAccess: DeleteAccountInfo(Username:String):Response
+        	activate DataAccess
+            
+            	DataAccess->Response:var response = new Response()
+                activate Response
+            Response-->DataAccess:return response
+            deactivate Response
+            	DataAccess->DataAccess:using (var connection = new SqlConnection(_connectionString)) {\n     connection.Open();\n     var countSql = "DELETE FROM " + tableName + " WHERE ";\n     if (collumnNames.Length == values.Length) {\n          for (int i = 0; i < collumnNames.Length; i++) {\n            <size:11>if (i != collumnNames.Length - 1) {\n                    countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"' and ";\n               }\n               else {\n                    countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"';";\n               }\n           }\n      }\n     else {\n          result.errorMessage = "There must be an equal ammount of collumnNames and values";\n     }\n     try {\n          var command = new SqlCommand(countSql, connection);\n          result.data = command.ExecuteScalar();\n          result.isSuccessful = true;\n     }
+            	DataAccess->DataStore:result.data = command.ExecutreScalar();
+                activate DataStore
+                	DataStore->DataStore: DELETE FROM UserAccount INNER JOIN UserProfile Where columnNames = values
+                	DataStore-->DataAccess: return;
+                deactivate DataStore
+                DataAccess-->Manager:return response
+        	deactivate DataAccess
+            Manager-->User Interface:return response
+        deactivate Manager
+    User Interface-->User:Console.WriteLine("Account deletion successful")
+   User->User Interface:User confirms acknowledges system message
+   User Interface->User Interface: Homepage():HTTP
+   User Interface-->User:Unauthenticated Homepage view
+    deactivate User Interface
+deactivate User
