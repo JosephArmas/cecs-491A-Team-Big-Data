@@ -29,7 +29,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var digest = encryptor.encryptString(password);
             result = securityManager.VerifyUser(username, digest, encryptor).Result;
             var message = securityManager.SendOTP();
-            var result2 = securityManager.VerifyOTP(message);
+            var result2 = securityManager.LoginOTP(message);
             //Assert
             Assert.IsTrue(result.isSuccessful);
             Assert.IsTrue(securityManager.IsAuthenticated());
@@ -49,7 +49,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var digest = encryptor.encryptString(password);
             result = securityManager.VerifyUser(username, digest, encryptor).Result;
             var message = securityManager.SendOTP();
-            var result2 = securityManager.VerifyOTP(message);
+            var result2 = securityManager.LoginOTP(message);
             //Verify User is truly authenticated
             Assert.IsTrue(securityManager.IsAuthenticated());
 
@@ -71,7 +71,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var digest = encryptor.encryptString(password);
             result = securityManager.VerifyUser(username, digest, encryptor).Result;
-            var result2 = securityManager.VerifyOTP("wrongOTP");
+            var result2 = securityManager.LoginOTP("wrongOTP");
             //Assert
             Assert.IsFalse(result2.isSuccessful);
             Assert.IsFalse(securityManager.IsAuthenticated());

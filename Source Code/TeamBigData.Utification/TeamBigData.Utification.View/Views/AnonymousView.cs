@@ -27,6 +27,7 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("------------MENU------------");
             Console.WriteLine("[1] Create a New Account");
             Console.WriteLine("[2] Login");
+            Console.WriteLine("[3] Account Recovery/Forgot Password");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-2");
             string input = Console.ReadLine();
@@ -46,6 +47,7 @@ namespace TeamBigData.Utification.View.Views
                     var encryptor = new Encryptor();
                     var encryptedPassword = encryptor.encryptString(userPassword);
                     response = securityManager.InsertUser(email, encryptedPassword, encryptor);
+                    Console.WriteLine(response.errorMessage);
                     break;
 
                 case 2:
@@ -61,7 +63,7 @@ namespace TeamBigData.Utification.View.Views
                         Console.WriteLine("Please enter the OTP to finish Authentication");
                         Console.WriteLine(securityManager.SendOTP());
                         string enteredOtp = Console.ReadLine();
-                        response = securityManager.VerifyOTP(enteredOtp);
+                        response = securityManager.LoginOTP(enteredOtp);
                         if(response.isSuccessful)
                         {
                             Console.WriteLine("You have been Successfully Authenticated");
@@ -72,6 +74,17 @@ namespace TeamBigData.Utification.View.Views
                     {
                         Console.WriteLine(response.errorMessage);
                     }
+                    break;
+
+                case 3:
+                    Console.WriteLine("Please enter your username");
+                    String inputUsername = Console.ReadLine();
+                    Console.WriteLine("Please enter your new password");
+                    String newPassword = Console.ReadLine();
+                    securityManager.GenerateOTP();
+                    Console.WriteLine("Please Enter the OTP: " + securityManager.SendOTP());
+                    String otp = Console.ReadLine();
+                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newPassword, otp).Result.errorMessage);
                     break;
                 default:
                     break;

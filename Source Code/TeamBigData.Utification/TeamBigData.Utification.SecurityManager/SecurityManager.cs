@@ -56,6 +56,7 @@ namespace TeamBigData.Utification.Manager
             var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             if (response.isSuccessful)
             {
+                sqlDAO.InsertUserProfile(new UserProfile(email, "Regular User"));
                 String username = response.errorMessage.Substring(47);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
@@ -71,8 +72,6 @@ namespace TeamBigData.Utification.Manager
                 log = new Log(1, "Error", email, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
             logger.Log(log);
-            var result2 = sqlDAO.InsertUserProfile(new UserProfile(email, "Regular User")).Result;
-            Console.WriteLine(result2.errorMessage);
             return response;
         }
 
@@ -193,7 +192,39 @@ namespace TeamBigData.Utification.Manager
             if (_otp == null)
             {
                 result.isSuccessful = false;
-                result.errorMessage = "Please Authenticate before entering an otp";
+                result.errorMessage = "Error OTP not Generated";
+                return result;
+            }
+            var currentTime = DateTime.Now;
+            if (enteredOTP.Equals(_otp))
+            {
+                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //12000000000 ticks in 2 minutes
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "OTP Verified";
+                }
+                else
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "OTP Expired, Please Authenticate Again";
+                }
+            }
+            else
+            {
+                Console.WriteLine(_otp);
+                result.isSuccessful = false;
+                result.errorMessage = "Invalid OTP";
+            }
+            return result;
+        }
+
+        public Response LoginOTP(String enteredOTP)
+        {
+            var result = new Response();
+            if (_otp == null)
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "Error OTP not Generated";
                 return result;
             }
             var currentTime = DateTime.Now;
@@ -295,6 +326,33 @@ namespace TeamBigData.Utification.Manager
             var enableTask = enabler.EnableAccount(disabledUser).Result;
             response = enableTask;
             return response;
+        }
+
+        public async Task<Response> RecoverAccount(String username, String newPassword, String enteredOTP)
+        {
+            Response result = new Response();
+            result.isSuccessful = false;
+            if(!AccountRegisterer.IsValidPassword(newPassword))
+            {
+                result.errorMessage = "Invalid new password\nPlease make it at least 8 characters and no weird symbols";
+                return result;
+            }
+            Response otpResponse = VerifyOTP(enteredOTP);
+            if (!otpResponse.isSuccessful)
+            {
+                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                return result;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            SqlDAO userDao = new SqlDAO(connectionString);
+            if (!await userDao.IsValidUsername(username))
+            {
+                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                return result;
+            }
+            Console.WriteLine("Checkpoint");
+            result = await userDao.CreateRecoveryRequest(username, newPassword);
+            return result;
         }
     }
 }

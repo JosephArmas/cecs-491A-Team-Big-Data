@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Azure.Identity;
+using Microsoft.Data.SqlClient;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Principal;
@@ -419,8 +420,9 @@ namespace TeamBigData.Utification.SQLDataAccess
             return list;
         }
 
-        public UserProfile SelectUserProfile(String username)
+        public Task<UserProfile> SelectUserProfile(String username)
         {
+            var tcs = new TaskCompletionSource<UserProfile>();
             UserProfile userProfile = new UserProfile("");
             string sqlStatement = "SELECT * FROM dbo.UserProfile WHERE Username = " + username;
             using (SqlConnection connect = new SqlConnection(_connectionString))
@@ -472,16 +474,18 @@ namespace TeamBigData.Utification.SQLDataAccess
                             birthday = reader.GetDateTime(ordinal);
                         }
                         userProfile = new UserProfile(userName, firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
+                        tcs.SetResult(userProfile);
                     }
                     reader.Close();
                 }
                 connect.Close();
             }
-            return userProfile;
+            return tcs.Task;
         }
 
-        public UserAccount SelectUserAccount(String username)
+        public Task<UserAccount> SelectUserAccount(String username)
         {
+            var tcs = new TaskCompletionSource<UserAccount>();
             UserAccount userAccount = new UserAccount("","");
             string sqlStatement = "SELECT * FROM dbo.UserAccount WHERE Username = " + username;
             using (SqlConnection connect = new SqlConnection(_connectionString))
@@ -525,12 +529,66 @@ namespace TeamBigData.Utification.SQLDataAccess
                             verified = reader.GetBoolean(ordinal);
                         }
                         userAccount = new UserAccount(userName, password, otp, otpCreated, verified);
+                        tcs.SetResult(userAccount);
                     }
                     reader.Close();
                 }
                 connect.Close();
             }
-            return userAccount;
+            return tcs.Task;
+        }
+
+        public Task<bool> IsValidUsername(String username)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            String sqlStatement = "Select COUNT(Username) FROM dbo.Users WHERE Username = \'" + username + "\'";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                var command = new SqlCommand(sqlStatement, connect);
+                if((int)command.ExecuteScalar() == 1)
+                {
+                    tcs.SetResult(true);
+                }
+                else
+                {
+                    tcs.SetResult(false);
+                }
+            }
+            return tcs.Task;
+        }
+
+        public Task<Response> CreateRecoveryRequest(String username, String newPassword)
+        {
+            var response = new Response();
+            var tcs = new TaskCompletionSource<Response>();
+            String insertSql = "Insert into dbo.RecoveryRequests(username, newPassword) " +
+                "values (\'" + username + "\', \'" + newPassword + "\')";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                var command = new SqlCommand(insertSql, connect);
+                try
+                {
+                    if(command.ExecuteNonQuery() == 1)
+                    {
+                        response.isSuccessful = true;
+                        response.errorMessage = "Account recovery request sent";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    response.isSuccessful = false;
+                    response.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    response.isSuccessful = false;
+                    response.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(response);
+            return tcs.Task;
         }
 
         public List<UserAccount> SelectUserAccountTable()
