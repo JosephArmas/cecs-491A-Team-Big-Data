@@ -41,7 +41,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.LogoutTests", "TeamBigData.Utification.LogoutTests\TeamBigData.Utification.LogoutTests.csproj", "{FC6D36ED-B16F-43D2-8859-C38606DADE02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.AccountDeletionTests", "TeamBigData.Utification.AccountDeletionTests\TeamBigData.Utification.AccountDeletionTests.csproj", "{518E1EB4-D7BD-4FD7-A509-C517DA7FAA34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AccountDeletionTests", "TeamBigData.Utification.AccountDeletionTests\TeamBigData.Utification.AccountDeletionTests.csproj", "{518E1EB4-D7BD-4FD7-A509-C517DA7FAA34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.DeletionService", "TeamBigData.Utification.DeletionService\TeamBigData.Utification.DeletionService.csproj", "{AE5EE018-2311-4B28-BC7D-FC0124565E1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.DeletionManager", "TeamBigData.Utification.DeletionManager\TeamBigData.Utification.DeletionManager.csproj", "{33F2A621-A1E7-463D-B957-C9AFEE4CA8B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +109,14 @@ Global
 		{518E1EB4-D7BD-4FD7-A509-C517DA7FAA34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{518E1EB4-D7BD-4FD7-A509-C517DA7FAA34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{518E1EB4-D7BD-4FD7-A509-C517DA7FAA34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE5EE018-2311-4B28-BC7D-FC0124565E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE5EE018-2311-4B28-BC7D-FC0124565E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE5EE018-2311-4B28-BC7D-FC0124565E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE5EE018-2311-4B28-BC7D-FC0124565E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33F2A621-A1E7-463D-B957-C9AFEE4CA8B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33F2A621-A1E7-463D-B957-C9AFEE4CA8B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33F2A621-A1E7-463D-B957-C9AFEE4CA8B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33F2A621-A1E7-463D-B957-C9AFEE4CA8B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +136,8 @@ Global
 		{29E797FF-331D-4101-8637-97CD457E18BA} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 		{FC6D36ED-B16F-43D2-8859-C38606DADE02} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 		{518E1EB4-D7BD-4FD7-A509-C517DA7FAA34} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
+		{AE5EE018-2311-4B28-BC7D-FC0124565E1E} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
+		{33F2A621-A1E7-463D-B957-C9AFEE4CA8B1} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3DAF13A-2974-4087-87BE-B77C46741866}
