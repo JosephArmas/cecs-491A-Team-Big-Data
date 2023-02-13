@@ -47,7 +47,7 @@ namespace TeamBigData.Utification.AccountServices
             if ((int)result.data == 1)
             {
                 result.isSuccessful = true;
-                result.errorMessage = username + " has been Successfully enabled";
+                result.errorMessage = username + " has been Successfully enabled";                
             }
             else
             {

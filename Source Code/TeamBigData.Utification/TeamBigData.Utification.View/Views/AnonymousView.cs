@@ -23,7 +23,7 @@ namespace TeamBigData.Utification.View.Views
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            Console.WriteLine("Welcome Anonymouse User");
+            Console.WriteLine("Welcome Anonymous User");
             Console.WriteLine("------------MENU------------");
             Console.WriteLine("[1] Create a New Account");
             Console.WriteLine("[2] Login");

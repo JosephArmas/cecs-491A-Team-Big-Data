@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Security.Principal;
+using System.Text;
 using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
@@ -324,6 +325,13 @@ namespace TeamBigData.Utification.Manager
             var userDao = new SqlDAO(connectionString);
             var enabler = new AccountDisabler(userDao);
             var enableTask = enabler.EnableAccount(disabledUser).Result;
+            if(enableTask.isSuccessful)
+            {
+                var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.RecoveryRequests;Integrated Security=True;Encrypt=False";
+                var requestDB = new SqlDAO(requestConnectionString);
+                var RequestFulfilled = requestDB.RequestFulfilled(disabledUser).Result;
+                response = RequestFulfilled;
+            }
             response = enableTask;
             return response;
         }
@@ -353,6 +361,22 @@ namespace TeamBigData.Utification.Manager
             Console.WriteLine("Checkpoint");
             result = await userDao.CreateRecoveryRequest(username, newPassword);
             return result;
+        }
+
+        public Response GetRecoveryRequests(List<string> requests, UserProfile userProfile)
+        {
+            var response = new Response();
+            if(!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.RecoveryRequests;Integrated Security = True;Encrypt=False";
+            var recoveryDao = new SqlDAO(connectionString);
+            requests = recoveryDao.GetRecoveryRequests();
+            response.isSuccessful = true;
+            return response;
         }
     }
 }
