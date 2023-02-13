@@ -538,5 +538,57 @@ namespace TeamBigData.Utification.SQLDataAccess
             List<UserAccount> userAccounts = new List<UserAccount>();
             return userAccounts;
         }
+
+        public List<string> GetRecoveryRequests()
+        {
+            List<string> requests = new List<string>();
+            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests WHERE fulfilled = 0 ORDER BY [TimeStamp]";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        String userName = "";
+
+                        int ordinal = reader.GetOrdinal("username");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userName = reader.GetString(ordinal);
+                        }
+                        requests.Add(userName);
+                    }
+                    reader.Close();
+                }
+                connect.Close();
+            }
+            return requests;
+        }
+
+        public Task<Response> RequestFulfilled(string username)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                string fulfill = "UPDATE dbo.RecoveryRequests SET \"fulfilled\" = 1 WHERE username LIKE '" + username + "%'; ";
+                try
+                {
+                    var command = new SqlCommand(fulfill, connect);
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
+        }
     }
 }
