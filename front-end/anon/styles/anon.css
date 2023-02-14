@@ -8,13 +8,14 @@
 .login button
 {
     padding: 10px;
-    width: 35%;
+    width: 70%;
 }
 
 .login 
 {
     display: flex;
     justify-content: center;
+    margin: 0 auto;
     padding: 50px;
 }
 
@@ -22,13 +23,14 @@
 {
     text-align: center;
     padding: 10px;
-    width: 35%;
+    width: 70%;
 }
 
 .register 
 {
     display: flex;
     justify-content: center;
+    margin: 0 auto;
     padding: 50px;
 }
 
@@ -37,7 +39,7 @@
 {
     text-align: center;
     padding: 10px;
-    width: 35%;
+    width: 70%;
 
 }
 
@@ -45,6 +47,7 @@
 {
     display: flex;
     justify-content: center;
+    margin: 0 auto;
     padding: 50px;
 }
 
