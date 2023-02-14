@@ -1,0 +1,31 @@
+.title 
+{
+    display: flex;
+    align-items: center;
+    justify-content:center;
+}
+
+.login 
+{
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    width: 100%;
+}
+
+.register
+{
+    text-align: center;
+    padding: 15px;
+}
+
+.support
+{
+    text-align: center;
+    padding: 15px;
+
+}
+.footer
+{
+    
+}
