@@ -119,6 +119,46 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
+        public Task<Response> ChangePassword(String username, String newPassword)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "' where username = '" + username + "'";
+                try
+                {
+                    var command = new SqlCommand(updateSql, connection);
+                    var rows = command.ExecuteNonQuery();
+                    if (rows == 1)
+                    {
+                        result.isSuccessful = true;
+                    }
+                    else if(rows > 1)
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "Error, Multiple Accounts Affected";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No account found";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
         public Task<Response> DeleteUser(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
@@ -358,73 +398,89 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public List<UserProfile> SelectUserProfileTable()
+        public Task<Response> SelectUserProfileTable(ref List<UserProfile> list)
         {
-            List<UserProfile> list = new List<UserProfile>();
-            string sqlStatement = "SELECT * FROM dbo.UserProfile";
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.UserProfiles";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                try
                 {
-                    // read through all rows
-                    while (reader.Read())
+                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
                     {
-                        String userName = "";
-                        String firstName = "";
-                        String lastName = "";
-                        int age = 0;
-                        String email = "";
-                        String address = "";
-                        DateTime birthday = new DateTime();
-                        String role = "";
+                        // read through all rows
+                        while (reader.Read())
+                        {
+                            String userName = "";
+                            String firstName = "";
+                            String lastName = "";
+                            int age = 0;
+                            String email = "";
+                            String address = "";
+                            DateTime birthday = new DateTime();
+                            String role = "";
 
-                        int ordinal = reader.GetOrdinal("Username");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userName = reader.GetString(ordinal);
-                        }
+                            int ordinal = reader.GetOrdinal("Username");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                userName = reader.GetString(ordinal);
+                            }
 
-                        ordinal = reader.GetOrdinal("Role");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            role = reader.GetString(ordinal);
+                            ordinal = reader.GetOrdinal("Role");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                role = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("FirstName");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                firstName = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("LastName");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                lastName = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("Address");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                address = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("Birthday");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                birthday = reader.GetDateTime(ordinal);
+                            }
+                            var userProfile = new UserProfile(userName, firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
+                            list.Add(userProfile);
                         }
-                        ordinal = reader.GetOrdinal("First Name");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                           firstName  = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Last Name");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            lastName = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Address");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            address = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Birthday");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            birthday = reader.GetDateTime(ordinal);
-                        }
-                        var userProfile = new UserProfile(userName,firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
-                        list.Add(userProfile);
+                        result.isSuccessful = true;
+                        reader.Close();
                     }
-                    reader.Close();
+                    connect.Close();
                 }
-                connect.Close();
+                catch(SqlException s)
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = s.Message;
+                }
+                catch(Exception e)
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = e.Message;
+                }
             }
-            return list;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
 
         public Task<UserProfile> SelectUserProfile(String username)
         {
             var tcs = new TaskCompletionSource<UserProfile>();
             UserProfile userProfile = new UserProfile("");
-            string sqlStatement = "SELECT * FROM dbo.UserProfile WHERE Username = " + username;
+            string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE Username = " + username;
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
@@ -578,6 +634,114 @@ namespace TeamBigData.Utification.SQLDataAccess
                 }
                 catch (SqlException s)
                 {
+                    if(s.Message.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
+                    {
+                        response.isSuccessful = false;
+                        response.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                    }
+                    else
+                    {
+                        response.isSuccessful = false;
+                        response.errorMessage = s.Message;
+                    }
+                }
+                catch (Exception e)
+                {
+                    response.isSuccessful = false;
+                    response.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(response);
+            return tcs.Task;
+        }
+
+        public Task<Response> SelectUserAccountTable(ref List<UserAccount> accountList)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            UserAccount userAccount = new UserAccount("", "");
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.Users";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                {
+                    try
+                    {
+                        // read through all rows
+                        while (reader.Read())
+                        {
+                            String userName = "";
+                            String password = "";
+                            int disabled = 0;
+                            int ordinal = reader.GetOrdinal("Username");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                userName = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("Password");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                password = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("Disabled");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                disabled = reader.GetInt32(ordinal);
+                            }
+                            userAccount = new UserAccount(userName, password);
+                            accountList.Add(userAccount);
+                        }
+                        reader.Close();
+                        result.isSuccessful = true;
+                    }
+                    catch(SqlException s)
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = s.Message;
+                    }
+                    catch(Exception e)
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = e.Message;
+                    }
+                }
+                connect.Close();
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
+        }
+
+        public Task<Response> GetRecoveryRequests(ref List<String> requests)
+        {
+            var response = new Response();
+            var tcs = new TaskCompletionSource<Response>();
+            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests WHERE fulfilled = 0 ORDER BY [TimeStamp]";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    connect.Open();
+                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            String userName = "";
+
+                            int ordinal = reader.GetOrdinal("username");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                userName = reader.GetString(ordinal);
+                            }
+                            requests.Add(userName);
+                        }
+                        reader.Close();
+                        response.isSuccessful = true;
+                    }
+                    connect.Close();
+                }
+                catch (SqlException s)
+                {
                     response.isSuccessful = false;
                     response.errorMessage = s.Message;
                 }
@@ -591,37 +755,40 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public List<UserAccount> SelectUserAccountTable()
+        public Task<Response> GetNewPassword(string username)
         {
-            List<UserAccount> userAccounts = new List<UserAccount>();
-            return userAccounts;
-        }
-
-        public List<string> GetRecoveryRequests()
-        {
-            List<string> requests = new List<string>();
-            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests WHERE fulfilled = 0 ORDER BY [TimeStamp]";
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND username = '" + username + "' Order by [timestamp] desc; ";
+                try
                 {
-                    while (reader.Read())
+                    var command = new SqlCommand(sqlSelect, connect);
+                    String newPassword = (String)command.ExecuteScalar();
+                    if(newPassword != null && newPassword != "")
                     {
-                        String userName = "";
-
-                        int ordinal = reader.GetOrdinal("username");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userName = reader.GetString(ordinal);
-                        }
-                        requests.Add(userName);
+                        result.data = newPassword;
+                        result.isSuccessful = true;
+                    } 
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No Requests Found from User";
                     }
-                    reader.Close();
                 }
-                connect.Close();
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
             }
-            return requests;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
 
         public Task<Response> RequestFulfilled(string username)
@@ -631,10 +798,20 @@ namespace TeamBigData.Utification.SQLDataAccess
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                string fulfill = "UPDATE dbo.RecoveryRequests SET \"fulfilled\" = 1 WHERE username LIKE '" + username + "%'; ";
+                string fulfill = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE username = '" + username + "'; ";
                 try
                 {
                     var command = new SqlCommand(fulfill, connect);
+                    if (command.ExecuteNonQuery() > 1)
+                    {
+                        result.isSuccessful = true;
+                        result.errorMessage = "Account recovery completed successfully for user";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No Request for User Found";
+                    }
                 }
                 catch (SqlException s)
                 {

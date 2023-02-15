@@ -42,7 +42,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManagerAcc = new SecurityManager();
                     List<UserAccount> listAcc = new List<UserAccount>();
-                    response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
+                    response = secManagerAcc.GetUserAccountTable(ref listAcc, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -62,7 +62,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
-                    response = secManager.GetUserProfileTable(list, userProfile);
+                    response = secManager.GetUserProfileTable(ref list, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -82,7 +82,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManagerAccRecovery = new SecurityManager();
                     List<string> listRequests = new List<string>();
-                    response = secManagerAccRecovery.GetRecoveryRequests(listRequests, userProfile);
+                    response = secManagerAccRecovery.GetRecoveryRequests(ref listRequests, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -95,7 +95,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     Console.WriteLine("Printing out Recovery Requests");
                     for (int i = 0; i < listRequests.Count; i++)
-                        Console.WriteLine(listRequests[i]);
+                        Console.WriteLine(listRequests[i].ToString());
                     Console.WriteLine("press Enter to exit...");
                     Console.ReadLine();
                     break;
@@ -113,7 +113,7 @@ namespace TeamBigData.Utification.View.Views
                         Console.ReadLine();
                         response.isSuccessful = false;
                         return response;
-                    }                    
+                    }
                     Console.WriteLine("User account was successfully re-enabled");
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();

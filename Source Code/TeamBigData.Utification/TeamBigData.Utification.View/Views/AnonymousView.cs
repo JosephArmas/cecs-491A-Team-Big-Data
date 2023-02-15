@@ -81,10 +81,12 @@ namespace TeamBigData.Utification.View.Views
                     String inputUsername = Console.ReadLine();
                     Console.WriteLine("Please enter your new password");
                     String newPassword = Console.ReadLine();
+                    var passwordEncryptor = new Encryptor();
+                    byte[] newEncryptedPassword = passwordEncryptor.encryptString(newPassword);
                     securityManager.GenerateOTP();
                     Console.WriteLine("Please Enter the OTP: " + securityManager.SendOTP());
                     String otp = Console.ReadLine();
-                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newPassword, otp).Result.errorMessage);
+                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor, otp).Result.errorMessage);
                     break;
                 default:
                     break;
