@@ -75,7 +75,7 @@ namespace TeamBigData.Utification.View.Views
                     }
                     var encryptorRegister = new Encryptor();
                     var encryptedPasswordRegister = encryptorRegister.encryptString(userPass);
-                    response = registerer.RegisterUser(email, encryptedPasswordRegister, encryptorRegister);
+                    response = registerer.RegisterUser(email, encryptedPasswordRegister, encryptorRegister).Result;
                     if (!response.isSuccessful)
                     {
                         Console.WriteLine(response.errorMessage + "\nPress Enter to Try Again...");
@@ -118,7 +118,7 @@ namespace TeamBigData.Utification.View.Views
                     }
                     var encryptorLogin = new Encryptor();
                     var encryptedPasswordLogin = encryptorLogin.encryptString(userPass);
-                    response = login.LoginUser(email, encryptedPasswordLogin, encryptorLogin, ref userAccount, ref userProfile);
+                    response = login.LoginUser(email, encryptedPasswordLogin, encryptorLogin, ref userAccount, ref userProfile).Result;
                     if (!response.isSuccessful)
                     {
                         Console.WriteLine(response.errorMessage + "\nPress Enter to Continue...");

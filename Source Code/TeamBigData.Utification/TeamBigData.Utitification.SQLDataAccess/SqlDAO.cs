@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             _connectionString = connectionString;
         }
 
-        public Response InsertUser(UserAccount user)
+        public Task<Response> InsertUser(UserAccount user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -48,11 +48,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
 
-        public Response InsertUserProfile(UserProfile user)
+        public async Task<Response> InsertUserProfile(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -85,7 +85,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task.Result;
             }
         }
-        public Response InsertUserHash(String userHash,int userID)
+        public Task<Response> InsertUserHash(String userHash,int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -114,10 +114,10 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
-        public async Task<Response> UpdateUserProfile(UserProfile user)
+        public  Task<Response> UpdateUserProfile(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -147,11 +147,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
 
-        public async Task<Response> DeleteUserProfile(int userID)
+        public Task<Response> DeleteUserProfile(int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -191,11 +191,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
 
-        public async Task<Response> Count(String tableName, String countedCollumn, String[] collumnNames, String[] values)
+        public Task<Response> Count(String tableName, String countedCollumn, String[] collumnNames, String[] values)
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
@@ -237,10 +237,10 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
-        public async Task<Response> CountAll(String tableName, String countedCollumn)
+        public Task<Response> CountAll(String tableName, String countedCollumn)
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
@@ -264,11 +264,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
 
-        public async Task<Response> CountSalt(String salt)
+        public Task<Response> CountSalt(String salt)
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
@@ -292,11 +292,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
 
-        public async Task<Response> Execute(object req)
+        public Task<Response> Execute(object req)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -306,7 +306,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 result.errorMessage = "Error: input parameter for SqlDAO not of type string";
                 result.isSuccessful = false;
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
             using (SqlConnection connect = new SqlConnection(_connectionString.ToString()))
             {
@@ -325,12 +325,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
 
-        public Response SelectUserProfileTable(ref List<UserProfile> userProfiles)
+        public Task<Response> SelectUserProfileTable(ref List<UserProfile> userProfiles)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.UserProfile";
             using (SqlConnection connect = new SqlConnection(_connectionString))
@@ -397,11 +398,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = "Empty List of UserProfiles";
                 }
             }
-            return result;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
 
-        public Response SelectUserProfile(int userID, ref UserProfile userProfile)
+        public Task<Response> SelectUserProfile(int userID, ref UserProfile userProfile)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE userID = '" + userID + "'";
             using (SqlConnection connect = new SqlConnection(_connectionString))
@@ -467,11 +470,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                 result.isSuccessful = false;
                 result.errorMessage = "No UserProfile Found";
             }
-            return result;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
 
-        public Response SelectUserAccount(String username, ref UserAccount userAccount)
+        public Task<Response> SelectUserAccount(String username, ref UserAccount userAccount)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.Users WHERE username = '" + username +"'";
             using (SqlConnection connect = new SqlConnection(_connectionString))
@@ -542,11 +547,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                 result.isSuccessful = false;
                 result.errorMessage = "No UserAccount Found";
             }
-            return result;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
 
-        public Response SelectUserAccountTable(ref List<UserAccount> userAccounts, string role)
+        public Task<Response> SelectUserAccountTable(ref List<UserAccount> userAccounts, string role)
         {
+            var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.Users";
             using (SqlConnection connect = new SqlConnection(_connectionString))
@@ -617,11 +624,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = "Empty List of UserAccounts";
                 }
             }
-            return result;
+            tcs.SetResult(result);
+            return tcs.Task;
         }
-        public Response SelectLastUserID()
+        public Task<Response> SelectLastUserID()
         {
             var tcs = new TaskCompletionSource<Response>();
+            Response response = new Response();
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -634,24 +643,24 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var rows = command.ExecuteReader();
                     while (rows.Read()) 
                     {
-                        tcs.Task.Result.data = rows.GetInt32(0);
-                        tcs.Task.Result.isSuccessful = true;
+                        response.data = rows.GetInt32(0);
+                        response.isSuccessful = true;
                     }
                 }
                 catch (SqlException s)
                 {
-                    tcs.Task.Result.errorMessage = s.Message;
+                    response.errorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    tcs.Task.Result.errorMessage = e.Message;
+                    response.errorMessage = e.Message;
                 }
             }
-
-            return tcs.Task.Result;
+            tcs.SetResult(response);
+            return tcs.Task;
         }
 
-        public async Task<Response> CountUserLoginAttempts(String username)
+        public Task<Response> CountUserLoginAttempts(String username)
         {
             var tcs = new TaskCompletionSource<Response>();
             var list = new ArrayList();
@@ -683,7 +692,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task.Result;
+                return tcs.Task;
             }
         }
         /*

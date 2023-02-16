@@ -84,7 +84,7 @@ namespace TeamBigData.Utification.View.Views
                     SecurityManager secManagerEnable = new SecurityManager();
                     Console.WriteLine("\nPlease Enter the name of the User to be re-enabled");
                     String disUser = Console.ReadLine();
-                    response = secManagerEnable.EnableAccount(disUser,userProfile);
+                    response = secManagerEnable.EnableAccount(disUser,userProfile).Result;
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -101,7 +101,7 @@ namespace TeamBigData.Utification.View.Views
                 case 4:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
-                    response = secManagerLogout.LogOutUser(ref userAccount, ref userProfile);
+                    response = secManagerLogout.LogOutUser(ref userAccount, ref userProfile).Result;
                     if (!response.isSuccessful)
                     {
                         Console.Clear();

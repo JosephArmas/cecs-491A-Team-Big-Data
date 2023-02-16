@@ -5,6 +5,6 @@ namespace TeamBigData.Utification.Manager.Abstractions
 {
     public interface ILogout
     {
-        public Response LogOutUser(ref UserAccount userAccount, ref UserProfile userProfile);
+        public Task<Response> LogOutUser(ref UserAccount userAccount, ref UserProfile userProfile);
     }
 }
