@@ -18,6 +18,17 @@ namespace TeamBigData.Utification.Models
         public DateTime _birthday { get; private set; }
         public IIdentity? Identity { get; private set; }
 
+        public UserProfile() 
+        {
+            _userID= 0;
+            _firstName = "";
+            _lastName = "";
+            _age = 0;
+            _address = "";
+            _birthday = new DateTime();
+            Identity = new GenericIdentity("0", "Anonymous User");
+        }
+
         bool IPrincipal.IsInRole(string role)
         {
             if (this.Identity.AuthenticationType != role)
@@ -48,7 +59,7 @@ namespace TeamBigData.Utification.Models
             Identity = new GenericIdentity(_userID.ToString(), role);
         }
 
-        public UserProfile(int userID, string firstName, string lastName, int age, string email, string address, DateTime birthday, GenericIdentity identity)
+        public UserProfile(int userID, string firstName, string lastName, int age, string address, DateTime birthday, GenericIdentity identity)
         {
             _userID= userID;
             _firstName = firstName;

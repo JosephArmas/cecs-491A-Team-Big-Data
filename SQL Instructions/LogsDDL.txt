@@ -1,12 +1,11 @@
-CREATE TABLE dbo.Logs
+CREATE TABLE Logs       
 (
-LogID int NOT NULL,
+LogID int IDENTITY,
 CorrelationID int,
-LogLevel varchar(50),
+LogLevel varchar(10),
 UserHash varchar(200),
-[TimeStamp] datetime,
-[Event] varchar(100),
-Category varchar(50),
-[Message] varchar(200),
-CONSTRAINT Logs_Primary_Key PRIMARY KEY(LogID)
-);
+[TimeStamp] datetime default getDate(),
+[Event] varchar(70),
+Category varchar(10),
+[Message] varchar(100)
+)

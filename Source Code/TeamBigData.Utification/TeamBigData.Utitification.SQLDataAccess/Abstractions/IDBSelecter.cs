@@ -10,10 +10,11 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
 {
     public interface IDBSelecter
     {
-        public UserProfile SelectUserProfile(String username);
-        public List<UserProfile> SelectUserProfileTable();
-        public UserAccount SelectUserAccount(String username);
-        public List<UserAccount> SelectUserAccountTable();
+        public Response SelectUserProfile(int userID, ref UserProfile userProfile);
+        public Response SelectUserProfileTable(ref List<UserProfile> userProfiles);
+        public Response SelectUserAccount(String username, ref UserAccount userAccount);
+        public Response SelectUserAccountTable(ref List<UserAccount> userAccounts, string role);
         public Response SelectLastUserID();
+        
     }
 }

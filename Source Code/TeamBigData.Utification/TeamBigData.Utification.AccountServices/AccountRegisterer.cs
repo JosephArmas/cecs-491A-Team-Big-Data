@@ -13,6 +13,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
 {
+    // Not used
     public class AccountRegisterer
     {
         private readonly IDBInserter _dbo;
@@ -40,18 +41,12 @@ namespace TeamBigData.Utification.AccountServices
                 return false;
         }
 
-        public static String GenerateUsername(String email)
-        {
-            return email;
-        }
-
         public async Task<Response> InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
         {
             Response result1 = new Response();
             Response result2 = new Response();
             result1.isSuccessful = false;
             int userID = 0;
-            String username = "";
             String password = encryptor.decryptString(encryptedPassword);
             String salt = "";
             String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
@@ -61,25 +56,20 @@ namespace TeamBigData.Utification.AccountServices
             IDBCounter countSalt = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
             if (IsValidPassword(password) && IsValidEmail(email))
             {
-                username = GenerateUsername(email);
-                //do
-                //{
-                //   salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
-                //}
-                //while ((int)countSalt.CountSalt(salt).Result.data > 0);
-                var digest = SecureHasher.HashString(password, salt);
-                if ((int)selectUsers.SelectLastUserID().data ==0)
+                salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
+                var digest = SecureHasher.HashString(salt, password);
+                if (true)//((int)selectUsers.SelectLastUserID().data ==0)
                 {
                     userID = 1001;
-                    user = new UserAccount(userID,username, digest, salt, userHash);
+                    user = new UserAccount(userID, email, digest, salt, userHash);
                     result1.data = user._userID;
                 }
                 else
                 {
-                    user = new UserAccount(username, digest, salt, userHash);
+                    user = new UserAccount(email, digest, salt, userHash);
                     result1.data = user;
                 }
-                result1 = await _dbo.InsertUser(user).ConfigureAwait(false);
+                //result1 = await _dbo.InsertUser(user).ConfigureAwait(false);
 
             }
             else if (!IsValidEmail(email))
@@ -104,7 +94,7 @@ namespace TeamBigData.Utification.AccountServices
             }
             else
             {
-                result1.errorMessage = "Account created successfully, your username is " + username;
+                result1.errorMessage = "Account created successfully, your username is " + email;
             }
             //If the Error message isn't one of these it return the entire error message from the dbo
             return result1;

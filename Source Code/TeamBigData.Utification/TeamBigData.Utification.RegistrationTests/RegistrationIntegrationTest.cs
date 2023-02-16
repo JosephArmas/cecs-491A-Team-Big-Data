@@ -13,6 +13,8 @@ using TeamBigData.Utification.Models;
 using Azure.Identity;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.Manager.Abstractions;
+using System.Security.Cryptography;
 
 namespace TeamBigData.Utification.RegistrationTests
 {
@@ -23,23 +25,18 @@ namespace TeamBigData.Utification.RegistrationTests
         public async Task CreatesLogWhenRegistering()
         {
             //Arrange
-            var userConnection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var logConnection = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=False";
-            var manager = new SecurityManager();
-            SqlDAO testDBO = new SqlDAO(userConnection);
+            IRegister register = new SecurityManager();
             SqlDAO logDBO = new SqlDAO(logConnection);
-            IDBSelecter selectDBO = new SqlDAO(userConnection);
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile= new UserProfile();
+            var username = "CreateLogWhenRegisteringTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
+            var encryptor = new Encryptor();
+            var encryptedPassword = encryptor.encryptString("password");
             var expected = 1;
             //Act
             int before = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
-            UserAccount userAccount = testDBO.SelectUserAccount("test@yahoo.com");
-            if (userAccount._username == "")
-            {
-                await testDBO.DeleteUserProfile((new UserProfile(userAccount._userID))._userID);
-            }
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString("password");
-            var result = manager.InsertUser("test@yahoo.com", encryptedPassword, encryptor);
+            var result = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
             int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
             //Assert
             Assert.AreEqual(expected, after - before);
@@ -51,42 +48,35 @@ namespace TeamBigData.Utification.RegistrationTests
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
-            var manager = new SecurityManager();
-            //Act
-            UserAccount userAccount = testDBO.SelectUserAccount("disabledUser@yahoo.com");
-            if (userAccount._username == "")
-            {
-                await testDBO.DeleteUserProfile((new UserProfile(userAccount._userID))._userID);
-            }
+            IDBSelecter testDBO = new SqlDAO(connectionString);
+            IRegister register = new SecurityManager();
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
+            var username = "ShouldAddUserToDBTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var actual = manager.InsertUser("disabledUser@yahoo.com", encryptedPassword, encryptor);
+            //Act
+            var test = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
+            var expected = testDBO.SelectUserAccount(username);
             //Assert
-            Assert.IsTrue(actual.isSuccessful);
+            Assert.IsTrue(userAccount._username == expected._username);
         }
 
         [TestMethod]
         public async Task CatchesDuplicateEmail()
         {
             //Arrange
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
-            var manager = new SecurityManager();
-            //Act
-            UserAccount userAccount = testDBO.SelectUserAccount(("testUser@yahoo.com"));
-            if (userAccount._username == "")
-            {
-                await testDBO.DeleteUserProfile((new UserProfile(userAccount._userID))._userID);
-            }
+            IRegister register = new SecurityManager();
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
+            var username = "CatchesDuplicateEmailTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
-            var actual = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
+            //Act
+            register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
+            var actual = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
             //Assert
-            Assert.IsTrue(actual.errorMessage.Contains("Email"));
+            Assert.IsTrue(actual.errorMessage.Contains("Email already linked to an account, please pick a new email"));
         }
 
         [TestMethod]
@@ -94,26 +84,20 @@ namespace TeamBigData.Utification.RegistrationTests
         {
             //Arrange
             Stopwatch stopwatch = new Stopwatch();
-            long expected = 5 * 1000;
-            var manager = new SecurityManager();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
-            //Act
-            UserAccount userAccount = testDBO.SelectUserAccount(("testUser@yahoo.com"));
-            if (userAccount._username == "")
-            {
-                await testDBO.DeleteUserProfile((new UserProfile(userAccount._userID))._userID);
-            }
-            stopwatch.Start();
+            IRegister register = new SecurityManager();
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
+            var username = "ShoudRegisterWithin5SecondsTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var result = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
+            //Act
+            stopwatch.Start();
+            var result = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
             //Assert
-            Assert.IsTrue(actual < expected);
+            Assert.IsTrue(actual < 5000);
             Assert.IsTrue(result.isSuccessful);
         }
     }

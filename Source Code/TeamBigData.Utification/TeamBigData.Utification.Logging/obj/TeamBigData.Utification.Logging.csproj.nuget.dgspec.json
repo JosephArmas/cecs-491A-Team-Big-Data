@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj": {}
+    "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj": {
+    "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj",
+        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj",
         "projectName": "TeamBigData.Utification.Cryptography",
-        "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj",
+        "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj",
         "packagesPath": "C:\\Users\\ghab\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\obj\\",
+        "outputPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -64,14 +64,14 @@
         }
       }
     },
-    "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
+    "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj",
+        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj",
         "projectName": "TeamBigData.Utification.ErrorResponse",
-        "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj",
+        "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj",
         "packagesPath": "C:\\Users\\ghab\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\obj\\",
+        "outputPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -124,14 +124,14 @@
         }
       }
     },
-    "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj": {
+    "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
+        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
         "projectName": "TeamBigData.Utification.Logging",
-        "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
+        "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
         "packagesPath": "C:\\Users\\ghab\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\obj\\",
+        "outputPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -153,14 +153,14 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj"
               },
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj"
               },
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj"
               }
             }
           }
@@ -194,14 +194,14 @@
         }
       }
     },
-    "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj": {
+    "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj",
+        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj",
         "projectName": "TeamBigData.Utification.Models",
-        "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj",
+        "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj",
         "packagesPath": "C:\\Users\\ghab\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\obj\\",
+        "outputPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -223,11 +223,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Cryptography\\TeamBigData.Utification.Cryptography.csproj"
               },
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj"
               }
             }
           }
@@ -261,14 +261,14 @@
         }
       }
     },
-    "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj": {
+    "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj",
+        "projectUniqueName": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj",
         "projectName": "TeamBigData.Utification.SQLDataAccess",
-        "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj",
+        "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\TeamBigData.Utification.SQLDataAccess.csproj",
         "packagesPath": "C:\\Users\\ghab\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\obj\\",
+        "outputPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utitification.SQLDataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -290,11 +290,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.ErrorResponse\\TeamBigData.Utification.ErrorResponse.csproj"
               },
-              "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj": {
-                "projectPath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj"
+              "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj": {
+                "projectPath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Models\\TeamBigData.Utification.Models.csproj"
               }
             }
           }

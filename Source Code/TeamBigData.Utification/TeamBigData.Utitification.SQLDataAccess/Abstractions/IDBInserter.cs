@@ -10,8 +10,8 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
 {
     public interface IDBInserter
     {
-        public Task<Response> InsertUser(UserAccount user);
-        public Task<Response> InsertUserProfile(UserProfile profile);
-        public Task<Response> InsertUserHash(String userHash, int userID);
+        public Response InsertUser(UserAccount user);
+        public Response InsertUserProfile(UserProfile profile);
+        public Response InsertUserHash(String userHash, int userID);
     }
 }

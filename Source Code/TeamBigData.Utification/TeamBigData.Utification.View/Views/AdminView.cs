@@ -21,7 +21,8 @@ namespace TeamBigData.Utification.View.Views
                 return response;
             }
             Console.Clear();
-            Console.WriteLine("Welcome Admin User");
+            Console.WriteLine("\nWelcome " + userAccount._username);
+            Console.WriteLine("Admin User View");
             Console.WriteLine("---------MENU---------");
             Console.WriteLine("[1] View All User Accounts");
             Console.WriteLine("[2] View All User Profiles");
@@ -42,7 +43,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManagerAcc = new SecurityManager();
                     List<UserAccount> listAcc = new List<UserAccount>();
-                    response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
+                    //response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -62,7 +63,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
-                    response = secManager.GetUserProfileTable(list, userProfile);
+                    //response = secManager.GetUserProfileTable(list, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -100,7 +101,7 @@ namespace TeamBigData.Utification.View.Views
                 case 4:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
-                    response = secManagerLogout.LogOut();
+                    response = secManagerLogout.LogOutUser(ref userAccount, ref userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();

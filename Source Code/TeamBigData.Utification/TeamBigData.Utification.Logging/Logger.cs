@@ -30,7 +30,7 @@ namespace TeamBigData.Utification.Logging
                 result.isSuccessful = false;
                 return result;
             }
-            String insertSql = "Insert into dbo.Logs (CorrelationID, LogLevel, UserHash, Event, Category, Message) values (" + log._correlationID + ", '" + log._logLevel +
+            String insertSql = "Insert into dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message]) values (" + log._correlationID + ", '" + log._logLevel +
                 "', '" + log._user + "', '" + log._event + "', '" + log._category + "', '" + log._message + "');";
             Response logReturn = await _dao.Execute(insertSql).ConfigureAwait(false);
             result.isSuccessful = false;

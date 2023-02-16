@@ -11,7 +11,7 @@ using static System.Net.WebRequestMethods;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter
+    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBDeleter, IDBUpdater
     {
         private String _connectionString;
 
@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             _connectionString = connectionString;
         }
 
-        public Task<Response> InsertUser(UserAccount user)
+        public Response InsertUser(UserAccount user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -48,11 +48,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task;
+                return tcs.Task.Result;
             }
         }
 
-        public Task<Response> InsertUserProfile(UserProfile user)
+        public Response InsertUserProfile(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -82,10 +82,10 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task;
+                return tcs.Task.Result;
             }
         }
-        public Task<Response> InsertUserHash(String userHash,int userID)
+        public Response InsertUserHash(String userHash,int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -114,10 +114,10 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task;
+                return tcs.Task.Result;
             }
         }
-        public Task<Response> UpdateUserProfile(UserProfile user)
+        public async Task<Response> UpdateUserProfile(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -147,11 +147,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task;
+                return tcs.Task.Result;
             }
         }
 
-        public Task<Response> DeleteUserProfile(int userID)
+        public async Task<Response> DeleteUserProfile(int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -191,11 +191,504 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.errorMessage = e.Message;
                 }
                 tcs.SetResult(result);
-                return tcs.Task;
+                return tcs.Task.Result;
             }
         }
 
-        public Task<Response> GetUser(UserAccount user)
+        public async Task<Response> Count(String tableName, String countedCollumn, String[] collumnNames, String[] values)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName + " WHERE ";
+                if (collumnNames.Length == values.Length)
+                {
+                    for (int i = 0; i < collumnNames.Length; i++)
+                    {
+                        if (i != collumnNames.Length - 1)
+                        {
+                            countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"' and ";
+                        }
+                        else
+                        {
+                            countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"';";
+                        }
+                    }
+                }
+                else
+                {
+                    result.errorMessage = "There must be an equal ammount of collumnNames and values";
+                }
+                try
+                {
+                    var command = new SqlCommand(countSql, connection);
+                    result.data = command.ExecuteScalar();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task.Result;
+            }
+        }
+        public async Task<Response> CountAll(String tableName, String countedCollumn)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName;
+                try
+                {
+                    var command = new SqlCommand(countSql, connection);
+                    result.data = command.ExecuteScalar();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task.Result;
+            }
+        }
+
+        public async Task<Response> CountSalt(String salt)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var countSql = "SELECT COUNT (salt) FROM dbo.Users Where salt = '" + salt + "'";
+                try
+                {
+                    var command = new SqlCommand(countSql, connection);
+                    result.data = command.ExecuteScalar();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task.Result;
+            }
+        }
+
+        public async Task<Response> Execute(object req)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            result.isSuccessful = false;
+            if (req.GetType() != typeof(string)) //Verifies if the parameter matches the acceptable string format type
+            {
+                result.errorMessage = "Error: input parameter for SqlDAO not of type string";
+                result.isSuccessful = false;
+                tcs.SetResult(result);
+                return tcs.Task.Result;
+            }
+            using (SqlConnection connect = new SqlConnection(_connectionString.ToString()))
+            {
+                connect.Open();
+                try
+                {
+                    result.data = (new SqlCommand(req.ToString(), connect)).ExecuteNonQuery();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task.Result;
+            }
+        }
+
+        public Response SelectUserProfileTable(ref List<UserProfile> userProfiles)
+        {
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.UserProfile";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                {
+                    // read through all rows
+                    while (reader.Read())
+                    {
+                        int userID = 0;
+                        String firstName = "";
+                        String lastName = "";
+                        int age = 0;
+                        String email = "";
+                        String address = "";
+                        DateTime birthday = new DateTime();
+                        String role = "";
+
+                        int ordinal = reader.GetOrdinal("userID");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userID = reader.GetInt32(ordinal);
+                        }
+
+                        ordinal = reader.GetOrdinal("Role");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            role = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("First Name");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                           firstName  = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("Last Name");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            lastName = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("Address");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            address = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("Birthday");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            birthday = reader.GetDateTime(ordinal);
+                        }
+                        userProfiles.Add(new UserProfile(userID, firstName, lastName, age, address, birthday, new GenericIdentity(userID.ToString(), role)));
+                    }
+                    reader.Close();
+                }
+                connect.Close();
+                if(userProfiles.Count > 0)
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "Returning List of UserProfiles";
+                }
+                else
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "Empty List of UserProfiles";
+                }
+            }
+            return result;
+        }
+
+        public Response SelectUserProfile(int userID, ref UserProfile userProfile)
+        {
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE userID = '" + userID + "'";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                {
+                    // read through all rows
+                    while (reader.Read())
+                    {
+                        userID = 0;
+                        String firstName = "";
+                        String lastName = "";
+                        int age = 0;
+                        String address = "";
+                        DateTime birthday = new DateTime();
+                        String role = "";
+
+                        int ordinal = reader.GetOrdinal("userID");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userID = reader.GetInt32(ordinal);
+                        }
+
+                        ordinal = reader.GetOrdinal("role");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            role = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("firstname");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            firstName = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("lastname");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            lastName = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("address");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            address = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("birthday");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            birthday = reader.GetDateTime(ordinal);
+                        }
+                        userProfile = new UserProfile(userID, firstName, lastName, age, address, birthday, new GenericIdentity(userID.ToString(), role));
+                    }
+                    reader.Close();
+                }
+                connect.Close();
+            }
+            if (userProfile._userID > 0)
+            {
+                result.isSuccessful = true;
+                result.errorMessage = "UserProfile Found";
+            }
+            else
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "No UserProfile Found";
+            }
+            return result;
+        }
+
+        public Response SelectUserAccount(String username, ref UserAccount userAccount)
+        {
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.Users WHERE username = '" + username +"'";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                {
+                    // read through all rows
+                    while (reader.Read())
+                    {
+                        int userID = 0;
+                        String userName = "";
+                        String password = "";
+                        String salt = "";
+                        String userHash = "";
+                        bool verified = false;
+
+                        int ordinal = reader.GetOrdinal("userID");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userID = reader.GetInt32(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("username");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userName = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("password");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            password = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("disabled");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            if (reader.GetInt32(ordinal) > 0)
+                            {
+                                verified = true;
+                            }
+                            else
+                            {
+                                verified = false;
+                            }
+                        }
+                        ordinal = reader.GetOrdinal("salt");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            password = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("userHash");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            password = reader.GetString(ordinal);
+                        }
+                        userAccount = new UserAccount(userID, userName, password, salt, userHash, verified);
+                    }
+                    reader.Close();
+                }
+                connect.Close();
+            }
+            if (userAccount._userID > 0)
+            {
+                result.isSuccessful = true;
+                result.errorMessage = "UserAccount Found";
+            }
+            else
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "No UserAccount Found";
+            }
+            return result;
+        }
+
+        public Response SelectUserAccountTable(ref List<UserAccount> userAccounts, string role)
+        {
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.Users";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                {
+                    // read through all rows
+                    while (reader.Read())
+                    {
+                        int userID = 0;
+                        String userName = "";
+                        String password = "";
+                        String salt = "";
+                        String userHash = "";
+                        bool verified = false;
+
+                        int ordinal = reader.GetOrdinal("userID");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userID = reader.GetInt32(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("username");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userName = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("password");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            password = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("disabled");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            if (reader.GetInt32(ordinal) > 0)
+                            {
+                                verified = true;
+                            }
+                            else
+                            {
+                                verified = false;
+                            }
+                        }
+                        ordinal = reader.GetOrdinal("salt");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            password = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("userHash");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            password = reader.GetString(ordinal);
+                        }
+                        userAccounts.Add(new UserAccount(userID, userName, password, salt, userHash, verified));
+                    }
+                    reader.Close();
+                }
+                connect.Close();
+                if (userAccounts.Count > 0)
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "Returning List of UserAccounts";
+                }
+                else
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "Empty List of UserAccounts";
+                }
+            }
+            return result;
+        }
+        public Response SelectLastUserID()
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var selectSql = "SELECT TOP(1) userID FROM dbo.Users ORDER BY userID DESC";
+                //Executes the SQL Insert Statement using the Connection String provided
+                try
+                {
+                    var command = new SqlCommand(selectSql, connection);
+                    var rows = command.ExecuteReader();
+                    while (rows.Read()) 
+                    {
+                        tcs.Task.Result.data = rows.GetInt32(0);
+                        tcs.Task.Result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    tcs.Task.Result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    tcs.Task.Result.errorMessage = e.Message;
+                }
+            }
+
+            return tcs.Task.Result;
+        }
+
+        public async Task<Response> CountUserLoginAttempts(String username)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var list = new ArrayList();
+            Response result = new Response();
+            result.isSuccessful = false;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + username + "' AND " +
+                    "\"timestamp\" >= DATEADD(day, -1, getDate()) order by \"timestamp\" asc";
+                try
+                {
+                    var command = new SqlCommand(selectSql, connection);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        list.Add(reader.GetString(0));
+                    }
+                    result.isSuccessful = true;
+                    result.data = list;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task.Result;
+            }
+        }
+        /*
+         * Functions not used
+         * public Task<Response> GetUser(UserAccount user)
         {
             var tcs = new TaskCompletionSource<Response>();
             var list = new Object[8];
@@ -247,392 +740,8 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public Task<Response> GetLoginAttempts(String username)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var list = new ArrayList();
-            Response result = new Response();
-            result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + username + "' AND " +
-                    "\"timestamp\" >= DATEADD(day, -1, getDate()) order by \"timestamp\" asc";
-                try
-                {
-                    var command = new SqlCommand(selectSql, connection);
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        list.Add(reader.GetString(0));
-                    }
-                    result.isSuccessful = true;
-                    result.data = list;
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public Task<Response> Count(String tableName, String countedCollumn, String[] collumnNames, String[] values)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
-                var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName + " WHERE ";
-                if (collumnNames.Length == values.Length)
-                {
-                    for (int i = 0; i < collumnNames.Length; i++)
-                    {
-                        if (i != collumnNames.Length - 1)
-                        {
-                            countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"' and ";
-                        }
-                        else
-                        {
-                            countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"';";
-                        }
-                    }
-                }
-                else
-                {
-                    result.errorMessage = "There must be an equal ammount of collumnNames and values";
-                }
-                try
-                {
-                    var command = new SqlCommand(countSql, connection);
-                    result.data = command.ExecuteScalar();
-                    result.isSuccessful = true;
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-        public Task<Response> CountAll(String tableName, String countedCollumn)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
-                var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName;
-                try
-                {
-                    var command = new SqlCommand(countSql, connection);
-                    result.data = command.ExecuteScalar();
-                    result.isSuccessful = true;
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public Task<Response> CountSalt(String salt)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
-                var countSql = "SELECT COUNT (salt) FROM dbo.Users Where salt = '" + salt + "'";
-                try
-                {
-                    var command = new SqlCommand(countSql, connection);
-                    result.data = command.ExecuteScalar();
-                    result.isSuccessful = true;
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public Task<Response> Execute(object req)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            Response result = new Response();
-            result.isSuccessful = false;
-            if (req.GetType() != typeof(string)) //Verifies if the parameter matches the acceptable string format type
-            {
-                result.errorMessage = "Error: input parameter for SqlDAO not of type string";
-                result.isSuccessful = false;
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-            using (SqlConnection connect = new SqlConnection(_connectionString.ToString()))
-            {
-                connect.Open();
-                try
-                {
-                    result.data = (new SqlCommand(req.ToString(), connect)).ExecuteNonQuery();
-                    result.isSuccessful = true;
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public List<UserProfile> SelectUserProfileTable()
-        {
-            List<UserProfile> list = new List<UserProfile>();
-            string sqlStatement = "SELECT * FROM dbo.UserProfile";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
-            {
-                connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
-                {
-                    // read through all rows
-                    while (reader.Read())
-                    {
-                        int userID = 0;
-                        String firstName = "";
-                        String lastName = "";
-                        int age = 0;
-                        String email = "";
-                        String address = "";
-                        DateTime birthday = new DateTime();
-                        String role = "";
-
-                        int ordinal = reader.GetOrdinal("userID");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userID = reader.GetInt32(ordinal);
-                        }
-
-                        ordinal = reader.GetOrdinal("Role");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            role = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("First Name");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                           firstName  = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Last Name");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            lastName = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Address");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            address = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Birthday");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            birthday = reader.GetDateTime(ordinal);
-                        }
-                        var userProfile = new UserProfile(userID,firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
-                        list.Add(userProfile);
-                    }
-                    reader.Close();
-                }
-                connect.Close();
-            }
-            return list;
-        }
-
-        public UserProfile SelectUserProfile(String username)
-        {
-            UserProfile userProfile = new UserProfile(0);
-            string sqlStatement = "SELECT * FROM dbo.UserProfile WHERE Username = " + username;
-            using (SqlConnection connect = new SqlConnection(_connectionString))
-            {
-                connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
-                {
-                    // read through all rows
-                    while (reader.Read())
-                    {
-                        int userID = 0;
-                        String firstName = "";
-                        String lastName = "";
-                        int age = 0;
-                        String email = "";
-                        String address = "";
-                        DateTime birthday = new DateTime();
-                        String role = "";
-
-                        int ordinal = reader.GetOrdinal("userID");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userID = reader.GetInt32(ordinal);
-                        }
-
-                        ordinal = reader.GetOrdinal("Role");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            role = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("First Name");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            firstName = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Last Name");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            lastName = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Address");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            address = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("Birthday");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            birthday = reader.GetDateTime(ordinal);
-                        }
-                        userProfile = new UserProfile(userID, firstName, lastName, age, email, address, birthday, new GenericIdentity("", role));
-                    }
-                    reader.Close();
-                }
-                connect.Close();
-            }
-            return userProfile;
-        }
-
-        public UserAccount SelectUserAccount(String username)
-        {
-            UserAccount userAccount = new UserAccount("","","","");
-            string sqlStatement = "SELECT * FROM dbo.User WHERE username = " + username;
-            using (SqlConnection connect = new SqlConnection(_connectionString))
-            {
-                connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
-                {
-                    // read through all rows
-                    while (reader.Read())
-                    {
-                        int userID = 0;
-                        String userName = "";
-                        String password = "";
-                        String salt = "";
-                        String userHash = "";
-                        bool verified = false;
-
-                        int ordinal = reader.GetOrdinal("userID");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userID = reader.GetInt32(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("username");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            userName = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("password");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            password = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("disabled");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            verified = reader.GetBoolean(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("salt");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            password = reader.GetString(ordinal);
-                        }
-                        ordinal = reader.GetOrdinal("userHash");
-                        if (!reader.IsDBNull(ordinal))
-                        {
-                            password = reader.GetString(ordinal);
-                        }
-                        userAccount = new UserAccount(userID, userName, password, salt, userHash, verified);
-                    }
-                    reader.Close();
-                }
-                connect.Close();
-            }
-            return userAccount;
-        }
-
-        public List<UserAccount> SelectUserAccountTable()
-        {
-            List<UserAccount> userAccounts = new List<UserAccount>();
-            return userAccounts;
-        }
-        public Response SelectLastUserID()
-        {
-            Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "SELECT TOP(1) userID FROM dbo.Users ORDER BY userID DESC";
-                //Executes the SQL Insert Statement using the Connection String provided
-                try
-                {
-                    var command = new SqlCommand(selectSql, connection);
-                    var rows = command.ExecuteReader();
-                    while (rows.Read()) 
-                    {
-                        result.data = rows.GetInt32(0);
-                        result.isSuccessful = true;
-                    }
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-            }
-
-            return result;
-        }
+        
+         * 
+         */
     }
 }

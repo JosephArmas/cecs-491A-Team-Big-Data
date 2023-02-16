@@ -25,7 +25,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                     if (!response.isSuccessful && response.errorMessage == "")
                     {
                         Console.Clear();
-                        Console.WriteLine(response.errorMessage + "\nPress Enter to Continue...");
+                        Console.WriteLine("\nExiting Utification...\nPress Enter to Continue...");
                         Console.ReadLine();
                         return;
                     }
@@ -42,7 +42,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
                     if (!response.isSuccessful && response.errorMessage == "")
                     {
-                        Console.WriteLine(response.errorMessage + "\nPress Enter to Continue...");
+                        Console.WriteLine("\nExiting Utification...\nPress Enter to Continue...");
                         Console.ReadLine();
                         return;
                     }
@@ -59,7 +59,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                     response = menu.DisplayMenu(ref userAccount, ref userProfile);
                     if (!response.isSuccessful && response.errorMessage == "")
                     {
-                        Console.WriteLine(response.errorMessage + "\nPress Enter to Continue...");
+                        Console.WriteLine("\nExiting Utification...\nPress Enter to Continue...");
                         Console.ReadLine();
                         return;
                     }

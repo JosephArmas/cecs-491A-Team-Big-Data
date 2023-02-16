@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "s2eQ4Y2T7MxIkYzvvTueco0PIgXUae7oahpXSUHUfwGh0yqKo3ckk6YYs2KH1KmSlIBr45GB23PmPW/867BT4w==",
+  "dgSpecHash": "dzdTNw9G8MB4f18zGfCov2cU42lxQbPizdZSW/tsYy3fKsxajdAt6oM9OX3xz+yvvM4kTehWazIAW9TrTVMAOA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ghab\\Desktop\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
+  "projectFilePath": "C:\\Users\\ghab\\Desktop\\Refactored\\TeamBigData.Utification\\TeamBigData.Utification.Logging\\TeamBigData.Utification.Logging.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ghab\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\ghab\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

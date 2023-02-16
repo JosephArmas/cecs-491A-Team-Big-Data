@@ -22,6 +22,16 @@ namespace TeamBigData.Utification.Models
         public bool _verified { get; private set; }
         public String _userHash { get; private set; }
 
+        public UserAccount()
+        {
+            _userID = 0;
+            _username = "";
+            _password = "";
+            _salt = "";
+            _otp = "";
+            _verified = true;
+            _userHash = "";
+        }
         public UserAccount(String username, String password, String salt, String userHash)
         {
             _verified = false;
@@ -30,9 +40,6 @@ namespace TeamBigData.Utification.Models
             _salt = salt;
             _userHash = userHash;
             GenerateOTP();
-            //_otpCreated = DateTime.Now.Ticks.ToString();
-            //var hash = SecureHasher.HashString(_otpCreated.Ticks, username);
-            //_otp = hash.Substring(0, 16).Replace("-", "").Replace(" ", "");
         }
         public UserAccount(int userID, String username, String password, String salt, String userHash)
         {
@@ -43,9 +50,6 @@ namespace TeamBigData.Utification.Models
             _salt = salt;
             _userHash = userHash;
             GenerateOTP();
-            //_otpCreated = DateTime.Now.Ticks.ToString();
-            //var hash = SecureHasher.HashString(_otpCreated.Ticks, username);
-            //_otp = hash.Substring(0, 16).Replace("-", "").Replace(" ", "");
         }
         public UserAccount(int userID, String username, String password, String salt, String userHash, bool verified)
         {
@@ -54,8 +58,6 @@ namespace TeamBigData.Utification.Models
             _username = username;
             _password = password;
             GenerateOTP();
-            //var hash = SecureHasher.HashString(_otpCreated.Ticks, username);
-            //_otp = hash.Substring(0, 16).Replace("-", "").Replace(" ", "");
         }
 
         public Response VerifyOTP(String otp)
@@ -63,11 +65,11 @@ namespace TeamBigData.Utification.Models
             var result = new Response();
             result.isSuccessful = false;
             var currentTime = DateTime.Now;
-            if ((currentTime.Ticks - int.Parse(_otpCreated)) > 1200000000) //2 minutes in microseconds
+            if ((currentTime.Ticks - float.Parse(_otpCreated)) > 1200000000) //2 minutes in microseconds
             {
-                //generate new otp
                 result.isSuccessful = false;
                 result.errorMessage = "OTP Expired, Please Authenticate Again";
+                GenerateOTP();
             }
             else
             {
