@@ -17,6 +17,7 @@ namespace TeamBigData.Utification.Models
         public String _otp { get; private set; }
         public String _otpCreated { get; private set; }
         public bool _verified { get; private set; }
+        public bool _disabled { get; private set; }
 
         public UserAccount(String username, String password)
         {
@@ -37,6 +38,11 @@ namespace TeamBigData.Utification.Models
             _otpCreated = otpCreated;
             //var hash = SecureHasher.HashString(_otpCreated.Ticks, username);
             //_otp = hash.Substring(0, 16).Replace("-", "").Replace(" ", "");
+        }
+
+        public String ToString()
+        {
+            return _username + ", " + _password;
         }
 
         public Response VerifyOTP(String otp)

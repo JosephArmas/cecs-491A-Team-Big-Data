@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Security.Principal;
+using System.Text;
 using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
@@ -56,6 +57,7 @@ namespace TeamBigData.Utification.Manager
             var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             if (response.isSuccessful)
             {
+                sqlDAO.InsertUserProfile(new UserProfile(email, "Regular User"));
                 String username = response.errorMessage.Substring(47);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
@@ -71,8 +73,6 @@ namespace TeamBigData.Utification.Manager
                 log = new Log(1, "Error", email, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
             logger.Log(log);
-            var result2 = sqlDAO.InsertUserProfile(new UserProfile(email, "Regular User")).Result;
-            Console.WriteLine(result2.errorMessage);
             return response;
         }
 
@@ -193,7 +193,39 @@ namespace TeamBigData.Utification.Manager
             if (_otp == null)
             {
                 result.isSuccessful = false;
-                result.errorMessage = "Please Authenticate before entering an otp";
+                result.errorMessage = "Error OTP not Generated";
+                return result;
+            }
+            var currentTime = DateTime.Now;
+            if (enteredOTP.Equals(_otp))
+            {
+                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //12000000000 ticks in 2 minutes
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "OTP Verified";
+                }
+                else
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "OTP Expired, Please Authenticate Again";
+                }
+            }
+            else
+            {
+                Console.WriteLine(_otp);
+                result.isSuccessful = false;
+                result.errorMessage = "Invalid OTP";
+            }
+            return result;
+        }
+
+        public Response LoginOTP(String enteredOTP)
+        {
+            var result = new Response();
+            if (_otp == null)
+            {
+                result.isSuccessful = false;
+                result.errorMessage = "Error OTP not Generated";
                 return result;
             }
             var currentTime = DateTime.Now;
@@ -249,7 +281,7 @@ namespace TeamBigData.Utification.Manager
             }
         }
 
-        public Response GetUserProfileTable(List<UserProfile> list, UserProfile userProfile)
+        public Response GetUserProfileTable(ref List<UserProfile> list, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -258,14 +290,13 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
+            var connection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            list = selectDAO.SelectUserProfileTable();
-            response.isSuccessful = true;
+            response = selectDAO.SelectUserProfileTable(ref list).Result;
             return response;
         }
 
-        public Response GetUserAccountTable(List<UserAccount> list, UserProfile userProfile)
+        public Response GetUserAccountTable(ref List<UserAccount> list, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -274,10 +305,9 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
+            var connection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            list = selectDAO.SelectUserAccountTable();
-            response.isSuccessful = true;
+            response = selectDAO.SelectUserAccountTable(ref list).Result;
             return response;
         }
         public Response EnableAccount(String disabledUser, UserProfile userProfile)
@@ -291,9 +321,73 @@ namespace TeamBigData.Utification.Manager
             }
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
-            var enabler = new AccountDisabler(userDao);
-            var enableTask = enabler.EnableAccount(disabledUser).Result;
-            response = enableTask;
+            //Find What they want to reset password to
+            var findTask = userDao.GetNewPassword(disabledUser).Result;
+            //Change Password
+            if(findTask.isSuccessful)
+            {
+                var changeTask = userDao.ResetAccount(disabledUser, (String)findTask.data).Result;
+                if (changeTask.isSuccessful)
+                {
+                    //Mark Request as Fullfilled
+                    var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+                    var requestDB = new SqlDAO(requestConnectionString);
+                    var RequestFulfilled = requestDB.RequestFulfilled(disabledUser).Result;
+                    response = RequestFulfilled;
+                }
+                else
+                {
+                    response = changeTask;
+                }
+            }
+            else
+            {
+                response = findTask;
+            }
+            return response;
+        }
+
+        public async Task<Response> RecoverAccount(String username, Byte[] encryptedPassword, Encryptor encryptor, String enteredOTP)
+        {
+            Response result = new Response();
+            result.isSuccessful = false;
+            //decrypt password
+            String newPassword = encryptor.decryptString(encryptedPassword);
+            //check if its valid
+            if(!AccountRegisterer.IsValidPassword(newPassword))
+            {
+                result.errorMessage = "Invalid new password. Please make it at least 8 characters and no weird symbols";
+                return result;
+            }
+            Response otpResponse = VerifyOTP(enteredOTP);
+            if (!otpResponse.isSuccessful)
+            {
+                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                return result;
+            }
+            //if valid password and otp, then we can hash password and proceed
+            var hasher = new SecureHasher();
+            //TODO: Add Salt to hash
+            var newDigest = SecureHasher.HashString(username, newPassword);
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            SqlDAO userDao = new SqlDAO(connectionString);
+            result = await userDao.CreateRecoveryRequest(username, newDigest);
+            return result;
+        }
+
+        public Response GetRecoveryRequests(ref List<string> requests, UserProfile userProfile)
+        {
+            var response = new Response();
+            if(!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
+            var recoveryDao = new SqlDAO(connectionString);
+            response = recoveryDao.GetRecoveryRequests(ref requests).Result;
+            response.isSuccessful = true;
             return response;
         }
     }

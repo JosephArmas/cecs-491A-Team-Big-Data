@@ -24,8 +24,9 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("---------MENU---------");
             Console.WriteLine("[1] View All User Accounts");
             Console.WriteLine("[2] View All User Profiles");
-            Console.WriteLine("[3] Re-enable User");
-            Console.WriteLine("[4] LogOut");
+            Console.WriteLine("[3] View Account Recovery Requests");
+            Console.WriteLine("[4] Re-enable User");
+            Console.WriteLine("[5] LogOut");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-4");
             string input = Console.ReadLine();
@@ -41,7 +42,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManagerAcc = new SecurityManager();
                     List<UserAccount> listAcc = new List<UserAccount>();
-                    response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
+                    response = secManagerAcc.GetUserAccountTable(ref listAcc, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -61,7 +62,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
-                    response = secManager.GetUserProfileTable(list, userProfile);
+                    response = secManager.GetUserProfileTable(ref list, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -78,6 +79,27 @@ namespace TeamBigData.Utification.View.Views
                     Console.ReadLine();
                     break;
                 case 3:
+                    Console.Clear();
+                    SecurityManager secManagerAccRecovery = new SecurityManager();
+                    List<string> listRequests = new List<string>();
+                    response = secManagerAccRecovery.GetRecoveryRequests(ref listRequests, userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.Clear();
+                    Console.WriteLine("Printing out Recovery Requests");
+                    for (int i = 0; i < listRequests.Count; i++)
+                        Console.WriteLine(listRequests[i].ToString());
+                    Console.WriteLine("press Enter to exit...");
+                    Console.ReadLine();
+                    break;
+                case 4:
                     Console.Clear();
                     SecurityManager secManagerEnable = new SecurityManager();
                     Console.WriteLine("Please Enter the name of the User to be re-enabled");
@@ -96,7 +118,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 4:
+                case 5:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();

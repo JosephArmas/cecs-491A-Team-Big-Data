@@ -64,7 +64,6 @@ namespace TeamBigData.Utification.AccountServices
             {
                 result.errorMessage = "Invalid passphrase provided. Retry again or contact system administrator";
             }
-
             if (!result.isSuccessful)
             {
                 if (result.errorMessage.Contains("Violation of PRIMARY KEY"))

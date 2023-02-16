@@ -1,3 +1,4 @@
+--TeamBigData.Utification.Users
 CREATE TABLE dbo.UserProfiles
 (
 username varchar(50),
