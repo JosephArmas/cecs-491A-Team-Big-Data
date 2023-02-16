@@ -18,13 +18,24 @@ namespace TeamBigData.Utification.Manager
         /// <param name="user">The account that will activate the deletion</param>
         /// <param name="del">The account that will be deleted</param>
         /// <returns>Response if the account was deleted</returns>
-        public Response DeleteAccount(UserProfile user, UserProfile del)
+        public Response DeleteAccount(String del, UserProfile user)
         {
             IDeletionService deletionService = new AccDeletionService(del);
             var answer = new Response();
-            if ((user._username == del._username && user.Identity.IsAuthenticated) || ((IPrincipal)user).IsInRole("Admin User"))
+            
+            if ((user.Identity.Name == del) || ((IPrincipal)user).IsInRole("Admin User"))
             {
-                Task<Response> task = deletionService.DeleteProfile();
+                Console.WriteLine(user.Identity.Name + " " + del);
+                Task<Response> taskF = deletionService.DeletePIIFeatures();
+                Task<Response> taskP = deletionService.DeletePIIProfile();
+                if (taskF.Result.isSuccessful == false)
+                {
+                    answer = taskF.Result;
+                }
+                else
+                {
+                    answer = taskP.Result;
+                }
             }
             else
             {

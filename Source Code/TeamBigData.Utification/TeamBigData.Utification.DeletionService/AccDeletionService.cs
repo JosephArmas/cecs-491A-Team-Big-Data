@@ -1,23 +1,50 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.SQLDataAccess;
 
 namespace TeamBigData.Utification.DeletionService
 {
     public class AccDeletionService : IDeletionService
     {
-        private UserProfile _userProfile;
-        public AccDeletionService(UserProfile user)
+        private String _userProfile;
+        public AccDeletionService(String user)
         {
             _userProfile = user;
         }
-        public Task<Response> DeleteFeatures()
+        public async Task<Response> DeletePIIFeatures()
         {
-            throw new NotImplementedException();
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            var err = "User feature data could not be deleted";
+            var result = await DeletePII(connectionString, err, 1);
+            return result;
         }
 
-        public Task<Response> DeleteProfile()
+        public async Task<Response> DeletePIIProfile()
         {
-            throw new NotImplementedException();
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var err = "User profile data could not be deleted";
+            var result = await DeletePII(connectionString,err,0);
+            return result;
+        }
+
+        public async Task<Response> DeletePII(String connString, String err,int piData)
+        {
+            var result = new Response();
+            result.isSuccessful = false;
+            var userDao = new SQLDeletionDAO(connString);
+            if (piData == 0)
+            {
+                result = await userDao.DeleteUser(_userProfile);
+            }
+            else
+            {
+                result = await userDao.DeleteFeatures(_userProfile);
+            }
+            if (result.isSuccessful == false)
+            {
+                result.errorMessage = err;
+            }
+            return result;
         }
     }
 }

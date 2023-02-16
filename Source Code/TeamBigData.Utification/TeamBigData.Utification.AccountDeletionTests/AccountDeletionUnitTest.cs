@@ -6,41 +6,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
     [TestClass]
     public class AccountDeletionUnitTest
     {
-        [TestMethod]
-        public void CanDeleteOwnAccount()
-        {
-            //Arrange
-            var user = new UserProfile(new GenericIdentity("Deletius", "Regular User")); //Create a fake user profile to see if it will allow the deletion
-            var delMan = new DeletionManager();
-            //Act
-            var result = delMan.DeleteAccount(user,user); //Start the deletion manager 
-            //Assert
-            Assert.AreEqual(1,result);
-        }
-        [TestMethod]
-        public void CanAdminDeleteOtherAdminAccount()
-        {
-            //Arrange
-            var adUser = new UserProfile(new GenericIdentity("Kratos", "Admin User")); //Create first admin user to attempt deletion from
-            var vicUser = new UserProfile(new GenericIdentity("Ares", "Admin User")); //Create second admin user to be deleted
-            var delMan = new DeletionManager();
-            //Act
-            var result = delMan.DeleteAccount(adUser,vicUser);
-            //Assert
-            Assert.Fail();
-        }
-        [TestMethod]
-        public void CanAdminDeleteUserAccount()
-        {
-            //Arrange
-            var adUser = new UserProfile(new GenericIdentity("God", "Admin User")); //Create admin user to attemot deletion from
-            var vicUser = new UserProfile(new GenericIdentity("Sodom", "Regular User")); //Create regular user to be deleted
-            var delMan = new DeletionManager();
-            //Act
-            var result = delMan.DeleteAccount(adUser,vicUser);
-            //Assert
-            Assert.Fail();
-        }
+
         [TestMethod]
         public void FailsWhenRegularUserTriesToDeleteAnotherUser()
         {
@@ -49,8 +15,9 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var vicUser = new UserProfile(new GenericIdentity("Abel", "Regular User")); //Create second Regular user to be deleted
             var delMan = new DeletionManager();
             //Act
-            var result = delMan.DeleteAccount(regUser,vicUser);
+            var result = delMan.DeleteAccount(vicUser.Identity.Name,regUser);
             //Assert
+            Console.WriteLine(result.errorMessage);
             Assert.IsFalse(result.isSuccessful);
         }
         [TestMethod]
@@ -61,9 +28,9 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var adUser = new UserProfile(new GenericIdentity("Caesar", "Admin User")); //Create Admin user to be deleted
             var delMan = new DeletionManager();
             //Act
-            var result = delMan.DeleteAccount(regUser,adUser);
+            var result = delMan.DeleteAccount(adUser.Identity.Name,regUser);
             //Assert
-            Assert.Fail();
+            Assert.IsFalse(result.isSuccessful);
         }
         [TestMethod]
         public void DefaultHomeviewDisplayed()

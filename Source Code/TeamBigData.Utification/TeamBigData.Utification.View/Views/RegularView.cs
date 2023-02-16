@@ -22,6 +22,7 @@ namespace TeamBigData.Utification.View.Views
             }
             Console.WriteLine("Welcome Regular User");
             Console.WriteLine("---------MENU---------");
+            Console.WriteLine("[2] Delete Account");
             Console.WriteLine("[1] LogOut");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-1");
@@ -40,6 +41,37 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
+                case 2:
+                    Console.WriteLine("Are you sure you wish to delete the account?(Y/N)");
+                    var answer = Console.ReadLine();
+                    if (answer == "N" || answer == "n")
+                    {
+                        break;
+                    }
+                    else if(answer =="Y" || answer =="y")
+                    {
+                        DeletionManager delManager = new DeletionManager();
+                        response = delManager.DeleteAccount(userProfile.Identity.Name, userProfile);
+                        if (!response.isSuccessful)
+                        {
+                            Console.Clear();
+                            Console.WriteLine(response.errorMessage);
+                            Console.WriteLine("Press Enter to exit...");
+                            Console.ReadLine();
+                            response.isSuccessful = false;
+                            return response;
+                        }
+                        userProfile = new UserProfile("");
+                        Console.WriteLine("Account Deletion Successful");
+                        Console.WriteLine("Press Enter to continue...");
+                        Console.ReadLine();
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid answer returning to menu");
+                        break;
+                    }
                 default:
                     break;
             }

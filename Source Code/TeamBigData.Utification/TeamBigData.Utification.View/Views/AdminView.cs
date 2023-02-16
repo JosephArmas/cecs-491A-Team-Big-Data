@@ -25,9 +25,10 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("[1] View All User Accounts");
             Console.WriteLine("[2] View All User Profiles");
             Console.WriteLine("[3] Re-enable User");
-            Console.WriteLine("[4] LogOut");
+            Console.WriteLine("[4] Delete User");
+            Console.WriteLine("[5] LogOut");
             Console.WriteLine("[0] exit");
-            Console.WriteLine("Enter 0-4");
+            Console.WriteLine("Enter 0-5");
             string input = Console.ReadLine();
             switch (Int32.Parse(input))
             {
@@ -97,6 +98,25 @@ namespace TeamBigData.Utification.View.Views
                     Console.ReadLine();
                     break;
                 case 4:
+                    Console.Clear();
+                    DeletionManager delManager = new DeletionManager();
+                    Console.WriteLine("Please Enter the name of the User to be deleted");
+                    String delUser = Console.ReadLine();
+                    response = delManager.DeleteAccount(delUser, userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("Account Deletion Successful");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
+                    break;
+                case 5:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();

@@ -9,8 +9,8 @@ namespace TeamBigData.Utification.DeletionService
 {
     public interface IDeletionService
     {
-        Task<Response> DeleteFeatures();
+        Task<Response> DeletePIIFeatures();
 
-        Task<Response> DeleteProfile();
+        Task<Response> DeletePIIProfile();
     }
 }
