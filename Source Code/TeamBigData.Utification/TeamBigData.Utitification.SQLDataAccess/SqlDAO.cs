@@ -791,6 +791,46 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
+        public Task<Response> ResetAccount(String username, String newPassword)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "', \"disabled\" = 0 where username = '" + username + "'";
+                try
+                {
+                    var command = new SqlCommand(updateSql, connection);
+                    var rows = command.ExecuteNonQuery();
+                    if (rows == 1)
+                    {
+                        result.isSuccessful = true;
+                    }
+                    else if (rows > 1)
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "Error, Multiple Accounts Affected";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No account found";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
         public Task<Response> RequestFulfilled(string username)
         {
             var tcs = new TaskCompletionSource<Response>();

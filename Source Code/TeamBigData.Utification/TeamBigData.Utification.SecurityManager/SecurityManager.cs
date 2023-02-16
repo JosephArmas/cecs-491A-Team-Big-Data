@@ -321,19 +321,12 @@ namespace TeamBigData.Utification.Manager
             }
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
-            var enabler = new AccountDisabler(userDao);
-            //Enable Account
-            var enableTask = enabler.EnableAccount(disabledUser).Result;
-            if(!enableTask.isSuccessful)
-            {
-                return enableTask;
-            }
             //Find What they want to reset password to
             var findTask = userDao.GetNewPassword(disabledUser).Result;
             //Change Password
             if(findTask.isSuccessful)
             {
-                var changeTask = userDao.ChangePassword(disabledUser, (String)findTask.data).Result;
+                var changeTask = userDao.ResetAccount(disabledUser, (String)findTask.data).Result;
                 if (changeTask.isSuccessful)
                 {
                     //Mark Request as Fullfilled
