@@ -1,0 +1,15 @@
+.home button
+{
+    background-color: #00ACB7;
+    color: white;
+    width: 25%;
+}
+
+.otp
+{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+
