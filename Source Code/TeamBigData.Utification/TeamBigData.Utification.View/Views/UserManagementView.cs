@@ -33,11 +33,12 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("Welcome Admin User");
             Console.WriteLine("---------MENU---------");
             Console.WriteLine("[1] Create Account");
-            Console.WriteLine("[2] Update Account");
-            Console.WriteLine("[3] Enable User");
-            Console.WriteLine("[4] Disable User");
-            Console.WriteLine("[5] Bulk File Upload");
-            Console.WriteLine("[6] LogOut");
+            Console.WriteLine("[2] Delete Account");
+            Console.WriteLine("[3] Update Account");
+            Console.WriteLine("[4] Enable User");
+            Console.WriteLine("[5] Disable User");
+            Console.WriteLine("[6] Bulk File Upload");
+            Console.WriteLine("[7] LogOut");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-4");
             string input = Console.ReadLine();
@@ -60,6 +61,30 @@ namespace TeamBigData.Utification.View.Views
                     response = securityManager.InsertUser(email, encryptedPassword, encryptor);
                     break;
                 case 2:
+                    //Deleting account
+                    Console.Clear();
+                    SecurityManager secManagerDelete = new SecurityManager();
+                    //var userDao = new SqlDAO(connectionString);
+                    //response = await userDao.GetUser(userAccount);
+                    //response = await userDao.UpdateUserProfile(userProfile);
+                    Console.WriteLine("Please Enter the name of the User to be Deleted");
+                    String delUser = Console.ReadLine();
+                    response = secManagerDelete.DeleteProfile(delUser, userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("User account was successfully updated");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
+
+                    break;
+                case 3:
                     //Updating account
                     Console.Clear();
                     SecurityManager secManagerUpdate = new SecurityManager();
@@ -83,7 +108,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.ReadLine();
 
                     break;
-                case 3:
+                case 4:
                     //disabling a user
                     Console.Clear();
                     SecurityManager secManagerDisable = new SecurityManager();
@@ -104,7 +129,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 4:
+                case 5:
                     //enabling a user
                     Console.Clear();
                     SecurityManager secManagerEnable = new SecurityManager();
@@ -124,8 +149,8 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 5:
-                    //
+                case 6:
+                    //Bulk File Upload
                     Console.Clear();
                     //SecurityManager secManager = new SecurityManager();
                     Console.WriteLine("Please upload CSV for requests");
@@ -146,7 +171,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 6:
+                case 7:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();
