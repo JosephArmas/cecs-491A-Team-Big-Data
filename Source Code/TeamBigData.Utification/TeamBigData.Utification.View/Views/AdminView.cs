@@ -26,7 +26,8 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("[2] View All User Profiles");
             Console.WriteLine("[3] View Account Recovery Requests");
             Console.WriteLine("[4] Re-enable User");
-            Console.WriteLine("[5] LogOut");
+            Console.WriteLine("[5] Go to UserManagement");
+            Console.WriteLine("[6] LogOut");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-4");
             string input = Console.ReadLine();
@@ -119,6 +120,11 @@ namespace TeamBigData.Utification.View.Views
                     Console.ReadLine();
                     break;
                 case 5:
+                    Console.Clear();
+                    IView menu = new UserManagementView();
+                    response = menu.DisplayMenu(ref userAccount, ref userProfile);
+                    break;
+                case 6:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();
