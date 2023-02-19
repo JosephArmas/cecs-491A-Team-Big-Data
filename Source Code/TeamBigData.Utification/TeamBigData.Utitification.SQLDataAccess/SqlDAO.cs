@@ -480,7 +480,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<UserProfile>();
             UserProfile userProfile = new UserProfile("");
-            string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE Username = " + username;
+            string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE Username = \'" + username + "\'";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
@@ -543,7 +543,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<UserAccount>();
             UserAccount userAccount = new UserAccount("","");
-            string sqlStatement = "SELECT * FROM dbo.UserAccount WHERE Username = " + username;
+            string sqlStatement = "SELECT * FROM dbo.UserAccount WHERE Username = \'" + username + "\'";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
@@ -762,7 +762,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND username = '" + username + "' Order by [timestamp] desc; ";
+                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND username = \'" + username + "\' Order by [timestamp] desc; ";
                 try
                 {
                     var command = new SqlCommand(sqlSelect, connect);
@@ -798,7 +798,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "', \"disabled\" = 0 where username = '" + username + "'";
+                var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "', \"disabled\" = 0 where username = \'" + username + "\'";
                 try
                 {
                     var command = new SqlCommand(updateSql, connection);
@@ -838,7 +838,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                string fulfill = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE username = '" + username + "'; ";
+                string fulfill = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE username = \'" + username + "\'; ";
                 try
                 {
                     var command = new SqlCommand(fulfill, connect);
