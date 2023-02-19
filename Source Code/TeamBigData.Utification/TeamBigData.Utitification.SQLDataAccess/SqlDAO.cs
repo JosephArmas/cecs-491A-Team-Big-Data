@@ -509,12 +509,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                         {
                             role = reader.GetString(ordinal);
                         }
-                        ordinal = reader.GetOrdinal("First Name");
+                        ordinal = reader.GetOrdinal("FirstName");
                         if (!reader.IsDBNull(ordinal))
                         {
                             firstName = reader.GetString(ordinal);
                         }
-                        ordinal = reader.GetOrdinal("Last Name");
+                        ordinal = reader.GetOrdinal("LastName");
                         if (!reader.IsDBNull(ordinal))
                         {
                             lastName = reader.GetString(ordinal);
