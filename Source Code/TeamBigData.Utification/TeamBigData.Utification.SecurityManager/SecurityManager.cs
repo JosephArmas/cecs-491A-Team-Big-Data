@@ -419,7 +419,7 @@ namespace TeamBigData.Utification.Manager
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
             //var updater = new AccountDisabler(userDao);
-            UserProfile insertUser = userDao.SelectUserProfile(updateUser);
+            UserProfile insertUser = userDao.SelectUserProfile(updateUser).Result;
             var updater = userDao.UpdateUserProfile(insertUser).Result;
             response = updater;
             return response;
@@ -436,7 +436,7 @@ namespace TeamBigData.Utification.Manager
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
             //var updater = new AccountDisabler(userDao);
-            UserProfile insertUser = userDao.SelectUserProfile(delUser);
+            UserProfile insertUser = userDao.SelectUserProfile(delUser).Result;
             var deleter = userDao.DeleteUser(insertUser).Result;
             response = deleter;
             return response;

@@ -157,7 +157,7 @@ namespace TeamBigData.Utification.View.Views
                     var filename = Console.ReadLine();
                     CsvReader csvReader = new CsvReader();
 
-                    response = csvReader.BulkFileUpload(filename, userProfile);
+                    response = csvReader.BulkFileUpload(filename, userProfile).Result;
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
