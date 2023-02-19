@@ -330,7 +330,23 @@ namespace TeamBigData.Utification.Manager
             response = updater;
             return response;
         }
-
+        public Response DeleteProfile(String delUser, UserProfile userProfile)
+        {
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            //var updater = new AccountDisabler(userDao);
+            UserProfile insertUser = userDao.SelectUserProfile(delUser);
+            var deleter = userDao.DeleteUser(insertUser).Result;
+            response = deleter;
+            return response;
+        }
         // public async Task<bool> BulkFileUpload(IFormFile file)
         //{
         // var response = new Response();

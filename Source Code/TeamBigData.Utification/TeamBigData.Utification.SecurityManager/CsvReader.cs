@@ -11,6 +11,7 @@ using System.Security.Principal;
 //using TeamBigData.Utification.Manager.SecurityManager;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -39,12 +40,23 @@ namespace TeamBigData.Utification.Manager
             ENABLE
 
         }
-        public async Task BulkFileUpload(String filename, UserProfile userProfile)
+        public CsvReader()
         {
+            RequestType _request;
+            String _email;
+            String _password;
+        }
+        public async Task<Response> BulkFileUpload(String filename, UserProfile userProfile)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var response = new Response();
             var requests = await ReadFileCsv(filename);
             SecurityManager securityManager = new SecurityManager();
-            
+
             //Switch cases will handle bulk cases better than ifelse
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Log log;
             foreach (var line in requests)
             {
                 switch (line.request)
@@ -52,7 +64,11 @@ namespace TeamBigData.Utification.Manager
                     case RequestType.CREATE:
                         var encryptor = new Encryptor();
                         var encryptedPassword = encryptor.encryptString(line.password);
-                        var response = securityManager.InsertUser(line.email, encryptedPassword, encryptor);
+                        var userManager = securityManager.InsertUser(line.email, encryptedPassword, encryptor);
+                        if (response.isSuccessful)
+                        {
+
+                        }
                         break;
                     case RequestType.UPDATE:
                         response = securityManager.UpdateProfile(line.email, userProfile);
@@ -65,6 +81,12 @@ namespace TeamBigData.Utification.Manager
                         break;
                 }
             }
+            if (stopwatch.ElapsedMilliseconds > 5000)
+            {
+
+            }
+                tcs.SetResult(response);
+            return response;
 
         }
         public async Task<List<CsvReader>> ReadFileCsv(string filename)
