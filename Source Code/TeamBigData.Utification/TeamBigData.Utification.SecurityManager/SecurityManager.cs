@@ -10,6 +10,7 @@ using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
+
 namespace TeamBigData.Utification.Manager
 {
     public class SecurityManager
@@ -296,5 +297,48 @@ namespace TeamBigData.Utification.Manager
             response = enableTask;
             return response;
         }
+        public Response DisableAccount(String enabledUser, UserProfile userProfile)
+        {
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            var disabler = new AccountDisabler(userDao);
+            var disableTask = disabler.DisableAccount(enabledUser).Result;
+            response = disableTask;
+            return response;
+        }
+        public Response UpdateProfile(String updateUser, UserProfile userProfile)
+        {
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            //var updater = new AccountDisabler(userDao);
+            UserProfile insertUser = userDao.SelectUserProfile(updateUser);
+            var updater = userDao.UpdateUserProfile(insertUser).Result;
+            response = updater;
+            return response;
+        }
+
+        // public async Task<bool> BulkFileUpload(IFormFile file)
+        //{
+        // var response = new Response();
+        //    if (file.fileSize > 2147483648)
+        //    {
+        //         response.isSuccessful = false
+        //         response.errorMessge = "";
+        //     }
+        // }
     }
 }
