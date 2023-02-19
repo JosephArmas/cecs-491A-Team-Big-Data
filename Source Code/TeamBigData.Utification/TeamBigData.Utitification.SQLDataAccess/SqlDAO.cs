@@ -422,7 +422,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         public UserProfile SelectUserProfile(String username)
         {
             UserProfile userProfile = new UserProfile("");
-            string sqlStatement = "SELECT * FROM dbo.UserProfile WHERE Username = " + username;
+            string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE Username = \'" + username + "\'";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();

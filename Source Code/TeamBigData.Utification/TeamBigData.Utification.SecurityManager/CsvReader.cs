@@ -42,9 +42,9 @@ namespace TeamBigData.Utification.Manager
         }
         public CsvReader()
         {
-            RequestType _request;
-            String _email;
-            String _password;
+            RequestType request;
+            String email;
+            String password;
         }
         public async Task<Response> BulkFileUpload(String filename, UserProfile userProfile)
         {
@@ -56,7 +56,6 @@ namespace TeamBigData.Utification.Manager
             //Switch cases will handle bulk cases better than ifelse
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            Log log;
             foreach (var line in requests)
             {
                 switch (line.request)
@@ -81,9 +80,10 @@ namespace TeamBigData.Utification.Manager
                         break;
                 }
             }
-            if (stopwatch.ElapsedMilliseconds > 5000)
+            if (stopwatch.ElapsedMilliseconds > 60000)
             {
-
+                response.isSuccessful = false;
+                response.errorMessage = "Bulk UM operation was NOT successful";
             }
                 tcs.SetResult(response);
             return response;

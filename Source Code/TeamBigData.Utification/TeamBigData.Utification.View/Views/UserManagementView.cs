@@ -155,9 +155,10 @@ namespace TeamBigData.Utification.View.Views
                     //SecurityManager secManager = new SecurityManager();
                     Console.WriteLine("Please upload CSV for requests");
                     var filename = Console.ReadLine();
+                    //var csvReader = new List<CsvReader>();
                     CsvReader csvReader = new CsvReader();
 
-                    response = csvReader.BulkFileUpload(filename, userProfile);
+                    response = csvReader.BulkFileUpload(filename, userProfile).Result;
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
