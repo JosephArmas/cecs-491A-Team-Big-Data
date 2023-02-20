@@ -48,8 +48,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var vicUser = new UserProfile(new GenericIdentity("Ares", "Admin User")); //Create second admin user to be deleted
             var delMan = new DeletionManager();
             //Act
-            testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Kratos',0);\r\nINSERT INTO dbo.Users (username, \"disabled\") VALUES ('Ares',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('Kratos','Admin User');\r\nINSERT INTO dbo.UserProfiles (username, role) VALUES ('Ares','Admin User');");
-            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Ares',0);\r\nINSERT INTO dbo.Evnts VALUES ('Ares',0);\r\nINSERT INTO dbo.Srvices VALUES ('Ares',0);\r\nINSERT INTO dbo.Pictures VALUES ('Ares',0);INSERT INTO dbo.Pins VALUES ('Kratos',0);\r\nINSERT INTO dbo.Evnts VALUES ('Kratos',0);\r\nINSERT INTO dbo.Srvices VALUES ('Kratos',0);\r\nINSERT INTO dbo.Pictures VALUES ('Kratos',0);");
+            testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Ares',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('Ares','Admin User');");
+            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Ares',0);\r\nINSERT INTO dbo.Evnts VALUES ('Ares',0);\r\nINSERT INTO dbo.Srvices VALUES ('Ares',0);\r\nINSERT INTO dbo.Pictures VALUES ('Ares',0);");
             var result = delMan.DeleteAccount(vicUser.Identity.Name, adUser);
             //Assert
             Assert.IsNotNull(result);
@@ -68,8 +68,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var vicUser = new UserProfile(new GenericIdentity("Sodom", "Regular User")); //Create regular user to be deleted
             var delMan = new DeletionManager();
             //Act
-            testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('God',0);INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Sodom',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('God','Admin User');INSERT INTO dbo.UserProfiles (username, role) VALUES ('Sodom','Regular User');");
-            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('God',0);\r\nINSERT INTO dbo.Evnts VALUES ('God',0);\r\nINSERT INTO dbo.Srvices VALUES ('God',0);\r\nINSERT INTO dbo.Pictures VALUES ('God',0);INSERT INTO dbo.Pins VALUES ('Sodom',0);\r\nINSERT INTO dbo.Evnts VALUES ('Sodom',0);\r\nINSERT INTO dbo.Srvices VALUES ('Sodom',0);\r\nINSERT INTO dbo.Pictures VALUES ('Sodom',0);");
+            testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Sodom',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('Sodom','Regular User');");
+            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Sodom',0);\r\nINSERT INTO dbo.Evnts VALUES ('Sodom',0);\r\nINSERT INTO dbo.Srvices VALUES ('Sodom',0);\r\nINSERT INTO dbo.Pictures VALUES ('Sodom',0);");
             var result = delMan.DeleteAccount(vicUser.Identity.Name, adUser);
             //Assert
             Assert.IsNotNull(result);
