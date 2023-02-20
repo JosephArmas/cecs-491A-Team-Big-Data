@@ -11,7 +11,7 @@ namespace TeamBigData.Utification.SQLDataAccess
 {
     public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater
     {
-        private String _connectionString;
+        private readonly String _connectionString;
 
         public SqlDAO(String connectionString)
         {
@@ -681,25 +681,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                 }
             }
             tcs.SetResult(response);
-            return tcs.Task;
-        }
-
-        public Task<Response> SelectUserAccountTable(ref List<UserAccount> accountList)
-        {
-            Response result = new Response();
-            var tcs = new TaskCompletionSource<Response>();
-            UserAccount userAccount = new UserAccount("", "");
-            if (userProfile._userID > 0)
-            {
-                result.isSuccessful = true;
-                result.errorMessage = "UserProfile Found";
-            }
-            else
-            {
-                result.isSuccessful = false;
-                result.errorMessage = "No UserProfile Found";
-            }
-            tcs.SetResult(result);
             return tcs.Task;
         }
 

@@ -47,7 +47,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 2:
+                case "2":
                     var answer = DeletionConfirmation();
                     if(answer)
                     {
@@ -62,7 +62,7 @@ namespace TeamBigData.Utification.View.Views
                             response.isSuccessful = false;
                             return response;
                         }
-                        userProfile = new UserProfile("");
+                        userProfile = new UserProfile(0);
                         Console.WriteLine("Account Deletion Successful");
                         Console.WriteLine("Press Enter to continue...");
                         Console.ReadLine();

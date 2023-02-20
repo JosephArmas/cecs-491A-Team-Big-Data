@@ -81,7 +81,7 @@ namespace TeamBigData.Utification.Manager
                         //response = securityManager.ChangePassword(line.email, userProfile);
                         break;
                     case RequestType.ENABLE:
-                        response = securityManager.EnableAccount(line.email, userProfile);
+                        response = securityManager.EnableAccount(line.email, userProfile).Result;
                         break;
                     case RequestType.DISABLE:
                         response = securityManager.DisableAccount(line.email, userProfile);
