@@ -107,7 +107,7 @@ namespace TeamBigData.Utification.View.Views
                     SecurityManager secManagerEnable = new SecurityManager();
                     Console.WriteLine("Please Enter the name of the User to be re-enabled");
                     String disUser = Console.ReadLine();
-                    response = secManagerEnable.EnableAccount(disUser,userProfile);
+                    response = secManagerEnable.EnableAccount(disUser,userProfile).Result;
                     if (!response.isSuccessful)
                     {
                         Console.Clear();

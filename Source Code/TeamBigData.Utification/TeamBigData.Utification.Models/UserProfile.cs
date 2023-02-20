@@ -13,7 +13,6 @@ namespace TeamBigData.Utification.Models
         public int _userID { get; private set; }
         public String _firstName { get; private set; }
         public String _lastName { get; private set; }
-        public int _age { get; private set; }
         public String _address { get; private set; }
         public DateTime _birthday { get; private set; }
         public IIdentity? Identity { get; private set; }
@@ -22,7 +21,6 @@ namespace TeamBigData.Utification.Models
             _userID= 0;
             _firstName = "";
             _lastName = "";
-            _age = 0;
             _address = "";
             _birthday = new DateTime();
             Identity = new GenericIdentity("0", "Anonymous User");
@@ -42,7 +40,6 @@ namespace TeamBigData.Utification.Models
             _userID= userID;
             _firstName = "";
             _lastName = "";
-            _age = 0;
             _address = "";
             _birthday = new DateTime();
             Identity = new GenericIdentity(_userID.ToString(), "Anonymous User");
@@ -53,18 +50,16 @@ namespace TeamBigData.Utification.Models
             _userID = userID;
             _firstName = "";
             _lastName = "";
-            _age = 0;
             _address = "";
             _birthday = new DateTime();
             Identity = new GenericIdentity(_userID.ToString(), role);
         }
 
-        public UserProfile(int userID, string firstName, string lastName, int age, string address, DateTime birthday, GenericIdentity identity)
+        public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, GenericIdentity identity)
         {
             _userID= userID;
             _firstName = firstName;
             _lastName = lastName;
-            _age = age;
             _address = address;
             _birthday = birthday;
             Identity = identity;
@@ -75,7 +70,7 @@ namespace TeamBigData.Utification.Models
         }
         public string ToString()
         {
-            return ",   UserID: " + _userID + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
+            return ",   UserID: " + _userID + ",   Fullname: " + _firstName + " " + _lastName + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
         }
     }
 }

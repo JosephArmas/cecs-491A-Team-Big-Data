@@ -6,7 +6,6 @@ using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
-using static System.Net.WebRequestMethods;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
@@ -286,8 +285,8 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select dbo.users.username, \"disabled\", firstname, lastname, dbo.userprofiles.email, \"address\", " +
-                    "birthday, role from dbo.Users left join dbo.UserProfiles on (dbo.Users.username = dbo.UserProfiles.username)" +
+                var selectSql = "Select dbo.users.userid, firstname, lastname, \"address\", birthday, role " +
+                    "from dbo.Users left join dbo.UserProfiles on (dbo.Users.username = dbo.UserProfiles.username)" +
                     " Where dbo.Users.username = '" + user._username + "' AND " + "password = '" + user._password + "'";
                 try
                 {
@@ -297,17 +296,9 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         result.isSuccessful = true;
                         reader.GetValues(list);
-                        if ((int)list[1] == 0)
-                        {
-                            var userProfile = new UserProfile((string)list[0], (string)list[2], (string)list[3], 21, (string)list[4], 
-                                (string)list[5], ((DateTime)list[6]), new GenericIdentity((string)list[0], (string)list[7]));
-                            result.data = userProfile;
-                        }
-                        else
-                        {
-                            result.isSuccessful = false;
-                            result.errorMessage = "Error: Account disabled. Perform account recovery or contact system admin";
-                        }
+                        var userProfile = new UserProfile((int)list[0], (string)list[1], (string)list[2], (string)list[3],
+                            ((DateTime)list[4]), new GenericIdentity((string)list[5]));
+                        result.data = userProfile;
                     }
                     else
                     {
@@ -695,6 +686,7 @@ namespace TeamBigData.Utification.SQLDataAccess
 
         public Task<Response> SelectUserAccountTable(ref List<UserAccount> accountList)
         {
+            Response result = new Response();
             var tcs = new TaskCompletionSource<Response>();
             UserAccount userAccount = new UserAccount("", "");
             if (userProfile._userID > 0)
@@ -1042,9 +1034,9 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
-                tcs.SetResult(result);
-                return tcs.Task;
             }
+            tcs.SetResult(result);
+            return tcs.Task;
         }
         /*
          * Functions not used
