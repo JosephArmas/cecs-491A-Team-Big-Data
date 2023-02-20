@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
@@ -12,6 +13,8 @@ namespace TeamBigData.Utification.View.Views
 {
     public class AnonymousView : IView
     {
+        public CultureInfo culStandard = new CultureInfo("en-US");
+        public CultureInfo culCurrent = CultureInfo.CurrentCulture;
         /// <summary>
         /// Display all startup options.
         /// </summary>
@@ -189,6 +192,14 @@ namespace TeamBigData.Utification.View.Views
         {
             Console.Clear();
             Console.WriteLine("--------------------------------------------");
+        }
+        public CultureInfo GetCultureInfo()
+        {
+            return CultureInfo.CurrentCulture;
+        }
+        public void SetCultureInfo(CultureInfo cul)
+        {
+            CultureInfo.CurrentCulture = cul;
         }
     }
 }
