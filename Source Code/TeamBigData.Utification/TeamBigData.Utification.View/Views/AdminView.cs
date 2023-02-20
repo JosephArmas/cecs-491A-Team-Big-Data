@@ -27,9 +27,11 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("---------MENU---------");
             Console.WriteLine("[1] View All User Accounts");
             Console.WriteLine("[2] View All User Profiles");
-            Console.WriteLine("[3] Re-enable User");
-            Console.WriteLine("[4] Delete User");
-            Console.WriteLine("[5] LogOut");
+            Console.WriteLine("[3] View Account Recovery Requests");
+            Console.WriteLine("[4] Re-enable User");
+            Console.WriteLine("[5] Go to UserManagement");
+            Console.WriteLine("[6] Delete User");
+            Console.WriteLine("[7] LogOut");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-5");
             string input = Console.ReadLine();
@@ -37,7 +39,7 @@ namespace TeamBigData.Utification.View.Views
             {
                 case 0:
                     //Console.Clear();
-                    Console.WriteLine("Logging Out User...\nExiting Utification...");
+                    Console.WriteLine("\nLogging Out User...\nExiting Utification...");
                     response.isSuccessful = false;
                     response.errorMessage = "";
                     return response;
@@ -45,43 +47,66 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManagerAcc = new SecurityManager();
                     List<UserAccount> listAcc = new List<UserAccount>();
-                    response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
+                    //response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
-                        Console.WriteLine("Press Enter to exit...");
+                        Console.WriteLine("\nPress Enter to exit...");
                         Console.ReadLine();
                         response.isSuccessful = false;
                         return response;
                     }
-                    Console.WriteLine("Printing out User Account Table");
+                    Console.WriteLine("\nPrinting out User Account Table");
                     for (int i = 0; i < listAcc.Count; i++)
                         Console.WriteLine(((UserAccount)listAcc[i]).ToString());
-                    Console.WriteLine("Press Enter to continue...");
+                    Console.WriteLine("\nPress Enter to continue...");
                     Console.ReadLine();
                     break;
                 case 2:
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
-                    response = secManager.GetUserProfileTable(list, userProfile);
+                    //response = secManager.GetUserProfileTable(list, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
-                        Console.WriteLine("Press Enter to exit...");
+                        Console.WriteLine("\nPress Enter to exit...");
                         Console.ReadLine();
                         response.isSuccessful = false;
                         return response;
                     }
-                    Console.WriteLine("Printing out User Profile Table");
+                    Console.WriteLine("\nPrinting out User Profile Table");
                     for (int i = 0; i < list.Count; i++)
                         Console.WriteLine(((UserProfile)list[i]).ToString());
-                    Console.WriteLine("Press Enter to continue...");
+                    Console.WriteLine("\nPress Enter to continue...");
                     Console.ReadLine();
                     break;
                 case 3:
+                    Console.Clear();
+                    SecurityManager secManagerEnable = new SecurityManager();
+                    Console.WriteLine("\nPlease Enter the name of the User to be re-enabled");
+                    String disUser = Console.ReadLine();
+                    response = secManagerEnable.EnableAccount(disUser,userProfile).Result;
+
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine("\nPress Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.Clear();
+                    Console.WriteLine("Printing out Recovery Requests");
+                    for (int i = 0; i < listRequests.Count; i++)
+                        Console.WriteLine(listRequests[i].ToString());
+                    Console.WriteLine("press Enter to exit...");
+                    Console.ReadLine();
+                    break;
+                case 4:
                     Console.Clear();
                     SecurityManager secManagerEnable = new SecurityManager();
                     Console.WriteLine("Please Enter the name of the User to be re-enabled");
@@ -100,7 +125,12 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 4:
+                case 5:
+                    Console.Clear();
+                    IView menu = new UserManagementView();
+                    response = menu.DisplayMenu(ref userAccount, ref userProfile);
+                    break;
+                case 6:
                     Console.Clear();
                     DeletionManager delManager = new DeletionManager();
                     Console.WriteLine("Please Enter the name of the User to be deleted");
@@ -119,7 +149,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
-                case 5:
+                case 7:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();
@@ -127,13 +157,13 @@ namespace TeamBigData.Utification.View.Views
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
-                        Console.WriteLine("Press Enter to exit...");
+                        Console.WriteLine("\nPress Enter to exit...");
                         Console.ReadLine();
                         response.isSuccessful = false;
                         return response;
                     }
-                    Console.WriteLine("Successfully logged out");
-                    Console.WriteLine("Press Enter to continue...");
+                    Console.WriteLine("\nSuccessfully logged out");
+                    Console.WriteLine("\nPress Enter to continue...");
                     Console.ReadLine();
                     return response;
                     break;

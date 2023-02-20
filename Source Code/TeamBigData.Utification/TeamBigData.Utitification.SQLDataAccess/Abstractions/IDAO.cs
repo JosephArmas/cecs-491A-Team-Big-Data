@@ -9,6 +9,6 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
 {
     public interface IDAO
     {
-        Task<Response> Execute(object req);
+        public Task<Response> Execute(object req);
     }
 }

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Manager.Abstractions;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.View.Abstraction;
 
@@ -18,30 +19,31 @@ namespace TeamBigData.Utification.View.Views
         public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
         {
             Response response = new Response();
+            ILogout logout = new SecurityManager();
             if (!((IPrincipal)userProfile).IsInRole("Regular User"))
             {
                 response.isSuccessful = false;
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            Console.WriteLine("Welcome Regular User");
+            Console.Clear(); 
+            Console.WriteLine("\nWelcome " + userAccount._username);
+            Console.WriteLine("Regular User View");
             Console.WriteLine("---------MENU---------");
             Console.WriteLine("[2] Delete Account");
             Console.WriteLine("[1] LogOut");
             Console.WriteLine("[0] exit");
-            Console.WriteLine("Enter 0-1");
+            Console.Write("Enter 0-1: ");
             string input = Console.ReadLine();
-            switch (Int32.Parse(input))
+            switch (input)
             {
-                case 0:
-                    Console.Clear();
-                    Console.WriteLine("Exiting Utification...");
+                case "0":
                     response.isSuccessful = false;
                     response.errorMessage = "";
                     return response;
-                case 1:
-                    userProfile = new UserProfile("");
-                    Console.WriteLine("Successfully logged out");
+                case "1":
+                    logout.LogOutUser(ref userAccount, ref userProfile);
+                    Console.WriteLine("\nSuccessfully logged out");
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
@@ -72,6 +74,8 @@ namespace TeamBigData.Utification.View.Views
                         break;
                     }
                 default:
+                    Console.WriteLine("Invalid Input\nPress Enter to Try Again...");
+                    Console.ReadLine();
                     break;
             }
             response.isSuccessful = true;

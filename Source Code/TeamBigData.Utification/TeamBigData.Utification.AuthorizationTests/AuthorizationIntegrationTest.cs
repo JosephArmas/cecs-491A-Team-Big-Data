@@ -19,7 +19,7 @@ namespace TeamBigData.Utification.AuthorizationTests
         {
             //Anonymous user is restriced to AnonymousView, RegistrationView, and LoginView
             //Arrange
-            var userAccount = new UserAccount("", "");
+            var userAccount = new UserAccount("", "", "", "");
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
@@ -58,7 +58,7 @@ namespace TeamBigData.Utification.AuthorizationTests
         {
             //Anonymous user is restriced to AnonymousView, RegistrationView, and LoginView
             //Arrange
-            var userAccount = new UserAccount("", "");
+            var userAccount = new UserAccount("", "", "", "");
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
@@ -96,7 +96,7 @@ namespace TeamBigData.Utification.AuthorizationTests
         {
             //Anonymous user is restriced to AnonymousView, RegistrationView, and LoginView
             //Arrange
-            var userAccount = new UserAccount("", "");
+            var userAccount = new UserAccount("", "", "", "");
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
