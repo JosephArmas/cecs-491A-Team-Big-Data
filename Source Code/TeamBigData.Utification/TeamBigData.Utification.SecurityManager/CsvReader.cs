@@ -65,11 +65,12 @@ namespace TeamBigData.Utification.Manager
                         var encryptor = new Encryptor();
                         var encryptedPassword = encryptor.encryptString(line.password);
                         //var hasher = new SecureHasher();
-                        var userManager = securityManager.InsertUser(line.email, encryptedPassword, encryptor);
-                        if (response.isSuccessful)
-                        {
-
-                        }
+                        response = securityManager.InsertUser(line.email, encryptedPassword, encryptor);
+                        
+                        break;
+                    case RequestType.DELETE:
+                        line.password = null;
+                        response = securityManager.DeleteProfile(line.email, userProfile);
                         break;
                     case RequestType.UPDATE:
                         //var hasher = new SecureHasher();
@@ -81,11 +82,12 @@ namespace TeamBigData.Utification.Manager
                         //response = securityManager.ChangePassword(line.email, userProfile);
                         break;
                     case RequestType.ENABLE:
-                        response = securityManager.EnableAccount(line.email, userProfile);
+                        response = securityManager.EnableAccount(line.email, userProfile).Result;
                         break;
                     case RequestType.DISABLE:
                         response = securityManager.DisableAccount(line.email, userProfile);
                         break;
+                    
                 }
             }
             if (stopwatch.ElapsedMilliseconds > 60000)

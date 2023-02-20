@@ -11,6 +11,7 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.AccountServices;
+using System.Diagnostics;
 
 namespace TeamBigData.Utification.View.Views
 {
@@ -23,6 +24,8 @@ namespace TeamBigData.Utification.View.Views
         {
             Response response = new Response();
             SecurityManager securityManager = new SecurityManager();
+            var stopwatch = new Stopwatch();
+            var expected = 5000;
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
             {
@@ -35,8 +38,8 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("[1] Create Account");
             Console.WriteLine("[2] Delete Account");
             Console.WriteLine("[3] Update Account");
-            Console.WriteLine("[4] Enable User");
-            Console.WriteLine("[5] Disable User");
+            Console.WriteLine("[4] Disable User");
+            Console.WriteLine("[5] Enable User");
             Console.WriteLine("[6] Bulk File Upload");
             Console.WriteLine("[7] LogOut");
             Console.WriteLine("[0] exit");
@@ -65,12 +68,36 @@ namespace TeamBigData.Utification.View.Views
                     {
                         if (adminCreate == "1")
                         {
+                            stopwatch.Start();
                             response = securityManager.InsertUser(email, encryptedPassword, encryptor);
+                            stopwatch.Stop();
+                            var actualReg = stopwatch.ElapsedMilliseconds;
+                            if(response.isSuccessful & (actualReg < expected))
+                            {
+                                Console.WriteLine("UM operation was successful");
+                            }
+                            else
+                            {
+                                response.isSuccessful = false;
+                                response.errorMessage = "UM operation was unsuccessful";
+                            }
                             check = false;
                         }
                         else if (adminCreate == "2")
                         {
+                            stopwatch.Start();
                             response = securityManager.InsertUserAdmin(email, encryptedPassword, encryptor, userProfile);
+                            stopwatch.Stop();
+                            var actualAdmin = stopwatch.ElapsedMilliseconds;
+                            if (response.isSuccessful & (actualAdmin< expected))
+                            {
+                                Console.WriteLine("UM operation was successful");
+                            }
+                            else
+                            {
+                                response.isSuccessful = false;
+                                response.errorMessage= "UM operation was unsuccessful";
+                            }
                             check = false;
                         }
                         else
@@ -81,7 +108,7 @@ namespace TeamBigData.Utification.View.Views
 
                         }
                     }
-                   
+                    return response;
                     break;
                 case 2:
                     //Deleting account
@@ -92,8 +119,15 @@ namespace TeamBigData.Utification.View.Views
                     //response = await userDao.UpdateUserProfile(userProfile);
                     Console.WriteLine("Please Enter the name of the User to be Deleted");
                     String delUser = Console.ReadLine();
+                    stopwatch.Start();
                     response = secManagerDelete.DeleteProfile(delUser, userProfile);
-                    if (!response.isSuccessful)
+                    stopwatch.Stop();
+                    var actualDel = stopwatch.ElapsedMilliseconds;
+                    if (response.isSuccessful & (actualDel < expected))
+                    {
+                        Console.WriteLine("UM operation was successful");
+                    }
+                    else if (!response.isSuccessful)
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
@@ -118,6 +152,7 @@ namespace TeamBigData.Utification.View.Views
                     String updatedUser = Console.ReadLine();
                     Console.WriteLine("What new password would you like?");
                     String updatePass = Console.ReadLine();
+                    stopwatch.Start();
                     var userDao = new SqlDAO(connectionString);
                     var encryptorU = new Encryptor();
                     var encryptedPasswordU = encryptorU.encryptString(updatePass);
@@ -126,7 +161,13 @@ namespace TeamBigData.Utification.View.Views
                     //var digest = SecureHasher.HashString(updatedUser, updatePass);
                     //response = userDao.ChangePassword(line.email, digest).Result;
                     response = secManagerUpdate.ChangePassword(updatedUser, userProfile, encryptorU, encryptedPasswordU);
-                    if (!response.isSuccessful)
+                    stopwatch.Stop();
+                    var actualUpdate = stopwatch.ElapsedMilliseconds;
+                    if (response.isSuccessful & (actualUpdate < expected))
+                    {
+                        Console.WriteLine("UM operation was successful");
+                    }
+                    else if (!response.isSuccessful)
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
@@ -147,8 +188,15 @@ namespace TeamBigData.Utification.View.Views
                   
                     Console.WriteLine("Please Enter the name of the User to be disabled");
                     String disabledUser = Console.ReadLine();
+                    stopwatch.Start();
                     response = secManagerDisable.DisableAccount(disabledUser, userProfile);
-                    if (!response.isSuccessful)
+                    stopwatch.Stop();
+                    var actualDisable = stopwatch.ElapsedMilliseconds;
+                    if (response.isSuccessful & (actualDisable < expected))
+                    {
+                        Console.WriteLine("UM operation was successful");
+                    }
+                    else if (!response.isSuccessful)
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
@@ -167,8 +215,15 @@ namespace TeamBigData.Utification.View.Views
                     SecurityManager secManagerEnable = new SecurityManager();
                     Console.WriteLine("Please Enter the name of the User to be re-enabled");
                     String disUser = Console.ReadLine();
-                    response = secManagerEnable.EnableAccount(disUser, userProfile);
-                    if (!response.isSuccessful)
+                    stopwatch.Start();
+                    response = secManagerEnable.EnableAccount(disUser, userProfile).Result;
+                    stopwatch.Stop();
+                    var actualEnable = stopwatch.ElapsedMilliseconds;
+                    if (response.isSuccessful & (actualEnable < expected))
+                    {
+                        Console.WriteLine("UM operation was successful");
+                    }
+                    else if (!response.isSuccessful)
                     {
                         Console.Clear();
                         Console.WriteLine(response.errorMessage);
@@ -186,8 +241,14 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     //SecurityManager secManager = new SecurityManager();
                     Console.WriteLine("Please upload CSV for requests");
+                    Console.WriteLine("Specify file name like 'file.csv'");
+                    //https://learn.microsoft.com/en-us/dotnet/api/system.io.path.getfilename?view=net-7.0#system-io-path-getfilename(system-string)
+                    //Universal Naming Convention is C:\MyDir\MyFile.csv
                     var filename = Console.ReadLine();
-                    //var csvReader = new List<CsvReader>();
+                    //var filename = @"C:\MyDir\test.csv";
+
+
+
                     CsvReader csvReader = new CsvReader();
 
                     response = csvReader.BulkFileUpload(filename, userProfile).Result;
@@ -200,7 +261,7 @@ namespace TeamBigData.Utification.View.Views
                         response.isSuccessful = false;
                         return response;
                     }
-                    Console.WriteLine("User account was successfully re-enabled");
+                    Console.WriteLine("Bulk UM operation was Successful");
                     Console.WriteLine("Press Enter to continue...");
                     Console.ReadLine();
                     break;
