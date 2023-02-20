@@ -202,6 +202,49 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
         }
+        public Task<Response> DeleteUser(string username)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            result.isSuccessful = false;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var deleteSql = "DELETE FROM dbo.UserProfiles WHERE username = '" + username + "';";
+                try
+                {
+                    var command = new SqlCommand(deleteSql, connection);
+                    var rows = command.ExecuteNonQuery();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                deleteSql = "DELETE FROM dbo.Users WHERE username = '" + username + "';";
+                try
+                {
+                    var command = new SqlCommand(deleteSql, connection);
+                    var rows = command.ExecuteNonQuery();
+                    result.isSuccessful = true;
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
 
         public Task<Response> GetUser(UserAccount user)
         {

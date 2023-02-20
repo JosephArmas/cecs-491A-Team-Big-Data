@@ -93,7 +93,16 @@ namespace TeamBigData.Utification.View.Views
                     //response = await userDao.UpdateUserProfile(userProfile);
                     Console.WriteLine("Please Enter the name of the User to be updated");
                     String updatedUser = Console.ReadLine();
-                    response = secManagerUpdate.UpdateProfile(updatedUser, userProfile);
+                    Console.WriteLine("What new password would you like?");
+                    String updatePass = Console.ReadLine();
+                    var userDao = new SqlDAO(connectionString);
+                    var encryptorU = new Encryptor();
+                    var encryptedPasswordU = encryptorU.encryptString(updatePass);
+
+
+                    //var digest = SecureHasher.HashString(updatedUser, updatePass);
+                    //response = userDao.ChangePassword(line.email, digest).Result;
+                    response = secManagerUpdate.ChangePassword(updatedUser, userProfile, encryptorU, encryptedPasswordU);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();

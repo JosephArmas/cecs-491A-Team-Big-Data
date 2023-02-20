@@ -12,6 +12,7 @@ using System.Security.Principal;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.SQLDataAccess;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -63,6 +64,7 @@ namespace TeamBigData.Utification.Manager
                     case RequestType.CREATE:
                         var encryptor = new Encryptor();
                         var encryptedPassword = encryptor.encryptString(line.password);
+                        //var hasher = new SecureHasher();
                         var userManager = securityManager.InsertUser(line.email, encryptedPassword, encryptor);
                         if (response.isSuccessful)
                         {
@@ -70,7 +72,13 @@ namespace TeamBigData.Utification.Manager
                         }
                         break;
                     case RequestType.UPDATE:
-                        response = securityManager.UpdateProfile(line.email, userProfile);
+                        //var hasher = new SecureHasher();
+                        var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
+                        var userDao = new SqlDAO(connectionString);
+                        
+                        var digest = SecureHasher.HashString(line.email, line.password);
+                        response = userDao.ChangePassword(line.email, digest).Result;
+                        //response = securityManager.ChangePassword(line.email, userProfile);
                         break;
                     case RequestType.ENABLE:
                         response = securityManager.EnableAccount(line.email, userProfile);

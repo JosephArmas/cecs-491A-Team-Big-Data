@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Microsoft.AspNetCore.DataProtection.XmlEncryption;
+using System.Collections;
+using System.Data;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Text;
@@ -407,9 +409,10 @@ namespace TeamBigData.Utification.Manager
             response = disableTask;
             return response;
         }
-        public Response UpdateProfile(String updateUser, UserProfile userProfile)
+        public Response ChangePassword(String updateUser, UserProfile userProfile, Encryptor encryptor, Byte[] encryptedPass)
         {
             var response = new Response();
+            
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
             {
                 response.isSuccessful = false;
@@ -419,11 +422,17 @@ namespace TeamBigData.Utification.Manager
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
             //var updater = new AccountDisabler(userDao);
-            UserProfile insertUser = userDao.SelectUserProfile(updateUser).Result;
-            var updater = userDao.UpdateUserProfile(insertUser).Result;
-            response = updater;
+            var decrypted = encryptor.decryptString(encryptedPass);
+            var hashPassword = SecureHasher.HashString(updateUser, decrypted);
+            //TODO
+            //      Add Salt
+     
+            response = userDao.ChangePassword(updateUser,hashPassword).Result;
+           
             return response;
         }
+
+        
         public Response DeleteProfile(String delUser, UserProfile userProfile)
         {
             var response = new Response();
@@ -436,8 +445,8 @@ namespace TeamBigData.Utification.Manager
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
             //var updater = new AccountDisabler(userDao);
-            UserProfile insertUser = userDao.SelectUserProfile(delUser).Result;
-            var deleter = userDao.DeleteUser(insertUser).Result;
+           // UserProfile insertUser = userDao.SelectUserProfile(delUser).Result;
+            var deleter = userDao.DeleteUser(delUser).Result;
             response = deleter;
             return response;
         }
