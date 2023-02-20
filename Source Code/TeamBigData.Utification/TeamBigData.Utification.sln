@@ -48,6 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.Acc
 		{F59F2E16-5DE8-44B6-8C4F-BCD137A06944} = {F59F2E16-5DE8-44B6-8C4F-BCD137A06944}
 		{F7AE8B84-47C4-4620-A30B-29ACD8902C4D} = {F7AE8B84-47C4-4620-A30B-29ACD8902C4D}
 	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.LogoutTests", "TeamBigData.Utification.LogoutTests\TeamBigData.Utification.LogoutTests.csproj", "{FC6D36ED-B16F-43D2-8859-C38606DADE02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
