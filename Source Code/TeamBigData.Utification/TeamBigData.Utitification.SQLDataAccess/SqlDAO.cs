@@ -1030,6 +1030,18 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         result.isSuccessful = false;
                         result.errorMessage = "Error, Multiple Accounts Affected";
+                        tcs.SetResult(result);
+                        return tcs.Task;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
                 tcs.SetResult(result);
                 return tcs.Task;
             }

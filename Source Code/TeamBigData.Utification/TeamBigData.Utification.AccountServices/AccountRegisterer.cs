@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Security.Principal;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
@@ -94,11 +95,13 @@ namespace TeamBigData.Utification.AccountServices
             }
             else
             {
-                result.errorMessage = "Account created successfully, your username is " + username;
+                result1.errorMessage = "Account created successfully, your username is " + email;
             }
             //If the Error message isn't one of these it return the entire error message from the dbo
-            return result;
+            return result1;
         }
+        //TODO: fix admin creation
+        /*
         public async Task<Response> InsertUserAdmin(String email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfile)
         {
             Response result = new Response();
@@ -144,5 +147,6 @@ namespace TeamBigData.Utification.AccountServices
             //If the Error message isn't one of these it return the entire error message from the dbo
             return result;
         }
+        */
     }
 }

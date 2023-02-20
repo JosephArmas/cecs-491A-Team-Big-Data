@@ -506,7 +506,7 @@ namespace TeamBigData.Utification.Manager
             response = selectDAO.SelectUserAccountTable(ref list).Result;
             return response;
         }
-        public Response EnableAccount(String disabledUser, UserProfile userProfile)
+        public Response ResetAccount(String disabledUser, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
