@@ -1,3 +1,4 @@
+--TeamBigData.Utification.Logs
 CREATE TABLE Logs       
 (
 LogID int IDENTITY,

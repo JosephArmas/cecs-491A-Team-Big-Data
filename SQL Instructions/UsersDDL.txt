@@ -1,3 +1,4 @@
+--TeamBigData.Utification.Users
 CREATE TABLE dbo.Users
 (
 userID int NOT NULL Identity(1001,1),
