@@ -104,11 +104,9 @@ namespace TeamBigData.Utification.Manager
             IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
             Log log;
             var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            UserAccount selectUserAccount = new UserAccount();
-            sqlUserSDAO.SelectUserAccount(ref selectUserAccount, email);
-            Console.WriteLine(userAccount._salt);
-            Console.ReadLine();
-            if (!userAccount._verified)
+            
+            sqlUserSDAO.SelectUserAccount(ref userAccount, email);
+            if (userAccount._verified == false)
             {
                 response.isSuccessful = false;
                 response.errorMessage = "User is Disabled.";
@@ -136,8 +134,7 @@ namespace TeamBigData.Utification.Manager
                 tcs.SetResult(response);
                 return tcs.Task;
             }
-            UserProfile selectUserProfile = new UserProfile();
-            sqlUserSDAO.SelectUserProfile(ref selectUserProfile, userAccount._userID);
+            sqlUserSDAO.SelectUserProfile(ref userProfile, userAccount._userID);
             if (userProfile._userID == 0)
             {
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");

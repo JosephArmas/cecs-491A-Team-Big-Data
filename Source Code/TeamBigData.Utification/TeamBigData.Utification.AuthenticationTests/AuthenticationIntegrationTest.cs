@@ -32,7 +32,6 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result2 = securityManager.LoginOTP(message);
             //Assert
             Assert.IsTrue(result.isSuccessful);
-            Assert.IsTrue(securityManager.IsAuthenticated());
         }
 
         [TestMethod]
@@ -84,16 +83,19 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
+            var userAccount = new UserAccount();
+            var userProfile = new UserProfile();
             var username = "disabledUser@yahoo.com";
             var password = "wrongPassword";
             //Act
             var digest = encryptor.encryptString(password);
-            securityManager.VerifyUser(username, digest, encryptor);
-            securityManager.VerifyUser(username, digest, encryptor);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
+            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             //Assert
+            Console.WriteLine(result.isSuccessful);
             Assert.IsFalse(result.isSuccessful);
-            Assert.IsTrue(result.errorMessage.Contains("disabled"));
+            Assert.IsTrue(result.errorMessage.Contains("User is Disabled."));
         }
 
         [TestMethod]

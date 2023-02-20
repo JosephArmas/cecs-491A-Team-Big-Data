@@ -122,7 +122,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var updateSql = "UPDATE dbo.UserProfiles set \"disabled\" += 1 Where userID = '" + userAccount._userID + "'";
+                var updateSql = "UPDATE dbo.Users set \"disabled\" += 1 Where userID = " + userAccount._userID + "";
                 try
                 {
                     var command = new SqlCommand(updateSql, connection);
@@ -798,12 +798,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                         ordinal = reader.GetOrdinal("salt");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            password = reader.GetString(ordinal);
+                            salt = reader.GetString(ordinal);
                         }
                         ordinal = reader.GetOrdinal("userHash");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            password = reader.GetString(ordinal);
+                            userHash = reader.GetString(ordinal);
                         }
                         userAccount = new UserAccount(userID, userName, password, salt, userHash, verified);
                     }
@@ -891,12 +891,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                             ordinal = reader.GetOrdinal("salt");
                             if (!reader.IsDBNull(ordinal))
                             {
-                                password = reader.GetString(ordinal);
+                                salt = reader.GetString(ordinal);
                             }
                             ordinal = reader.GetOrdinal("userHash");
                             if (!reader.IsDBNull(ordinal))
                             {
-                                password = reader.GetString(ordinal);
+                                userHash = reader.GetString(ordinal);
                             }
                             userAccounts.Add(new UserAccount(userID, userName, password, salt, userHash, verified));
                         }
