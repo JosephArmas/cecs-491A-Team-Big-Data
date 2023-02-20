@@ -106,10 +106,11 @@ namespace TeamBigData.Utification.Manager
             var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             
             sqlUserSDAO.SelectUserAccount(ref userAccount, email);
+
             if (userAccount._verified == false)
             {
                 response.isSuccessful = false;
-                response.errorMessage = "User is Disabled.";
+                response.errorMessage = "Error: Account disabled. Perform account recovery or contact system admin";
                 tcs.SetResult(response);
                 return tcs.Task;
             }
@@ -130,7 +131,7 @@ namespace TeamBigData.Utification.Manager
             {
                 sqlUserIDAO.IncrementUserAccountDisabled(userAccount);
                 response.isSuccessful = false;
-                response.errorMessage = "Username or Password is Invalid.";
+                response.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
                 tcs.SetResult(response);
                 return tcs.Task;
             }
