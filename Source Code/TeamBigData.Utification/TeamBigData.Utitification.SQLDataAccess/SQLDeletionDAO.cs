@@ -33,7 +33,6 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the column names and values given
-                Console.WriteLine("Username is: "+user);
                 var deleteSql = "DELETE FROM dbo.\"Events\" WHERE username = '" + username + "';DELETE FROM dbo.Pictures WHERE username = '" + username + "'" +
                     ";DELETE FROM dbo.\"Services\" WHERE username = '" + username + "';DELETE FROM dbo.Pins WHERE username = '" + username + "';";
                 try
@@ -42,7 +41,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var rows = command.ExecuteNonQuery();
                     result.isSuccessful = true;
                     result.data = rows;
-                    Console.WriteLine("The feature rows affected->>" + rows);
                 }
                 catch (SqlException s)
                 {
@@ -81,7 +79,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                         result.isSuccessful = true;
                         result.data = rows;
                     }
-                    Console.WriteLine("The rows affected->>"+rows);
                 }
                 catch (SqlException s)
                 {

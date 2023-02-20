@@ -31,7 +31,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Deletius',0);\r\nINSERT INTO dbo.\"Events\" VALUES ('Deletius',0);\r\nINSERT INTO dbo.\"Services\" VALUES ('Deletius',0);\r\nINSERT INTO dbo.Pictures VALUES ('Deletius',0);");
             var result = delMan.DeleteAccount(user.Identity.Name, user); //Start the deletion manager 
             //Assert
-            Console.WriteLine(result.errorMessage + result.isSuccessful + result.data);
+            Console.WriteLine("Account Deletion Successful");
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -52,6 +52,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Ares',0);\r\nINSERT INTO dbo.\"Events\" VALUES ('Ares',0);\r\nINSERT INTO dbo.\"Services\" VALUES ('Ares',0);\r\nINSERT INTO dbo.Pictures VALUES ('Ares',0);");
             var result = delMan.DeleteAccount(vicUser.Identity.Name, adUser);
             //Assert
+            Console.WriteLine("Account Deletion Successful");
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -72,6 +73,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Sodom',0);\r\nINSERT INTO dbo.\"Events\" VALUES ('Sodom',0);\r\nINSERT INTO dbo.\"Services\" VALUES ('Sodom',0);\r\nINSERT INTO dbo.Pictures VALUES ('Sodom',0);");
             var result = delMan.DeleteAccount(vicUser.Identity.Name, adUser);
             //Assert
+            Console.WriteLine("Account Deletion Successful");
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);

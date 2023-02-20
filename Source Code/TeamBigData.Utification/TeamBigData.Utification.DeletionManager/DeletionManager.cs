@@ -30,7 +30,6 @@ namespace TeamBigData.Utification.Manager
             
             if ((user.Identity.Name == del && user.Identity.IsAuthenticated) || isAdmin())
             {
-                Console.WriteLine(user.Identity.Name + " " + del);
                 Task<Response> taskF = deletionService.DeletePIIFeatures();
                 Task<Response> taskP = deletionService.DeletePIIProfile();
                 if (taskF.Result.isSuccessful == false)
