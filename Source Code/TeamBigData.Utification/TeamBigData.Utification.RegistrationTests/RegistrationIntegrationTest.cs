@@ -36,7 +36,7 @@ namespace TeamBigData.Utification.RegistrationTests
             var expected = 1;
             //Act
             int before = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
-            var result = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
+            var result = register.RegisterUser(username, encryptedPassword, encryptor).Result;
             int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
             //Assert
             Assert.AreEqual(expected, after - before);
@@ -56,10 +56,12 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
-            var test = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
-            var expected = testDBO.SelectUserAccount(username);
+            var test = register.RegisterUser(username, encryptedPassword, encryptor);
+            var account = new UserAccount();
+            var expected = testDBO.SelectUserAccount(username, ref account).Result;
             //Assert
-            Assert.IsTrue(userAccount._username == expected._username);
+            Assert.IsTrue(userAccount._username == account._username);
+            Assert.IsTrue(expected.isSuccessful);
         }
 
         [TestMethod]
@@ -73,8 +75,8 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
-            register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
-            var actual = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
+            register.RegisterUser(username, encryptedPassword, encryptor);
+            var actual = register.RegisterUser(username, encryptedPassword, encryptor).Result;
             //Assert
             Assert.IsTrue(actual.errorMessage.Contains("Email already linked to an account, please pick a new email"));
         }
@@ -92,7 +94,7 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             stopwatch.Start();
-            var result = register.RegisterUser(username, encryptedPassword, encryptor, ref userAccount, ref userProfile);
+            var result = register.RegisterUser(username, encryptedPassword, encryptor).Result;
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
@@ -100,7 +102,8 @@ namespace TeamBigData.Utification.RegistrationTests
             Assert.IsTrue(actual < 5000);
             Assert.IsTrue(result.isSuccessful);
         }
-
+        //Dont know why there are 2
+        /*
         [TestMethod]
         public async Task ShouldRegisterWithin5Seconds()
         {
@@ -124,5 +127,6 @@ namespace TeamBigData.Utification.RegistrationTests
             Assert.IsTrue(actual < expected);
             Assert.IsTrue(result.isSuccessful);
         }
+        */
     }
 }

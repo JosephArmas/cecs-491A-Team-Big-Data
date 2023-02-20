@@ -9,7 +9,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBDeleter, IDBUpdater
+    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater
     {
         private String _connectionString;
 
@@ -542,7 +542,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         {
                             birthday = reader.GetDateTime(ordinal);
                         }
-                        userProfiles.Add(new UserProfile(userID, firstName, lastName, age, address, birthday, new GenericIdentity(userID.ToString(), role)));
+                        userProfiles.Add(new UserProfile(userID, firstName, lastName, address, birthday, new GenericIdentity(userID.ToString(), role)));
                     }
                     reader.Close();
                 }
@@ -614,7 +614,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         {
                             birthday = reader.GetDateTime(ordinal);
                         }
-                        userProfile = new UserProfile(userID, firstName, lastName, age, address, birthday, new GenericIdentity(userID.ToString(), role));
+                        userProfile = new UserProfile(userID, firstName, lastName, address, birthday, new GenericIdentity(userID.ToString(), role));
                     }
                     reader.Close();
                 }

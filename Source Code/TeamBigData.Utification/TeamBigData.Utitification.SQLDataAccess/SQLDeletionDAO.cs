@@ -34,8 +34,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 connection.Open();
                 //Creates an Insert SQL statements using the column names and values given
                 Console.WriteLine("Username is: "+user);
-                var deleteSql = "DELETE FROM dbo.Evnts WHERE username = '" + username + "';DELETE FROM dbo.Pictures WHERE username = '" + username + "'" +
-                    ";DELETE FROM dbo.Srvices WHERE username = '" + username + "';DELETE FROM dbo.Pins WHERE username = '" + username + "';";
+                var deleteSql = "DELETE FROM dbo.Events WHERE username = '" + username + "';DELETE FROM dbo.Pictures WHERE username = '" + username + "'" +
+                    ";DELETE FROM dbo.Services WHERE username = '" + username + "';DELETE FROM dbo.Pins WHERE username = '" + username + "';";
                 try
                 {
                     var command = new SqlCommand(deleteSql, connection);
