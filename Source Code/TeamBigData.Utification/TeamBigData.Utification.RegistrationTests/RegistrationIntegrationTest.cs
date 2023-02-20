@@ -52,11 +52,11 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
-            var test = register.RegisterUser(username, encryptedPassword, encryptor);
-            var expected = testDBO.SelectUserAccount(username);
-            //Assert\
-            Assert.IsTrue(username == expected._username);
-            Assert.IsTrue(test.Result.isSuccessful);
+            var test = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            //Assert
+            Assert.IsTrue(username == userAccount._username);
+            Assert.IsTrue(test.isSuccessful);
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             register.RegisterUser(username, encryptedPassword, encryptor);
-            var actual = register.RegisterUser(username, encryptedPassword, encryptor).Result;
+            var actual = await register.RegisterUser(username, encryptedPassword, encryptor);
             //Assert
             Assert.IsTrue(actual.errorMessage.Contains("Email already linked to an account, please pick a new email"));
         }
@@ -89,7 +89,7 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             stopwatch.Start();
-            var result = register.RegisterUser(username, encryptedPassword, encryptor).Result;
+            var result = await register.RegisterUser(username, encryptedPassword, encryptor);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 

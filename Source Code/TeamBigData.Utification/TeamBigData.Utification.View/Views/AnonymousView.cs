@@ -38,6 +38,7 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("------------MENU------------");
             Console.WriteLine("[1] Create a New Account");
             Console.WriteLine("[2] Login");
+            Console.WriteLine("[3] Recover Account/Forgot Password");
             Console.WriteLine("[0] exit");
             Console.Write("Enter 0-2: ");
             string input = Console.ReadLine();
@@ -159,6 +160,19 @@ namespace TeamBigData.Utification.View.Views
                             return response;
                         }
                     }
+                    break;
+                case "3":
+                    Console.WriteLine("Please enter your username");
+                    String inputUsername = Console.ReadLine();
+                    Console.WriteLine("Please enter your new password");
+                    String newPassword = Console.ReadLine();
+                    var passwordEncryptor = new Encryptor();
+                    byte[] newEncryptedPassword = passwordEncryptor.encryptString(newPassword);
+                    SecurityManager securityManager = new SecurityManager();
+                    securityManager.GenerateOTP();
+                    Console.WriteLine("Please Enter the OTP: " + securityManager.SendOTP());
+                    String otp = Console.ReadLine();
+                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor, otp).Result.errorMessage);
                     break;
                 default:
                     Console.WriteLine("Invalid Input\nPress Enter to Try Again...");

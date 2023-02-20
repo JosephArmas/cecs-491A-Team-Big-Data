@@ -104,7 +104,8 @@ namespace TeamBigData.Utification.Manager
             IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
             Log log;
             var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            userAccount = sqlUserSDAO.SelectUserAccount(email);
+            UserAccount selectUserAccount = new UserAccount();
+            sqlUserSDAO.SelectUserAccount(ref selectUserAccount, email);
             Console.WriteLine(userAccount._salt);
             Console.ReadLine();
             if (!userAccount._verified)
@@ -135,7 +136,8 @@ namespace TeamBigData.Utification.Manager
                 tcs.SetResult(response);
                 return tcs.Task;
             }
-            UserProfile selectUserProfile = sqlUserSDAO.SelectUserProfile(userAccount._userID);
+            UserProfile selectUserProfile = new UserProfile();
+            sqlUserSDAO.SelectUserProfile(ref selectUserProfile, userAccount._userID);
             if (userProfile._userID == 0)
             {
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
@@ -320,8 +322,7 @@ namespace TeamBigData.Utification.Manager
             }
             var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            list = selectDAO.SelectUserProfileTable();
-            response.isSuccessful = true;
+            response = selectDAO.SelectUserProfileTable(ref list, "Admin User").Result;
             return response;
         }
 
@@ -336,7 +337,7 @@ namespace TeamBigData.Utification.Manager
             }
             var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            list = selectDAO.SelectUserAccountTable(userProfile.Identity.AuthenticationType);
+            response = selectDAO.SelectUserAccountTable(ref list, userProfile.Identity.AuthenticationType).Result;
             response.isSuccessful = true;
             return response;
         }
@@ -360,7 +361,8 @@ namespace TeamBigData.Utification.Manager
                 }
                 var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                 IDBSelecter selectDao = new SqlDAO(connectionString);
-                UserAccount userAccount = selectDao.SelectUserAccount(username);
+                UserAccount userAccount = new UserAccount();
+                await selectDao.SelectUserAccount(ref userAccount, username);
                 if (SecureHasher.HashString(userAccount._salt, password) == userAccount._password)
                 {
                     result.isSuccessful = true;
