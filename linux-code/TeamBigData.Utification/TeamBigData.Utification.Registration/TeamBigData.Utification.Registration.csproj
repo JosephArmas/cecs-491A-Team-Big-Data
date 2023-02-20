@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Abstraction\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Response\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Security\TeamBigData.Utification.Security.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
