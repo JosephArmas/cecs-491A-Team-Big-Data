@@ -28,10 +28,10 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var delMan = new DeletionManager();
             //Act
             testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Deletius',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('Deletius','Regular User');");
-            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Deletius',0);\r\nINSERT INTO dbo.Evnts VALUES ('Deletius',0);\r\nINSERT INTO dbo.Srvices VALUES ('Deletius',0);\r\nINSERT INTO dbo.Pictures VALUES ('Deletius',0);");
+            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Deletius',0);\r\nINSERT INTO dbo.\"Events\" VALUES ('Deletius',0);\r\nINSERT INTO dbo.\"Services\" VALUES ('Deletius',0);\r\nINSERT INTO dbo.Pictures VALUES ('Deletius',0);");
             var result = delMan.DeleteAccount(user.Identity.Name, user); //Start the deletion manager 
             //Assert
-            Console.WriteLine(result.errorMessage + result.isSuccessful + result.data);
+            Console.WriteLine("Account Deletion Successful");
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -49,9 +49,10 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var delMan = new DeletionManager();
             //Act
             testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Ares',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('Ares','Admin User');");
-            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Ares',0);\r\nINSERT INTO dbo.Evnts VALUES ('Ares',0);\r\nINSERT INTO dbo.Srvices VALUES ('Ares',0);\r\nINSERT INTO dbo.Pictures VALUES ('Ares',0);");
+            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Ares',0);\r\nINSERT INTO dbo.\"Events\" VALUES ('Ares',0);\r\nINSERT INTO dbo.\"Services\" VALUES ('Ares',0);\r\nINSERT INTO dbo.Pictures VALUES ('Ares',0);");
             var result = delMan.DeleteAccount(vicUser.Identity.Name, adUser);
             //Assert
+            Console.WriteLine("Account Deletion Successful");
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -69,9 +70,10 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var delMan = new DeletionManager();
             //Act
             testuserDBO.Execute("INSERT INTO dbo.Users (username, \"disabled\") VALUES ('Sodom',0);INSERT INTO dbo.UserProfiles (username, role) VALUES ('Sodom','Regular User');");
-            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Sodom',0);\r\nINSERT INTO dbo.Evnts VALUES ('Sodom',0);\r\nINSERT INTO dbo.Srvices VALUES ('Sodom',0);\r\nINSERT INTO dbo.Pictures VALUES ('Sodom',0);");
+            testfeatDBO.Execute("INSERT INTO dbo.Pins VALUES ('Sodom',0);\r\nINSERT INTO dbo.\"Events\" VALUES ('Sodom',0);\r\nINSERT INTO dbo.\"Services\" VALUES ('Sodom',0);\r\nINSERT INTO dbo.Pictures VALUES ('Sodom',0);");
             var result = delMan.DeleteAccount(vicUser.Identity.Name, adUser);
             //Assert
+            Console.WriteLine("Account Deletion Successful");
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
