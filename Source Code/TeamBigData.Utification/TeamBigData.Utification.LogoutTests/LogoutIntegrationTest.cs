@@ -26,9 +26,9 @@ namespace TeamBigData.Utification.LogoutTests
             //Act
             stopwatch.Start();
             var digest = encryptor.encryptString(password);
-            result = securityManager.RegisterUser(username, digest, encryptor, ref userAccount, ref userProfile);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
-            result = securityManager.LogOutUser(ref userAccount,ref userProfile);
+            result = securityManager.RegisterUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            result = securityManager.LogOutUser(ref userAccount, ref userProfile).Result;
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert

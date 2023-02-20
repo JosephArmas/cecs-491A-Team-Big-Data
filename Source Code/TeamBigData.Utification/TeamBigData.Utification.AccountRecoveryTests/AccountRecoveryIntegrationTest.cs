@@ -54,7 +54,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             long expected = 5 * 1000;
             //Act
             stopwatch.Start();
-            var enableResponse = adminManager.EnableAccount("testUser@yahoo.com", userProfile);
+            var enableResponse = adminManager.EnableAccount("testUser@yahoo.com", userProfile).Result;
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;
 
