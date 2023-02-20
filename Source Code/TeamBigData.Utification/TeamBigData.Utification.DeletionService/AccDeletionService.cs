@@ -38,7 +38,7 @@ namespace TeamBigData.Utification.DeletionService
             }
             else
             {
-                result = await userDao.DeleteFeatures(_userProfile);
+                result = await userDao.DeleteFeatureInfo(_userProfile);
             }
             if (result.isSuccessful == false)
             {

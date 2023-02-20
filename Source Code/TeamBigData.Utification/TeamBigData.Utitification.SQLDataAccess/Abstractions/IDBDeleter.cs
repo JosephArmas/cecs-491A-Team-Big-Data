@@ -11,6 +11,6 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
     public interface IDBDeleter
     {
         public Task<Response> DeleteUser(String user);
-        public Task<Response> DeleteFeatures(String user);
+        public Task<Response> DeleteFeatureInfo(String user);
     }
 }

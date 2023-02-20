@@ -22,8 +22,8 @@ namespace TeamBigData.Utification.SQLDataAccess
         /// Deletes the features through one sql delete statement. Borrowed from the DeleteUser method from SqlDAO by David.
         /// </summary>
         /// <param name="user"></param>
-        /// <returns></returns>
-        public Task<Response> DeleteFeatures(String user)
+        /// <returns>The response from the sql query</returns>
+        public Task<Response> DeleteFeatureInfo(String user)
         {
             var tcs = new TaskCompletionSource<Response>();
             var username = user;
@@ -41,6 +41,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
                     result.isSuccessful = true;
+                    result.data = rows;
+                    Console.WriteLine("The feature rows affected->>" + rows);
                 }
                 catch (SqlException s)
                 {
@@ -54,7 +56,11 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
         }
-
+        /// <summary>
+        /// Deletes the user information from users table and userprofiles through one sql statement. Borrowed from the DeleteUser method from SqlDAO by David
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>The response from the sql query</returns>
         public Task<Response> DeleteUser(String user)
         {
             var tcs = new TaskCompletionSource<Response>();
@@ -64,13 +70,18 @@ namespace TeamBigData.Utification.SQLDataAccess
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
+                //Creates an Insert SQL statements using the column names and values given
                 var deleteSql = "DELETE FROM dbo.UserProfiles WHERE username = '" + username + "';DELETE FROM dbo.Users WHERE username = '" + username + "';";
                 try
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
-                    result.isSuccessful = true;
+                    if (rows > 0)
+                    {
+                        result.isSuccessful = true;
+                        result.data = rows;
+                    }
+                    Console.WriteLine("The rows affected->>"+rows);
                 }
                 catch (SqlException s)
                 {

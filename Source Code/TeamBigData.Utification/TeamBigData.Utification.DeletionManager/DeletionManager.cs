@@ -12,6 +12,7 @@ namespace TeamBigData.Utification.Manager
 {
     public class DeletionManager
     {
+        
         /// <summary>
         /// Takes in 2 user accounts to check if valid and delete the second
         /// </summary>
@@ -20,10 +21,14 @@ namespace TeamBigData.Utification.Manager
         /// <returns>Response if the account was deleted</returns>
         public Response DeleteAccount(String del, UserProfile user)
         {
+            bool isAdmin()
+            {
+                return ((IPrincipal)user).IsInRole("Admin User");
+            }
             IDeletionService deletionService = new AccDeletionService(del);
             var answer = new Response();
             
-            if ((user.Identity.Name == del) || ((IPrincipal)user).IsInRole("Admin User"))
+            if ((user.Identity.Name == del && user.Identity.IsAuthenticated) || isAdmin())
             {
                 Console.WriteLine(user.Identity.Name + " " + del);
                 Task<Response> taskF = deletionService.DeletePIIFeatures();
@@ -39,7 +44,7 @@ namespace TeamBigData.Utification.Manager
             }
             else
             {
-                var err = "User does not have permission to delete the account account";
+                var err = "User does not have permission to delete the account";
                 answer.isSuccessful = false;
                 answer.errorMessage = err;
                 answer.data = 0;
@@ -47,5 +52,6 @@ namespace TeamBigData.Utification.Manager
             
             return answer;
         }
+
     }
 }
