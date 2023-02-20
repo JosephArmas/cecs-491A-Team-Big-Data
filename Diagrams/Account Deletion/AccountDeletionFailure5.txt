@@ -1,0 +1,84 @@
+title As an authenticated user, I want to delete my account but do not automatically get redirected to the home view
+
+#participants
+participant User
+participant EntryPoint
+participant Manager
+participant DeletionService
+participant SQLDAO
+participant Response
+participant UserhashDS
+participant MapDS
+participant DataStore
+
+
+activate User
+	box over User: User is an authenticated user
+    box over User: User is looking at an\naccount deletion view
+	User->EntryPoint: User wants to\ndelete their account 
+    activate EntryPoint
+    	EntryPoint->EntryPoint: DeletionConfirmation():bool
+    	EntryPoint-->User: Console.WriteLine("Are you sure you wish to delete this account?")
+    	User->EntryPoint: User confirms that they want to delete the account
+        EntryPoint->EntryPoint:if(DeletionConfirmation() == True)
+    	EntryPoint->Manager: var delManager = new Manager()
+        activate Manager
+        	Manager-->EntryPoint: return delManager
+        deactivate Manager
+        EntryPoint->Manager:DeleteAccount(User:String):Response
+        activate Manager
+        Manager->Manager:if(isAdmin():bool == true)
+        Manager->DeletionService:DeleteAccountInfo(User:String):Response
+        activate DeletionService
+        DeletionService->SQLDAO:GetUserHash(user:UserProfile):Response
+                activate SQLDAO
+      SQLDAO->Response:var response = new Response()
+                activate Response
+            Response-->SQLDAO:return response
+            deactivate Response
+        SQLDAO->UserhashDS:result.data = command.ExecuteScalar()
+                activate UserhashDS
+                UserhashDS->UserhashDS:SELECT UserID WHERE UserID = username
+                UserhashDS-->SQLDAO:return int
+                deactivate UserhashDS
+        SQLDAO-->DeletionService:return response
+        deactivate SQLDAO
+        DeletionService->SQLDAO:DeleteFeatureInfo(user:UserProfile):Response
+        activate SQLDAO
+              SQLDAO->Response:var response = new Response()
+                activate Response
+            Response-->SQLDAO:return response
+            deactivate Response
+        SQLDAO->MapDS:result.data = command.ExecuteNonQuery()
+                activate MapDS
+                MapDS->MapDS:UPDATE Pins INNER JOIN Events \nINNER JOIN Services INNER JOIN \nPictures \nSET Active = 0 \nWHERE UserID = userHash
+                MapDS-->SQLDAO:return int > 1
+                deactivate MapDS
+                        SQLDAO->SQLDAO:if(response.result < 1){\nresponse.isSuccessful = false\nresponse.errorMessage = 'Feature info failed to delete'\n}
+        SQLDAO-->DeletionService:return response
+        deactivate SQLDAO
+        	DeletionService->SQLDAO: DeleteUser(user:UserProfile):Response
+        	activate SQLDAO
+                  SQLDAO->Response:var response = new Response()
+                activate Response
+            Response-->SQLDAO:return response
+            deactivate Response
+
+            	SQLDAO->DataStore:var rows = command.ExecuteNonQuery();
+                activate DataStore
+                	DataStore->DataStore: DELETE FROM UserAccount INNER JOIN UserProfile Where columnNames = values
+                	DataStore-->SQLDAO: return 1;
+                                            SQLDAO->SQLDAO:if(response.result < 1){\nresponse.isSuccessful = false\nresponse.errorMessage = 'User account has failed to be deleted'\n}
+                deactivate DataStore
+                SQLDAO-->DeletionService:return response
+        	deactivate SQLDAO
+            DeletionService-->Manager:return response
+            deactivate DeletionService
+            Manager-->EntryPoint:return response
+        deactivate Manager
+    EntryPoint-->User:Console.WriteLine("Account deletion successful")
+   User->EntryPoint:User acknowledges system message
+   EntryPoint->EntryPoint: Homepage():HTTP
+   EntryPoint-->User:Not the Unauthenticated Homepage view
+    deactivate EntryPoint
+deactivate User

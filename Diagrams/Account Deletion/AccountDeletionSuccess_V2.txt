@@ -1,0 +1,104 @@
+title Account Deletion Success
+
+#participants
+participant User
+participant EntryPoint
+participant Manager
+participant DeletionService
+participant Response
+participant SQLDAO
+participant MapDS
+participant PictureDS
+participant UserhashDS
+participant DataStore
+
+
+activate User
+	box over User: User is an authenticated user
+    box over User: User is looking at an\naccount deletion view
+	User->EntryPoint: User wants to\ndelete their account 
+    activate EntryPoint
+    	EntryPoint->EntryPoint: DeletionConfirmation():bool
+    	EntryPoint-->User: Console.WriteLine("Are you sure you wish to delete this account?")
+    	User->EntryPoint: User confirms that they want to delete the account
+        EntryPoint->EntryPoint:if(DeletionConfirmation() == True)
+    	EntryPoint->Manager: var delManager = new Manager()
+        activate Manager
+        	Manager-->EntryPoint: return delManager
+        deactivate Manager
+        EntryPoint->Manager:DeleteAccount()
+        activate Manager
+        Manager->Manager:isAdmin():bool
+        Manager->DeletionService:DeleteAccountInfo()
+        activate DeletionService
+                    	DeletionService->Response:var response = new Response()
+                activate Response
+            Response-->DeletionService:return response
+            deactivate Response
+        DeletionService->SQLDAO:DeletePinInfo()
+        activate SQLDAO
+        SQLDAO->SQLDAO:SqlConnection()
+        SQLDAO->MapDS:result.data = command.ExecuteScalar()
+                activate MapDS
+                MapDS->MapDS:DELETE FROM Events WHERE UserHash = value
+                MapDS-->SQLDAO:return
+                deactivate MapDS
+        SQLDAO-->DeletionService:return
+        deactivate SQLDAO
+        DeletionService->SQLDAO:DeleteEventInfo()
+        activate SQLDAO
+        SQLDAO->SQLDAO:SqlConnection()
+                SQLDAO->MapDS:result.data = command.ExecuteScalar()
+                activate MapDS
+                MapDS->MapDS:DELETE FROM Events WHERE UserHash = value
+                MapDS-->SQLDAO:return
+                deactivate MapDS
+        SQLDAO-->DeletionService:return
+        deactivate SQLDAO
+        DeletionService->SQLDAO:DeletePictureInfo()
+        activate SQLDAO
+        SQLDAO->SQLDAO:SqlConnection()
+                SQLDAO->PictureDS:result.data = command.ExecuteScalar()
+                                activate PictureDS
+                PictureDS->PictureDS:DELETE FROM Events WHERE UserHash = value
+                PictureDS-->SQLDAO:return
+                deactivate PictureDS
+        SQLDAO-->DeletionService:return
+        deactivate SQLDAO
+        DeletionService->SQLDAO:DeleteServiceInfo()
+        activate SQLDAO
+        SQLDAO->SQLDAO:SqlConnection()
+                SQLDAO->MapDS:result.data = command.ExecuteScalar()
+                activate MapDS
+                MapDS->MapDS:DELETE FROM Events WHERE UserHash = value
+                MapDS-->SQLDAO:return
+                deactivate MapDS
+        SQLDAO-->DeletionService:return
+        deactivate SQLDAO
+        	DeletionService->SQLDAO: DeleteAccountInfo(Username:String):Response
+        	activate SQLDAO
+            
+
+            	SQLDAO->SQLDAO:using (var connection = new SqlConnection(_connectionString)) {\n     connection.Open();\n     var countSql = "DELETE FROM " + tableName + " WHERE ";\n     if (collumnNames.Length == values.Length) {\n          for (int i = 0; i < collumnNames.Length; i++) {\n            <size:11>if (i != collumnNames.Length - 1) {\n                    countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"' and ";\n               }\n               else {\n                    countSql = countSql + collumnNames[i] + @" = '" + values[i] + @"';";\n               }\n           }\n      }\n     else {\n          result.errorMessage = "There must be an equal ammount of collumnNames and values";\n     }\n     try {\n          var command = new SqlCommand(countSql, connection);\n          result.data = command.ExecuteScalar();\n          result.isSuccessful = true;\n     }
+                SQLDAO->UserhashDS:result.data = command.ExecuteScalar();
+                activate UserhashDS
+                UserhashDS->UserhashDS:SELECT FROM UserHashes Where columnNames = values
+                UserhashDS-->SQLDAO:return;
+                deactivate UserhashDS
+            	SQLDAO->DataStore:result.data = command.ExecuteScalar();
+                activate DataStore
+                	DataStore->DataStore: DELETE FROM UserAccount INNER JOIN UserProfile Where columnNames = values
+                	DataStore-->SQLDAO: return;
+                deactivate DataStore
+                SQLDAO-->DeletionService:return response
+        	deactivate SQLDAO
+            DeletionService-->Manager:return response
+            deactivate DeletionService
+            Manager-->EntryPoint:return response
+        deactivate Manager
+    EntryPoint-->User:Console.WriteLine("Account deletion successful")
+   User->EntryPoint:User confirms acknowledges system message
+   EntryPoint->EntryPoint: Homepage():HTTP
+   EntryPoint-->User:Unauthenticated Homepage view
+    deactivate EntryPoint
+deactivate User

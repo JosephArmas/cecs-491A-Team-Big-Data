@@ -1,4 +1,5 @@
-﻿using System.Security.Principal;
+﻿using System.Globalization;
+using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
@@ -8,6 +9,8 @@ namespace TeamBigData.Utification.View.Views
 {
     public class AdminView : IView
     {
+        public CultureInfo culStandard = new CultureInfo("en-US");
+        public CultureInfo culCurrent = CultureInfo.CurrentCulture;
         /// <summary>
         /// Display all startup options.
         /// </summary>
@@ -27,9 +30,10 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("[3] View Account Recovery Requests");
             Console.WriteLine("[4] Re-enable User");
             Console.WriteLine("[5] Go to UserManagement");
-            Console.WriteLine("[6] LogOut");
+            Console.WriteLine("[6] Delete User");
+            Console.WriteLine("[7] LogOut");
             Console.WriteLine("[0] exit");
-            Console.WriteLine("Enter 0-4");
+            Console.WriteLine("Enter 0-5");
             string input = Console.ReadLine();
             switch (Int32.Parse(input))
             {
@@ -128,6 +132,25 @@ namespace TeamBigData.Utification.View.Views
                     break;
                 case 6:
                     Console.Clear();
+                    DeletionManager delManager = new DeletionManager();
+                    Console.WriteLine("Please Enter the name of the User to be deleted");
+                    String delUser = Console.ReadLine();
+                    response = delManager.DeleteAccount(delUser, userProfile);
+                    if (!response.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Account Deletion Failed: "+response.errorMessage);
+                        Console.WriteLine("Press Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    Console.WriteLine("Account Deletion Successful");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
+                    break;
+                case 7:
+                    Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();
                     if (!response.isSuccessful)
@@ -159,6 +182,14 @@ namespace TeamBigData.Utification.View.Views
         {
             Console.Clear();
             Console.WriteLine("--------------------------------------------");
+        }
+        public CultureInfo GetCultureInfo()
+        {
+            return CultureInfo.CurrentCulture;
+        }
+        public void SetCultureInfo(CultureInfo cul)
+        {
+            CultureInfo.CurrentCulture = cul;
         }
     }
 }
