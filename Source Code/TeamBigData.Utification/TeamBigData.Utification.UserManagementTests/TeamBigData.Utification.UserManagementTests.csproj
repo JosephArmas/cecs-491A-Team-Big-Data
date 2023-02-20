@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.View\TeamBigData.Utification.View.csproj" />
   </ItemGroup>
 

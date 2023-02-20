@@ -27,6 +27,7 @@ namespace TeamBigData.Utification.LogoutTests
             stopwatch.Start();
             var digest = encryptor.encryptString(password);
             result = securityManager.RegisterUser(username, digest, encryptor).Result;
+            Thread.Sleep(1000);
             result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             result = securityManager.LogOutUser(ref userAccount, ref userProfile).Result;
             stopwatch.Stop();

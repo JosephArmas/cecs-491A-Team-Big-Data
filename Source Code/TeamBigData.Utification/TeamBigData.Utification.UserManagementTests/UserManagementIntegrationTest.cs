@@ -22,7 +22,7 @@ namespace TeamBigData.Utification.UserManagementTests
         {
             //Admin is only allowed to acess UserManagementView
             //Arrange
-            var userAccount = new UserAccount("", "");
+            var userAccount = new UserAccount();
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
@@ -60,7 +60,7 @@ namespace TeamBigData.Utification.UserManagementTests
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
-            var userAccount = new UserAccount("", "");
+            var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             String userPassword = "Password";
             var stopwatch = new Stopwatch();
