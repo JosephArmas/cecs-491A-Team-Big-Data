@@ -1,10 +1,10 @@
 --TeamBigData.Utification.Users
 CREATE TABLE RecoveryRequests       
 (
-userID varchar(50),
+userID int,
 "newPassword" varchar(200),
 fulfilled int default 0,  
 "timestamp" datetime default getDate(),
-Constraint RR_PrimaryKey Primary key(username, "timestamp"),
-Constraint RR_ForeignKey_01 Foreign Key (username) references dbo.Users(username)
+Constraint RR_PrimaryKey Primary key(userID, "timestamp"),
+Constraint RR_ForeignKey_01 Foreign Key (userID) references dbo.Users(userID)
 );

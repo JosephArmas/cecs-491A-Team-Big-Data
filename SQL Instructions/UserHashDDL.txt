@@ -1,4 +1,5 @@
-REATE TABLE dbo.UserHash
+--TeamBigData.Utification.Logs
+CREATE TABLE dbo.UserHash
 (
 userHash varchar(200) NOT NULL,
 "userID" int NOT NULL,
