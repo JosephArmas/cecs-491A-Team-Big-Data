@@ -58,7 +58,30 @@ namespace TeamBigData.Utification.View.Views
                     String userPassword = Console.ReadLine();
                     var encryptor = new Encryptor();
                     var encryptedPassword = encryptor.encryptString(userPassword);
-                    response = securityManager.InsertUser(email, encryptedPassword, encryptor);
+                    Console.WriteLine("Do you want:\n[1] This User to be Regular\n[2] This User to be an Admin");
+                    String adminCreate = Console.ReadLine();
+                    var check = true;
+                    while (check != false)
+                    {
+                        if (adminCreate == "1")
+                        {
+                            response = securityManager.InsertUser(email, encryptedPassword, encryptor);
+                            check = false;
+                        }
+                        else if (adminCreate == "2")
+                        {
+                            response = securityManager.InsertUserAdmin(email, encryptedPassword, encryptor, userProfile);
+                            check = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid Entry. Try again");
+                            Console.WriteLine("Do you want:\n[1] This User to be Regular\n[2] This User to be an Admin");
+                            adminCreate = Console.ReadLine();
+
+                        }
+                    }
+                   
                     break;
                 case 2:
                     //Deleting account

@@ -78,6 +78,45 @@ namespace TeamBigData.Utification.Manager
             logger.Log(log);
             return response;
         }
+        public Response InsertUserAdmin(String email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfile)
+        {
+            var response = new Response();
+            Stopwatch stopwatch = new Stopwatch();
+            response.isSuccessful = false;
+            if(!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to Admin Creation";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            IDBInserter sqlDAO = new SqlDAO(connectionString);
+            var accountManager = new AccountRegisterer(sqlDAO);
+            stopwatch.Start();
+            response = accountManager.InsertUserAdmin(email, encryptedPassword, encryptor, userProfile).Result;
+            stopwatch.Stop();
+            Log log;
+            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            if (response.isSuccessful)
+            {
+                sqlDAO.InsertUserProfile(new UserProfile(email, "Admin User"));
+                String username = response.errorMessage.Substring(47);
+                if (stopwatch.ElapsedMilliseconds > 5000)
+                {
+                    log = new Log(1, "Warning", email, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
+                }
+                else
+                {
+                    log = new Log(1, "Info", email, "Manager.InsertUser()", "Data", "Account Registration Succesful");
+                }
+            }
+            else
+            {
+                log = new Log(1, "Error", email, "Manager.InsertUser()", "Data", "Error in Creating Account");
+            }
+            logger.Log(log);
+            return response;
+        }
 
         public async Task<Response> VerifyUser(String username, byte[] encryptedPassword, Encryptor encryptor)
         {
