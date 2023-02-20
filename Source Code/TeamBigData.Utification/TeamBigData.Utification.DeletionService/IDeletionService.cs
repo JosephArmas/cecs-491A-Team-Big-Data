@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.ErrorResponse;
 
-namespace TeamBigData.Utification.SQLDataAccess.Abstractions
+namespace TeamBigData.Utification.DeletionService
 {
-    public interface IDAO
+    public interface IDeletionService
     {
-        public Task<Response> Execute(object req);
+        Task<Response> DeletePIIFeatures();
+
+        Task<Response> DeletePIIProfile();
     }
 }

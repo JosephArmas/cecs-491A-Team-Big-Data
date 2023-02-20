@@ -10,14 +10,21 @@ namespace TeamBigData.Utification.Models
 {
     public class UserProfile : IMyIPrincipal
     {
-        public String _username { get; private set; }
+        public int _userID { get; private set; }
         public String _firstName { get; private set; }
         public String _lastName { get; private set; }
-        public int _age { get; private set; }
-        public String _email { get; private set; }
         public String _address { get; private set; }
         public DateTime _birthday { get; private set; }
         public IIdentity? Identity { get; private set; }
+        public UserProfile() 
+        {
+            _userID= 0;
+            _firstName = "";
+            _lastName = "";
+            _address = "";
+            _birthday = new DateTime();
+            Identity = new GenericIdentity("0", "Anonymous User");
+        }
 
         bool IPrincipal.IsInRole(string role)
         {
@@ -27,37 +34,32 @@ namespace TeamBigData.Utification.Models
             }
             return true;
         }
-        public UserProfile(string username)
+
+        public UserProfile(int userID)
         {
-            _username = username;
+            _userID= userID;
             _firstName = "";
             _lastName = "";
-            _age = 0;
-            _email = username;
             _address = "";
             _birthday = new DateTime();
-            Identity = new GenericIdentity(username, "Anonymous User");
+            Identity = new GenericIdentity(_userID.ToString(), "Anonymous User");
         }
 
-        public UserProfile(string username, string role)
+        public UserProfile(int userID, string role)
         {
-            _username = username;
+            _userID = userID;
             _firstName = "";
             _lastName = "";
-            _age = 0;
-            _email = username;
             _address = "";
             _birthday = new DateTime();
-            Identity = new GenericIdentity(username, role);
+            Identity = new GenericIdentity(_userID.ToString(), role);
         }
 
-        public UserProfile(string username, string firstName, string lastName, int age, string email, string address, DateTime birthday, GenericIdentity identity)
+        public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, GenericIdentity identity)
         {
-            _username = username;
+            _userID= userID;
             _firstName = firstName;
             _lastName = lastName;
-            _age = age;
-            _email = email;
             _address = address;
             _birthday = birthday;
             Identity = identity;
@@ -68,7 +70,7 @@ namespace TeamBigData.Utification.Models
         }
         public string ToString()
         {
-            return ",   Username: " + _username + ",   Fullname: " + _firstName + " " + _lastName + ",   Age: " + _age + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
+            return ",   UserID: " + _userID + ",   Fullname: " + _firstName + " " + _lastName + ",   Birthday: " + _birthday + ",   Role: " + Identity.AuthenticationType;
         }
     }
 }
