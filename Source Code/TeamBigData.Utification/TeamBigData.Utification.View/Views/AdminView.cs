@@ -85,22 +85,10 @@ namespace TeamBigData.Utification.View.Views
                     break;
                 case 3:
                     Console.Clear();
-                    SecurityManager secManagerEnable = new SecurityManager();
-                    Console.WriteLine("\nPlease Enter the name of the User to be re-enabled");
-                    String disUser = Console.ReadLine();
-                    response = secManagerEnable.EnableAccount(disUser,userProfile).Result;
-
-                    if (!response.isSuccessful)
-                    {
-                        Console.Clear();
-                        Console.WriteLine(response.errorMessage);
-                        Console.WriteLine("\nPress Enter to exit...");
-                        Console.ReadLine();
-                        response.isSuccessful = false;
-                        return response;
-                    }
-                    Console.Clear();
                     Console.WriteLine("Printing out Recovery Requests");
+                    SecurityManager manager = new SecurityManager();
+                    List<string> listRequests = new List<string>();
+                    manager.GetRecoveryRequests(ref listRequests, userProfile);
                     for (int i = 0; i < listRequests.Count; i++)
                         Console.WriteLine(listRequests[i].ToString());
                     Console.WriteLine("press Enter to exit...");
