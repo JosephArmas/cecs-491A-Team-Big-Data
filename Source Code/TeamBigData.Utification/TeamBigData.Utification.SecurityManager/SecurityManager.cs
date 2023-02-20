@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.Manager
         
         // Does Insert user and doesnt need AccountRegisterer.
         // Does this need to be async?
-        public Task<Response> RegisterUser(string email, byte[] encryptedPassword, Encryptor encryptor)
+        public async Task<Response> RegisterUser(string email, byte[] encryptedPassword, Encryptor encryptor)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
@@ -37,7 +37,7 @@ namespace TeamBigData.Utification.Manager
             var digest = SecureHasher.HashString(salt, password);
             String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
             var userHash = SecureHasher.HashString(pepper, email);
-            response = sqlUserSDAO.SelectLastUserID().Result;
+            response = await sqlUserSDAO.SelectLastUserID().ConfigureAwait(false);
             if ((int)response.data == 0)
             {
                 userID = 1001;
@@ -50,7 +50,7 @@ namespace TeamBigData.Utification.Manager
                 userAccount = new UserAccount(userID, email, digest, salt, userHash);
                 response.data = "UserAccount Created";
             }
-            response = sqlUserIDAO.InsertUser(userAccount).Result;
+            response = await sqlUserIDAO.InsertUser(userAccount).ConfigureAwait(false);
             if (!response.isSuccessful)
             {
                 if (response.errorMessage.Contains("Violation of PRIMARY KEY"))
@@ -65,14 +65,14 @@ namespace TeamBigData.Utification.Manager
             else
             {
                 userProfile = new UserProfile(userID, "Regular User");
-                response = sqlUserIDAO.InsertUserProfile(userProfile).Result;
+                response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
                 stopwatch.Stop();
                 Log log;
                 var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
                 if (response.isSuccessful)
                 {
                     IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
-                    insertUserHash.InsertUserHash(userHash, userID);
+                    await insertUserHash.InsertUserHash(userHash, userID).ConfigureAwait(false);
                     if (stopwatch.ElapsedMilliseconds > 5000)
                     {
                         log = new Log(1, "Warning", userHash, "SecurityManager.RegisterUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
@@ -90,8 +90,7 @@ namespace TeamBigData.Utification.Manager
                 Console.WriteLine(responselog.errorMessage);
                 response.errorMessage = "Account created successfully, your username is " + email;
             }
-            tcs.SetResult(response);
-            return tcs.Task;
+            return response;
         }
         public Task<Response> LoginUser(String email, byte[] encryptedPassword, Encryptor encryptor, ref UserAccount userAccount, ref UserProfile userProfile)
         {
@@ -221,7 +220,7 @@ namespace TeamBigData.Utification.Manager
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 userHash = SecureHasher.HashString(pepper, email);
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
-                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().Result.data);
+                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().data);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
                     log = new Log(1, "Warning", userHash, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
@@ -236,8 +235,86 @@ namespace TeamBigData.Utification.Manager
                 log = new Log(1, "Error", userHash, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
             logger.Log(log);
-            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().Result.data, "Regular User")).Result;
+            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().data, "Regular User")).Result;
             Console.WriteLine(result2.errorMessage);
+            return response;
+        }
+        public Response InsertUserAdmin(String email, byte[] encryptedPassword, Encryptor encryptor,UserProfile userProfile)
+        {
+            var response = new Response();
+            Stopwatch stopwatch = new Stopwatch();
+            String userHash = "";
+            response.isSuccessful = false;
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to view";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            IDBInserter sqlIDAO = new SqlDAO(connectionString);
+            IDBSelecter sqlSDAO = new SqlDAO(connectionString);
+            var accountManager = new AccountRegisterer(sqlIDAO);
+            stopwatch.Start();
+            response = accountManager.InsertUser(email, encryptedPassword, encryptor).Result;
+            stopwatch.Stop();
+            Log log;
+            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            if (response.isSuccessful)
+            {
+                String username = response.errorMessage.Substring(47);
+                String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
+                userHash = SecureHasher.HashString(pepper, email);
+                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().data);
+                if (stopwatch.ElapsedMilliseconds > 5000)
+                {
+                    log = new Log(1, "Warning", userHash, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
+                }
+                else
+                {
+                    log = new Log(1, "Info", userHash, "Manager.InsertUser()", "Data", "Account Registration Succesful");
+                }
+            }
+            else
+            {
+                log = new Log(1, "Error", userHash, "Manager.InsertUser()", "Data", "Error in Creating Account");
+            }
+            logger.Log(log);
+            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().data, "Admin User")).Result;
+            Console.WriteLine(result2.errorMessage);
+            return response;
+        }
+
+        public Response GetUserProfileTable(List<UserProfile> list, UserProfile userProfile)
+        {
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
+            IDBSelecter selectDAO = new SqlDAO(connection);
+            list = selectDAO.SelectUserProfileTable();
+            response.isSuccessful = true;
+            return response;
+        }
+
+        public Response GetUserAccountTable(List<UserAccount> list, UserProfile userProfile)
+        {
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
+            IDBSelecter selectDAO = new SqlDAO(connection);
+            list = selectDAO.SelectUserAccountTable();
+            response.isSuccessful = true;
             return response;
         }
 
@@ -260,8 +337,7 @@ namespace TeamBigData.Utification.Manager
                 }
                 var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                 IDBSelecter selectDao = new SqlDAO(connectionString);
-                UserAccount userAccount = new UserAccount();
-                selectDao.SelectUserAccount(username, ref userAccount);
+                UserAccount userAccount = selectDao.SelectUserAccount(username);
                 if (SecureHasher.HashString(userAccount._salt, password) == userAccount._password)
                 {
                     result.isSuccessful = true;
@@ -473,10 +549,9 @@ namespace TeamBigData.Utification.Manager
             }
             var connection = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            response = selectDAO.SelectUserAccountTable(ref list, "Admin User").Result;
+            response = selectDAO.SelectUserAccountTable(ref list).Result;
             return response;
         }
-
         public Response ResetAccount(String disabledUser, UserProfile userProfile)
         {
             var response = new Response();
