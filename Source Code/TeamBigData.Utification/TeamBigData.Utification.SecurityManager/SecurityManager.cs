@@ -53,14 +53,16 @@ namespace TeamBigData.Utification.Manager
             response = await sqlUserIDAO.InsertUser(userAccount).ConfigureAwait(false);
             if (!response.isSuccessful)
             {
-                if (response.errorMessage.Contains("Violation of PRIMARY KEY"))
+                if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
                 {
                     response.errorMessage = "Email already linked to an account, please pick a new email";
+                    response.isSuccessful = false;
+                    return response;
                 }
-                else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                /*else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
                 {
                     response.errorMessage = "Unable to assign username. Retry again or contact system administrator";
-                }
+                }*/
             }
             else
             {
@@ -89,6 +91,7 @@ namespace TeamBigData.Utification.Manager
                 var responselog = logger.Log(log).Result;
                 Console.WriteLine(responselog.errorMessage);
                 response.errorMessage = "Account created successfully, your username is " + email;
+                response.isSuccessful = true;
             }
             return response;
         }
@@ -98,10 +101,20 @@ namespace TeamBigData.Utification.Manager
             Response response = new Response();
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
             Log log;
             var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            UserAccount selectUserAccount = sqlUserSDAO.SelectUserAccount(email);
-            if (selectUserAccount._userID == 0)
+            userAccount = sqlUserSDAO.SelectUserAccount(email);
+            Console.WriteLine(userAccount._salt);
+            Console.ReadLine();
+            if (!userAccount._verified)
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "User is Disabled.";
+                tcs.SetResult(response);
+                return tcs.Task;
+            }
+            if (userAccount._userID == 0)
             {
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
@@ -109,6 +122,16 @@ namespace TeamBigData.Utification.Manager
                 insertUserHash.InsertUserHash(userHash, 0);
                 response.errorMessage = "User doesn't exist.";
                 log = new Log(1, "Error", userHash, "SecurityManager.LoginUser()", "Data", "Error UserAccount doesn't exist.");
+                tcs.SetResult(response);
+                return tcs.Task;
+            }
+            string password = encryptor.decryptString(encryptedPassword);
+            String digest = SecureHasher.HashString(userAccount._salt, password);
+            if (userAccount._password != digest)
+            {
+                sqlUserIDAO.IncrementUserAccountDisabled(userAccount);
+                response.isSuccessful = false;
+                response.errorMessage = "Username or Password is Invalid.";
                 tcs.SetResult(response);
                 return tcs.Task;
             }

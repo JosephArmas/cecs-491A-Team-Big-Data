@@ -1,6 +1,7 @@
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Models;
 
 namespace TeamBigData.Utification.AuthenticationTests
 {
@@ -30,8 +31,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "wrongPassword";
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
             //Act
             var digest = encryptor.encryptString(password);
+            result = securityManager.LoginUser( username, digest, encryptor,  ref userAccount, ref userProfile).Result;
             result = securityManager.VerifyUser(username, digest, encryptor).Result;
             var message = securityManager.SendOTP();
             var result2 = securityManager.LoginOTP(message);

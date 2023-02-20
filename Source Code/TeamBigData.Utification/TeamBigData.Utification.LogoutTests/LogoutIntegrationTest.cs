@@ -21,7 +21,7 @@ namespace TeamBigData.Utification.LogoutTests
             var encryptor = new Encryptor();
             var userAccount = new UserAccount();
             var userProfile = new UserProfile();
-            var username = "SuccessfulLogoutTest"+ Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
+            var username = "SuccessfulLogoutTest"+ Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var password = "password";
             //Act
             stopwatch.Start();
@@ -34,8 +34,11 @@ namespace TeamBigData.Utification.LogoutTests
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual <= expected);
+            Console.WriteLine(actual <= expected);
             Assert.IsTrue(actual >= 0);
+            Console.WriteLine(actual >= 0);
             Assert.IsTrue(result.isSuccessful);
+            Console.WriteLine(result.isSuccessful);
         }
     }
 }

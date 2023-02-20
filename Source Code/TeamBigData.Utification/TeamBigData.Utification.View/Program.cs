@@ -1,5 +1,7 @@
 ﻿using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Manager.Abstractions;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;

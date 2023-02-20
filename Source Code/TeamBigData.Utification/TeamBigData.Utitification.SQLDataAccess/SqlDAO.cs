@@ -114,6 +114,35 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
         }
+        public Task<Response> IncrementUserAccountDisabled(UserAccount userAccount)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var updateSql = "UPDATE dbo.UserProfiles set \"disabled\" += 1 Where userID = '" + userAccount._userID + "'";
+                try
+                {
+                    var command = new SqlCommand(updateSql, connection);
+                    var rows = command.ExecuteNonQuery();
+                    if (rows == 1)
+                    {
+                        response.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    response.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    response.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(response);
+            return tcs.Task;
+        }
         public  Task<Response> UpdateUserProfile(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
@@ -725,7 +754,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         ordinal = reader.GetOrdinal("disabled");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            if (reader.GetInt32(ordinal) > 0)
+                            if (reader.GetInt32(ordinal) < 3)
                             {
                                 verified = true;
                             }
@@ -810,7 +839,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         ordinal = reader.GetOrdinal("disabled");
                         if (!reader.IsDBNull(ordinal))
                         {
-                            if (reader.GetInt32(ordinal) > 0)
+                            if (reader.GetInt32(ordinal) < 3)
                             {
                                 verified = true;
                             }
