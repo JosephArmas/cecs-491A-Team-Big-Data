@@ -8,4 +8,5 @@ username varchar(50),
 salt varchar(50),
 userHash varchar(200),
 CONSTRAINT Users_Primary_Key PRIMARY KEY(userID),
+CONSTRAINT Users_Candidate_Key_01 UNIQUE (username)
 );

@@ -1,5 +1,5 @@
-CREATE TABLE dbo."Events"
+CREATE TABLE dbo.Events
 (
-userID int NOT NULL,
+username varchar(50),
 "disabled" int DEFAULT 0,
 );

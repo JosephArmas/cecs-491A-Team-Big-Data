@@ -66,14 +66,14 @@ namespace TeamBigData.Utification.RegistrationTests
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
             UserProfile userProfile = new UserProfile();
-            var username = "CatchesDuplicateEmailTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
+            var username = "CatchesDuplicateEmailTest@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             var actual = await register.RegisterUser(username, encryptedPassword, encryptor);
             var expected = await register.RegisterUser(username, encryptedPassword, encryptor);
             //Assert
-            Assert.IsTrue(expected.errorMessage.Contains("Email already linked to an account, please pick a new email"));
+            Assert.AreEqual(actual.errorMessage, "Email already linked to an account, please pick a new email");
         }
 
         [TestMethod]
