@@ -121,8 +121,9 @@ namespace TeamBigData.Utification.View.Views
                 case 6:
                     Console.Clear();
                     DeletionManager delManager = new DeletionManager();
-                    Console.WriteLine("Please Enter the name of the User to be deleted");
-                    String delUser = Console.ReadLine();
+                    Console.WriteLine("Please Enter the ID of the User to be deleted");
+                    int delUserID = int.Parse(Console.ReadLine());
+                    UserProfile delUser = new UserProfile(delUserID);
                     response = delManager.DeleteAccount(delUser, userProfile);
                     if (!response.isSuccessful)
                     {
