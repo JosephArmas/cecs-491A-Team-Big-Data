@@ -17,7 +17,7 @@ namespace TeamBigData.Utification.AccountServices
         {
             var result = new Response();
             result.isSuccessful = false;
-            var updateSql = "Update dbo.Users Set \"disabled\" = 1 where username = '" + username + "';";
+            var updateSql = "Update dbo.Users Set \"disabled\" = 3 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
             if ((int)result.data == 1)
             {
