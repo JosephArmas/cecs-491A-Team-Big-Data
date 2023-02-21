@@ -7,6 +7,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.Cryptography;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.View.Abstraction;
@@ -60,6 +61,7 @@ namespace TeamBigData.Utification.UserManagementTests
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
+            Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             String userPassword = "Password";
@@ -72,21 +74,27 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            var testing = securityManager.InsertUser(email, encryptedPassword, encryptor);
+            response = securityManager.RegisterUser(email, encryptedPassword, encryptor).Result;
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected)
+            if (actual < expected &&  response.isSuccessful)
+            {
+                Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
+            }
             else
+            {
                 Assert.IsTrue(false);
+            }
         }
         [TestMethod]
         public void DeleteWithinFiveSeconds()
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
+            Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             String userPassword = "Password";
@@ -100,43 +108,53 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            var testing = securityManager.DeleteProfile(email, sysUnderTestAdmin);
+            response = securityManager.DeleteProfile(email, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected)
+            if (actual < expected && response.isSuccessful)
+            {
+                Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
+            }
             else
                 Assert.IsTrue(false);
-        }
-        [TestMethod]
-        public void DisableWithinFiveSeconds()
-        {
-            //Testing ability to have a task perform under 5 seconds
-            //Arrange
-            var userAccount = new UserAccount();
-            var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
-            var stopwatch = new Stopwatch();
-            var expected = 5000;
-            string email = "";
-            SecurityManager securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(userPassword);
-            var madeUser = securityManager.InsertUser(email, encryptedPassword, encryptor);
+            }
+       
+            [TestMethod]
+            public void DisableWithinFiveSeconds()
+            {
+                //Testing ability to have a task perform under 5 seconds
+                //Arrange
+                Response response = new Response();
+                var userAccount = new UserAccount();
+                var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
+                String userPassword = "Password";
+                var stopwatch = new Stopwatch();
+                var expected = 5000;
+                string email = "";
+                SecurityManager securityManager = new SecurityManager();
+                var encryptor = new Encryptor();
+                var encryptedPassword = encryptor.encryptString(userPassword);
+                var madeUser = securityManager.InsertUser(email, encryptedPassword, encryptor);
 
-            //Act
-            stopwatch.Start();
-            var testing = securityManager.DisableAccount(email, sysUnderTestAdmin);
-            stopwatch.Stop();
-            var actual = stopwatch.ElapsedMilliseconds;
+                //Act
+                stopwatch.Start();
+                response = securityManager.DisableAccount(email, sysUnderTestAdmin);
+                stopwatch.Stop();
+                var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected)
+            if (actual < expected && response.isSuccessful)
+            {
+                Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
+            }
             else
                 Assert.IsTrue(false);
+            }
+
         }
-    }
 }
+

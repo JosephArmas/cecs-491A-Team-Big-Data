@@ -246,10 +246,9 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Specify file name like 'file.csv'");
                     //https://learn.microsoft.com/en-us/dotnet/api/system.io.path.getfilename?view=net-7.0#system-io-path-getfilename(system-string)
                     //Universal Naming Convention is C:\MyDir\MyFile.csv
-                    var filename = Console.ReadLine();
-                    //var filename = @"C:\MyDir\test.csv";
-
-
+                    var filenameGet = Console.ReadLine();
+                    var filename = @"C:\MyDir\"+filenameGet+"";
+                    //var filename = "C:\Users\joshu\source\repos\cecs-491A-Team-Big-Data\Source Code\TeamBigData.Utification\TeamBigData.Utification.View\bin\Debug\net6.0\""+ filename+"";
 
                     CsvReader csvReader = new CsvReader();
 

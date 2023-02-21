@@ -65,7 +65,7 @@ namespace TeamBigData.Utification.Manager
                         var encryptor = new Encryptor();
                         var encryptedPassword = encryptor.encryptString(line.password);
                         //var hasher = new SecureHasher();
-                        response = securityManager.InsertUser(line.email, encryptedPassword, encryptor);
+                        response = securityManager.RegisterUser(line.email, encryptedPassword, encryptor).Result;
                         
                         break;
                     case RequestType.DELETE:
