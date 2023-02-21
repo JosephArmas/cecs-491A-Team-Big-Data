@@ -1,0 +1,109 @@
+title As an Authorized Admin, I want access to UserManagement, so that I may perform a functionality.
+
+   actor User
+    participant Program
+    
+    
+    participant IView
+    participant UserManager
+    participant UserProfile
+    participant SecurityManager
+    
+    participant Response
+    participant Logger
+    participant SqlDAO
+    
+    participant IDBSelector
+    participant App DB
+    
+    
+    
+    activate User
+    note over User:The System Admin has \nbeen Authenticated
+    
+    User->>Program: Admin logs in
+    activate Program
+    
+    Program->>Response: var response = new Response();
+    activate Response
+    Response->>Response:{\nbool isSuccessful\nString errorMessage\nobject data\n}
+    Response-->>Program: return Response
+    deactivate Response
+    
+    Program->>SecurityManager:SecurityManager securityManager = new SecurityManager();
+    activate SecurityManager
+    SecurityManager->>SecurityManager:{\nUserProfile? _user;\nString _otp;\nDateTime _otpCreated;\nBoolean _otpVerified\n}
+    SecurityManager-->>Program:return SecurityManager instance
+    deactivate SecurityManager
+    Program->>UserProfile:UserProfile userProfile = UserProfile.IsInRole("Admin User");
+    activate UserProfile
+    UserProfile->>UserProfile:{\nString _username\nString _firstname\nString _lastName\nint _age\nString _email\nString _address\nDateTime _birthday\nIIdentity? Identity\n}
+    UserProfile-->>Program:return Admin User
+    deactivate UserProfile
+    
+    Program->>IView:IView menu = new AdminView();
+    activate IView
+    IView->>IView: response = menu.DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
+    IView-->>Program:return AdminView instance
+    deactivate IView
+  
+    
+    Program->>Program:if(!response.isSuccessful && response.errorMessage =="")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage)\n     return\n}\nif(!response.isSuccessful && response.errorMessage != "")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage);\n     return;\n}
+    Program-->>User:Admin sees Admin View
+    
+    User->>Program: Admin wants to access UserManagement View
+    Program->>IView:menu = new UserManagementView();
+    activate IView
+    IView->>SecurityManager: SecurityManager secManagerAcc = new SecurityManager();
+    activate SecurityManager
+    SecurityManager->>SqlDAO: response = secManagerAcc.GetUserAccountTable(list<UserAccount>, userProfile)
+    activate SqlDAO
+     SqlDAO->>SqlDAO:{\nString _connectionString\n}
+    
+    SqlDAO->>IDBSelector:SqlDAO:IDBSelector
+    activate IDBSelector
+    IDBSelector->>IDBSelector:{\nUserProfile SelecteUserProfile(String username)\nList<UserProfile> SelectUserProfileTable();\nUserAccount SelectUserAccount(String username);\nLList<UserAccount> SelectUserAccountTable();\n}
+    IDBSelector-->>SqlDAO:return IDBSelector
+    deactivate IDBSelector
+    SqlDAO->>App DB: list = selectDAO.SelectUserProfileTable();
+    activate App DB
+    App DB->>App DB:"SELECT * FROM dbo.UserProfile"
+    App DB-->>SqlDAO: return list
+    deactivate App DB
+    SqlDAO-->>SecurityManager: return response
+    deactivate SqlDAO
+    SecurityManager-->>IView: Admin has access permission to UserManagement
+    deactivate SecurityManager
+    IView->>IView:response = menu.DisplayMenu(ref userAccount, ref userProfile)
+    IView-->>Program:return UserManagementView Instance
+    deactivate IView
+    Program->>Program:if(!response.isSuccessful && response.errorMessage =="")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage)\n     return\n}\nif(!response.isSuccessful && response.errorMessage != "")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage);\n     return;\n}
+    Program-->>User:UserManagement View is displayed
+    User->>Program: Admin wants to conduct UM operation
+    Program->>UserManager:UserManager userManager = new UserManager();
+    activate UserManager
+    
+    UserManager-->UserManager:if (File.Contains(lines.count) <10k)
+    UserManager->>Logger:var sysLogger = new Logger();
+    activate Logger
+    Logger->>SqlDAO:response = userManager.CreateAccount(new UserProfile)
+    activate SqlDAO
+    SqlDAO-->>App DB:user = InsertUserProfile(UserProfile)
+    activate App DB
+    App DB-->>App DB:"SELECT * FROM dbo.UserProfile"
+    App DB-->>SqlDAO:return response
+    deactivate App DB
+
+    
+    SqlDAO-->>Logger: return response
+    deactivate SqlDAO
+    Logger->>UserManager: return response
+    deactivate Logger
+    box right of UserManager:Want response less than 5 seconds
+    UserManager->>UserManager:if(!response.isSuccessful && response.errorMessage =="")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage)\n     return\n}\nif(!response.isSuccessful && response.errorMessage != "")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage);\n     return;\n}
+    UserManager-->>Program:response.ErrorMessage(“UM operation was successful”)
+    deactivate UserManager
+    
+    Program-->>User: Admin is Notified of successful operation
+    
+    deactivate User
