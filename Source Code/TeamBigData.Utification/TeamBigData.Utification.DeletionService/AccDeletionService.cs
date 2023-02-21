@@ -6,8 +6,8 @@ namespace TeamBigData.Utification.DeletionService
 {
     public class AccDeletionService : IDeletionService
     {
-        private String _userProfile;
-        public AccDeletionService(String user)
+        private UserProfile _userProfile;
+        public AccDeletionService(UserProfile user)
         {
             _userProfile = user;
         }

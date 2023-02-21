@@ -51,7 +51,7 @@ namespace TeamBigData.Utification.View.Views
                     if(answer)
                     {
                         DeletionManager delManager = new DeletionManager();
-                        response = delManager.DeleteAccount(userProfile.Identity.Name, userProfile);
+                        response = delManager.DeleteAccount(userProfile, userProfile);
                         if (!response.isSuccessful)
                         {
                             Console.Clear();
