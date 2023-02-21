@@ -13,5 +13,6 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> InsertUser(UserAccount user);
         public Task<Response> InsertUserProfile(UserProfile profile);
         public Task<Response> InsertUserHash(String userHash, int userID);
+        public Task<Response> IncrementUserAccountDisabled(UserAccount userAccount);
     }
 }

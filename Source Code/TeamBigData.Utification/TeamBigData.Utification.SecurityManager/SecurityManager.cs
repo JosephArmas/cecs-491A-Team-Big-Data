@@ -53,14 +53,16 @@ namespace TeamBigData.Utification.Manager
             response = await sqlUserIDAO.InsertUser(userAccount).ConfigureAwait(false);
             if (!response.isSuccessful)
             {
-                if (response.errorMessage.Contains("Violation of PRIMARY KEY"))
+                if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
                 {
                     response.errorMessage = "Email already linked to an account, please pick a new email";
+                    response.isSuccessful = false;
+                    return response;
                 }
-                else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                /*else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
                 {
                     response.errorMessage = "Unable to assign username. Retry again or contact system administrator";
-                }
+                }*/
             }
             else
             {
@@ -89,6 +91,88 @@ namespace TeamBigData.Utification.Manager
                 var responselog = logger.Log(log).Result;
                 Console.WriteLine(responselog.errorMessage);
                 response.errorMessage = "Account created successfully, your username is " + email;
+                response.isSuccessful = true;
+            }
+            return response;
+        }
+        public async Task<Response> RegisterUserAdmin(string email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfileA)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response response = new Response();
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
+            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            if (!((IPrincipal)userProfileA).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to view";
+                return response;
+            }
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            int userID = 0;
+            String password = encryptor.decryptString(encryptedPassword);
+            String salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
+            var digest = SecureHasher.HashString(salt, password);
+            String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
+            var userHash = SecureHasher.HashString(pepper, email);
+            response = await sqlUserSDAO.SelectLastUserID().ConfigureAwait(false);
+            if ((int)response.data == 0)
+            {
+                userID = 1001;
+                userAccount = new UserAccount(userID, email, digest, salt, userHash);
+                response.data = "UserAccount Created";
+            }
+            else
+            {
+                userID = (int)response.data + 1;
+                userAccount = new UserAccount(userID, email, digest, salt, userHash);
+                response.data = "UserAccount Created";
+            }
+            response = await sqlUserIDAO.InsertUser(userAccount).ConfigureAwait(false);
+            if (!response.isSuccessful)
+            {
+                if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                {
+                    response.errorMessage = "Email already linked to an account, please pick a new email";
+                    response.isSuccessful = false;
+                    return response;
+                }
+                /*else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                {
+                    response.errorMessage = "Unable to assign username. Retry again or contact system administrator";
+                }*/
+            }
+            else
+            {
+                userProfile = new UserProfile(userID, "Admin User");
+                response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
+                stopwatch.Stop();
+                Log log;
+                var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+                if (response.isSuccessful)
+                {
+                    IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                    await insertUserHash.InsertUserHash(userHash, userID).ConfigureAwait(false);
+                    if (stopwatch.ElapsedMilliseconds > 5000)
+                    {
+                        log = new Log(1, "Warning", userHash, "SecurityManager.RegisterUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
+                    }
+                    else
+                    {
+                        log = new Log(1, "Info", userHash, "SecurityManager.RegisterUser()", "Data", "Account Registration Succesful");
+                    }
+                }
+                else
+                {
+                    log = new Log(1, "Error", userHash, "SecurityManager.RegisterUser()", "Data", "Error in Creating Account");
+                }
+                var responselog = logger.Log(log).Result;
+                Console.WriteLine(responselog.errorMessage);
+                response.errorMessage = "Account created successfully, your username is " + email;
+                response.isSuccessful = true;
             }
             return response;
         }
@@ -98,9 +182,24 @@ namespace TeamBigData.Utification.Manager
             Response response = new Response();
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
             Log log;
             var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            response = sqlUserSDAO.SelectUserAccount(email, ref userAccount).Result;
+            if (userProfile.Identity.AuthenticationType != "Anonymous User")
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Error You are already Logged In";
+                tcs.SetResult(response);
+                return tcs.Task;
+            }
+            sqlUserSDAO.SelectUserAccount(ref userAccount, email);
+            if (userAccount._verified == false)
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Error: Account disabled. Perform account recovery or contact system admin";
+                tcs.SetResult(response);
+                return tcs.Task;
+            }
             if (userAccount._userID == 0)
             {
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
@@ -112,7 +211,17 @@ namespace TeamBigData.Utification.Manager
                 tcs.SetResult(response);
                 return tcs.Task;
             }
-            response = sqlUserSDAO.SelectUserProfile(userAccount._userID, ref userProfile).Result;
+            string password = encryptor.decryptString(encryptedPassword);
+            String digest = SecureHasher.HashString(userAccount._salt, password);
+            if (userAccount._password != digest)
+            {
+                sqlUserIDAO.IncrementUserAccountDisabled(userAccount);
+                response.isSuccessful = false;
+                response.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
+                tcs.SetResult(response);
+                return tcs.Task;
+            }
+            sqlUserSDAO.SelectUserProfile(ref userProfile, userAccount._userID);
             if (userProfile._userID == 0)
             {
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
@@ -220,7 +329,7 @@ namespace TeamBigData.Utification.Manager
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 userHash = SecureHasher.HashString(pepper, email);
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
-                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().data);
+                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().Result.data);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
                     log = new Log(1, "Warning", userHash, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
@@ -235,7 +344,7 @@ namespace TeamBigData.Utification.Manager
                 log = new Log(1, "Error", userHash, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
             logger.Log(log);
-            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().data, "Regular User")).Result;
+            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().Result.data, "Regular User")).Result;
             Console.WriteLine(result2.errorMessage);
             return response;
         }
@@ -266,7 +375,7 @@ namespace TeamBigData.Utification.Manager
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 userHash = SecureHasher.HashString(pepper, email);
                 IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
-                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().data);
+                insertUserHash.InsertUserHash(userHash, (int)sqlSDAO.SelectLastUserID().Result.data);
                 if (stopwatch.ElapsedMilliseconds > 5000)
                 {
                     log = new Log(1, "Warning", userHash, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
@@ -281,12 +390,12 @@ namespace TeamBigData.Utification.Manager
                 log = new Log(1, "Error", userHash, "Manager.InsertUser()", "Data", "Error in Creating Account");
             }
             logger.Log(log);
-            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().data, "Admin User")).Result;
+            var result2 = sqlIDAO.InsertUserProfile(new UserProfile((int)sqlSDAO.SelectLastUserID().Result.data, "Admin User")).Result;
             Console.WriteLine(result2.errorMessage);
             return response;
         }
 
-        public Response GetUserProfileTable(List<UserProfile> list, UserProfile userProfile)
+        public Response GetUserProfileTable(ref List<UserProfile> list, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -297,8 +406,7 @@ namespace TeamBigData.Utification.Manager
             }
             var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            list = selectDAO.SelectUserProfileTable();
-            response.isSuccessful = true;
+            response = selectDAO.SelectUserProfileTable(ref list, "Admin User").Result;
             return response;
         }
 
@@ -313,7 +421,7 @@ namespace TeamBigData.Utification.Manager
             }
             var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
             IDBSelecter selectDAO = new SqlDAO(connection);
-            list = selectDAO.SelectUserAccountTable();
+            response = selectDAO.SelectUserAccountTable(ref list, userProfile.Identity.AuthenticationType).Result;
             response.isSuccessful = true;
             return response;
         }
@@ -337,7 +445,8 @@ namespace TeamBigData.Utification.Manager
                 }
                 var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                 IDBSelecter selectDao = new SqlDAO(connectionString);
-                UserAccount userAccount = selectDao.SelectUserAccount(username);
+                UserAccount userAccount = new UserAccount();
+                await selectDao.SelectUserAccount(ref userAccount, username);
                 if (SecureHasher.HashString(userAccount._salt, password) == userAccount._password)
                 {
                     result.isSuccessful = true;
@@ -523,7 +632,7 @@ namespace TeamBigData.Utification.Manager
             }
         }
 
-        public Response GetUserProfileTable(ref List<UserProfile> list, UserProfile userProfile)
+        /*public Response GetUserProfileTable(ref List<UserProfile> list, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -551,7 +660,7 @@ namespace TeamBigData.Utification.Manager
             IDBSelecter selectDAO = new SqlDAO(connection);
             response = selectDAO.SelectUserAccountTable(ref list).Result;
             return response;
-        }
+        }*/
         public Response ResetAccount(String disabledUser, UserProfile userProfile)
         {
             var response = new Response();
@@ -575,7 +684,11 @@ namespace TeamBigData.Utification.Manager
                     var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                     var requestDB = new SqlDAO(requestConnectionString);
                     var RequestFulfilled = requestDB.RequestFulfilled(disabledUser).Result;
-                    response = RequestFulfilled;
+                    if(RequestFulfilled.isSuccessful)
+                    {
+                        response.isSuccessful = true;
+                        response.errorMessage = "Account recovery completed successfully for user";
+                    }
                 }
                 else
                 {
@@ -607,13 +720,20 @@ namespace TeamBigData.Utification.Manager
                 result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
                 return result;
             }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            SqlDAO userDao = new SqlDAO(connectionString);
+            UserAccount userAccount = new UserAccount();
+            var selectResponse = userDao.SelectUserAccount(ref userAccount, username).Result;
+            if(!selectResponse.isSuccessful)
+            {
+                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                return result;
+            }
             //if valid password and otp, then we can hash password and proceed
             var hasher = new SecureHasher();
             //TODO: Add Salt to hash
-            var newDigest = SecureHasher.HashString(username, newPassword);
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO userDao = new SqlDAO(connectionString);
-            result = await userDao.CreateRecoveryRequest(username, newDigest);
+            var newDigest = SecureHasher.HashString(userAccount._salt, newPassword);
+            result = await userDao.CreateRecoveryRequest(userAccount._userID, newDigest);
             return result;
         }
 

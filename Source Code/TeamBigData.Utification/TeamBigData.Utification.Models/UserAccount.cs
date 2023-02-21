@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.Cryptography;
@@ -57,6 +58,8 @@ namespace TeamBigData.Utification.Models
             _verified = verified;
             _username = username;
             _password = password;
+            _salt = salt;
+            _userHash = userHash;
             GenerateOTP();
         }
 
@@ -114,5 +117,10 @@ namespace TeamBigData.Utification.Models
             }
             _otpCreated = DateTime.Now.Ticks.ToString();
         }
+        public string ToString()
+        {
+            return ",   UserID: " + _userID + ",   Username: " + _username + ", Salt: " + _salt + ",   OTP: " + _otp + ",   Verified: " + _verified + ", UserHash: " + _userHash;
+        }
+       
     }
 }

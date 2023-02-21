@@ -67,7 +67,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
                     List<UserProfile> list = new List<UserProfile>();
-                    //response = secManager.GetUserProfileTable(list, userProfile);
+                    response = secManager.GetUserProfileTable(ref list, userProfile);
                     if (!response.isSuccessful)
                     {
                         Console.Clear();
@@ -97,7 +97,7 @@ namespace TeamBigData.Utification.View.Views
                 case 4:
                     Console.Clear();
                     SecurityManager secManagerEnable = new SecurityManager();
-                    Console.WriteLine("Please Enter the name of the User to be re-enabled");
+                    Console.WriteLine("Please Enter the userID of the User to be re-enabled");
                     String disUser = Console.ReadLine();
                     response = secManagerEnable.EnableAccount(disUser,userProfile).Result;
                     if (!response.isSuccessful)
@@ -121,8 +121,9 @@ namespace TeamBigData.Utification.View.Views
                 case 6:
                     Console.Clear();
                     DeletionManager delManager = new DeletionManager();
-                    Console.WriteLine("Please Enter the name of the User to be deleted");
-                    String delUser = Console.ReadLine();
+                    Console.WriteLine("Please Enter the ID of the User to be deleted");
+                    int delUserID = int.Parse(Console.ReadLine());
+                    UserProfile delUser = new UserProfile(delUserID);
                     response = delManager.DeleteAccount(delUser, userProfile);
                     if (!response.isSuccessful)
                     {

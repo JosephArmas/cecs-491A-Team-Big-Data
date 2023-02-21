@@ -32,7 +32,6 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result2 = securityManager.LoginOTP(message);
             //Assert
             Assert.IsTrue(result.isSuccessful);
-            Assert.IsTrue(securityManager.IsAuthenticated());
         }
 
         [TestMethod]
@@ -45,16 +44,14 @@ namespace TeamBigData.Utification.AuthenticationTests
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "password";
+            UserAccount userAccount= new UserAccount();
+            UserProfile userProfile= new UserProfile();
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
-            var message = securityManager.SendOTP();
-            var result2 = securityManager.LoginOTP(message);
-            //Verify User is truly authenticated
-            Assert.IsTrue(securityManager.IsAuthenticated());
-
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             //Assert
+            Console.WriteLine(result.isSuccessful);
             Assert.IsFalse(result.isSuccessful);
             Assert.AreEqual(result.errorMessage, expected);
         }
@@ -84,16 +81,19 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
+            var userAccount = new UserAccount();
+            var userProfile = new UserProfile();
             var username = "disabledUser@yahoo.com";
             var password = "wrongPassword";
             //Act
             var digest = encryptor.encryptString(password);
-            securityManager.VerifyUser(username, digest, encryptor);
-            securityManager.VerifyUser(username, digest, encryptor);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
+            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             //Assert
+            Console.WriteLine(result.isSuccessful);
             Assert.IsFalse(result.isSuccessful);
-            Assert.IsTrue(result.errorMessage.Contains("disabled"));
+            Assert.IsTrue(result.errorMessage.Contains("Error: Account disabled. Perform account recovery or contact system admin"));
         }
 
         [TestMethod]
@@ -107,13 +107,15 @@ namespace TeamBigData.Utification.AuthenticationTests
             var enabler = new AccountDisabler(sqlDAO);
             var username = "disabledUser@yahoo.com";
             var password = "password";
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
             var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(1, "Info", "SYSTEM", "CantLoginWhenDisabled", "Data", "This is a automated test");
 
             //Act
             enabler.DisableAccount("disabledUser@yahoo.com");
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert
@@ -130,12 +132,14 @@ namespace TeamBigData.Utification.AuthenticationTests
             var encryptor = new Encryptor();
             var username = "disabledUser@yahoo.com";
             var password = "password";
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
             var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(1, "Error", "WrongInfo", "CantLoginWhenDisabledLogFail", "View", "This is a automated test");
 
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert

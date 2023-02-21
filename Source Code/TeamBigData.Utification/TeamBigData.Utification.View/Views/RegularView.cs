@@ -26,7 +26,6 @@ namespace TeamBigData.Utification.View.Views
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            Console.Clear(); 
             Console.WriteLine("\nWelcome " + userAccount._username);
             Console.WriteLine("Regular User View");
             Console.WriteLine("---------MENU---------");
@@ -52,7 +51,7 @@ namespace TeamBigData.Utification.View.Views
                     if(answer)
                     {
                         DeletionManager delManager = new DeletionManager();
-                        response = delManager.DeleteAccount(userProfile.Identity.Name, userProfile);
+                        response = delManager.DeleteAccount(userProfile, userProfile);
                         if (!response.isSuccessful)
                         {
                             Console.Clear();

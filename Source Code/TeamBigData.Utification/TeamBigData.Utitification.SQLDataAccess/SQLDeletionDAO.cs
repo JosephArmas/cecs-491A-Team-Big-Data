@@ -23,7 +23,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         /// </summary>
         /// <param name="user"></param>
         /// <returns>The response from the sql query</returns>
-        public Task<Response> DeleteFeatureInfo(String user)
+        public Task<Response> DeleteFeatureInfo(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             var username = user;
@@ -33,16 +33,15 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the column names and values given
-                Console.WriteLine("Username is: "+user);
-                var deleteSql = "DELETE FROM dbo.Events WHERE username = '" + username + "';DELETE FROM dbo.Pictures WHERE username = '" + username + "'" +
-                    ";DELETE FROM dbo.Services WHERE username = '" + username + "';DELETE FROM dbo.Pins WHERE username = '" + username + "';";
+                var deleteSql = "DELETE FROM dbo.\"Events\" WHERE userID = '" + username._userID + "';DELETE FROM dbo.Pictures WHERE userID = '" + username._userID + "'" +
+                    ";DELETE FROM dbo.\"Services\" WHERE userID = '" + username._userID + "';DELETE FROM dbo.Pins WHERE userID = '" + username._userID + "';";
                 try
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
+                    Console.WriteLine(rows);
                     result.isSuccessful = true;
                     result.data = rows;
-                    Console.WriteLine("The feature rows affected->>" + rows);
                 }
                 catch (SqlException s)
                 {
@@ -61,7 +60,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         /// </summary>
         /// <param name="user"></param>
         /// <returns>The response from the sql query</returns>
-        public Task<Response> DeleteUser(String user)
+        public Task<Response> DeleteUser(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -71,7 +70,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the column names and values given
-                var deleteSql = "DELETE FROM dbo.UserProfiles WHERE username = '" + username + "';DELETE FROM dbo.Users WHERE username = '" + username + "';";
+                var deleteSql = "DELETE FROM dbo.UserProfiles WHERE userID = '" + username._userID + "';DELETE FROM dbo.Users WHERE userID = '" + username._userID + "';";
                 try
                 {
                     var command = new SqlCommand(deleteSql, connection);
@@ -81,7 +80,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                         result.isSuccessful = true;
                         result.data = rows;
                     }
-                    Console.WriteLine("The rows affected->>"+rows);
                 }
                 catch (SqlException s)
                 {

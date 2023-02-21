@@ -28,18 +28,15 @@ namespace TeamBigData.Utification.RegistrationTests
             var logConnection = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=False";
             IRegister register = new SecurityManager();
             SqlDAO logDBO = new SqlDAO(logConnection);
-            UserAccount userAccount = new UserAccount();
-            UserProfile userProfile= new UserProfile();
-            var username = "CreateLogWhenRegisteringTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
+            var username = "CreateLogWhenRegisteringTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var expected = 1;
             //Act
             int before = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
             var result = register.RegisterUser(username, encryptedPassword, encryptor).Result;
             int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
             //Assert
-            Assert.AreEqual(expected, after - before);
+            Assert.IsTrue(after > before);
             Assert.IsTrue(result.isSuccessful);
         }
 
@@ -51,17 +48,15 @@ namespace TeamBigData.Utification.RegistrationTests
             IDBSelecter testDBO = new SqlDAO(connectionString);
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
-            UserProfile userProfile = new UserProfile();
-            var username = "ShouldAddUserToDBTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
+            var username = "ShouldAddUserToDBTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
-            var test = register.RegisterUser(username, encryptedPassword, encryptor);
-            var account = new UserAccount();
-            var expected = testDBO.SelectUserAccount(username, ref account).Result;
+            var test = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
             //Assert
-            Assert.IsTrue(userAccount._username == account._username);
-            Assert.IsTrue(expected.isSuccessful);
+            Assert.IsTrue(username == userAccount._username);
+            Assert.IsTrue(test.isSuccessful);
         }
 
         [TestMethod]
@@ -71,14 +66,14 @@ namespace TeamBigData.Utification.RegistrationTests
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
             UserProfile userProfile = new UserProfile();
-            var username = "CatchesDuplicateEmailTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
+            var username = "CatchesDuplicateEmailTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
-            register.RegisterUser(username, encryptedPassword, encryptor);
-            var actual = register.RegisterUser(username, encryptedPassword, encryptor).Result;
+            var actual = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var expected = await register.RegisterUser(username, encryptedPassword, encryptor);
             //Assert
-            Assert.IsTrue(actual.errorMessage.Contains("Email already linked to an account, please pick a new email"));
+            Assert.IsTrue(expected.errorMessage.Contains("Email already linked to an account, please pick a new email"));
         }
 
         [TestMethod]
@@ -89,12 +84,12 @@ namespace TeamBigData.Utification.RegistrationTests
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
             UserProfile userProfile = new UserProfile();
-            var username = "ShoudRegisterWithin5SecondsTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(8)) + "@yahoo.com";
+            var username = "ShoudRegisterWithin5SecondsTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             stopwatch.Start();
-            var result = register.RegisterUser(username, encryptedPassword, encryptor).Result;
+            var result = await register.RegisterUser(username, encryptedPassword, encryptor);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 

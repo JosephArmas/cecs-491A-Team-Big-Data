@@ -33,6 +33,7 @@ namespace TeamBigData.Utification.AuthorizationTests
             var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
             //Assert
             bool pass = false;
+            Console.WriteLine(logResultAnonymous.errorMessage);
             if (!logResultAnonymous.isSuccessful && logResultAnonymous.errorMessage == "")
                 pass = true;
             else

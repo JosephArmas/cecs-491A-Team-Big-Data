@@ -16,10 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.AccountServices\TeamBigData.Utification.AccountServices.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.View\TeamBigData.Utification.View.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Models;
 
 namespace TeamBigData.Utification.AuthenticationTests
 {
@@ -30,9 +31,11 @@ namespace TeamBigData.Utification.AuthenticationTests
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var password = "wrongPassword";
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser( username, digest, encryptor,  ref userAccount, ref userProfile).Result;
             var message = securityManager.SendOTP();
             var result2 = securityManager.LoginOTP(message);
             //Assert
@@ -50,16 +53,16 @@ namespace TeamBigData.Utification.AuthenticationTests
             var username = "testUser@yahoo.com";
             var password = "password";
             var expected = "OTP Expired, Please Authenticate Again";
+            var userAccount = new UserAccount();
+            var userProfile = new UserProfile();
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
-            var message = securityManager.SendOTP();
-            Thread.Sleep(120000);//Wait 2 Minutes
-            var result2 = securityManager.LoginOTP(message);
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            Thread.Sleep(125000);//Wait 2 Minutes
+            result = userAccount.VerifyOTP(userAccount._otp);
             //Assert
-            Assert.AreEqual(expected, result2.errorMessage);
-            Assert.IsFalse(result2.isSuccessful);
-            Assert.IsFalse(securityManager.IsAuthenticated());
+            Assert.AreEqual(expected, result.errorMessage);
+            Assert.IsFalse(result.isSuccessful);
         }
     }
 }

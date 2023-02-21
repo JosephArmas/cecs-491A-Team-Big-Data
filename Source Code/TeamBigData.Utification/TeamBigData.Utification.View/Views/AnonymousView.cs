@@ -26,17 +26,18 @@ namespace TeamBigData.Utification.View.Views
             bool flag = false;
             String email = "";
             String userPass = "";
+            InputValidation valid = new InputValidation();
             if (!((IPrincipal)userProfile).IsInRole("Anonymous User"))
             {
                 response.isSuccessful = false;
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            Console.Clear();
             Console.WriteLine("\nWelcome Anonymouse User");
             Console.WriteLine("------------MENU------------");
             Console.WriteLine("[1] Create a New Account");
             Console.WriteLine("[2] Login");
+            Console.WriteLine("[3] Recover Account/Forgot Password");
             Console.WriteLine("[0] exit");
             Console.Write("Enter 0-2: ");
             string input = Console.ReadLine();
@@ -48,11 +49,12 @@ namespace TeamBigData.Utification.View.Views
                     return response;
                 case "1":
                     Console.Clear();
+                    valid = new InputValidation();
                     while (!flag)
                     {
                         Console.Write("\nTo create a new Account, please enter your email: ");
                         email = Console.ReadLine();
-                        if (!IsValidEmail(email))
+                        if (!valid.IsValidEmail(email))
                         {
                             Console.Clear();
                             Console.WriteLine("\nInvalid Email...");
@@ -67,7 +69,7 @@ namespace TeamBigData.Utification.View.Views
                     {
                         Console.Write("\nPlease enter your new password: ");
                         userPass = Console.ReadLine();
-                        if (!IsValidPassword(userPass))
+                        if (!valid.IsValidPassword(userPass))
                         {
                             Console.WriteLine("\nInvalid Password...");
                         }
@@ -92,6 +94,7 @@ namespace TeamBigData.Utification.View.Views
                 case "2":
                     String tryAgain = "";
                     Console.Clear();
+                    valid = new InputValidation();
                     flag = false;
                     while (!flag)
                     {
@@ -99,7 +102,7 @@ namespace TeamBigData.Utification.View.Views
                         email = Console.ReadLine();
                         Console.Write("\nPlese enter your Password: ");
                         userPass = Console.ReadLine();
-                        if (IsValidEmail(email) && IsValidPassword(userPass))
+                        if (valid.IsValidEmail(email) && valid.IsValidPassword(userPass))
                         {
                             flag = true;
                         }
@@ -157,6 +160,19 @@ namespace TeamBigData.Utification.View.Views
                         }
                     }
                     break;
+                case "3":
+                    Console.WriteLine("Please enter your username");
+                    String inputUsername = Console.ReadLine();
+                    Console.WriteLine("Please enter your new password");
+                    String newPassword = Console.ReadLine();
+                    var passwordEncryptor = new Encryptor();
+                    byte[] newEncryptedPassword = passwordEncryptor.encryptString(newPassword);
+                    SecurityManager securityManager = new SecurityManager();
+                    securityManager.GenerateOTP();
+                    Console.WriteLine("Please Enter the OTP: " + securityManager.SendOTP());
+                    String otp = Console.ReadLine();
+                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor, otp).Result.errorMessage);
+                    break;
                 default:
                     Console.WriteLine("Invalid Input\nPress Enter to Try Again...");
                     Console.ReadLine();
@@ -166,25 +182,6 @@ namespace TeamBigData.Utification.View.Views
             response.errorMessage = "";
             return response;
         }
-
-        public static bool IsValidPassword(String password)
-        {
-            Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!\s-]*$");
-            if (passwordAllowedCharacters.IsMatch(password) && password.Length >= 8)
-                return true;
-            else
-                return false;
-        }
-
-        public static bool IsValidEmail(String email)
-        {
-            Regex emailAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.-]*$");
-            if (emailAllowedCharacters.IsMatch(email) && email.Contains('@') && (!email.StartsWith("@")))
-                return true;
-            else
-                return false;
-        }
-
         /// <summary>
         /// Clear console and print seperator.
         /// </summary>

@@ -6,8 +6,8 @@ namespace TeamBigData.Utification.DeletionService
 {
     public class AccDeletionService : IDeletionService
     {
-        private String _userProfile;
-        public AccDeletionService(String user)
+        private UserProfile _userProfile;
+        public AccDeletionService(UserProfile user)
         {
             _userProfile = user;
         }
@@ -15,7 +15,7 @@ namespace TeamBigData.Utification.DeletionService
         {
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
             var err = "User feature data could not be deleted";
-            var result = await DeletePII(connectionString, err, 1);
+            var result = await DeletePII(connectionString, err, 1).ConfigureAwait(false);
             return result;
         }
 
@@ -23,7 +23,7 @@ namespace TeamBigData.Utification.DeletionService
         {
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var err = "User profile data could not be deleted";
-            var result = await DeletePII(connectionString,err,0);
+            var result = await DeletePII(connectionString,err,0).ConfigureAwait(false);
             return result;
         }
 
@@ -34,11 +34,11 @@ namespace TeamBigData.Utification.DeletionService
             var userDao = new SQLDeletionDAO(connString);
             if (piData == 0)
             {
-                result = await userDao.DeleteUser(_userProfile);
+                result = await userDao.DeleteUser(_userProfile).ConfigureAwait(false);
             }
             else
             {
-                result = await userDao.DeleteFeatureInfo(_userProfile);
+                result = await userDao.DeleteFeatureInfo(_userProfile).ConfigureAwait(false);
             }
             if (result.isSuccessful == false)
             {
