@@ -1,5 +1,5 @@
-CREATE TABLE dbo.Services
+CREATE TABLE dbo."Services"
 (
-username varchar(50),
+userID int NOT NULL,
 "disabled" int DEFAULT 0,
 );
