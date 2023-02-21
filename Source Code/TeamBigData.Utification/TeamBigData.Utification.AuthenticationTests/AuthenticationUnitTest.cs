@@ -36,7 +36,6 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var digest = encryptor.encryptString(password);
             result = securityManager.LoginUser( username, digest, encryptor,  ref userAccount, ref userProfile).Result;
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
             var message = securityManager.SendOTP();
             var result2 = securityManager.LoginOTP(message);
             //Assert
