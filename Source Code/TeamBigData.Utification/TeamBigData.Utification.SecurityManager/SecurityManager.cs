@@ -679,7 +679,11 @@ namespace TeamBigData.Utification.Manager
                     var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                     var requestDB = new SqlDAO(requestConnectionString);
                     var RequestFulfilled = requestDB.RequestFulfilled(disabledUser).Result;
-                    response = RequestFulfilled;
+                    if(RequestFulfilled.isSuccessful)
+                    {
+                        response.isSuccessful = true;
+                        response.errorMessage = "Account recovery completed successfully for user";
+                    }
                 }
                 else
                 {
@@ -711,13 +715,20 @@ namespace TeamBigData.Utification.Manager
                 result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
                 return result;
             }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            SqlDAO userDao = new SqlDAO(connectionString);
+            UserAccount userAccount = new UserAccount();
+            var selectResponse = userDao.SelectUserAccount(ref userAccount, username).Result;
+            if(!selectResponse.isSuccessful)
+            {
+                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                return result;
+            }
             //if valid password and otp, then we can hash password and proceed
             var hasher = new SecureHasher();
             //TODO: Add Salt to hash
-            var newDigest = SecureHasher.HashString(username, newPassword);
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO userDao = new SqlDAO(connectionString);
-            result = await userDao.CreateRecoveryRequest(username, newDigest);
+            var newDigest = SecureHasher.HashString(userAccount._salt, newPassword);
+            result = await userDao.CreateRecoveryRequest(userAccount._userID, newDigest);
             return result;
         }
 

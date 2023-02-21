@@ -706,12 +706,12 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> CreateRecoveryRequest(String username, String newPassword)
+        public Task<Response> CreateRecoveryRequest(int userID, String newPassword)
         {
             var response = new Response();
             var tcs = new TaskCompletionSource<Response>();
-            String insertSql = "Insert into dbo.RecoveryRequests(username, newPassword) " +
-                "values (\'" + username + "\', \'" + newPassword + "\')";
+            String insertSql = "Insert into dbo.RecoveryRequests(userID, newPassword) " +
+                "values (\'" + userID + "\', \'" + newPassword + "\')";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
@@ -975,7 +975,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         {
                             String userName = "";
 
-                            int ordinal = reader.GetOrdinal("username");
+                            int ordinal = reader.GetOrdinal("userID");
                             if (!reader.IsDBNull(ordinal))
                             {
                                 userName = reader.GetString(ordinal);
@@ -1000,14 +1000,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> GetNewPassword(string username)
+        public Task<Response> GetNewPassword(string userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND username = \'" + username + "\' Order by [timestamp] desc; ";
+                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND userId = " + userID + " Order by [timestamp] desc; ";
                 try
                 {
                     var command = new SqlCommand(sqlSelect, connect);
@@ -1072,14 +1072,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> ResetAccount(String username, String newPassword)
+        public Task<Response> ResetAccount(String userID, String newPassword)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "', \"disabled\" = 0 where username = \'" + username + "\'";
+                var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "', \"disabled\" = 0 where userID = " + userID;
                 try
                 {
                     var command = new SqlCommand(updateSql, connection);
@@ -1092,6 +1092,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         result.isSuccessful = false;
                         result.errorMessage = "Error, Multiple Accounts Affected";
+                        tcs.SetResult(result);
+                        return tcs.Task;
+                    }
+                    else if (rows == 0)
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
                         tcs.SetResult(result);
                         return tcs.Task;
                     }
@@ -1163,14 +1170,14 @@ namespace TeamBigData.Utification.SQLDataAccess
         }
         */
 
-        public Task<Response> RequestFulfilled(string username)
+        public Task<Response> RequestFulfilled(string userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 connect.Open();
-                string fulfill = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE username = \'" + username + "\'; ";
+                string fulfill = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE userID = " + userID;
                 try
                 {
                     var command = new SqlCommand(fulfill, connect);
