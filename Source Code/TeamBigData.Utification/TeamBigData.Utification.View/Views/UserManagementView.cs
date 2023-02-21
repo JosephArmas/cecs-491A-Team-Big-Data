@@ -60,7 +60,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Please enter new password");
                     String userPassword = Console.ReadLine();
                     var encryptor = new Encryptor();
-                    var encryptedPassword = encryptor.encryptString(userPassword);
+                    byte[] encryptedPassword = encryptor.encryptString(userPassword);
                     Console.WriteLine("Do you want:\n[1] This User to be Regular\n[2] This User to be an Admin");
                     String adminCreate = Console.ReadLine();
                     var check = true;
@@ -69,7 +69,7 @@ namespace TeamBigData.Utification.View.Views
                         if (adminCreate == "1")
                         {
                             stopwatch.Start();
-                            response = securityManager.InsertUser(email, encryptedPassword, encryptor);
+                            response = securityManager.RegisterUser(email, encryptedPassword, encryptor).Result;
                             stopwatch.Stop();
                             var actualReg = stopwatch.ElapsedMilliseconds;
                             if(response.isSuccessful & (actualReg < expected))
@@ -86,7 +86,7 @@ namespace TeamBigData.Utification.View.Views
                         else if (adminCreate == "2")
                         {
                             stopwatch.Start();
-                            response = securityManager.InsertUserAdmin(email, encryptedPassword, encryptor, userProfile);
+                            response = securityManager.RegisterUserAdmin(email, encryptedPassword, encryptor, userProfile).Result;
                             stopwatch.Stop();
                             var actualAdmin = stopwatch.ElapsedMilliseconds;
                             if (response.isSuccessful & (actualAdmin< expected))
@@ -119,6 +119,8 @@ namespace TeamBigData.Utification.View.Views
                     //response = await userDao.UpdateUserProfile(userProfile);
                     Console.WriteLine("Please Enter the name of the User to be Deleted");
                     String delUser = Console.ReadLine();
+                    var pii = 1;
+
                     stopwatch.Start();
                     response = secManagerDelete.DeleteProfile(delUser, userProfile);
                     stopwatch.Stop();

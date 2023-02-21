@@ -95,6 +95,87 @@ namespace TeamBigData.Utification.Manager
             }
             return response;
         }
+        public async Task<Response> RegisterUserAdmin(string email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfileA)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response response = new Response();
+            UserAccount userAccount = new UserAccount();
+            UserProfile userProfile = new UserProfile();
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
+            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            if (!((IPrincipal)userProfileA).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to view";
+                return response;
+            }
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            int userID = 0;
+            String password = encryptor.decryptString(encryptedPassword);
+            String salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
+            var digest = SecureHasher.HashString(salt, password);
+            String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
+            var userHash = SecureHasher.HashString(pepper, email);
+            response = await sqlUserSDAO.SelectLastUserID().ConfigureAwait(false);
+            if ((int)response.data == 0)
+            {
+                userID = 1001;
+                userAccount = new UserAccount(userID, email, digest, salt, userHash);
+                response.data = "UserAccount Created";
+            }
+            else
+            {
+                userID = (int)response.data + 1;
+                userAccount = new UserAccount(userID, email, digest, salt, userHash);
+                response.data = "UserAccount Created";
+            }
+            response = await sqlUserIDAO.InsertUser(userAccount).ConfigureAwait(false);
+            if (!response.isSuccessful)
+            {
+                if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                {
+                    response.errorMessage = "Email already linked to an account, please pick a new email";
+                    response.isSuccessful = false;
+                    return response;
+                }
+                /*else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                {
+                    response.errorMessage = "Unable to assign username. Retry again or contact system administrator";
+                }*/
+            }
+            else
+            {
+                userProfile = new UserProfile(userID, "Admin User");
+                response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
+                stopwatch.Stop();
+                Log log;
+                var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+                if (response.isSuccessful)
+                {
+                    IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                    await insertUserHash.InsertUserHash(userHash, userID).ConfigureAwait(false);
+                    if (stopwatch.ElapsedMilliseconds > 5000)
+                    {
+                        log = new Log(1, "Warning", userHash, "SecurityManager.RegisterUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
+                    }
+                    else
+                    {
+                        log = new Log(1, "Info", userHash, "SecurityManager.RegisterUser()", "Data", "Account Registration Succesful");
+                    }
+                }
+                else
+                {
+                    log = new Log(1, "Error", userHash, "SecurityManager.RegisterUser()", "Data", "Error in Creating Account");
+                }
+                var responselog = logger.Log(log).Result;
+                Console.WriteLine(responselog.errorMessage);
+                response.errorMessage = "Account created successfully, your username is " + email;
+                response.isSuccessful = true;
+            }
+            return response;
+        }
         public Task<Response> LoginUser(String email, byte[] encryptedPassword, Encryptor encryptor, ref UserAccount userAccount, ref UserProfile userProfile)
         {
             var tcs = new TaskCompletionSource<Response>();

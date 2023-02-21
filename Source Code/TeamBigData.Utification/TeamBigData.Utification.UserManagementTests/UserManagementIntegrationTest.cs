@@ -76,11 +76,67 @@ namespace TeamBigData.Utification.UserManagementTests
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
-            bool pass = false;
+
             if (actual < expected)
-                Assert.IsTrue(pass);
+                Assert.IsTrue(true);
+            else
+                Assert.IsTrue(false);
+        }
+        [TestMethod]
+        public void DeleteWithinFiveSeconds()
+        {
+            //Testing ability to have a task perform under 5 seconds
+            //Arrange
+            var userAccount = new UserAccount();
+            var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
+            String userPassword = "Password";
+            var stopwatch = new Stopwatch();
+            var expected = 5000;
+            string email = "";
+            SecurityManager securityManager = new SecurityManager();
+            var encryptor = new Encryptor();
+            var encryptedPassword = encryptor.encryptString(userPassword);
+            var madeUser = securityManager.InsertUser(email, encryptedPassword, encryptor);
 
+            //Act
+            stopwatch.Start();
+            var testing = securityManager.DeleteProfile(email, sysUnderTestAdmin);
+            stopwatch.Stop();
+            var actual = stopwatch.ElapsedMilliseconds;
+            //Assert
 
+            if (actual < expected)
+                Assert.IsTrue(true);
+            else
+                Assert.IsTrue(false);
+        }
+        [TestMethod]
+        public void DisableWithinFiveSeconds()
+        {
+            //Testing ability to have a task perform under 5 seconds
+            //Arrange
+            var userAccount = new UserAccount();
+            var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
+            String userPassword = "Password";
+            var stopwatch = new Stopwatch();
+            var expected = 5000;
+            string email = "";
+            SecurityManager securityManager = new SecurityManager();
+            var encryptor = new Encryptor();
+            var encryptedPassword = encryptor.encryptString(userPassword);
+            var madeUser = securityManager.InsertUser(email, encryptedPassword, encryptor);
+
+            //Act
+            stopwatch.Start();
+            var testing = securityManager.DisableAccount(email, sysUnderTestAdmin);
+            stopwatch.Stop();
+            var actual = stopwatch.ElapsedMilliseconds;
+            //Assert
+
+            if (actual < expected)
+                Assert.IsTrue(true);
+            else
+                Assert.IsTrue(false);
         }
     }
 }
