@@ -71,8 +71,9 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             var actual = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var expected = await register.RegisterUser(username, encryptedPassword, encryptor);
             //Assert
-            Assert.IsTrue(actual.errorMessage.Contains("Email already linked to an account, please pick a new email"));
+            Assert.IsTrue(expected.errorMessage.Contains("Email already linked to an account, please pick a new email"));
         }
 
         [TestMethod]

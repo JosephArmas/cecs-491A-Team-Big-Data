@@ -185,9 +185,14 @@ namespace TeamBigData.Utification.Manager
             IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
             Log log;
             var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            
+            if (userProfile.Identity.AuthenticationType != "Anonymous User")
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Error You are already Logged In";
+                tcs.SetResult(response);
+                return tcs.Task;
+            }
             sqlUserSDAO.SelectUserAccount(ref userAccount, email);
-
             if (userAccount._verified == false)
             {
                 response.isSuccessful = false;
