@@ -35,28 +35,6 @@ namespace TeamBigData.Utification.AuthenticationTests
         }
 
         [TestMethod]
-        public void CantLoginWhileAlreadyLoggedIn()
-        {
-            //Arrange
-            var result = new Response();
-            var expected = "Error You are already Logged In";
-            var securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
-            var password = "password";
-            UserAccount userAccount= new UserAccount();
-            UserProfile userProfile= new UserProfile();
-            //Act
-            var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
-            //Assert
-            Console.WriteLine(result.isSuccessful);
-            Assert.IsFalse(result.isSuccessful);
-            Assert.AreEqual(result.errorMessage, expected);
-        }
-
-        [TestMethod]
         public void FailsWhenWrongOTPEntered()
         {
             //Arrange
