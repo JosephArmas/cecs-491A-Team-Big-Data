@@ -7,6 +7,8 @@ STEP 1. Create 2 SQL Databases
 	Right Click Databases folder and create new database
 	First is named TeamBigData.Utification.Logs
 	Second is named TeamBigData.Utification.Users
+	Third is named TeamBigData.Utification.UserHash
+	Fourth is named TeamBigData.Utification.Features
 Step 2. Creaing an AppUser Login
 	Right Click the Security Tab on the bottom of your SQL Server
 	(It should be global, not in any 1 database)
@@ -22,9 +24,11 @@ Step 3. Creating an AppUser User in the Logs Database
 	Click Memberships on the left and make them a db_datareader
 Step 4. Creating the Tables
 	Execute the LogsDDL into the Logs Database
+	*Very important to execute Users then UserProfiles, it has a foreign key constraint
 	Execute the UsersDDL into the Users Database
 	Execute the UserProfilesDDL into the Users Database
-	*Very important to execute Users then UserProfiles, it has a foreign key constraint
+	Execute the FeaturesDDL into the Features Database
+	Execute the UserHashDDL into the UserHash Database
 Step 5. Granting Insert Permission on Logs
 	Enter in the SQL query GRANT INSERT on dbo.Logs to AppUser
 
