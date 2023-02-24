@@ -1,35 +1,12 @@
-# cecs-491A-Team-Big-Data
-# [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
-Team Lead: Joseph Armas\
-<br />
-Team Members:\
-Joshua Gherman <br /> 
-Rhoy Oviedo <br />
-Frank Curry <br />
-Ghabrille Ampo <br />
-David De Girolamo <br />
-# [Scrum](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum)
-* Milestone 1
-  * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
-* Milestone 2
-  * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone2)
-* Milestone 3
-  * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone3)
-# [RFP](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/RFP)
-* includes all versions of RFP
-# [Milestone 1](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%201)
-* [BRD](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%201/BRD)
-* [High Level Design](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%201/high-level%20design)
-* [Project Plan](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%201/project%20plan/version%201)
-# [Milestone 2](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202)
-* [Low Level Design](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202)
-  * [Registration](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202/low%20level%20design/registration)
-  * [Logging](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%202/low%20level%20design/logging)
-* [Logging + Registration Source Code](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/Source%20Code/TeamBigData.Utification)
-# [Milestone 3](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203)
-* [Software Bill of Materials](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203/bill%20of%20materials)
-* [Dar Reports](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203/bill%20of%20materials/dar%20reports)
-* [Low Level Design](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203/low%20level%20design)
-  * [Authentication](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203/low%20level%20design/authentication)
-  * [Authorization](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203/low%20level%20design/authorization/Sequence%20Diagrams)
+# [Figma front-end design](https://www.figma.com/file/Yn017yQFhCZIDddC8menQT/Utification-views?node-id=0%3A1&t=dgaPizb53y1PsFsV-0)
+  * click above to be directed to link of Ui Designs
+# Steps
+ * ## Make sure npm is installed. You can check if its installed by using: npm --version
+ * ### If you see a folder with "package.json" do as follows:
+ <ol>
+  <li> in the directory with "package.json" run: npm install
+  <li> after install dependency, run: npm run dev
+ </ol>
+
+you should be in browser sync and able to see html & css 
 
