@@ -16,6 +16,7 @@ David De Girolamo <br />
 * Milestone 3
   * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone3)
 * [Spring 2023](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/spring%202023)
+# [Project Plan](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/main/milestone%201/project%20plan/version%205/TeamBigData-ProjectPlanV5.pdf)
 # [Sql Instructions](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/SQL%20Instructions)
 # Archived
   * [RFP](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/RFP)
