@@ -39,7 +39,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
-                    Console.WriteLine(rows);
                     result.isSuccessful = true;
                     result.data = rows;
                 }

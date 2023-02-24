@@ -23,9 +23,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
         public async Task CanDeleteOwnAccountAsync()
         {
             //Arrange
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBSelecter testDBO = new SqlDAO(connectionString);
-            IDAO featDBO = new SqlDAO(connectionString);
+            IDBSelecter testDBO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
+            IDAO featDBO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False");
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
             var username = "Deletius" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
@@ -39,7 +38,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Regular User"));
             var result = delMan.DeleteAccount(user, user); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful"+result.data+result.errorMessage);
+            Console.WriteLine("Account Deletion Successful"+result.errorMessage);
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -53,25 +52,19 @@ namespace TeamBigData.Utification.AccountDeletionTests
             IDAO featDBO = new SqlDAO(connectionString);
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
-            UserAccount adUserAccount = new UserAccount();
-            var username = "Zeus" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
-            UserAccount adminAccount = new UserAccount();
-            var adUsername = "Ares" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
+            var username = "Abel" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var vicUser = new UserProfile();
-            var adUser = new UserProfile();
+            var user = new UserProfile();
             var delMan = new DeletionManager();
             //Act
-            var admin = await register.RegisterUser(adUsername, encryptedPassword, encryptor);
-            var victim = await register.RegisterUser(username, encryptedPassword, encryptor);
-            var getVic = await testDBO.SelectUserAccount(ref userAccount, username);
-            vicUser = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
-            var getAd = await testDBO.SelectUserAccount(ref adUserAccount, adUsername);
-            adUser = new UserProfile(adUserAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
-            var result = delMan.DeleteAccount(vicUser, adUser);
+            var test = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity(userAccount._userID.ToString(),"Admin User"));
+            var admin = new UserProfile(new GenericIdentity("1001","Admin User"));
+            var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful");
+            Console.WriteLine("Account Deletion Successful" + result.errorMessage);
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -81,30 +74,23 @@ namespace TeamBigData.Utification.AccountDeletionTests
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var featconnectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
             IDBSelecter testDBO = new SqlDAO(connectionString);
-            IDAO featDBO = new SqlDAO(featconnectionString);
+            IDAO featDBO = new SqlDAO(connectionString);
             IRegister register = new SecurityManager();
             UserAccount userAccount = new UserAccount();
-            UserAccount adUserAccount = new UserAccount();
-            var username = "Sodom" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
-            UserAccount adminAccount = new UserAccount();
-            var adUsername = "GodAlmighty" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
+            var username = "Abel" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
-            var vicUser = new UserProfile();
-            var adUser = new UserProfile();
+            var user = new UserProfile();
             var delMan = new DeletionManager();
             //Act
-            var admin = await register.RegisterUser(adUsername, encryptedPassword, encryptor);
-            var victim = await register.RegisterUser(username, encryptedPassword, encryptor);
-            var getVic = await testDBO.SelectUserAccount(ref userAccount, username);
-            vicUser = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Regular User"));
-            var getAd = await testDBO.SelectUserAccount(ref adUserAccount, adUsername);
-            adUser = new UserProfile(adUserAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
-            var result = delMan.DeleteAccount(vicUser, adUser);
+            var test = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity(userAccount._userID.ToString(), "Regular User"));
+            var admin = new UserProfile(new GenericIdentity("1001", "Admin User"));
+            var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful");
+            Console.WriteLine("Account Deletion Successful" + result.errorMessage);
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
