@@ -1,6 +1,7 @@
 <!-- TODO: -->
 <!-- * AJAX request to different views -->
-<!-- * Refactor code to be cleaner-->
+<!-- * Home view -->
+<!-- * How to switch on and off a container: JS?-->
 
 <!DOCTYPE html>
 <html>
@@ -11,34 +12,72 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="anon/styles/anon.css">
+        <link rel="stylesheet" href="styles/anon.css">
     </head>
     <body>
+        <!-- * anon view-->
+        <div class="anon-container">
+        <div class="header-container">
+            <div class="login-register">
+                    <button type="button" id="login" onclick="alert('Redirect to Login view')">Login</button>
+                    <button type="button" id="register" onclick="alert('Redirect to register view')">Register</button>
+            </div>
+        </div>
         <div class="title">
             <h1>Utification</h1>
         </div>
-
-        <div class="login">
-            <button type="button" onclick="alert('Redirect to Login view')">Log in</button>
+        <div class="picture">
+            <img src="https://citysecuritymagazine.com/wp-content/uploads/2019/09/73p13.jpg" alt="Utification">
         </div>
-
-        <div class="register">
-            <button type="button" onclick="alert('Redirect to register view')">Register</button>
+        <div class="quote">
+            <h4>"Unify communities. Together we build cleaner and comfortable environments" </h4>
         </div>
-
-        <div class="support">
-            <button type="button" onclick="alert('Redirect to support view')">Contact Support</button>
-        </div>
-
         <div class="footer">
             <footer>&copy; 2023 Utification</footer>
+        </div>
+        </div>
+        <!--* Login view-->
+        <div class="login-container">
+            <div class="back-button">
+                <button type="button" onclick="alert('Redirect to anon view')">Back</button>
+            </div>
+            <div class="login-title">
+                <h1>Login</h1>
+            </div>
+            <div class="input-field">
+                <input type="email" placeholder="email address">
+                <input type="password" placeholder="password" minlength="8">
+                <button type="button">Submit</button>
+            </div>
 
+            <div class="options-other">
+                <button type="button" onclick="alert('redirect to account recovery view')">Forgot Password</button>
+                <button type="button" class="button2" onclick="alert('redirect to contact support')">Contact Support</button>
+            </div>
+        </div>
+        <!-- * registration view-->
+        <div class="registration-container">
+            <div class="back-button">
+                <button type="button" onclick="alert('Redirect to anon view')">Back</button>
+            </div>
+            <div class="login-title">
+                <h1>Registration</h1>
+            </div>
+            <div class="input-field">
+                <input type="email" placeholder="email address">
+                <input type="password" placeholder="password" minlength="8">
+                <input type="password" placeholder="confirm password" minlength="8">
+                <button type="button">Submit</button>
+            </div>
+            <div class="reg-contact">
+                <button type="button" onclick="alert('redirect to contact support')">Contact Support</button>
+            </div>
         </div>
 
-        <!-- inserting registration page -->
-        <div class="registration-content">
 
-        </div>
+
+
+
         
 
 

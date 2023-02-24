@@ -1,0 +1,149 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.anon-container
+{
+    display: show;
+}
+
+.header-container
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-content: space-between;
+}
+
+
+
+.login-register
+{
+    display: flex;
+    gap: 20px;
+    padding: 10px 20px;
+}
+
+.login-register button
+{
+    min-width: 50px;
+    color: white;
+    background-color: #ca74ff;
+    /* align-self: flex-end; */
+}
+
+.title 
+{
+    display: flex;
+    justify-content: center;
+
+}
+
+.picture
+{
+    display: flex;
+    padding-top: 10px;
+    /* max-width: 1100px; */
+}
+
+.picture img
+{
+    /* width: 400px; */
+    /* height:auto; */
+    min-width: 100%;
+    /* max-width: 100%; */
+    max-height: 100%;
+}
+
+.quote
+{
+    display: flex;
+    padding-top: 10px;
+    justify-content: center;
+}
+
+
+.footer 
+{
+    display: flex-end;
+    flex-direction: column;
+    /* position: relative; */
+    margin: 0 auto;;
+    /* bottom: 5px; */
+}
+
+/* end of anon view */
+
+/* Login View */
+.login-container
+{
+    display: none;
+}
+.back-button 
+{
+    padding: 10px 10px;
+}
+
+.back-button button
+{
+    min-width: 50px;
+    background-color: #00acb7;
+    color: white
+}
+
+.login-title
+{
+    display: flex;
+    justify-content: center;
+}
+
+.input-field
+{
+    display: flex;
+    padding: 30px;
+    flex-direction: column; 
+    align-items: center;
+    gap: 30px
+}
+
+.input-field input
+{
+    min-width: 50px;
+}
+.input-field button
+{
+    min-width: 100px;
+    background-color: #ca74ff;
+    color: white
+}
+
+.options-other
+{
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+}
+
+/* end of login view */
+
+
+/* Registration view */
+/* * reused from login */
+.registration-container
+{
+    display: none;
+}
+
+
+.reg-contact
+{
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 10px;
+}
+
+
+
+
+
