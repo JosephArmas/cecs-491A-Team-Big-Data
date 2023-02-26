@@ -4,6 +4,7 @@
  * check if a user is first logged in -> update-profile view
  * input validations for login/registration?
  * home view
+ * do error screen
 */
 
 // reuse function to list on back button click
