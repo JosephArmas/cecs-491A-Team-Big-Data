@@ -1,0 +1,26 @@
+*
+{
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.button-container
+{
+    display: flex;
+    justify-content: space-between;
+    padding:20px 20px;
+}
+
+#b-cp
+{
+    min-width: 100px;;
+    background-color: #3e84e6;
+    color: white;
+}
+
+#b-cu
+{
+    min-width: 100px;
+    background-color: #00b74f;
+    color: white;
+}

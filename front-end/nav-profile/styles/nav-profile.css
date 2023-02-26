@@ -31,3 +31,35 @@
     justify-content: space-around;
 
 }
+
+.security button
+{
+    background-color: green;
+    color: white;
+    width: 20%;
+}
+
+.update-profile
+{
+    background-color: beige;
+    color: white;
+    width: 20%;
+}
+
+.security
+{
+    display: flex;
+    justify-content: left center;
+    padding: 20px;
+    margin: 0 auto;
+
+}
+
+.update-profile
+{
+    display: flex;
+    justify-content: right center;
+    padding: 20px;
+    margin: 0 auto;
+
+}
