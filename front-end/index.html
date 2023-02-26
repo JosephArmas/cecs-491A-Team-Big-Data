@@ -1,7 +1,6 @@
 <!-- TODO: -->
 <!-- * AJAX request to different views -->
 <!-- * Home view -->
-<!-- * How to switch on and off a container: JS?-->
 
 <!DOCTYPE html>
 <html>
@@ -15,12 +14,55 @@
         <link rel="stylesheet" href="styles/anon.css">
     </head>
     <body>
-        <!-- * anon view-->
+        <!-- * Login view-->
+        <div class="login-container" hidden>
+            <div class="back-button">
+                <button type="button" onclick="homeClicked()">Back</button>
+            </div>
+            <div class="login-box">
+            <div class="login-title">
+                <h1>Login</h1>
+            </div>
+            <div class="input-field">
+                <input type="email" placeholder="email address">
+                <input type="password" placeholder="password" minlength="8">
+                <button type="button">Submit</button>
+            </div>
+
+            <div class="options-other">
+                <button type="button" onclick="alert('redirect to account recovery view')">Forgot Password</button>
+                <button type="button" class="button2" onclick="alert('redirect to contact support')">Contact Support</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- * Registration View -->
+        <div class="registration-container" hidden >
+            <div class="back-button">
+                <button type="button" onclick="homeClicked()">Back</button>
+            </div>
+            <div class="reg-box">
+            <div class="login-title">
+                <h1>Registration</h1>
+            </div>
+            <div class="input-field">
+                <input type="email" placeholder="email address">
+                <input type="password" placeholder="password" minlength="8">
+                <input type="password" placeholder="confirm password" minlength="8">
+                <button type="button" id="regBtn-submit" onclick="homeClicked()">Submit</button>
+            </div>
+            <div class="reg-contact">
+                <button type="button" onclick="alert('redirect to contact support')">Contact Support</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- Anon View -->
         <div class="anon-container">
         <div class="header-container">
             <div class="login-register">
-                    <button type="button" id="login" onclick="alert('Redirect to Login view')">Login</button>
-                    <button type="button" id="register" onclick="alert('Redirect to register view')">Register</button>
+                    <button type="button" id="login" onclick="loginClicked()">Login</button>
+                    <button type="button" id="register" onclick="regClicked()">Register</button>
             </div>
         </div>
         <div class="title">
@@ -36,46 +78,6 @@
             <footer>&copy; 2023 Utification</footer>
         </div>
         </div>
-        <!--* Login view-->
-        <div class="login-container">
-            <div class="back-button">
-                <button type="button" onclick="alert('Redirect to anon view')">Back</button>
-            </div>
-            <div class="login-title">
-                <h1>Login</h1>
-            </div>
-            <div class="input-field">
-                <input type="email" placeholder="email address">
-                <input type="password" placeholder="password" minlength="8">
-                <button type="button">Submit</button>
-            </div>
-
-            <div class="options-other">
-                <button type="button" onclick="alert('redirect to account recovery view')">Forgot Password</button>
-                <button type="button" class="button2" onclick="alert('redirect to contact support')">Contact Support</button>
-            </div>
-        </div>
-        <!-- * registration view-->
-        <div class="registration-container">
-            <div class="back-button">
-                <button type="button" onclick="alert('Redirect to anon view')">Back</button>
-            </div>
-            <div class="login-title">
-                <h1>Registration</h1>
-            </div>
-            <div class="input-field">
-                <input type="email" placeholder="email address">
-                <input type="password" placeholder="password" minlength="8">
-                <input type="password" placeholder="confirm password" minlength="8">
-                <button type="button">Submit</button>
-            </div>
-            <div class="reg-contact">
-                <button type="button" onclick="alert('redirect to contact support')">Contact Support</button>
-            </div>
-        </div>
-
-
-
 
 
         
@@ -89,7 +91,7 @@
         <!-- <script src="anon/sources/axios-ajax/axios.js"> </script> -->
 
         <!-- page specific (js file) -->
-        <script src="anon/sources/main.js"> </script>
+        <script src="sources/main.js"> </script>
 
         
     </body>
