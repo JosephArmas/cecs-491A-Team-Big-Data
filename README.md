@@ -1,5 +1,6 @@
 # cecs-491A-Team-Big-Data
 # [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
+# [Task Items](https://github.com/users/JosephArmas/projects/5)
 Team Lead: Joseph Armas\
 <br />
 Team Members:\
