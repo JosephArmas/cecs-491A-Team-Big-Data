@@ -801,9 +801,13 @@ namespace TeamBigData.Utification.Manager
             }
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
+            var userDelDao = new SQLDeletionDAO(connectionString);
+            IDBSelecter testDBO = new SqlDAO(connectionString);
             //var updater = new AccountDisabler(userDao);
-           // UserProfile insertUser = userDao.SelectUserProfile(delUser).Result;
-            var deleter = userDao.DeleteUser(delUser).Result;
+            UserAccount userAccount = new UserAccount();
+            response = userDao.SelectUserAccount(ref userAccount, delUser).Result;
+           
+            var deleter = userDao.DeleteUserProfile(userAccount._userID).Result;
             response = deleter;
             return response;
         }
