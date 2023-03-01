@@ -58,8 +58,10 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var digest = encryptor.encryptString(password);
             result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            securityManager.GenerateOTP();
+            var otp = securityManager.SendOTP();
             Thread.Sleep(125000);//Wait 2 Minutes
-            result = userAccount.VerifyOTP(userAccount._otp);
+            result = userAccount.VerifyOTP(otp);
             //Assert
             Assert.AreEqual(expected, result.errorMessage);
             Assert.IsFalse(result.isSuccessful);
