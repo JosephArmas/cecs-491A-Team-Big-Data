@@ -1,0 +1,168 @@
+<!-- TODO: -->
+<!-- * AJAX request to different views -->
+<!-- * AJAX  GET/ POST  with back end -->
+<!-- * Goals ? -->
+<!-- * description ? -->
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Utification</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="styles/anon.css">
+    </head>
+    <body>
+
+        <!-- * Home view -->
+        <div class="home-container" hidden>
+            <!-- reused from anon  -->
+            <div class="home-header-container">
+                <div class="menu-container">
+                    <nav class="ham-menu-container">
+                        <button type="button">ham-menu</button>
+                        <ul class="features" >
+                            <li>feature 1</li>
+                            <li>feature 2</li>
+                            <li>feature 3</li>
+                            <li>feature 4</li>
+                            <li>feature 5</li>
+                            <li>feature 6</li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="title">
+                    <h1>Utification</h1>
+                </div>
+                <div class="profile-container">
+                    <div>
+                        <!-- to not be bloated have a ajax call for the profile-nav -->
+                        <button type="button" id="profileBtn">Profile</button>
+                    </div>
+                    <div>
+                        <button type="button" id="home-logoutBtn" onclick="homeClicked()">Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div><div id="map"></div></div>
+            
+                <div class="misc">
+                    <div class="reg-contact-home">
+                        <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
+                    </div>
+                </div>
+            <div class="footer">
+                <footer>&copy; 2023 Utification</footer>
+            </div>
+        </div>
+
+        <!-- * OTP -->
+        <div class="otp-container" hidden>
+            <div class="home">
+                <button type="button" onclick="alert('Redirect to anon view')">Home</button>
+            </div>
+            <div class="otp-header">
+                <h2>Enter OTP</h2>
+            </div>
+
+            <div class="otp">
+                <input type="text"> 
+            </div>
+
+            <div class="submit">
+                <button type="button" onclick="regView()">Submit</button>
+                
+            </div>
+
+        </div>
+
+        <!-- * Login view -->
+        <div class="login-container" id="login-contianer" hidden>
+            <div class="back-button">
+                <button type="button" onclick="homeClicked()">Back</button>
+            </div>
+            <div class="login-box">
+            <div class="login-title">
+                <h1>Login</h1>
+            </div>
+            <div class="input-field">
+                <input type="email" placeholder="email address">
+                <input type="password" placeholder="password" minlength="8">
+                <button type="button" id="sub-login" onclick="otpView()">Submit</button>
+            </div>
+
+            <div class="options-other">
+                <button type="button" onclick="alert('redirect to account recovery view')">Forgot Password</button>
+                <button type="button" class="button2" onclick="alert('redirect to contact support')">Contact Support</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- * Registration View -->
+        <div class="registration-container" id="registration-container" hidden>
+            <div class="back-button">
+                <button type="button" onclick="homeClicked()">Back</button>
+            </div>
+            <div class="reg-box">
+            <div class="login-title">
+                <h1>Registration</h1>
+            </div>
+            <div class="input-field">
+                <input type="email" placeholder="email address">
+                <input type="password" placeholder="password" minlength="8">
+                <input type="password" placeholder="confirm password" minlength="8">
+                <button type="button" id="regBtn-submit" onclick="homeClicked()">Submit</button>
+            </div>
+            <div class="reg-contact">
+                <button type="button" onclick="alert('redirect to contact support')">Contact Support</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- * Anon View -->
+        <div class="anon-container" id="anon-container">
+            <div class="header-container">
+                <div class="login-register">
+                    <button type="button" id="login" onclick="loginClicked()">Login</button>
+                    <button type="button" id="register" onclick="regClicked()">Register</button>
+                </div>
+            </div>
+            <div class="title">
+                <h1>Utification</h1>
+            </div>
+            <div class="content-container">
+                <div class="box-1">
+                </div>
+                <div class="box-2">
+                </div> 
+            </div>
+            <div class="quote">
+                <h4>"Unify communities. Together we build cleaner and comfortable environments" </h4>
+            </div>
+            <div class="footer">
+                <footer>&copy; 2023 Utification</footer>
+            </div>
+        </div>
+
+        
+
+
+        <!-- TODO:add -->
+        <!-- Thirdparty dependency -->
+        <script src="node_modules/axios/dist/axios.js"></script>
+
+        <!-- App Dependency -->
+        <!-- <script src="anon/sources/axios-ajax/axios.js"> </script> -->
+
+        <!-- page specific (js file) -->
+        <script src="sources/main.js"> </script>
+        <script src="sources/map.js"> </script>
+        
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDAxXprY1K6lDtVWm4gXS81RMskECWUIQ&callback=initMap" async defer></script>
+        
+    </body>
+</html>
