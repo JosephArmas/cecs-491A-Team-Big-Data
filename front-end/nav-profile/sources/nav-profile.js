@@ -1,7 +1,11 @@
-
+// TODO:
+// * check if passwords match when confirming
+// * have the ability to see password?
+document.querySelector("#container").addEventListener("click",secClicked());
 function secClicked()
 {
-    var btnContainer = document.querySelector(".container");
+    // var btnContainer = document.querySelector(".container");
+    var btnContainer = document.querySelector("#container");
     if (btnContainer.style.display === "none")
     {
         btnContainer.style.display = "block";
@@ -26,7 +30,34 @@ function homeClicked()
 {
     var navContainer = document.querySelector(".nav-home");
     var updateContainer = document.querySelector(".nav-update");
-    updateContainer.style.display = "none";
-    navContainer.style.display = "block";
+    var passwordContainer = document.querySelector(".change-password-container");
+    var btnContainer = document.querySelector("#container");
+    if (updateContainer.style.display === "block")
+    {
+        updateContainer.style.display = "none";
+        navContainer.style.display = "block";
+    }
+    else if(passwordContainer.style.display === "block")
+    {
+        passwordContainer.style.display = "none";
+        btnContainer.style.display = "none";
+        navContainer.style.display = "block";
 
+    } 
+    // else {
+    //     passwordContainer.style.dispaly ="none";
+    //     updateContainer.style.dispaly ="none";
+    //     navContainer.style.dispaly = "none";
+
+
+    // }
+
+}
+
+function changePasswordClicked()
+{
+    var navContainer = document.querySelector(".nav-home");
+    var passwordContainer = document.querySelector(".change-password-container");
+    navContainer.style.display = "none";
+    passwordContainer.style.display = "block";
 }

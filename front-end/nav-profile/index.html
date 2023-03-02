@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="styles/nav-profile.css">
     </head>
     <body>
+        <!-- * main profile nav view-->
         <div class="nav-home">
             <div class="top-button-container">
                 <button type="button" id="b-h" onclick="alert('redirect to home')">Home</button>
@@ -24,15 +25,15 @@
                 <h3 id="update-profile" onclick="updateClicked()">Update Profile</h3>
 
             </div>
-            <div class="container">
+            <div class="container" id="container">
                 <div class="box-container">
-                    <button type="button" id="b-cp" onclick="alert('redirect to change password')">Change Password</button>
+                    <button type="button" id="b-cp" onclick="changePasswordClicked()">Change Password</button>
                     <button type="button" id="b-cu" onclick="alert('redirect to change username')">Change Username</button>
                 </div>
             </div>
         </div>
 
-        <!-- update profile -->
+        <!-- * update profile -->
         <div class="nav-update">
             <div class="Home-container">
                 <div class="home">
@@ -76,6 +77,40 @@
             </div>
             </div>
 
+            <!-- * Change password view -->
+            <div class="change-password-container">
+                <div class="sec-button-container">
+                    <button type="button" id="b-h" onclick="homeClicked()">Back</button>
+                    <button type="button" id ="b-p" onclick="">Home</button>
+                    <button type="button" id="b-l" onclick="alert('redirect to anon')">Logout</button>
+                </div>
+        
+                <div class="change-password-features">
+                    <div class="current-password">
+                        <!-- <form action="/back-end" class ="client-container"> -->
+                            <!-- <label for="current">Current Password:</label><br>
+                            <input type="text" id="current" password="current"><br>
+                            <label for="newpass">New Password:</label><br>
+                            <input type="text" id="newpass" password="newpass"><br>
+                            <label for="newredo">Retype Password:</label><br>
+                            <input type="text" id="newredo" password="newredo"><br>
+                            <input type="submit" value="Submit"> -->
+                            <input type="password" id="current" placeholder="Current Password">
+                            <input type="password" id="newpass" placeholder="New Password">
+                            <input type="password" id="newredo" placeholder="Confirm Password">
+                                <div class="submission">
+                                    <div class="check-mark">
+                                        <input type="checkbox" required>
+                                    </div>
+                                    <div class="submit">
+                                        <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
+                                    </div>
+                                </div>
+                            <!-- <button type="button">Submit</button> -->
+                        <!-- </form> -->
+                    </div>
+                </div>
+            </div>
 
 
 
