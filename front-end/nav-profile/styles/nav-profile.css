@@ -53,10 +53,14 @@
     cursor: pointer;
 }
 
-.container
+/* .container
 {
     display: none;
 
+} */
+#container
+{
+    display: none;
 }
 
 /* updat-profile */
@@ -165,3 +169,57 @@ h1
 }
 
 
+/* change password */
+.sec-button-container
+{
+    display: flex;
+    justify-content: space-between;
+    padding:20px 20px;
+}
+
+.change-password-container
+{
+    display: none;
+}
+.current-password
+{
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    /* justify-content: center; */
+    align-items: center;
+    gap: 20px;
+}
+
+.current-password input
+{
+    min-width: 50px;
+}
+
+.current-password button
+{
+    min-width: 25px;
+}
+
+
+#b-h
+{
+    min-width: 100px;;
+    background-color: #ca74ff;
+    color: white;
+}
+
+#b-l
+{
+    min-width: 100px;
+    background-color: #00acb7;
+    color: white;
+}
+
+#b-p
+{
+    min-width: 100px;
+    background-color: #00acb7;
+    color: white;
+    margin-left: 65%;
+}
