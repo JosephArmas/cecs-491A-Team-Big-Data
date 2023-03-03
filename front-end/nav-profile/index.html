@@ -1,7 +1,6 @@
 <!-- TODO: -->
 <!-- * ajax call to anon when logout clicked -->
 <!-- * ajax call to home view when clicked -->
-<!-- * incorporate change password and change username views -->
 
 <!DOCTYPE html>
 <html>
@@ -12,6 +11,9 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="styles/nav-profile.css">
+        <link rel="stylesheet" href="styles/change-password.css">
+        <link rel="stylesheet" href="styles/change-username.css">
+        <link rel="stylesheet" href="styles/update-profile.css">
     </head>
     <body>
         <!-- * main profile nav view-->
@@ -28,12 +30,12 @@
             <div class="container" id="container">
                 <div class="box-container">
                     <button type="button" id="b-cp" onclick="changePasswordClicked()">Change Password</button>
-                    <button type="button" id="b-cu" onclick="alert('redirect to change username')">Change Username</button>
+                    <button type="button" id="b-cu" onclick="changeUsernameClicked()">Change Username</button>
                 </div>
             </div>
         </div>
 
-        <!-- * update profile -->
+        <!-- * Update Profile -->
         <div class="nav-update">
             <div class="Home-container">
                 <div class="home">
@@ -87,14 +89,6 @@
         
                 <div class="change-password-features">
                     <div class="current-password">
-                        <!-- <form action="/back-end" class ="client-container"> -->
-                            <!-- <label for="current">Current Password:</label><br>
-                            <input type="text" id="current" password="current"><br>
-                            <label for="newpass">New Password:</label><br>
-                            <input type="text" id="newpass" password="newpass"><br>
-                            <label for="newredo">Retype Password:</label><br>
-                            <input type="text" id="newredo" password="newredo"><br>
-                            <input type="submit" value="Submit"> -->
                             <input type="password" id="current" placeholder="Current Password">
                             <input type="password" id="newpass" placeholder="New Password">
                             <input type="password" id="newredo" placeholder="Confirm Password">
@@ -106,9 +100,31 @@
                                         <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
                                     </div>
                                 </div>
-                            <!-- <button type="button">Submit</button> -->
-                        <!-- </form> -->
                     </div>
+                </div>
+            </div>
+
+            <!-- * Change Username view -->
+            <div class="change-username-container">
+                <div class="change-pw-top-container">
+                    <button type="button" id="cu-b" onclick="homeClicked()">Back</button>
+                    <button type="button" id ="cu-h" onclick="">Home</button>
+                    <button type="button" id="cu-l" onclick="alert('redirect to anon')">Logout</button>
+                </div>
+               
+                <div class="changeuser-input-container">
+                    <div class="cu-input">
+                        <input type="text" id="nuser" placeholder="New Username">
+                        <input type="password" id="rtuser" placeholder="Retype Username">
+                        <div class="submission">
+                            <div class="check-mark">
+                                <input type="checkbox" required>
+                            </div>
+                            <div class="submit">
+                                <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
+                            </div>
+                        </div>
+                </div>
                 </div>
             </div>
 
