@@ -24,10 +24,12 @@ function homeClicked()
 {
 
     var regContainer = document.querySelector(".registration-container");
+    var otpContainer = document.querySelector(".otp-container");
     var anonContainer = document.querySelector(".anon-container");
     var loginContainer = document.querySelector(".login-container");
     var homeContainer = document.querySelector(".home-container")
     anonContainer.style.display = "block";
+    otpContainer.style.display="none";
     homeContainer.style.display = "none";
     regContainer.style.display = "none";     
     loginContainer.style.display = "none";
