@@ -2,11 +2,14 @@
   * click above to be directed to link of Ui Designs
 # Steps
  * ## Make sure npm is installed. You can check if its installed by running in cmd or powershell: npm --version
- * ### If you see a folder with "package.json" do as follows:
- <ol>
-  <li> in the directory with "package.json" run: npm install
-  <li> after install dependency, run: npm run dev
- </ol>
+ 
+## If you see a folder with "package.json" do as follows: 
+
+  * in the directory with "package.json"\
+  ```npm install```
+  
+  * after install dependency, run: npm run dev\
+  ```npm run dev```
 
 you should be in browser sync and able to see html & css 
 
