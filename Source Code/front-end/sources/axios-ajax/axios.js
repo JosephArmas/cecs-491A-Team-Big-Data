@@ -8,8 +8,14 @@ function get(url)
     const ajax = window.axios
     // creating configs obj
     const configs = {
-        method: 'get' // property of configs obj 
+        method: 'get', // property of configs obj 
+        headers: {
+
+        }
     };
     return ajax.get(url,configs)
 }
 
+window.ajaxClient = {
+    get: get
+}
