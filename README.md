@@ -9,10 +9,10 @@
  
 ## If you see a folder with "package.json" do as follows: 
 
-  * in the directory with "package.json"\
+  * in the directory with "package.json" (should be in front-end folder)\
   ```npm install```
   
-  * after install dependency, run: npm run dev\
+  * after install dependency\
   ```npm run dev```
 
 you should be in browser sync and able to see html & css 
