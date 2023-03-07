@@ -1,6 +1,6 @@
 # [Figma front-end design](https://www.figma.com/file/Yn017yQFhCZIDddC8menQT/Utification-views?node-id=0%3A1&t=dgaPizb53y1PsFsV-0)
   * click above to be directed to link of Ui Designs
-# [Aws setup](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/joseph/AWS%20setup.pdf)
+# [Aws setup](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/joseph/AWS%20Setup.pdf)
   * steps to set up working aws
   * refer to ghabe steps for setting up security
 
