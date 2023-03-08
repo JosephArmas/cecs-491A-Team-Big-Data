@@ -269,15 +269,11 @@
 
 /* end of home view  */
 
-#map 
+.map 
 {
     height: 80vh;
     width: 100%;
     background-color: black;
-}
-
-html, body 
-{
     margin: 0;
     padding: 0;
 }
