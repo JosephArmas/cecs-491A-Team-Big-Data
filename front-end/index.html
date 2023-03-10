@@ -89,6 +89,7 @@
         <!-- * Login view -->
         <!-- <form action="/" method="GET"> -->
         <div class="login-container" id="login-contianer" hidden>
+            <form action="/" method="GET" id="login-form">
             <div class="back-button">
                 <button type="button" onclick="homeClicked()">Back</button>
             </div>
@@ -97,9 +98,9 @@
                 <h1>Login</h1>
             </div>
             <div class="input-field">
-                <input type="email" id ="email" placeholder="email address" required>
-                <input type="password" id="password" placeholder="password" minlength="8" required>
-                <button type="button" id="sub-login" onclick="otpView()">Submit</button>
+                <input type="email" id ="email" placeholder="email address" required data-error="email required" />
+                <input type="password" id="password" placeholder="password" minlength="8" required  />
+                <button type="button" id="sub-login" onclick="">Submit</button>
             </div>
 
             <div class="options-other">
@@ -107,6 +108,7 @@
                 <button type="button" class="button2" onclick="alert('redirect to contact support')">Contact Support</button>
             </div>
             </div>
+            </form>
         </div>
         <!-- </form> -->
 
