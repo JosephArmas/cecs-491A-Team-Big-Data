@@ -79,3 +79,11 @@
     flex-direction: column;
     margin: 0 auto;
 }
+
+#errors
+{
+    padding-top: 20px;
+    color:red;
+    text-align: center;
+}
+

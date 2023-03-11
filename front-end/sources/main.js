@@ -28,11 +28,13 @@ function homeClicked()
     var anonContainer = document.querySelector(".anon-container");
     var loginContainer = document.querySelector(".login-container");
     var homeContainer = document.querySelector(".home-container")
+    var globalErrors = document.querySelector("#errors");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
     regContainer.style.display = "none";     
     loginContainer.style.display = "none";
+    globalErrors.innerHTML = "";
 
 
 }
@@ -50,18 +52,42 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
+    var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
     homeContainer.style.display = "block";
 }
 
-function otpView()
+function showOtp()
 {
+    var otpContainer = document.querySelector(".otp-container");
     var loginContainer = document.querySelector(".login-container");
-    var anonContainer = document.querySelector(".anon-container");
-    var otpContainer =document.querySelector(".otp-container");
-    loginContainer.style.display = "none";
-    anonContainer.style.display = "none";
     otpContainer.style.display = "block";
+    loginContainer.style.display = "none";
+}
+
+function IsValidPassword(password)
+{
+    let passwordAllowed = new RegExp("^[a-zA-Z0-9@.,!\s-]")
+    // var passwordAllowed = /"^[a-zA-Z0-9@.,!\s-]"/;
+    if (passwordAllowed.test() && password.length >= 8)
+    {
+        return true;
+    } else
+    {
+        return false;
+    }
+}
+
+function IsValidEmail(email)
+{
+    let emailAllowed = new RegExp("^[a-zA-Z0-9@.-]*$");
+    if (emailAllowed.test(email) && email.includes("@") && !email.startsWith("@"))     
+    {
+        return true;
+    } else
+    {
+        return false;
+    }
 
 }
