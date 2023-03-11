@@ -1,7 +1,7 @@
 
 # Pre-requisite to have full stack working
   * ## **MUST** have working Database
-# Back-End Server
+# Steps for Back-End Server
   1. ## Navigate to production folder & open with Visual Studio Code
   2. ## Make sure to run TeamBigData.EntryPoint **NOT** TeamBigData.Views
 # Steps for front-end dir
