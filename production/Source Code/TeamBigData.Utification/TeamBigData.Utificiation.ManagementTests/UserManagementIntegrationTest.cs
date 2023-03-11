@@ -79,7 +79,7 @@ namespace TeamBigData.Utification.UserManagementTests
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected &&  response.isSuccessful)
+            if (actual < expected && response.isSuccessful)
             {
                 Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
@@ -121,7 +121,7 @@ namespace TeamBigData.Utification.UserManagementTests
             else
                 Assert.IsTrue(false);
         }
-       
+
         [TestMethod]
         public void DisableWithinFiveSeconds()
         {
@@ -203,56 +203,56 @@ namespace TeamBigData.Utification.UserManagementTests
             try
             {
                 /*ran into errors with getting directory path*/
-                /*string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
-                /*Directory will be created if not existing
-                Directory.CreateDirectory(directoryPath);
-                //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
-                DirectoryInfo di = new DirectoryInfo(directoryPath);
-                string filePath = Path.Combine(directoryPath, "testSize.csv");
-                //using (StreamWriter sw = new StreamWriter("testSize.csv"))
-                using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
-                {
-                    //excel has  a limit of 1million rows. but only makes a 40k kb file
-                    //so it needs to be 50 times that to reach 2GB (50 was barely not enough)
-                    //doing this will take like 4~5min
-                    for (int line = 0; line < 51500000; line++)
-                    {
-                        //the $ allows me to insert info into the string
-                        string data = $"CREATE,testSize{line}@yahoo.com,password";
-                        sw.WriteLine(data);
-                        /* if (line == 999999)
-                         {
-                             Console.WriteLine(line);
-                             break;
-                         }
-                        sw.Flush();
-                    }
-                }
-                var filenameGet = "testSize.csv";
-                var filename = @"C:\MyDir\" + filenameGet + "";
-                CsvReader csvReader = new CsvReader();
-
-                //Act
-                stopwatch.Start();
-                response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
-                stopwatch.Stop();
-            }
-            catch (OutOfMemoryException ex) 
+        /*string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+        /*Directory will be created if not existing
+        Directory.CreateDirectory(directoryPath);
+        //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
+        DirectoryInfo di = new DirectoryInfo(directoryPath);
+        string filePath = Path.Combine(directoryPath, "testSize.csv");
+        //using (StreamWriter sw = new StreamWriter("testSize.csv"))
+        using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
+        {
+            //excel has  a limit of 1million rows. but only makes a 40k kb file
+            //so it needs to be 50 times that to reach 2GB (50 was barely not enough)
+            //doing this will take like 4~5min
+            for (int line = 0; line < 51500000; line++)
             {
-                Console.WriteLine("Bulk UM was too big");
-                Assert.IsTrue(true);
+                //the $ allows me to insert info into the string
+                string data = $"CREATE,testSize{line}@yahoo.com,password";
+                sw.WriteLine(data);
+                /* if (line == 999999)
+                 {
+                     Console.WriteLine(line);
+                     break;
+                 }
+                sw.Flush();
             }
-            var actual = stopwatch.ElapsedMilliseconds;
-            //Assert
+        }
+        var filenameGet = "testSize.csv";
+        var filename = @"C:\MyDir\" + filenameGet + "";
+        CsvReader csvReader = new CsvReader();
 
-            if (actual < expected && response.isSuccessful==false)
-            {
-                Console.WriteLine("Bulk UM was successful");
-                Assert.IsTrue(true);
-            }
-            else
-                Assert.IsTrue(false); 
-        }*/
+        //Act
+        stopwatch.Start();
+        response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
+        stopwatch.Stop();
+    }
+    catch (OutOfMemoryException ex) 
+    {
+        Console.WriteLine("Bulk UM was too big");
+        Assert.IsTrue(true);
+    }
+    var actual = stopwatch.ElapsedMilliseconds;
+    //Assert
+
+    if (actual < expected && response.isSuccessful==false)
+    {
+        Console.WriteLine("Bulk UM was successful");
+        Assert.IsTrue(true);
+    }
+    else
+        Assert.IsTrue(false); 
+}*/
         [TestMethod]
         public void BulkUploadLength()
         {
@@ -278,11 +278,11 @@ namespace TeamBigData.Utification.UserManagementTests
                 int amount = 11000;
                 for (int line = 0; line < amount; line++)
                 {
-                    
+
                     //the $ allows me to insert info into the string
                     string data = $"CREATE,testLength{line}@yahoo.com,password";
                     //was encountering an error with emptyspace
-                    if (countLines < amount -1)
+                    if (countLines < amount - 1)
                     {
 
 
@@ -352,16 +352,16 @@ namespace TeamBigData.Utification.UserManagementTests
             {
                 int countLines = 0;
                 int amount = 3;
-                for(int line = 0; line < amount; line++)
+                for (int line = 0; line < amount; line++)
                 {
-                    
+
                     //the $ allows me to insert info into the string
                     string data = $"CREATE,testWork{line}@yahoo.com,password";
                     //was encountering an error with emptyspace
-                    if (countLines<amount-1)
+                    if (countLines < amount - 1)
                     {
-                        
-                        
+
+
                         //sw.Write(data);
                         sw.WriteLine(data);
 
@@ -432,7 +432,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
                     //the $ allows me to insert info into the string
                     string create = $"CREATE,testCND{line}@yahoo.com,password";
-                    string delete = $"DELETE,testCND{line -1}@yahoo.com,password";
+                    string delete = $"DELETE,testCND{line - 1}@yahoo.com,password";
                     //was encountering an error with emptyspace
                     if (countLines < amount - 1)
                     {

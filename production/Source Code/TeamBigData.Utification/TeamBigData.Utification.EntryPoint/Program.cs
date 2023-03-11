@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Net.Http.Headers;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.SQLDataAccess;

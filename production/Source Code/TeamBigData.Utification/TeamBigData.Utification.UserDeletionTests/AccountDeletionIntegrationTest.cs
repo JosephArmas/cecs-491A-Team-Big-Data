@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -38,7 +38,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Regular User"));
             var result = delMan.DeleteAccount(user, user); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful"+result.errorMessage);
+            Console.WriteLine("Account Deletion Successful" + result.errorMessage);
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.data > 0);
             Assert.IsTrue(result.isSuccessful);
@@ -60,8 +60,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
             //Act
             var test = await register.RegisterUser(username, encryptedPassword, encryptor);
             var expected = await testDBO.SelectUserAccount(ref userAccount, username);
-            user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity(userAccount._userID.ToString(),"Admin User"));
-            var admin = new UserProfile(new GenericIdentity("1001","Admin User"));
+            user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity(userAccount._userID.ToString(), "Admin User"));
+            var admin = new UserProfile(new GenericIdentity("1001", "Admin User"));
             var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 
             //Assert
             Console.WriteLine("Account Deletion Successful" + result.errorMessage);

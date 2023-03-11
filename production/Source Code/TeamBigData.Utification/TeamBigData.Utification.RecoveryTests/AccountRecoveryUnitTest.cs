@@ -32,7 +32,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             stopwatch.Start();
             secManager.GenerateOTP();
             var otp = secManager.SendOTP();
-            Response insertResult = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;   
+            Response insertResult = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
             Response fetchResult = secManagerAccRecovery.GetRecoveryRequests(ref listRequests, userProfile);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
@@ -49,7 +49,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Arrange
             var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
             SecurityManager adminManager = new SecurityManager();
-            var userProfile = new UserProfile(new GenericIdentity("username","Admin User"));
+            var userProfile = new UserProfile(new GenericIdentity("username", "Admin User"));
             var stopwatch = new Stopwatch();
             long expected = 5 * 1000;
             //Act

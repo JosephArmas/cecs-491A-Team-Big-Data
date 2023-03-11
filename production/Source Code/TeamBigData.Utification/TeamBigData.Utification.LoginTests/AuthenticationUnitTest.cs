@@ -1,4 +1,4 @@
-using TeamBigData.Utification.Cryptography;
+﻿using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
@@ -19,7 +19,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = encryptor.decryptString(encrypted);
             //Assert
             Assert.AreEqual(expected, result);
-        }    
+        }
 
         [TestMethod]
         public void FailsWhenInvalidCredentials()
@@ -35,7 +35,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             UserProfile userProfile = new UserProfile();
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser( username, digest, encryptor,  ref userAccount, ref userProfile).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             var message = securityManager.SendOTP();
             var result2 = securityManager.LoginOTP(message);
             //Assert
