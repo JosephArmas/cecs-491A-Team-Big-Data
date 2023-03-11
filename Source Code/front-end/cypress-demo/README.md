@@ -14,4 +14,4 @@ The demo will open Cypress in UI mode and the user can use the guided tour to wa
     ```npm install```
 
 2. Run the demo  
-    ```npm run test:cy```
+    ```front-end```

@@ -11,7 +11,7 @@
 // please read our getting started guide:
 // https://on.cypress.io/introduction-to-cypress
 
-describe('map test cases', () => {
+describe('map e2e test cases', () => {
     beforeEach(() => {
       // Arrange
       cy.visit('http://localhost:3000')
