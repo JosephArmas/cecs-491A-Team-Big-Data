@@ -4,11 +4,11 @@
 // Google maps api code follows Google's map api doc tutorials. https://developers.google.com/maps/documentation/javascript/overview#maps_map_simple-javascript
 (function (root, ajaxClient) {
     // Dependency check
-    const isValid = root && ajaxClient;
-    if(!isValid){
-        // Handle missing dependencies
-        alert("Missing dependencies");
-    }
+    // const isValid = root && ajaxClient;
+    // if(!isValid){
+    //     // Handle missing dependencies
+    //     alert("Missing dependencies");
+    // }
     const CALIFORNIA_BOUNDS = {
         north: 42.009517,
         south: 32.528832,
@@ -20,7 +20,7 @@
 
     var script = document.createElement('script');
     // * below is where you were edit to enter your own API key
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyD0CMp5YaPFs_dJjnWubKmXGWyOyTbThGg=US&language=en&callback=initMap';
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
     script.async = true;
 
     let map;

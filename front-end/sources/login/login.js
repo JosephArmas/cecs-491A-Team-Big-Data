@@ -22,7 +22,6 @@ loginBtn.addEventListener('click', function (event)
     } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
     {
         loginUser();
-        // sendOtp();
 
     } else
     {
@@ -55,9 +54,17 @@ function loginUser()
         }
     }).catch(function (error)
         {
-            let errorAfter = error.response.data;
-            let cleanError = errorAfter.replace(/"/g,"");
-            errorsDiv.innerHTML = cleanError; 
+            if (error.response.status == 500)
+            {
+                errorsDiv.style.color = "red"; 
+                errorsDiv.innerHTML = "server error. Please try again later";
+            } else
+            {
+                let errorAfter = error.response.data;
+                let cleanError = errorAfter.replace(/"/g,"");
+                errorsDiv.style.color = "red"; 
+                errorsDiv.innerHTML = cleanError; 
+            }
         });
 }
 

@@ -19,7 +19,7 @@
     color: white
 
 }
-
+/*
 .map
 {
     border: 5px solid black;
@@ -28,6 +28,7 @@
     margin-right: 20%;
 
 }
+*/
 
 
 .misc
@@ -40,4 +41,13 @@
 {
     padding-right: 25px;
 
+}
+
+#map
+{
+    height: 80vh;
+    width: 100%;
+    background-color: black;
+    margin: 0;
+    padding:0;
 }

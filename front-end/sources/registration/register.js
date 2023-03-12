@@ -13,9 +13,12 @@ regBtn.addEventListener('click', function (event)
    event.preventDefault();
    if (registerEmail.value == '' || registerPassword.value == '' || confirmedPassword.value == '')
    {
+      
+      errorsDiv.style.color = "red";
       errorsDiv.innerHTML = "Please fill in all fields";
    } else if(registerPassword.value !== confirmedPassword.value)
    {
+      errorsDiv.style.color = "red";
       errorsDiv.innerHTML = "Passwords do not match";
 
    } else if(IsValidPassword(registerPassword.value) === true && IsValidEmail(registerEmail.value) === true)
@@ -25,11 +28,17 @@ regBtn.addEventListener('click', function (event)
    }
    else if (IsValidPassword(registerPassword.value) === false)
    {
+      errorsDiv.style.color = "red";
       errorsDiv.innerHTML = "Password must be at least 8 characters long";
-   } else{
+   } else if (IsValidEmail(registerEmail.value) === false || IsValidPassword(registerPassword.value) === false){
       
+      errorsDiv.style.color = "red";
       errorsDiv.innerHTML = "Error with email or password. Please try again";
       
+   }
+   else {
+      errorsDiv.innerHTML = "server error";
+
    }
    regForm.reset()
 
@@ -55,9 +64,18 @@ function registerUser()
          errorsCont.innerHTML = cleanResponse +  ". Please return to home screen to login.";
    }).catch(function (error)
    {
-      let errorAfter = error.response.data
-      let cleanError = errorAfter.replace(/"/g,"");
-      errorsCont.innerHTML = cleanError; 
+      if(error.response.status == 500)
+      {
+         console.log(error.response.status)
+         errorsCont.style.color = "red";
+         errorsCont.innerHTML = "Server error, try again later.";
+      } else
+      {
+         let errorAfter = error.response.data
+         let cleanError = errorAfter.replace(/"/g,"");
+         errorsDiv.style.color = "red";
+         errorsCont.innerHTML = cleanError; 
+      }
 
    });
    regForm.reset();

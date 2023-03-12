@@ -9,6 +9,7 @@ otpBtn.addEventListener('click', function (event)
     event.preventDefault();
     if (otpInput.value == '')
     {
+        errorsOtp.stytle.color = "red";
         errorsOtp.innerHTML = "Please enter OTP";
 
     } else if (otpInput.value == otpVal) 
