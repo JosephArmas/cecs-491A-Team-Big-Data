@@ -88,6 +88,33 @@ CONSTRAINT UserProfiles_Foreign_Key_01 FOREIGN KEY (userID) references dbo.Users
 );
 ```
 
+* Open console for TeamBigData.Utification.Features
+```
+CREATE TABLE dbo."Events"
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+
+CREATE TABLE dbo.Pictures
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+
+CREATE TABLE dbo.Pins
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+
+CREATE TABLE dbo."Services"
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+```
+
 # Step 5 (optional) instead of using Integrated Security and using the root/admin user created earlier
 * In each corresponding database console
 ```
