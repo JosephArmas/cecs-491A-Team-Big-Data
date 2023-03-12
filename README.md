@@ -8,7 +8,7 @@
  * ## Make sure npm is installed. You can check if its installed by running in cmd or powershell: 
    ```npm --version```
  
- * ## Navidate to front-end folder 
+ * ## Navigate to front-end folder 
    ```npm install```
   
   * After install dependency\
