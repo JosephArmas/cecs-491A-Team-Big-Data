@@ -341,7 +341,7 @@ namespace TeamBigData.Utification.UserManagementTests
             var stopwatch = new Stopwatch();
             var expected = 5000;
             /*ran into errors with getting directory path*/
-            string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+            string directoryPath = @"C:\MyDir";
             /*Directory will be created if not existing*/
             Directory.CreateDirectory(directoryPath);
             //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
@@ -394,6 +394,8 @@ namespace TeamBigData.Utification.UserManagementTests
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
+            Console.WriteLine(response.errorMessage);
+
             //Assert
 
             if (actual < expected && response.isSuccessful)
@@ -416,7 +418,7 @@ namespace TeamBigData.Utification.UserManagementTests
             var stopwatch = new Stopwatch();
             var expected = 5000;
             /*ran into errors with getting directory path*/
-            string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+            string directoryPath = @"C:\MyDir";
             /*Directory will be created if not existing*/
             Directory.CreateDirectory(directoryPath);
             //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
