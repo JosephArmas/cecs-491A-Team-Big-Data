@@ -537,7 +537,7 @@ namespace TeamBigData.Utification.Manager
             var currentTime = DateTime.Now;
             if (enteredOTP.Equals(_otp))
             {
-                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //12000000000 ticks in 2 minutes
+                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //1200000000 ticks in 2 minutes
                 {
                     result.isSuccessful = true;
                     result.errorMessage = "OTP Verified";

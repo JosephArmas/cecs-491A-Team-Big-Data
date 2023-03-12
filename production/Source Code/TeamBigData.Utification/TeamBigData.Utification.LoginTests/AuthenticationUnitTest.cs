@@ -49,17 +49,12 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Arrange
             var result = new Response();
             var securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
-            var password = "password";
             var expected = "OTP Expired, Please Authenticate Again";
-            var userAccount = new UserAccount();
-            var userProfile = new UserProfile();
             //Act
-            var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            securityManager.GenerateOTP();
+            var otp = securityManager.SendOTP();
             Thread.Sleep(125000);//Wait 2 Minutes
-            result = userAccount.VerifyOTP(userAccount._otp);
+            result = securityManager.VerifyOTP(otp);
             //Assert
             Assert.AreEqual(expected, result.errorMessage);
             Assert.IsFalse(result.isSuccessful);
