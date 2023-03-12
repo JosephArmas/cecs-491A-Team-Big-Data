@@ -91,7 +91,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var log = new Log(1, "Info", "SYSTEM", "CantLoginWhenDisabled", "Data", "This is a automated test");
 
             //Act
-            enabler.DisableAccount("disabledUser@yahoo.com");
+            var response = enabler.DisableAccount("disabledUser@yahoo.com");
             var digest = encryptor.encryptString(password);
             result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             var rows = sysUnderTest.Log(log).Result;

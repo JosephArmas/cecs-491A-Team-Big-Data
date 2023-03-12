@@ -648,7 +648,7 @@ namespace TeamBigData.Utification.Manager
             response = selectDAO.SelectUserAccountTable(ref list).Result;
             return response;
         }*/
-        public Response ResetAccount(String disabledUser, UserProfile userProfile)
+        public Response ResetAccount(int disabledUserId, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -660,17 +660,17 @@ namespace TeamBigData.Utification.Manager
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
             //Find What they want to reset password to
-            var findTask = userDao.GetNewPassword(disabledUser).Result;
+            var findTask = userDao.GetNewPassword(disabledUserId).Result;
             //Change Password
             if(findTask.isSuccessful)
             {
-                var changeTask = userDao.ResetAccount(disabledUser, (String)findTask.data).Result;
+                var changeTask = userDao.ResetAccount(disabledUserId, (String)findTask.data).Result;
                 if (changeTask.isSuccessful)
                 {
                     //Mark Request as Fullfilled
                     var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                     var requestDB = new SqlDAO(requestConnectionString);
-                    var RequestFulfilled = requestDB.RequestFulfilled(disabledUser).Result;
+                    var RequestFulfilled = requestDB.RequestFulfilled(disabledUserId).Result;
                     if(RequestFulfilled.isSuccessful)
                     {
                         response.isSuccessful = true;
@@ -724,7 +724,7 @@ namespace TeamBigData.Utification.Manager
             return result;
         }
 
-        public Response GetRecoveryRequests(ref List<string> requests, UserProfile userProfile)
+        public Response GetRecoveryRequests(ref List<int> requests, UserProfile userProfile)
         {
             var response = new Response();
             if(!((IPrincipal)userProfile).IsInRole("Admin User"))

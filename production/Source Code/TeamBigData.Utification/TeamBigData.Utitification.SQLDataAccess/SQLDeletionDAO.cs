@@ -50,6 +50,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
+                Console.WriteLine(result.errorMessage);
                 tcs.SetResult(result);
                 return tcs.Task;
             }

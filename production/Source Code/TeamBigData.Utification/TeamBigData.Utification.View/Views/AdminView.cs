@@ -87,7 +87,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     Console.WriteLine("Printing out Recovery Requests");
                     SecurityManager manager = new SecurityManager();
-                    List<string> listRequests = new List<string>();
+                    List<int> listRequests = new List<int>();
                     manager.GetRecoveryRequests(ref listRequests, userProfile);
                     for (int i = 0; i < listRequests.Count; i++)
                         Console.WriteLine(listRequests[i].ToString());

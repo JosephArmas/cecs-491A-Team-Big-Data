@@ -26,7 +26,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var username = "testUser@yahoo.com";
             var newPassword = "password";
             var encryptedPassword = encryptor.encryptString(newPassword);
-            List<string> listRequests = new List<string>();
+            List<int> listRequests = new List<int>();
             //Act
             //Insert Request and Check if its Available
             stopwatch.Start();
@@ -38,6 +38,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
             Assert.IsNotNull(listRequests);
+            Assert.IsTrue(listRequests.Count > 0);
             Assert.IsTrue(insertResult.isSuccessful && fetchResult.isSuccessful);
             Assert.AreEqual(insertResult.errorMessage, "Account recovery request sent");
             Assert.IsTrue(actual < expected);
@@ -52,9 +53,12 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var userProfile = new UserProfile(new GenericIdentity("username", "Admin User"));
             var stopwatch = new Stopwatch();
             long expected = 5 * 1000;
+            var list = new List<int>();
+            var getResponse = adminManager.GetRecoveryRequests(ref list, userProfile);
+            Console.WriteLine(list.ToString());
             //Act
             stopwatch.Start();
-            var enableResponse = adminManager.ResetAccount("1049", userProfile);
+            var enableResponse = adminManager.ResetAccount(list[0], userProfile);
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;
 

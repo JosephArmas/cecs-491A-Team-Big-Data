@@ -959,7 +959,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> GetRecoveryRequests(ref List<String> requests)
+        public Task<Response> GetRecoveryRequests(ref List<int> requests)
         {
             var response = new Response();
             var tcs = new TaskCompletionSource<Response>();
@@ -973,14 +973,14 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         while (reader.Read())
                         {
-                            String userName = "";
+                            int userId = 0;
 
                             int ordinal = reader.GetOrdinal("userID");
                             if (!reader.IsDBNull(ordinal))
                             {
-                                userName = reader.GetString(ordinal);
+                                userId = reader.GetInt32(ordinal);
                             }
-                            requests.Add(userName);
+                            requests.Add(userId);
                         }
                         reader.Close();
                         response.isSuccessful = true;
@@ -1000,7 +1000,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> GetNewPassword(string userID)
+        public Task<Response> GetNewPassword(int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -1036,7 +1036,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> CountUserLoginAttempts(String username)
+        public Task<Response> CountUserLoginAttempts(int userId)
         {
             var tcs = new TaskCompletionSource<Response>();
             var list = new ArrayList();
@@ -1046,7 +1046,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + username + "' AND " +
+                var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + userId + "' AND " +
                     "\"timestamp\" >= DATEADD(day, -1, getDate()) order by \"timestamp\" asc";
                 try
                 {
@@ -1072,7 +1072,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> ResetAccount(String userID, String newPassword)
+        public Task<Response> ResetAccount(int userID, String newPassword)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -1170,7 +1170,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         }
         */
 
-        public Task<Response> RequestFulfilled(string userID)
+        public Task<Response> RequestFulfilled(int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
