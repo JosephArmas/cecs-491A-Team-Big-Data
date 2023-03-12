@@ -34,21 +34,6 @@ ALTER ROLE [db_datareader] ADD MEMBER AppUser;
 Grant INSERT to AppUser;
 ```
 
-* Open console for TeamBigData.Utification.Users
-```
-CREATE TABLE dbo.Users
-(
-userID int NOT NULL Identity(1001,1),
-username varchar(50),
-"password" varchar(200),
-"disabled" int DEFAULT 0,
-salt varchar(50),
-userHash varchar(200),
-CONSTRAINT Users_Primary_Key PRIMARY KEY(userID),
-CONSTRAINT Users_Candidate_Key_01 UNIQUE (username)
-);
-```
-
 * Open console for TeamBigData.Utification.UserHash
 ```
 CREATE TABLE dbo.UserHash
