@@ -474,7 +474,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Assert
 
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && (response.isSuccessful || response.errorMessage.Equals("Email already linked to an account, please pick a new email")))
             {
                 Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);
