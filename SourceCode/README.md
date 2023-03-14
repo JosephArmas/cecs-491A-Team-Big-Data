@@ -11,7 +11,7 @@ David De Girolamo <br />
 Data Base: 	Make sure to follow sql instructions to set up database.
 
 Back-end: 	Open TeamBigData.Utification.sln in Visual Studio.
-		Right click on "Utification.EntryPoint" and select "Set as Startup Project"
+		In the Solutions Explorer right click on "Utification.EntryPoint" and select "Set as Startup Project"
 
 Front-end:	Open front-end folder in VS Code and open two terminals.
 		First terminal run "npm install" then "npm run dev" to turn on front-end.
