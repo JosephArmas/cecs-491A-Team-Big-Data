@@ -55,7 +55,6 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             long expected = 5 * 1000;
             var list = new List<int>();
             var getResponse = adminManager.GetRecoveryRequests(ref list, userProfile);
-            Console.WriteLine(list.ToString());
             //Act
             stopwatch.Start();
             var enableResponse = adminManager.ResetAccount(list[0], userProfile);

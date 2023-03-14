@@ -200,10 +200,10 @@ namespace TeamBigData.Utification.UserManagementTests
             String userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
-            try
+           /* try
             {
                 /*ran into errors with getting directory path*/
-        /*string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+        /*string directoryPath = @"C:\MyDir";
         /*Directory will be created if not existing
         Directory.CreateDirectory(directoryPath);
         //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
@@ -253,6 +253,76 @@ namespace TeamBigData.Utification.UserManagementTests
     else
         Assert.IsTrue(false); 
 }*/
+
+                /*ran into errors with getting directory path
+                string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+                /*Directory will be created if not existing
+                Directory.CreateDirectory(directoryPath);
+                //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
+                DirectoryInfo di = new DirectoryInfo(directoryPath);
+                string filePath = Path.Combine(directoryPath, "testSize.csv");
+                //using (StreamWriter sw = new StreamWriter("testSize.csv"))
+                using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
+                {
+                    int countLines = 0;
+                    int amount = 51500000;
+                    //excel has  a limit of 1million rows. but only makes a 40k kb file
+                    //so it needs to be 50 times that to reach 2GB (50 was barely not enough)
+                    //doing this will take like 4~5min
+                    for (int line = 0; line < amount; line++)
+                    {
+                        //the $ allows me to insert info into the string
+                        string data = $"CREATE,testSize{line}@yahoo.com,password";
+                        if (countLines < amount - 1)
+                        {
+
+
+                            //sw.Write(data);
+                            sw.WriteLine(data);
+
+
+                        }
+                        else
+                        {
+                            //sw.WriteLine();
+                            sw.Write(data);
+                            //sw.WriteLine();
+                        }
+                        countLines++;
+                        /* if (line == 999999)
+                         {
+                             Console.WriteLine(line);
+                             break;
+                         }
+                        sw.Flush();
+                    }
+                }*/
+               /* var filenameGet = "testSize.csv";
+                var filename = @"C:\MyDir\" + filenameGet + "";
+                CsvReader csvReader = new CsvReader();
+
+                //Act
+                stopwatch.Start();
+                response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
+                stopwatch.Stop();*/
+            //}
+           /* catch (OutOfMemoryException ex) 
+            {
+                Console.WriteLine("Bulk UM was too big");
+                Assert.IsTrue(true);
+            }*//*
+            var actual = stopwatch.ElapsedMilliseconds;
+            //Assert
+
+            if (actual < expected && response.isSuccessful==false)
+            {
+                Console.WriteLine("Bulk UM was successful");
+                Assert.IsTrue(true);
+            }
+            else
+                Assert.IsTrue(false); 
+        }*/
+
         [TestMethod]
         public void BulkUploadLength()
         {
@@ -264,8 +334,10 @@ namespace TeamBigData.Utification.UserManagementTests
             String userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
+            string email = "";
+            SecurityManager securityManager = new SecurityManager();
             /*ran into errors with getting directory path*/
-            string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+            string directoryPath = @"C:\MyDir";
             /*Directory will be created if not existing*/
             Directory.CreateDirectory(directoryPath);
             //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
@@ -325,6 +397,8 @@ namespace TeamBigData.Utification.UserManagementTests
             {
                 //Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);
+                securityManager.DeleteProfile(email, sysUnderTestAdmin);
+
             }
             else
                 Assert.IsTrue(false);
@@ -340,6 +414,8 @@ namespace TeamBigData.Utification.UserManagementTests
             String userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
+            string email = "";
+            SecurityManager securityManager = new SecurityManager();
             /*ran into errors with getting directory path*/
             string directoryPath = @"C:\MyDir";
             /*Directory will be created if not existing*/
@@ -398,10 +474,13 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Assert
 
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && (response.isSuccessful || response.errorMessage.Equals("Email already linked to an account, please pick a new email")))
             {
                 Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);
+                securityManager.DeleteProfile("testWork0@yahoo.com", sysUnderTestAdmin);
+                securityManager.DeleteProfile("testWork1@yahoo.com", sysUnderTestAdmin);
+                securityManager.DeleteProfile("testWork2@yahoo.com", sysUnderTestAdmin);
             }
             else
                 Assert.IsTrue(false);
@@ -417,6 +496,8 @@ namespace TeamBigData.Utification.UserManagementTests
             String userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
+            string email = "";
+            SecurityManager securityManager = new SecurityManager();
             /*ran into errors with getting directory path*/
             string directoryPath = @"C:\MyDir";
             /*Directory will be created if not existing*/

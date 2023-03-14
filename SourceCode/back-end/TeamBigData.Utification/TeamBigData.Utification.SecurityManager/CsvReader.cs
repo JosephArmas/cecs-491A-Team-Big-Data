@@ -13,6 +13,7 @@ using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.SQLDataAccess;
+using System.IO;
 
 
 namespace TeamBigData.Utification.Manager
@@ -54,8 +55,10 @@ namespace TeamBigData.Utification.Manager
             var response = new Response();
             CsvReaderModel csvModel = new CsvReaderModel(filename);
             List<CsvReader> requests = await ReadFileCsv(filename);
-            
-            if (csvModel.Length > 2147483648)
+            long fileSize = new FileInfo(filename).Length;
+
+
+            if (fileSize > 2147483648)
             {
                 response.errorMessage = "File Size is too Big";
                 response.isSuccessful = false;
@@ -120,7 +123,18 @@ namespace TeamBigData.Utification.Manager
         public async Task<List<CsvReader>> ReadFileCsv(string filename)
         {
             var csvReader = new List<CsvReader>();
-            using (StreamReader reader = new StreamReader(filename))
+            //https://stackoverflow.com/questions/1862982/c-sharp-filestream-optimal-buffer-size-for-writing-large-files
+            //bufferSize of 4 megabytes
+            var bufferSize = 4194304;
+            /*FileStrea needs a path: filename
+             *Mode: Open- opens a file
+             *Access: Read access
+             *Share: None - security 
+             *BufferSize: file sent over packets instead a one big payload
+             *Options: Asynchronus - want to read the file with async
+             */
+            using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.None, bufferSize, FileOptions.Asynchronous))
+            using (StreamReader reader = new StreamReader(fs))
             {
                 //reads until end of line
                 //ReadToEnd was reccommended during office hours
@@ -229,19 +243,26 @@ namespace TeamBigData.Utification.Manager
             var readAll = await File.ReadAllLinesAsync(filename);
             var response = new Response();
             int lines = 0;
-            using (StreamReader reader = new StreamReader(filename))
-            {
-                foreach (var line in readAll)
+            //https://stackoverflow.com/questions/1862982/c-sharp-filestream-optimal-buffer-size-for-writing-large-files
+            //resource looked at when learning about buffer sizes
+            /* decided to move this check to the CsvReader*/
+            //var bufferSize = 2 * *22;
+            //using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Write, FileShare.None, bufferSize))
+            //{
+                using (StreamReader reader = new StreamReader(filename))
                 {
-                    lines++;
-                    if(lines > 10000)
+                    foreach (var line in readAll)
                     {
-                        response.isSuccessful = false;
-                        response.errorMessage = "File has too many lines";
-                        return response;
+                        lines++;
+                        if (lines > 10000)
+                        {
+                            response.isSuccessful = false;
+                            response.errorMessage = "File has too many lines";
+                            return response;
+                        }
                     }
                 }
-            }
+           // }
             response.isSuccessful = true;
             //tcs.SetResult(response);
             return response;
