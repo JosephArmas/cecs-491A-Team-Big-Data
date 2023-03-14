@@ -8,8 +8,8 @@ describe('pin e2e test cases', () => {
     cy.get('button[id=login]').click()
     cy.get('#email').type('test@gmail.com')
     cy.get('#password').type('password')
-    cy.get('button[id=sub-login]').click()
-    cy.get('#otp-display').invoke('text').wait(500).then((text) => {
+    cy.get('button[id=sub-login]').click().wait(500)
+    cy.get('#otp-display').invoke('text').then((text) => {
       cy.get('#otp-input').type(text)
       cy.get('button[id=otp-submit]').click()
     })

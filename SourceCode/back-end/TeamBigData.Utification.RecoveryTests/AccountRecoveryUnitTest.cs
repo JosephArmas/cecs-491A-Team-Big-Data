@@ -57,11 +57,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var getResponse = adminManager.GetRecoveryRequests(ref list, userProfile);
             //Act
             stopwatch.Start();
-<<<<<<<< HEAD:SourceCode/back-end/TeamBigData.Utification.AccountRecoveryTests/AccountRecoveryIntegrationTest.cs
-            var enableResponse = adminManager.ResetAccount("1017", userProfile);
-========
             var enableResponse = adminManager.ResetAccount(list[0], userProfile);
->>>>>>>> integration:SourceCode/back-end/TeamBigData.Utification.RecoveryTests/AccountRecoveryUnitTest.cs
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;
 

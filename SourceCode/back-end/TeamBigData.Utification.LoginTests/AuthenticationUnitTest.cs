@@ -51,19 +51,10 @@ namespace TeamBigData.Utification.AuthenticationTests
             var securityManager = new SecurityManager();
             var expected = "OTP Expired, Please Authenticate Again";
             //Act
-<<<<<<<< HEAD:SourceCode/back-end/TeamBigData.Utification.AuthenticationTests/AuthenticationUnitTest.cs
-            var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
-            securityManager.GenerateOTP();
-            var otp = securityManager.SendOTP();
-            Thread.Sleep(125000);//Wait 2 Minutes
-            result = userAccount.VerifyOTP(otp);
-========
             securityManager.GenerateOTP();
             var otp = securityManager.SendOTP();
             Thread.Sleep(125000);//Wait 2 Minutes
             result = securityManager.VerifyOTP(otp);
->>>>>>>> integration:SourceCode/back-end/TeamBigData.Utification.LoginTests/AuthenticationUnitTest.cs
             //Assert
             Assert.AreEqual(expected, result.errorMessage);
             Assert.IsFalse(result.isSuccessful);
