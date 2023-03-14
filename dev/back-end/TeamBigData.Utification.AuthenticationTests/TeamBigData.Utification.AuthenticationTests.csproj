@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
+  </ItemGroup>
+
+</Project>
