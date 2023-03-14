@@ -26,7 +26,7 @@ namespace TeamBigData.Utification.AuthenticationTests
         {
             //Arrange
             var result = new Response();
-            var expected = "User doesn't exist.";
+            var expected = "Invalid username or password provided. Retry again or contact system administrator";
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
