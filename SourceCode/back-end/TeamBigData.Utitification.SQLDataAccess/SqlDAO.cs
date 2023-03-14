@@ -959,7 +959,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> GetRecoveryRequests(ref List<String> requests)
+        public Task<Response> GetRecoveryRequests(ref List<int> requests)
         {
             var response = new Response();
             var tcs = new TaskCompletionSource<Response>();
@@ -973,14 +973,14 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         while (reader.Read())
                         {
-                            String userName = "";
+                            int userId = 0;
 
                             int ordinal = reader.GetOrdinal("userID");
                             if (!reader.IsDBNull(ordinal))
                             {
-                                userName = reader.GetString(ordinal);
+                                userId = reader.GetInt32(ordinal);
                             }
-                            requests.Add(userName);
+                            requests.Add(userId);
                         }
                         reader.Close();
                         response.isSuccessful = true;
@@ -1000,7 +1000,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> GetNewPassword(string userID)
+        public Task<Response> GetNewPassword(int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -1036,7 +1036,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> CountUserLoginAttempts(String username)
+        public Task<Response> CountUserLoginAttempts(int userId)
         {
             var tcs = new TaskCompletionSource<Response>();
             var list = new ArrayList();
@@ -1046,7 +1046,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + username + "' AND " +
+                var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + userId + "' AND " +
                     "\"timestamp\" >= DATEADD(day, -1, getDate()) order by \"timestamp\" asc";
                 try
                 {
@@ -1072,7 +1072,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> ResetAccount(String userID, String newPassword)
+        public Task<Response> ResetAccount(int userID, String newPassword)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -1170,7 +1170,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         }
         */
 
-        public Task<Response> RequestFulfilled(string userID)
+        public Task<Response> RequestFulfilled(int userID)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
@@ -1203,6 +1203,98 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
             tcs.SetResult(result);
             return tcs.Task;
+        }
+        public Task<List<Pin>> SelectPinTable()
+        {
+            var tcs = new TaskCompletionSource<List<Pin>>();
+            List<Pin> pins = new List<Pin>();
+            Response result = new Response();
+            string sqlStatement = "SELECT * FROM dbo.Pins";
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    connect.Open();
+                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    {
+                        // read through all rows
+                            while (reader.Read())
+                            {
+                                int pinID = 0;
+                                int userID = 0;
+                                string lat = "";
+                                string lng = "";
+                                int pinType = 0;
+                                string description = "";
+                                int disabled = 0;
+                                pinID = reader.GetInt32(0);
+                                userID = reader.GetInt32(1);
+                                lat = reader.GetString(2);
+                                lng = reader.GetString(3);
+                                pinType = reader.GetInt32(4);
+                                description = reader.GetString(5);
+                                disabled = reader.GetInt32(6);
+                                pins.Add(new Pin(pinID, userID, lat, lng, pinType, description, disabled));
+                            }
+                        reader.Close();
+                    }
+                    connect.Close();
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                if (pins.Count > 0)
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "Returning List of Pins";
+                    result.data = pins;
+                }
+                else if (pins.Count == 0 && result.errorMessage.Equals(""))
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "Empty List of Pins";
+                    result.data = pins;
+                }
+            }
+            tcs.SetResult(pins);
+            return tcs.Task;
+        }
+
+        public Task<Response> InsertPin(Pin pin)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var insertSql = "INSERT INTO dbo.Pins (userID,lat,lng,pinType,\"description\",\"disabled\") values('" + pin._userID + "', '" + pin._lat + "', '" + pin._lng + "', " + pin._pinType + ", '" + pin._description + "', " + pin._disabled + ")";
+                //Executes the SQL Insert Statement using the Connection String provided
+                try
+                {
+                    var command = new SqlCommand(insertSql, connection);
+                    var rows = command.ExecuteNonQuery();
+                    if (rows == 1)
+                    {
+                        result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
         }
     }
 }

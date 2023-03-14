@@ -39,7 +39,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
-                    Console.WriteLine(rows);
                     result.isSuccessful = true;
                     result.data = rows;
                 }
@@ -51,6 +50,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
+                Console.WriteLine(result.errorMessage);
                 tcs.SetResult(result);
                 return tcs.Task;
             }

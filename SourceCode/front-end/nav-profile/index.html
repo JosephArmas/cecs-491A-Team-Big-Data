@@ -1,0 +1,144 @@
+<!-- TODO: -->
+<!-- * ajax call to anon when logout clicked -->
+<!-- * ajax call to home view when clicked -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles/nav-profile.css">
+        <link rel="stylesheet" href="styles/change-password.css">
+        <link rel="stylesheet" href="styles/change-username.css">
+        <link rel="stylesheet" href="styles/update-profile.css">
+    </head>
+    <body>
+        <!-- * main profile nav view-->
+        <div class="nav-home">
+            <div class="top-button-container">
+                <button type="button" id="b-h" onclick="alert('redirect to home')">Home</button>
+                <button type="button" id="b-l" onclick="alert('redirect to anon')">Logout</button>
+            </div>
+            <div class="options-container">
+                <h3 id="sec" onclick="secClicked()">Security</h3>
+                <h3 id="update-profile" onclick="updateClicked()">Update Profile</h3>
+
+            </div>
+            <div class="container" id="container">
+                <div class="box-container">
+                    <button type="button" id="b-cp" onclick="changePasswordClicked()">Change Password</button>
+                    <button type="button" id="b-cu" onclick="changeUsernameClicked()">Change Username</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- * Update Profile -->
+        <div class="nav-update">
+            <div class="Home-container">
+                <div class="home">
+                    <button type="button" onclick="homeClicked()">Back</button>
+                </div>
+            </div>
+
+            <h1>Update Profile</h1>
+            <div class="name-container">
+                <div class="fname">
+                    <input type="text" placeholder="First name"required>
+                </div>
+
+                <div class="lname">
+                    <input type="text" placeholder="Last name" required>
+                </div>
+            </div>
+
+            <div class="personal-container">
+                <div class="age">
+                    <input type="number" min="1" placeholder="Age" required>
+                </div>
+                <div class="city">
+                    <input text="input" placeholder="City" required>
+                </div>
+                <div class="zip-code">
+                    <input type="number" placeholder="Postal Code" pattern="[0-9]{5}" minlength="5" maxlength="5" required>
+                </div>
+                <div class="address">
+                    <input type="text" placeholder="Address">
+                </div>
+            </div>
+
+            <div class="submission">
+                <div class="check-mark">
+                    <input type="checkbox" required>
+                </div>
+                <div class="submit">
+                    <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
+                </div>
+            </div>
+            </div>
+
+            <!-- * Change password view -->
+            <div class="change-password-container">
+                <div class="sec-button-container">
+                    <button type="button" id="b-h" onclick="homeClicked()">Back</button>
+                    <button type="button" id ="b-p" onclick="">Home</button>
+                    <button type="button" id="b-l" onclick="alert('redirect to anon')">Logout</button>
+                </div>
+        
+                <div class="change-password-features">
+                    <div class="current-password">
+                            <input type="password" id="current" placeholder="Current Password">
+                            <input type="password" id="newpass" placeholder="New Password">
+                            <input type="password" id="newredo" placeholder="Confirm Password">
+                                <div class="submission">
+                                    <div class="check-mark">
+                                        <input type="checkbox" required>
+                                    </div>
+                                    <div class="submit">
+                                        <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- * Change Username view -->
+            <div class="change-username-container">
+                <div class="change-pw-top-container">
+                    <button type="button" id="cu-b" onclick="homeClicked()">Back</button>
+                    <button type="button" id ="cu-h" onclick="">Home</button>
+                    <button type="button" id="cu-l" onclick="alert('redirect to anon')">Logout</button>
+                </div>
+               
+                <div class="changeuser-input-container">
+                    <div class="cu-input">
+                        <input type="text" id="nuser" placeholder="New Username">
+                        <input type="password" id="rtuser" placeholder="Retype Username">
+                        <div class="submission">
+                            <div class="check-mark">
+                                <input type="checkbox" required>
+                            </div>
+                            <div class="submit">
+                                <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
+                            </div>
+                        </div>
+                </div>
+                </div>
+            </div>
+
+
+
+        <!-- TODO:add -->
+        <!-- Thirdparty dependency -->
+        <script src="node_modules/axios/dist/axios.js"></script>
+
+        <!-- App Dependency -->
+        <!-- <script src="anon/sources/axios-ajax/axios.js"> </script> -->
+
+        <!-- page specific (js file) -->
+        <script src="sources/nav-profile.js"></script>
+        
+    </body>
+</html>

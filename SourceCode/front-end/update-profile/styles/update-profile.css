@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+.logout-container 
+{
+    display: flex;
+    justify-content: flex-start; 
+    padding: 20px 20px;
+}
+
+.logout-container button
+{
+    min-width: 100px;
+    background-color: #00ACB7;
+    color: white;
+    border-color: black;
+}
+
+.name-container
+{
+    display: flex;
+    justify-content: center;
+    padding: 20px 20px;
+}
+
+.fname
+{
+    padding-right: 20px;
+}
+
+.lname
+{
+    padding-left: 20px;
+}
+
+
+.personal-container
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.age
+{
+    padding: 20px 20px;
+}
+
+.city
+{
+    padding: 20px 20px;
+}
+.zip-code
+{
+    padding: 20px 20px;
+}
+.address
+{
+    padding: 20px 20px;
+}
+.update-username
+{
+    padding: 20px 20px;
+}
+
+.submission
+{
+    display: flex;
+    justify-content: center;
+    padding: 20px 20px;
+}
+
+.check-mark
+{
+    padding-right: 20px;
+    padding-top: 8px;
+}
+.submit
+{
+    padding-left: 20px
+}
+.submit button
+{
+    min-width: 100px;
+    background-color: #ca74ff;
+    color: white;
+    border-radius: 20px;
+    padding: 5px 15px;
+    border-color: black;
+}
+
+h1 
+{
+    text-align: center;
+    padding: 20px 20px;
+}
+

@@ -41,7 +41,8 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("[4] Disable User");
             Console.WriteLine("[5] Enable User");
             Console.WriteLine("[6] Bulk File Upload");
-            Console.WriteLine("[7] LogOut");
+            Console.WriteLine("[7] TEST create testSize.csv");
+            Console.WriteLine("[8] LogOut");
             Console.WriteLine("[0] exit");
             Console.WriteLine("Enter 0-4");
             string input = Console.ReadLine();
@@ -267,6 +268,45 @@ namespace TeamBigData.Utification.View.Views
                     Console.ReadLine();
                     break;
                 case 7:
+                    Console.Clear();
+                    /*ran into errors with getting directory path*/
+                    string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+                    /*Directory will be created if not existing*/
+                    Directory.CreateDirectory(directoryPath);
+                    //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
+                    DirectoryInfo di = new DirectoryInfo(directoryPath);
+                    string filePath = Path.Combine(directoryPath, "testSize.csv");
+                    Console.WriteLine("Creating File...");
+                    try
+                    {
+                        //using (StreamWriter sw = new StreamWriter("testSize.csv"))
+                        using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
+                        {
+                            //excel has  a limit of 1million rows. it is equal to .04 of a GB
+                            //so it needs to be 50 times that to reach 2GB (50 was barely not enough)
+                            //doing this will take like 4~5min
+                            for (int line = 0; line < 51500000; line++)
+                            {
+                                //the $ allows me to insert info into the string
+                                string data = $"CREATE,testSize{line}@yahoo.com,password";
+                                sw.WriteLine(data);
+                                if (line == 25999999)
+                                {
+                                    Console.WriteLine("Halfway done...");
+                                    break;
+                                }
+                                sw.Flush();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    Console.WriteLine("testSize.csv was created");
+                    Console.ReadLine();
+                    break;
+                case 8:
                     Console.Clear();
                     SecurityManager secManagerLogout = new SecurityManager();
                     response = secManagerLogout.LogOut();

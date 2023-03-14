@@ -24,7 +24,6 @@ namespace TeamBigData.Utification.Manager
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
-            UserAccount userAccount = new UserAccount();
             UserProfile userProfile = new UserProfile();
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
@@ -37,19 +36,7 @@ namespace TeamBigData.Utification.Manager
             var digest = SecureHasher.HashString(salt, password);
             String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
             var userHash = SecureHasher.HashString(pepper, email);
-            response = await sqlUserSDAO.SelectLastUserID().ConfigureAwait(false);
-            if ((int)response.data == 0)
-            {
-                userID = 1001;
-                userAccount = new UserAccount(userID, email, digest, salt, userHash);
-                response.data = "UserAccount Created";
-            }
-            else
-            {
-                userID = (int)response.data + 1;
-                userAccount = new UserAccount(userID, email, digest, salt, userHash);
-                response.data = "UserAccount Created";
-            }
+            var userAccount = new UserAccount(userID, email, digest, salt, userHash);
             response = await sqlUserIDAO.InsertUser(userAccount).ConfigureAwait(false);
             if (!response.isSuccessful)
             {
@@ -66,6 +53,8 @@ namespace TeamBigData.Utification.Manager
             }
             else
             {
+                var response2 = await sqlUserSDAO.SelectLastUserID().ConfigureAwait(false);
+                userID = (int)response2.data;
                 userProfile = new UserProfile(userID, "Regular User");
                 response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
                 stopwatch.Stop();
@@ -89,7 +78,6 @@ namespace TeamBigData.Utification.Manager
                     log = new Log(1, "Error", userHash, "SecurityManager.RegisterUser()", "Data", "Error in Creating Account");
                 }
                 var responselog = logger.Log(log).Result;
-                Console.WriteLine(responselog.errorMessage);
                 response.errorMessage = "Account created successfully, your username is " + email;
                 response.isSuccessful = true;
             }
@@ -170,7 +158,6 @@ namespace TeamBigData.Utification.Manager
                     log = new Log(1, "Error", userHash, "SecurityManager.RegisterUser()", "Data", "Error in Creating Account");
                 }
                 var responselog = logger.Log(log).Result;
-                Console.WriteLine(responselog.errorMessage);
                 response.errorMessage = "Account created successfully, your username is " + email;
                 response.isSuccessful = true;
             }
@@ -550,7 +537,7 @@ namespace TeamBigData.Utification.Manager
             var currentTime = DateTime.Now;
             if (enteredOTP.Equals(_otp))
             {
-                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //12000000000 ticks in 2 minutes
+                if ((currentTime.Ticks - _otpCreated.Ticks) < 1200000000) //1200000000 ticks in 2 minutes
                 {
                     result.isSuccessful = true;
                     result.errorMessage = "OTP Verified";
@@ -661,7 +648,7 @@ namespace TeamBigData.Utification.Manager
             response = selectDAO.SelectUserAccountTable(ref list).Result;
             return response;
         }*/
-        public Response ResetAccount(String disabledUser, UserProfile userProfile)
+        public Response ResetAccount(int disabledUserId, UserProfile userProfile)
         {
             var response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -673,17 +660,17 @@ namespace TeamBigData.Utification.Manager
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
             //Find What they want to reset password to
-            var findTask = userDao.GetNewPassword(disabledUser).Result;
+            var findTask = userDao.GetNewPassword(disabledUserId).Result;
             //Change Password
             if(findTask.isSuccessful)
             {
-                var changeTask = userDao.ResetAccount(disabledUser, (String)findTask.data).Result;
+                var changeTask = userDao.ResetAccount(disabledUserId, (String)findTask.data).Result;
                 if (changeTask.isSuccessful)
                 {
                     //Mark Request as Fullfilled
                     var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
                     var requestDB = new SqlDAO(requestConnectionString);
-                    var RequestFulfilled = requestDB.RequestFulfilled(disabledUser).Result;
+                    var RequestFulfilled = requestDB.RequestFulfilled(disabledUserId).Result;
                     if(RequestFulfilled.isSuccessful)
                     {
                         response.isSuccessful = true;
@@ -737,7 +724,7 @@ namespace TeamBigData.Utification.Manager
             return result;
         }
 
-        public Response GetRecoveryRequests(ref List<string> requests, UserProfile userProfile)
+        public Response GetRecoveryRequests(ref List<int> requests, UserProfile userProfile)
         {
             var response = new Response();
             if(!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -801,9 +788,13 @@ namespace TeamBigData.Utification.Manager
             }
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             var userDao = new SqlDAO(connectionString);
+            var userDelDao = new SQLDeletionDAO(connectionString);
+            IDBSelecter testDBO = new SqlDAO(connectionString);
             //var updater = new AccountDisabler(userDao);
-           // UserProfile insertUser = userDao.SelectUserProfile(delUser).Result;
-            var deleter = userDao.DeleteUser(delUser).Result;
+            UserAccount userAccount = new UserAccount();
+            response = userDao.SelectUserAccount(ref userAccount, delUser).Result;
+           
+            var deleter = userDao.DeleteUserProfile(userAccount._userID).Result;
             response = deleter;
             return response;
         }
