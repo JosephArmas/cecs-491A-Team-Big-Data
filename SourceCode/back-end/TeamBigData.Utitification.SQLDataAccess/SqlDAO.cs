@@ -1,4 +1,5 @@
-﻿﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -10,7 +11,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater
+    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDAOAnalysis
     {
         private readonly String _connectionString;
 
@@ -1115,60 +1116,6 @@ namespace TeamBigData.Utification.SQLDataAccess
             tcs.SetResult(result);
             return tcs.Task;
         }
-        /*
-         * Functions not used
-         * public Task<Response> GetUser(UserAccount user)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var list = new Object[8];
-            Response result = new Response();
-            result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select dbo.users.userID, \"disabled\", firstname, lastname, dbo.userprofiles.email, \"address\", " +
-                    "birthday, role from dbo.Users left join dbo.UserProfiles on (dbo.Users.username = dbo.UserProfiles.username)" +
-                    " Where dbo.Users.username = '" + user._username + "' AND " + "password = '" + user._password + "'";
-                try
-                {
-                    var command = new SqlCommand(selectSql, connection);
-                    var reader = command.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        result.isSuccessful = true;
-                        reader.GetValues(list);
-                        if ((int)list[1] == 0)
-                        {
-                            var userProfile = new UserProfile((int)list[0], (string)list[2], (string)list[3], 21, (string)list[4],
-                                (string)list[5], ((DateTime)list[6]), new GenericIdentity((string)list[0], (string)list[7]));
-                            result.data = userProfile;
-                        }
-                        else
-                        {
-                            result.isSuccessful = false;
-                            result.errorMessage = "Error: Account disabled. Perform account recovery or contact system admin";
-                        }
-                    }
-                    else
-                    {
-                        result.isSuccessful = false;
-                        result.errorMessage = "Error: Invalid Username or Password";
-                    }
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-        */
 
         public Task<Response> RequestFulfilled(int userID)
         {
@@ -1204,6 +1151,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             tcs.SetResult(result);
             return tcs.Task;
         }
+
         public Task<List<Pin>> SelectPinTable()
         {
             var tcs = new TaskCompletionSource<List<Pin>>();
@@ -1282,6 +1230,170 @@ namespace TeamBigData.Utification.SQLDataAccess
                     if (rows == 1)
                     {
                         result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> GetNewLogins(ref List<AnalysisRow> rows)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            result.isSuccessful = false;
+            int month, day, logins, i;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var selectSql = "Select * from dbo.loginsPast3Months";
+                try
+                {
+                    var command = new SqlCommand(selectSql, connection);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.isSuccessful = true;
+                        i = reader.GetOrdinal("Month");
+                        month = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Day");
+                        day = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Logins");
+                        logins = reader.GetInt32(i);
+                        var row = new AnalysisRow(month, day, logins);
+                        rows.Add(row);
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> GetNewRegistrations(ref List<AnalysisRow> rows)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            result.isSuccessful = false;
+            int month, day, registrations, i;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var selectSql = "Select * from dbo.registrationsPast3Months";
+                try
+                {
+                    var command = new SqlCommand(selectSql, connection);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.isSuccessful = true;
+                        i = reader.GetOrdinal("Month");
+                        month = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Day");
+                        day = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Registrations");
+                        registrations = reader.GetInt32(i);
+                        var row = new AnalysisRow(month, day, registrations);
+                        rows.Add(row);
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> GetNewPins(ref List<AnalysisRow> rows)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            result.isSuccessful = false;
+            int month, day, pinsAdded, i;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var selectSql = "Select * from dbo.newPinsPast3Months";
+                try
+                {
+                    var command = new SqlCommand(selectSql, connection);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.isSuccessful = true;
+                        i = reader.GetOrdinal("Month");
+                        month = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Day");
+                        day = reader.GetInt32(i);
+                        i = reader.GetOrdinal("PinsAdded");
+                        pinsAdded = reader.GetInt32(i);
+                        var row = new AnalysisRow(month, day, pinsAdded);
+                        rows.Add(row);
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> GetNewEvents(ref List<AnalysisRow> rows)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            result.isSuccessful = false;
+            int month, day, eventsAdded, i;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                //Creates an Insert SQL statements using the collumn names and values given
+                var selectSql = "Select * from dbo.newEventsPast3Months";
+                try
+                {
+                    var command = new SqlCommand(selectSql, connection);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.isSuccessful = true;
+                        i = reader.GetOrdinal("Month");
+                        month = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Day");
+                        day = reader.GetInt32(i);
+                        i = reader.GetOrdinal("EventsAdded");
+                        eventsAdded = reader.GetInt32(i);
+                        var row = new AnalysisRow(month, day, eventsAdded);
+                        rows.Add(row);
                     }
                 }
                 catch (SqlException s)

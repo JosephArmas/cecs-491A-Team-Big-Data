@@ -7,7 +7,7 @@ Month("timestamp") as "Month" from dbo.logs where "event" = 'SecurityManager.Reg
 AND "timestamp" >= DateAdd(MONTH, -3, getDate()) group by Month("timestamp"), Day("timestamp");
 Go
 create view newPinsPast3Months as select Count("timestamp") as PinsAdded, Day("timeStamp") as "Day", 
-Month("timestamp") as "Month" from dbo.logs where "event" = 'PinsService.StoreNewPin()' 
+Month("timestamp") as "Month" from dbo.logs where "event" = 'PinService.StoreNewPin()' 
 AND "timestamp" >= DateAdd(MONTH, -3, getDate()) group by Month("timestamp"), Day("timestamp");
 Go
 create view newEventsPast3Months as select Count("timestamp") as Events, Day("timeStamp") as "Day", 
