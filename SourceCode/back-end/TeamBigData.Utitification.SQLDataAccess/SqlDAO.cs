@@ -1272,6 +1272,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         var row = new AnalysisRow(month, day, logins);
                         rows.Add(row);
                     }
+                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
@@ -1313,6 +1314,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         var row = new AnalysisRow(month, day, registrations);
                         rows.Add(row);
                     }
+                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
@@ -1354,6 +1356,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         var row = new AnalysisRow(month, day, pinsAdded);
                         rows.Add(row);
                     }
+                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
@@ -1395,6 +1398,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         var row = new AnalysisRow(month, day, eventsAdded);
                         rows.Add(row);
                     }
+                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
