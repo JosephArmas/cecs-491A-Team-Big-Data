@@ -87,3 +87,8 @@
     text-align: center;
 }
 
+#anon-container
+{
+    display: none;
+}
+

@@ -15,12 +15,29 @@
         <link rel="stylesheet" href="styles/home-reg.css">
         <link rel="stylesheet" href="styles/registration.css">
         <link rel="stylesheet" href="styles/map.css">
+        <link rel="stylesheet" href="styles/analytics.css">
     </head>
     <body>
-        <div id="test-data"></div>
+
+        <!-- * Error response -->
+        <div id="errors"></div>
+        
+        <!-- * Analytics -->
+        <div class="analytics-container">
+            <div class="analytics-header">
+                <button type="button" id="analytics-home">Home</button>
+                <button type="button" id="analytics-logout">Logout</button>
+            </div>
+            <h1>Analytics</h1>
+            <div class ="chart-options">
+                <button type="button" id="analytics-logins">Logins</button>
+                <button type="button" id="analytics-registrations">Registrations</button>
+                <button type="button" id="analytics-maps">Maps</button>
+                <button type="button" id="analytics-pins">Pins</button>
+            </div>
+        </div>
 
         <!-- * Home view -->
-        <div id="errors"></div>
         <div class="home-container" hidden>
             <!-- reused from anon  -->
             <div class="home-header-container">
@@ -130,7 +147,8 @@
         </div>
 
         <!-- * Anon View -->
-        <div class="anon-container" id="anon-container">
+    <!--
+        <div class="anon-container" id="anon-container"> 
             <div class="header-container">
                 <div class="login-register">
                     <button type="button" id="login" onclick="loginClicked()">Login</button>
@@ -153,6 +171,7 @@
                 <footer>&copy; 2023 Utification</footer>
             </div>
         </div>
+    -->
 
 
         <!-- Thirdparty dependency -->
@@ -168,6 +187,7 @@
 
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
+        <script src="sources/analytics/analytics.js"></script>
 
         
     </body>
