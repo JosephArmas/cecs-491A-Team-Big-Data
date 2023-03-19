@@ -53,8 +53,8 @@ namespace TeamBigData.Utification.AccountServices
             String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
             var userHash = SecureHasher.HashString(email,pepper);
             UserAccount user = new UserAccount("", "", "", "");
-            IDBSelecter selectUsers = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
-            IDBCounter countSalt = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
+            IDBSelecter selectUsers = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False");
+            IDBCounter countSalt = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False");
             if (IsValidPassword(password) && IsValidEmail(email))
             {
                 salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));

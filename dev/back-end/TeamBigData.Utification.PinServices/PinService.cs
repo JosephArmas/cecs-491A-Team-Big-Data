@@ -12,10 +12,10 @@ namespace TeamBigData.Utification.PinServices
         {
             var tcs = new TaskCompletionSource<List<Pin>>();
             List<Pin> pins = new List<Pin>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            var connectionString = @"Server=.;Database=TeamBigData.Utification.Features;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False";
             IDBSelecter sqlSelect = new SqlDAO(connectionString);
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var result = await sqlSelect.SelectPinTable().ConfigureAwait(false);
             if (result.Count== 0)
             {
@@ -35,10 +35,10 @@ namespace TeamBigData.Utification.PinServices
         public async Task<Response> StoreNewPin(Pin pin, UserAccount userAccount)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            var connectionString = @"Server=.;Database=TeamBigData.Utification.Features;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False";
             IDBInserter sqlInsert = new SqlDAO(connectionString);
             Log log = new Log(1, "info", userAccount._userHash, "PinService.GetPinTable()", "Data", "Get pins table successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var result = await sqlInsert.InsertPin(pin).ConfigureAwait(false);
             if (!result.isSuccessful)
             {

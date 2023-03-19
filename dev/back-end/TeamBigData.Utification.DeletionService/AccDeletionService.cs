@@ -13,7 +13,7 @@ namespace TeamBigData.Utification.DeletionService
         }
         public async Task<Response> DeletePIIFeatures()
         {
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            var connectionString = @"Server=.;Database=TeamBigData.Utification.Features;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False";
             var err = "User feature data could not be deleted";
             var result = await DeletePII(connectionString, err, 1).ConfigureAwait(false);
             return result;
@@ -21,7 +21,7 @@ namespace TeamBigData.Utification.DeletionService
 
         public async Task<Response> DeletePIIProfile()
         {
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var connectionString = @"Server=.;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False";
             var err = "User profile data could not be deleted";
             var result = await DeletePII(connectionString,err,0).ConfigureAwait(false);
             return result;
