@@ -35,10 +35,22 @@
                 <button type="button" id="analytics-maps">Maps</button>
                 <button type="button" id="analytics-pins">Pins</button>
             </div>
+            <div class ="analytics-maps-view">
+                <h1>Maps Analytics</h1>
+            </div>
+            <div class ="analytics-registration-view">
+                <h1>Registrations Analytics</h1>
+            </div>
+            <div class ="analytics-logins-view">
+                <h1>Logins Analytics</h1>
+            </div>
+            <div class ="analytics-pins-view">
+                <h1>Pins Analytics</h1>
+            </div>
         </div>
 
         <!-- * Home view -->
-        <div class="home-container" hidden>
+        <div class="home-container">
             <!-- reused from anon  -->
             <div class="home-header-container">
                 <div class="menu-container">
@@ -79,7 +91,7 @@
         </div>
 
         <!-- * OTP -->
-        <div class="otp-container" hidden>
+        <div class="otp-container" >
             <form action="/" method="POST" id="otp-form">
             <div class="home">
                 <button type="button" onclick="homeClicked()">Home</button>
@@ -100,7 +112,7 @@
         </div>
 
         <!-- * Login view -->
-        <div class="login-container" id="login-contianer" hidden>
+        <div class="login-container" id="login-contianer" >
             <form action="/" method="POST" id="login-form">
             <div class="back-button">
                 <button type="button" id="login-home" onclick="homeClicked()">Back</button>
@@ -124,7 +136,7 @@
         </div>
 
         <!-- * Registration View -->
-        <div class="registration-container" id="registration-container" hidden>
+        <div class="registration-container" id="registration-container" >
             <form action="/" method="POST" id="registration-form">
             <div class="back-button">
                 <button type="button" id="reg-home" onclick="homeClicked()">Back</button>

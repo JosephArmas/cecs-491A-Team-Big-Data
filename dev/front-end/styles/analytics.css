@@ -48,3 +48,21 @@ h1
     background-color: #ca74ff;
     color: white;
 }
+
+.analytics-maps-view
+{
+    visibility: hidden;
+}
+
+.analytics-registration-view
+{
+    visibility: hidden;
+}
+.analytics-logins-view
+{
+    visibility: hidden;
+}
+.analytics-pins-view
+{
+    visibility: hidden;
+}

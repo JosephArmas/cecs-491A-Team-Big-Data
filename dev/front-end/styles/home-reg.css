@@ -41,3 +41,8 @@
     padding-right: 25px;
 
 }
+
+.home-container
+{
+    visibility: hidden;
+}

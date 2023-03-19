@@ -1,10 +1,7 @@
 // Todo: 
 /*
- * notify what a user their username when logged in
  * check if a user is first logged in -> update-profile view
- * input validations for login/registration?
  * home view - hamburger menu
- * do error screen - show message validations & status codes
 */
 
 // reuse function to list on back button click
@@ -29,11 +26,13 @@ function homeClicked()
     var loginContainer = document.querySelector(".login-container");
     var homeContainer = document.querySelector(".home-container")
     var globalErrors = document.querySelector("#errors");
+    var analyticsView = document.querySelector(".analytics-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
     regContainer.style.display = "none";     
     loginContainer.style.display = "none";
+    analyticsView.style.display = "none";
     globalErrors.innerHTML = "";
 
 
