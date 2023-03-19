@@ -4,7 +4,7 @@
  * home view - hamburger menu
 */
 
-// reuse function to list on back button click
+// Reuse function to list on back button click
 document.querySelector(".back-button").addEventListener("click", homeClicked());
 // document.querySelector("#regBtn-submit").addEventListener("click", homeClicked());
 //document.querySelector(".home-logoutBtn").addEventListener("click", homeClicked());
