@@ -23,11 +23,13 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
+            var userAccount = new UserAccount();
+            var userProfile = new UserProfile();
             var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             var message = securityManager.SendOTP();
             var result2 = securityManager.LoginOTP(message);
             //Assert
@@ -41,11 +43,13 @@ namespace TeamBigData.Utification.AuthenticationTests
             var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
+            var userAccount = new UserAccount();
+            var userProfile = new UserProfile();
             var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.VerifyUser(username, digest, encryptor).Result;
+            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
             var result2 = securityManager.LoginOTP("wrongOTP");
             //Assert
             Assert.IsFalse(result2.isSuccessful);

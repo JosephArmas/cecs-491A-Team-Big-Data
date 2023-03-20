@@ -195,6 +195,7 @@ namespace TeamBigData.Utification.Manager
                 insertUserHash.InsertUserHash(userHash, 0);
                 response.errorMessage = "User doesn't exist.";
                 log = new Log(1, "Error", userHash, "SecurityManager.LoginUser()", "Data", "Error UserAccount doesn't exist.");
+                logger.Log(log);
                 tcs.SetResult(response);
                 return tcs.Task;
             }
@@ -217,11 +218,14 @@ namespace TeamBigData.Utification.Manager
                 insertUserHash.InsertUserHash(userHash, 0);
                 response.errorMessage = "User doesn't exist.";
                 log = new Log(1, "Error", userHash, "SecurityManager.LoginUser()", "Data", "Error UserProfile doesn't exist.");
+                logger.Log(log);
                 tcs.SetResult(response);
                 return tcs.Task;
             }
             response.isSuccessful = true;
             response.errorMessage = "User is successfully authenticated.";
+            log = new Log(1, "Info", userAccount._userHash, "SecurityManager.LoginUser()", "Data", "Sucessful Login");
+            logger.Log(log);
             tcs.SetResult(response);
             return tcs.Task;
         }

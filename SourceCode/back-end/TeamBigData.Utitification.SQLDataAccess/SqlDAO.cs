@@ -11,7 +11,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDAOAnalysis
+    public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDBAnalysis
     {
         private readonly String _connectionString;
 
@@ -1245,17 +1245,17 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public Task<Response> GetNewLogins(ref List<AnalysisRow> rows)
+        public Task<Response> GetNewLogins(ref int[] rows)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
-            int month, day, logins, i;
+            int daysAgo, logins, i;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select * from dbo.loginsPast3Months";
+                var selectSql = "Select * from dbo.loginsPast3Months order by DaysAgo";
                 try
                 {
                     var command = new SqlCommand(selectSql, connection);
@@ -1263,16 +1263,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                     while (reader.Read())
                     {
                         result.isSuccessful = true;
-                        i = reader.GetOrdinal("Month");
-                        month = reader.GetInt32(i);
-                        i = reader.GetOrdinal("Day");
-                        day = reader.GetInt32(i);
+                        i = reader.GetOrdinal("DaysAgo");
+                        daysAgo = reader.GetInt32(i);
                         i = reader.GetOrdinal("Logins");
                         logins = reader.GetInt32(i);
-                        var row = new AnalysisRow(month, day, logins);
-                        rows.Add(row);
+                        rows[90 - daysAgo] = logins;
                     }
-                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
@@ -1287,17 +1283,17 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public Task<Response> GetNewRegistrations(ref List<AnalysisRow> rows)
+        public Task<Response> GetNewRegistrations(ref int[] rows)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
-            int month, day, registrations, i;
+            int daysAgo, registrations, i;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select * from dbo.registrationsPast3Months";
+                var selectSql = "Select * from dbo.registrationsPast3Months order by DaysAgo";
                 try
                 {
                     var command = new SqlCommand(selectSql, connection);
@@ -1305,16 +1301,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                     while (reader.Read())
                     {
                         result.isSuccessful = true;
-                        i = reader.GetOrdinal("Month");
-                        month = reader.GetInt32(i);
-                        i = reader.GetOrdinal("Day");
-                        day = reader.GetInt32(i);
+                        i = reader.GetOrdinal("DaysAgo");
+                        daysAgo = reader.GetInt32(i);
                         i = reader.GetOrdinal("Registrations");
                         registrations = reader.GetInt32(i);
-                        var row = new AnalysisRow(month, day, registrations);
-                        rows.Add(row);
+                        rows[90 - daysAgo] = registrations;
                     }
-                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
@@ -1329,17 +1321,17 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public Task<Response> GetNewPins(ref List<AnalysisRow> rows)
+        public Task<Response> GetPinsAdded(ref int[] rows)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
-            int month, day, pinsAdded, i;
+            int daysAgo, pins, i;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select * from dbo.newPinsPast3Months";
+                var selectSql = "Select * from dbo.newPinsPastWeek order by DaysAgo";
                 try
                 {
                     var command = new SqlCommand(selectSql, connection);
@@ -1347,16 +1339,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                     while (reader.Read())
                     {
                         result.isSuccessful = true;
-                        i = reader.GetOrdinal("Month");
-                        month = reader.GetInt32(i);
-                        i = reader.GetOrdinal("Day");
-                        day = reader.GetInt32(i);
-                        i = reader.GetOrdinal("PinsAdded");
-                        pinsAdded = reader.GetInt32(i);
-                        var row = new AnalysisRow(month, day, pinsAdded);
-                        rows.Add(row);
+                        i = reader.GetOrdinal("DaysAgo");
+                        daysAgo = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Pins");
+                        pins = reader.GetInt32(i);
+                        rows[7 - daysAgo] = pins;
                     }
-                    rows.Sort();
                 }
                 catch (SqlException s)
                 {
@@ -1371,17 +1359,17 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public Task<Response> GetNewEvents(ref List<AnalysisRow> rows)
+        public Task<Response> GetPinPulls(ref int[] rows)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
-            int month, day, eventsAdded, i;
+            int daysAgo, pinPulls, i;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var selectSql = "Select * from dbo.newEventsPast3Months";
+                var selectSql = "Select * from dbo.pinPullsPastMonth order by DaysAgo";
                 try
                 {
                     var command = new SqlCommand(selectSql, connection);
@@ -1389,16 +1377,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                     while (reader.Read())
                     {
                         result.isSuccessful = true;
-                        i = reader.GetOrdinal("Month");
-                        month = reader.GetInt32(i);
-                        i = reader.GetOrdinal("Day");
-                        day = reader.GetInt32(i);
-                        i = reader.GetOrdinal("EventsAdded");
-                        eventsAdded = reader.GetInt32(i);
-                        var row = new AnalysisRow(month, day, eventsAdded);
-                        rows.Add(row);
+                        i = reader.GetOrdinal("DaysAgo");
+                        daysAgo = reader.GetInt32(i);
+                        i = reader.GetOrdinal("Pins");
+                        pinPulls = reader.GetInt32(i);
+                        rows[30 - daysAgo] = pinPulls;
                     }
-                    rows.Sort();
                 }
                 catch (SqlException s)
                 {

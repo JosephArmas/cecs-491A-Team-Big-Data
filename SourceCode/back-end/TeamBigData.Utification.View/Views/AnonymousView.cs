@@ -8,6 +8,8 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Manager.Abstractions;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.View.Abstraction;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.AnalysisManagers;
 
 namespace TeamBigData.Utification.View.Views
 {
