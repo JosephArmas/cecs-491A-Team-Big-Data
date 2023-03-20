@@ -51,8 +51,3 @@
     justify-content: center;
     gap: 35px;
 }
-
-.login-container
-{
-    visibility: hidden;
-}

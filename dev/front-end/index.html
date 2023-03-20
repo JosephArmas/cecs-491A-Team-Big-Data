@@ -16,12 +16,29 @@
         <link rel="stylesheet" href="styles/registration.css">
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/analytics.css">
+        <link rel="stylesheet" href="styles/home-admin.css">
     </head>
     <body>
 
         <!-- * Error response -->
         <div id="errors"></div>
         
+        <!-- * Admin view -->
+        <div class="home-admin-container">
+            <div class="logout-container">
+                <button type="button" id="admin-logout">Logout</button>
+            </div>
+            <h1>Admin Home</h1>
+            <div class="admin-features">
+                <div class="user-management">
+                    <button type="button" onclick="alert('Redirect to  User Management view')">User Management</button>
+                </div>
+                <div class="usage-analysis">
+                    <button type="button" onclick="alert('Redirect to Usage Analysis Dashboard view')">Usage Analysis Dashboard</button>
+                </div>
+            </div>
+        </div>
+
         <!-- * Analytics -->
         <div class="analytics-container">
             <div class="analytics-header">
@@ -159,7 +176,6 @@
         </div>
 
         <!-- * Anon View -->
-    <!--
         <div class="anon-container" id="anon-container"> 
             <div class="header-container">
                 <div class="login-register">
@@ -183,7 +199,6 @@
                 <footer>&copy; 2023 Utification</footer>
             </div>
         </div>
-    -->
 
 
         <!-- Thirdparty dependency -->
