@@ -2,10 +2,13 @@
 /*
  * check if a user is first logged in -> update-profile view
  * home view - hamburger menu
+ * User management view - admin
 */
 
 // Reuse function to list on back button click
 document.querySelector(".back-button").addEventListener("click", homeClicked());
+document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
+document.querySelector("#admin-logout").addEventListener("click", homeClicked);
 // document.querySelector("#regBtn-submit").addEventListener("click", homeClicked());
 //document.querySelector(".home-logoutBtn").addEventListener("click", homeClicked());
 
@@ -27,13 +30,16 @@ function homeClicked()
     var homeContainer = document.querySelector(".home-container")
     var globalErrors = document.querySelector("#errors");
     var analyticsView = document.querySelector(".analytics-container");
+    var adminView = document.querySelector(".home-admin-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
     regContainer.style.display = "none";     
     loginContainer.style.display = "none";
     analyticsView.style.display = "none";
+    adminView.style.display = "none";
     globalErrors.innerHTML = "";
+
 
 
 }
@@ -89,4 +95,24 @@ function IsValidEmail(email)
         return false;
     }
 
+}
+
+function adminView()
+{
+    var homeContainer = document.querySelector(".home-admin-container");
+    var anonContainer = document.querySelector(".anon-container");
+    var analyticsView = document.querySelector(".analytics-container");
+    var otpContainer =document.querySelector(".otp-container");
+    homeContainer.style.display = "block";
+    analyticsView.style.display = "none";
+    otpContainer.style.display = "none";
+    anonContainer.style.display = "none";
+}
+
+function showAnalytics()
+{
+    var analyticsView = document.querySelector(".analytics-container");
+    var homeContainer = document.querySelector(".home-admin-container");
+    analyticsView.style.display = "block";
+    homeContainer.style.display = "none";
 }

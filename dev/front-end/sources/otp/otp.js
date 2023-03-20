@@ -11,11 +11,17 @@ otpBtn.addEventListener('click', function (event)
     {
         errorsOtp.innerHTML = "Please enter OTP";
 
-    } else if (otpInput.value == otpVal) 
+    } else if (otpInput.value == otpVal && roles.includes(userType))  
     {
         errorsOtp.innerHTML = "";
         regView();
         
+    } else if(otpInput.value == otpVal && userType === "Admin User")
+    {
+
+        errorsOtp.innerHTML = "";
+        adminView();
+
     } else 
     {
         errorsOtp.style.color = "red";

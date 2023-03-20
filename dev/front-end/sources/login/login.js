@@ -7,6 +7,7 @@ const password = document.getElementById('password');
 const loginBtn = document.getElementById('sub-login');
 const loginHome = document.getElementById('login-home');
 var errorsDiv = document.getElementById('errors');
+var userType = "";
 const roles =  ['Regular User']
 const user = {}
 loginBtn.addEventListener('click', function (event)
@@ -49,9 +50,16 @@ function loginUser()
         if(responseAfter.identity.isAuthenticated === true && responseAfter.identity.authenticationType !== 'Anonymous User' )
         {
             errorsDiv.innerHTML = "";
+            userType = responseAfter.identity.authenticationType;
             showOtp();
             sendOtp();
             
+        } else if (responseAfter.identity.isAuthenticate === true && responseAfter.identity.authenticationType === 'Admin User')
+        {
+            userType = responseAfter.identity.authenticationType;
+            showOtp();
+            sendOtp();
+
         }
     }).catch(function (error)
         {
