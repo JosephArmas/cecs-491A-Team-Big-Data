@@ -2,14 +2,8 @@
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Cryptography;
-using System.Diagnostics;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.PinManagers;
-using System.Linq.Expressions;
-using Azure.Identity;
-using System.Net.NetworkInformation;
-using System.Security.Principal;
-using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
