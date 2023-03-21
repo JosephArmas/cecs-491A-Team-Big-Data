@@ -163,6 +163,30 @@ namespace TeamBigData.Utification.Manager
             }
             return response;
         }
+        
+        public Task<Response> UpdateProfile(int id, string fname, string lname, ref UserProfile profile, DateTime bday, string address = " ")
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response response = new Response();
+            profile._firstName = fname;
+            profile._lastName = lname;
+            profile._birthday = bday;
+            profile._address = address;
+            var connectionString = @"Server=.;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False";
+            // IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            if (profile._firstName == " " || profile._lastName == " ")
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Fill in first name and lastname";
+            }
+            
+            IDBUpdater sqlUserUDAO = new SqlDAO(connectionString);
+            sqlUserUDAO.UpdateUserProfile(profile);
+            // Success
+            response.isSuccessful = true;
+            response.errorMessage = "Successfully updated";
+            return tcs.Task;
+        }
         public Task<Response> LoginUser(String email, byte[] encryptedPassword, Encryptor encryptor, ref UserAccount userAccount, ref UserProfile userProfile)
         {
             var tcs = new TaskCompletionSource<Response>();
@@ -733,7 +757,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
+            var connectionString = @"Server=.;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=False";
             var recoveryDao = new SqlDAO(connectionString);
             response = recoveryDao.GetRecoveryRequests(ref requests).Result;
             response.isSuccessful = true;

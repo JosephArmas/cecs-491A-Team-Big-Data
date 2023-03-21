@@ -11,10 +11,10 @@ namespace TeamBigData.Utification.Models
     public class UserProfile : IMyIPrincipal
     {
         public int _userID { get; private set; }
-        public String _firstName { get; private set; }
-        public String _lastName { get; private set; }
-        public String _address { get; private set; }
-        public DateTime _birthday { get; private set; }
+        public String _firstName { get; set; }
+        public String _lastName { get; set; }
+        public String _address { get; set; }
+        public DateTime _birthday { get; set; }
         public IIdentity? Identity { get; private set; }
         public UserProfile() 
         {

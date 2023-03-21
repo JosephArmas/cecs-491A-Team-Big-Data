@@ -144,7 +144,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             tcs.SetResult(response);
             return tcs.Task;
         }
-        public  Task<Response> UpdateUserProfile(UserProfile user)
+        public Task<Response> UpdateUserProfile(UserProfile user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();

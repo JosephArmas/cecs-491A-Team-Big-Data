@@ -21,7 +21,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
         //TODO: add encryption Key parameter
     }
-
+    
     public class PinInfo
     {
         public int pinID { get; set; }
@@ -33,6 +33,15 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         public int disabled { get; set; }
     }
 
+    public class UpdateUserProfileInfo
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string address { get; set; }
+        public DateTime birthday { get; set; }
+
+    }
+    
     [ApiController]
     [Route("[controller]")]
     public class AccountController : Controller
@@ -143,6 +152,25 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             var pinMan = new PinManager();
             var response = pinMan.SaveNewPin(pin,_userAccount);
             tcs.SetResult(Ok(response));
+            return tcs.Task;
+        }
+
+        [Route("updateProfile")]
+        [HttpPost]
+        public Task<IActionResult> UpdateProfile(UpdateUserProfileInfo updateProfile)
+        {
+            var tcs = new TaskCompletionSource<IActionResult>();
+            _userProfile = new UserProfile();
+            var response = _securityManager.UpdateProfile(_userProfile._userID,updateProfile.firstName, updateProfile.lastName, ref _userProfile, updateProfile.birthday, updateProfile.address).Result;
+            if (response.isSuccessful)
+            {
+                tcs.SetResult(Ok(response.errorMessage));
+            }
+            else
+            {
+                tcs.SetResult(Conflict(response.errorMessage));
+            }
+
             return tcs.Task;
         }
     }
