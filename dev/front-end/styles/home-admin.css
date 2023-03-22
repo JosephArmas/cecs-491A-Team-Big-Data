@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+#admin-home
+{
+    text-align: center;
+}
 .logout-container 
 {
     display: flex;

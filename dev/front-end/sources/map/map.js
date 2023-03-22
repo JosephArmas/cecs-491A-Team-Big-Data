@@ -32,7 +32,7 @@
 
     let map;
 
-    var errorsDiv = document.getElementById('errors');
+    // var errorsDiv = document.getElementById('errors');
 
     const webServiceUrl = 'https://localhost:7259/account/pin';
 
@@ -125,7 +125,7 @@
     }
 
     function placeNewPin(latLng, map) {
-        errorsDiv.innerHTML = "";
+        // errorsDiv.innerHTML = "";
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
@@ -189,7 +189,7 @@
     }
    
     window.initMap = function() {
-        errorsDiv.innerHTML = "";
+        // errorsDiv.innerHTML = "";
         map = new google.maps.Map(document.getElementById('map'), {
             center: CSULB,
             minZoom: 8,

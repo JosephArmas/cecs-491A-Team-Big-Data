@@ -6,11 +6,13 @@
 */
 
 // Reuse function to list on back button click
-document.querySelector(".back-button").addEventListener("click", homeClicked());
+// document.querySelector(".back-button").addEventListener("click", homeClicked());
 document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
 document.querySelector("#admin-logout").addEventListener("click", homeClicked);
-// document.querySelector("#regBtn-submit").addEventListener("click", homeClicked());
-//document.querySelector(".home-logoutBtn").addEventListener("click", homeClicked());
+document.querySelector("#register").addEventListener("click", regClicked);
+// var globalErrors = document.querySelector("#errors");
+var errorsDiv = document.getElementById('errors');
+
 
 function loginClicked()
 {
@@ -28,7 +30,6 @@ function homeClicked()
     var anonContainer = document.querySelector(".anon-container");
     var loginContainer = document.querySelector(".login-container");
     var homeContainer = document.querySelector(".home-container")
-    var globalErrors = document.querySelector("#errors");
     var analyticsView = document.querySelector(".analytics-container");
     var adminView = document.querySelector(".home-admin-container");
     anonContainer.style.display = "block";
@@ -38,7 +39,7 @@ function homeClicked()
     loginContainer.style.display = "none";
     analyticsView.style.display = "none";
     adminView.style.display = "none";
-    globalErrors.innerHTML = "";
+    // errorsDiv.innerHTML = "";
 
 
 
@@ -57,7 +58,7 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
-    var globalErrors = document.querySelector("#errors");
+    // var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
     homeContainer.style.display = "block";
@@ -115,4 +116,18 @@ function showAnalytics()
     var homeContainer = document.querySelector(".home-admin-container");
     analyticsView.style.display = "block";
     homeContainer.style.display = "none";
+}
+
+
+function showAnalyticsRegistrationView()
+{
+    let analyticsHome = document.querySelector(".analytics-home");
+    let analyticsRegistration = document.querySelector(".analytics-registration-view");
+    // let analyticTitle = document.createElement("h1");
+    // analyticTitle.textContent = "Analytics Registration";
+    // analyticTitle.style.textAlign = "center";
+    analyticsRegistration.style.display = "block";
+    // analyticsRegistration.insertBefore(analyticTitle ,analyticsRegistration.firstChild);
+    analyticsHome.style.display = "none";
+    
 }

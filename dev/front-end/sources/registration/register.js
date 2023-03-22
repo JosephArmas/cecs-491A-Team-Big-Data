@@ -4,7 +4,7 @@ const registerEmail = document.getElementById('r-email');
 const registerPassword = document.getElementById('r-pw');
 const confirmedPassword = document.getElementById('r-cpw');
 const regBtn = document.getElementById('regBtn-submit');
-var errorsCont = document.getElementById('errors');
+// var errorsCont = document.getElementById('errors');
 const regForm = document.getElementById('registration-form');
 var regHome = document.getElementById("reg-home");
 const newUser = {}
@@ -37,7 +37,7 @@ regBtn.addEventListener('click', function (event)
 
 regHome.addEventListener('click', function (event)
 {
-   errorsCont.innerHTML= "";
+   // errorsCont.innerHTML= "";
 });
 
 
@@ -51,13 +51,13 @@ function registerUser()
    {
       let responseAfter = response.data
       let cleanResponse = responseAfter.replace(/"/g,"");
-         errorsCont.style.color = "green";
-         errorsCont.innerHTML = cleanResponse +  ". Please return to home screen to login.";
+         errorsDiv.style.color = "green";
+         errorsDiv.innerHTML = cleanResponse +  ". Please return to home screen to login.";
    }).catch(function (error)
    {
       let errorAfter = error.response.data
       let cleanError = errorAfter.replace(/"/g,"");
-      errorsCont.innerHTML = cleanError; 
+      errorsDiv.innerHTML = cleanError; 
 
    });
    regForm.reset();

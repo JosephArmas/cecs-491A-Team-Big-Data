@@ -1,5 +1,5 @@
 var otpContainer = document.querySelector(".otp-container");
-var errorsOtp = document.getElementById("errors");
+// var errorsOtp = document.getElementById("errors");
 const otpBtn = document.querySelector("#otp-submit");
 const otpForm = document.querySelector("#otp-form");
 const otpDisplay = document.querySelector("#otp-display");

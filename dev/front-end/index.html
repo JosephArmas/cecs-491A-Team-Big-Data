@@ -9,6 +9,7 @@
         <title>Utification</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="node_modules/chartist/dist/index.css">
         <link rel="stylesheet" href="styles/anon.css">
         <link rel="stylesheet" href="styles/login.css">
         <link rel="stylesheet" href="styles/otp.css">
@@ -23,12 +24,15 @@
         <!-- * Error response -->
         <div id="errors"></div>
         
+        <!-- * Test -->
+        <!-- <div class="test" ></div> -->
+
         <!-- * Admin view -->
-        <div class="home-admin-container">
+        <div class="home-admin-container" hidden>
             <div class="logout-container">
                 <button type="button" id="admin-logout" onclick="">Logout</button>
             </div>
-            <h1>Admin Home</h1>
+            <h1 id="admin-home">Admin Home</h1>
             <div class="admin-features">
                 <div class="user-management">
                     <button type="button" onclick="alert('Redirect to  User Management view')">User Management</button>
@@ -40,34 +44,44 @@
         </div>
 
         <!-- * Analytics -->
-        <div class="analytics-container">
+        <div class="analytics-container" >
+            <div class="analytics-home" >
             <div class="analytics-header">
                 <button type="button" id="analytics-home">Home</button>
                 <button type="button" id="analytics-logout">Logout</button>
             </div>
-            <h1>Analytics</h1>
+            <h1 id="home-title">Analytics</h1>
             <div class ="chart-options">
                 <button type="button" id="analytics-logins">Logins</button>
                 <button type="button" id="analytics-registrations">Registrations</button>
                 <button type="button" id="analytics-maps">Maps</button>
                 <button type="button" id="analytics-pins">Pins</button>
             </div>
-            <div class ="analytics-maps-view">
-                <h1>Maps Analytics</h1>
             </div>
-            <div class ="analytics-registration-view">
-                <h1>Registrations Analytics</h1>
-            </div>
-            <div class ="analytics-logins-view">
-                <h1>Logins Analytics</h1>
-            </div>
-            <div class ="analytics-pins-view">
-                <h1>Pins Analytics</h1>
+            <div>
+                <div class ="analytics-maps-view">
+                </div>
+                <div class ="analytics-registration-view" hidden>
+                    <!-- * reuse analytics-header -->
+                    <div class="analytics-header"> 
+                        <button type="button" id="analytics-back">Back</button>
+                        <button type="button" id="analytics-logout">Logout</button>
+                    </div> 
+                    <h1 id="registration-title">Registrations Analytics</h1>
+                    <div class="analytics-chart-registration"></div>
+                </div>
+                <div class ="analytics-logins-view">
+                    <!-- <h1 id="login-title">Logins Analytics</h1> -->
+                </div>
+                <div class ="analytics-pins-view">
+                    <!-- <h1 id="pin-title">Pins Analytics</h1> -->
+                </div>
+
             </div>
         </div>
 
         <!-- * Home view -->
-        <div class="home-container">
+        <div class="home-container" hidden>
             <!-- reused from anon  -->
             <div class="home-header-container">
                 <div class="menu-container">
@@ -108,7 +122,7 @@
         </div>
 
         <!-- * OTP -->
-        <div class="otp-container" >
+        <div class="otp-container" hidden>
             <form action="/" method="POST" id="otp-form">
             <div class="home">
                 <button type="button" onclick="homeClicked()">Home</button>
@@ -129,7 +143,7 @@
         </div>
 
         <!-- * Login view -->
-        <div class="login-container" id="login-contianer" >
+        <div class="login-container" id="login-contianer" hidden>
             <form action="/" method="POST" id="login-form">
             <div class="back-button">
                 <button type="button" id="login-home" onclick="homeClicked()">Back</button>
@@ -153,7 +167,7 @@
         </div>
 
         <!-- * Registration View -->
-        <div class="registration-container" id="registration-container" >
+        <div class="registration-container" id="registration-container">
             <form action="/" method="POST" id="registration-form">
             <div class="back-button">
                 <button type="button" id="reg-home" onclick="homeClicked()">Back</button>
@@ -176,11 +190,12 @@
         </div>
 
         <!-- * Anon View -->
+
         <div class="anon-container" id="anon-container"> 
             <div class="header-container">
                 <div class="login-register">
                     <button type="button" id="login" onclick="loginClicked()">Login</button>
-                    <button type="button" id="register" onclick="regClicked()">Register</button>
+                    <button type="button" id="register" onclick="">Register</button>
                 </div>
             </div>
             <div class="title">
@@ -208,13 +223,13 @@
         <script src="sources/login/login.js"> </script>
         <script src="sources/registration/register.js"> </script>
         <script src="sources/otp/otp.js"> </script>
+        <script type="module" src="sources/analytics/analytics.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>
 
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
-        <script src="sources/analytics/analytics.js"></script>
 
         
     </body>

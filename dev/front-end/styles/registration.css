@@ -21,3 +21,7 @@
     /* padding: 20px 10px; */
     padding-left: 320px;
 }
+
+#registration-container {
+    display: none;
+}
