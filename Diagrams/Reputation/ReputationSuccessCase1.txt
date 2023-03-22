@@ -1,198 +1,258 @@
 title As a user, I want to successfully report another user and affect their reputation score
 
 actor Authenticated User
-participant ReputationView
+participant View
 participant Console
-participant ReputationController
-participant ReputationModel
-participant ReputationManager
-participant ReputationService
-participant UserAccountModel
-participant SqlDAO
+participant Controller
+participant Manager
+participant Service
+participant Model
+participant Logging
+participant DataAccess
 participant ErrorResponse
 participant SQLServer
 activate Authenticated User
 
-Authenticated User ->> ReputationView: User submits a report of\n					 				another User 
-activate ReputationView
+Authenticated User ->> View: User submits a report of\n					 				another User 
+activate View
 
-box over ReputationView: const reputationService = "/reputation/report"\nlet userReport = {} 
+box over View: const reputationService = "/reputation/report"\nlet userReport = {} 
  
-ReputationView ->> Console:axios.post(reputationService, userReport).then(response=>{})
+View ->> Console:axios.post(reputationService, userReport).then(response=>{}): response JSON object
 activate Console
 
+Console ->> Controller: app.Run(): Task object
+activate Controller
 
-Console ->> ReputationController: app.Run();
-activate ReputationController
+Controller ->> Model: Reputation newUserReputationReport = new Reputation(): Reputation object
+activate Model
 
+Model -->> Controller: return Reputation object
+deactivate Model
 
+Controller ->> Model: UserAccount actorUserAccount = new UserAccount(): UserAccount object
+activate Model
 
-ReputationController ->> ReputationModel: Reputation newUserRating = new Reputation()
-activate ReputationModel
+Model -->> Controller: return UserAccount object
+deactivate Model
 
+Controller ->> Manager: ReputationManager repManager = new ReputationManager(): ReputationManager object
+activate Manager
 
-ReputationModel -->> ReputationController: return Reputation instance
-deactivate ReputationModel
+Manager -->> Controller: return ReputationManager object
 
-ReputationController ->> ReputationManager: ReputationManager repManager = new ReputationManager();
-activate ReputationManager
+Controller ->> Manager: var response = repManager.RecordNewUserReport(newUserReputationReport, actorUserAccount): Task object
 
-
-
-ReputationManager -->> ReputationController: return ReputationManager instance
-
-ReputationController ->> ReputationManager: var response = repManager.RecordNewUserReport(NewUserRating);
-
-
-
-ReputationManager ->> ReputationService: ReputationService repService = new ReputationService(); 
-activate ReputationService
-
-ReputationService -->> ReputationManager: return ReputationServices instance
-
-ReputationManager ->> ReputationService: Response response = repService.StoreNewUserReport(ref newReport).Result;
-
-ReputationService ->> UserAccountModel: UserAccount ratedUserAccount = new UserAccount()
-activate UserAccountModel
-
-UserAccountModel -->> ReputationService: return UserAcount instance 
-deactivate UserAccountModel
-
-ReputationService ->> SqlDAO: IDBSelector userDatabase = new SqlDao(userAccountConnectionString);
-activate SqlDAO
-
-
-
-SqlDAO -->> ReputationService: return SqlDAO instance
-
-ReputationService ->> SqlDAO: var userHash = userDatabase.SelectUserAccount(ref ratedUserAccount, newReport.reportedUser);
-
-
-
-SqlDAO ->> ErrorResponse: Response result = new Response();
+Manager ->> ErrorResponse: Response response = new Response(): Response object
 activate ErrorResponse
 
-ErrorResponse -->> SqlDAO: return Response instance
+ErrorResponse -->> Manager: return Response object
 deactivate ErrorResponse
 
-SqlDAO ->> SQLServer: connect.Open();\nvar command = new SqlCommand(updateSql, connection);\nvar rows = command .ExecuteNonQuery();
+Manager ->> Service: ReputationService repService = new ReputationService(): ReputationService object 
+activate Service
+
+Service -->> Manager: return ReputationService object
+
+Manager ->> Service: response = repService.StoreNewUserReport(ref newReport): Response object
+
+Service ->> Model: UserAccount reputationRatedUserAccount = new UserAccount(): UserAccount object
+activate Model
+
+Model -->> Service: return UserAcount object 
+deactivate Model
+
+Service ->> DataAccess: IDBSelector userDatabase = new SqlDAO(userAccountConnectionString): IDBSelector SqlDAO object
+activate DataAccess
+
+DataAccess -->> Service: return IDBSelector SqlDAO object
+
+Service ->> DataAccess: var getUserHash = await userDatabase.SelectUserAccount(ref reputationRatedUserAccount, newReport._reportedUser).Result: Task object
+
+DataAccess ->> ErrorResponse: Response result = new Response(): Response object
+activate ErrorResponse
+
+ErrorResponse -->> DataAccess: return Response object
+deactivate ErrorResponse
+
+DataAccess ->> SQLServer: var rows = command .ExecuteNonQuery(): OUTPUT clause
 activate SQLServer
 
 box over SQLServer: SELECT *\nFROM dbo.Users\nWHERE username = newReport.reportedUser;
 
-SQLServer -->> SqlDAO: returns all rows from dbo.Users that meet the condition\nconnect.Close();
+SQLServer -->> DataAccess: returns all rows from dbo.Users that meet the condition
 deactivate SQLServer
 
-SqlDAO -->> ReputationService: returns result.IsSucessful = true;
-deactivate SqlDAO
+DataAccess -->> Service: return Task object
+deactivate DataAccess
 
-box over ReputationService: newReport._reportedUser = userHash;
+box over Service: newReport._reportedUser = userHash;
 
-ReputationService ->> SqlDAO: IDBInserter insertReport = new SqlDAO(reputationConnectionString);
-activate SqlDAO
+group if (result.isSuccessful)
+Service ->> DataAccess: IDBInserter insertReport = new SqlDAO(reputationConnectionString): IDBInserter SqlDAO object
+activate DataAccess
 
-SqlDAO -->> ReputationService: return SqlDAO instance
+DataAccess -->> Service: return IDBInserter SqlDAO object
 
-ReputationService ->> SqlDAO: var result = await insertReport.InsertUserReport(newReport).ConfigureAwait(false);
+Service ->> DataAccess: var result = await insertReport.InsertUserReport(newReport).ConfigureAwait(false): Task object
+end
 
-
-
-SqlDAO ->> ErrorResponse: Response result = new Response();
+DataAccess ->> ErrorResponse: Response result = new Response(): Response object
 activate ErrorResponse
 
-
-
-ErrorResponse -->> SqlDAO: return Response instance
+ErrorResponse -->> DataAccess: return Response object
 deactivate ErrorResponse
 
-SqlDAO ->> SQLServer: connect.Open();\nvar command = new SqlCommand(updateSql, connection);\nvar rows = command .ExecuteNonQuery();
+DataAccess ->> SQLServer:  rows = command .ExecuteNonQuery(): OUTPUT clause
 activate SQLServer
 
 box over SQLServer: INSERT INTO dbo.UserReports(rating, feedback, reportedUser)\nVALUES(newReport._rating, 'newReport._feedback', 'newReport_reportedUser);
 
-SQLServer -->> SqlDAO: returns "You have made changes to the database. Rows affected: 1"\nconnect.Close();
+SQLServer -->> DataAccess: returns "You have made changes to the database. Rows affected: 1"
 deactivate SQLServer
 
-SqlDAO -->> ReputationService: return result.IsSucessful = true;
-deactivate SqlDAO
+DataAccess -->> Service: return Task object
+deactivate DataAccess
 
-ReputationService -->> ReputationManager: return response.IsSuccessful = true;
-deactivate ReputationService
+Service -->> Manager: return Response object
+deactivate Service
 
-group if (response.IsSuccessful) 
-ReputationManager ->> ReputationService: Response response = repService.UpdateReputation(newReport);
-activate ReputationService
-end 
+Manager ->> Logging: Logger newUserReportLog = Log(actorUserAccount): Response object
+activate Logging
 
-ReputationService ->> SqlDAO: IDBSelector getSumRatings = new SqlDAO(reputationConnectionString);
-activate SqlDAO
-
-SqlDAO -->> ReputationService: return SqlDAO instance
-ReputationService ->> SqlDAO: var newRating = await getSumRatings.SelectUserRatings(newReport).ConfigureAwait(false);
-
-SqlDAO ->> ErrorResponse: Response result = new Response();
+Logging ->> ErrorResponse: Response result = new Response(): Response object
 activate ErrorResponse
 
-ErrorResponse -->> SqlDAO: return Response instance
+ErrorResponse -->> Logging: return Reponse object
 deactivate ErrorResponse
 
-SqlDAO ->> SQLServer:connect.Open();\nvar command = new SqlCommand(updateSql, connection);\nvar rows = command .ExecuteNonQuery();
+Logging ->> DataAccess: Response logReturn = await _dao.Execute(insertSql).ConfigureAwait(false): Task object
+activate DataAccess
+
+DataAccess ->> ErrorResponse: Response result = new Response(): Response object
+activate ErrorResponse
+
+ErrorResponse -->> DataAccess: return Response object
+deactivate ErrorResponse
+
+DataAccess ->> SQLServer: result.data = (new SqlCommand(req.ToString, connect)).ExecuteNonQuery(): OUTPUT clause
+activate SQLServer
+
+box over SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (log._correlationID, 'log._logLevel', 'log._user', 'log._event', 'log._category', 'log._message');
+
+SQLServer -->> DataAccess: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+DataAccess -->> Logging: return Task object
+deactivate DataAccess
+Logging -->> Manager: return Response object
+deactivate Logging
+
+group if (response.IsSuccessful) 
+Manager ->> Service: Response response = repService.UpdateReputation(newReport): Response object
+activate Service
+end 
+
+Service ->> DataAccess: IDBSelector getSumRatings = new SqlDAO(reputationConnectionString);
+activate DataAccess
+
+DataAccess -->> Service: return IDBSelector SqlDAO object
+Service ->> DataAccess: var newRating = await getSumRatings.SelectUserRatings(newReport).ConfigureAwait(false): Task object
+
+DataAccess ->> ErrorResponse: Response result = new Response(): Response object
+activate ErrorResponse
+
+ErrorResponse -->> DataAccess: return Response object
+deactivate ErrorResponse
+
+DataAccess ->> SQLServer:var rows = command .ExecuteNonQuery(): OUTPUT clause
 activate SQLServer
 
 box over SQLServer: SELECT rating\nFROM dbo.UserReports\nWHERE reportedUser = newReport._reportedUser;
 
-SQLServer -->> SqlDAO: returns all rows from dbo.UserReports that meet the condition\nconnect.Close();
-
-box over SqlDAO: double rows = 0.0;
-group while(reader.Read())
-box over SqlDAO: rows = rows + 1.0;\ndouble newRating = rating + newRating;
-end
-
-box over SqlDAO: newRating = newRating / rows + 1.0;
+SQLServer -->> DataAccess: returns all rows from dbo.UserReports that meet the condition
 deactivate SQLServer
 
-SqlDAO -->> ReputationService: return result.IsSuccessful = true;
-deactivate SqlDAO
+box over DataAccess: double rows = 0.0;
+group while(reader.Read())
+box over DataAccess: rows = rows + 1.0;\ndouble newRating = rating + newRating;
+end
+
+box over DataAccess: newRating = newRating / rows + 1.0;
+
+DataAccess -->> Service: return Task
+deactivate DataAccess
 
 group if (result.IsSuccessful)
 
-ReputationService ->> SqlDAO: IDBUpdater updateReputation = new SqlDAO(userProfileConnectionString);
-activate SqlDAO
+Service ->> DataAccess: IDBUpdater updateReputation = new SqlDAO(userProfileConnectionString);
+activate DataAccess
 
-SqlDAO -->> ReputationService: return SqlDAO instance
+DataAccess -->> Service: return SqlDAO instance
 
-ReputationService ->> SqlDAO: var result = await updateReputation.UpdateUserReputation(newReport, newRating);
+Service ->> DataAccess: var result = await updateReputation.UpdateUserReputation(newReport, newRating): Task object
 end
 
-SqlDAO ->> ErrorResponse: Response result = new Response();
+DataAccess ->> ErrorResponse: Response result = new Response(): Response object
 activate ErrorResponse
 
-ErrorResponse -->> SqlDAO: return Response instance
+ErrorResponse -->> DataAccess: return Response object
 deactivate ErrorResponse
 
-SqlDAO ->> SQLServer:connect.Open();\nvar command = new SqlCommand(updateSql, connection);\nvar rows = command .ExecuteNonQuery();
+DataAccess ->> SQLServer:var rows = command .ExecuteNonQuery(): output
 activate SQLServer
 
 box over SQLServer: UPDATE dbo.UserProfile\nSET reputation = newRating\nWHERE reportedUser = 'newReport._reportedUser';
 
-SQLServer -->> SqlDAO: returns "You have made changes to the database. Rows affected: 1"\nconnect.Close();
+SQLServer -->> DataAccess: returns "You have made changes to the database. Rows affected: 1"
 deactivate SQLServer
 
-SqlDAO -->> ReputationService: return result.IsSucessful = true;
-deactivate SqlDAO
+DataAccess -->> Service: return Task object
+deactivate DataAccess
 
-ReputationService -->> ReputationManager: return response.isSuccessful = true;
-deactivate ReputationService
+Service -->> Manager: return Response object
+deactivate Service
 
-ReputationManager -->> ReputationController: return tcs.Task
-deactivate ReputationManager
+Manager ->> Logging: Logger updateRatingLog = Log(actorUserAccount): Response object
+activate Logging
 
-ReputationController -->> Console: return tcs.Task;
-deactivate ReputationController
+Logging ->> ErrorResponse: Response result = new Response(): Response object
+activate ErrorResponse
 
-Console -->> ReputationView: returns response and status 200
+ErrorResponse -->> Logging: return Reponse object
+deactivate ErrorResponse
+
+Logging ->> DataAccess: Response logReturn = await _dao.Execute(insertSql).ConfigureAwait(false): Task object
+activate DataAccess
+
+DataAccess ->> ErrorResponse: Response result = new Response(): Response object
+activate ErrorResponse
+
+ErrorResponse -->> DataAccess: return Response object
+deactivate ErrorResponse
+
+DataAccess ->> SQLServer: result.data = (new SqlCommand(req.ToString, connect)).ExecuteNonQuery(): output
+activate SQLServer
+
+box over SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (log._correlationID, 'log._logLevel', 'log._user', 'log._event', 'log._category', 'log._message');
+
+SQLServer -->> DataAccess: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+DataAccess -->> Logging: return Task object
+deactivate DataAccess
+Logging -->> Manager: return Response object
+deactivate Logging
+
+Manager -->> Controller: return Task object
+deactivate Manager
+
+Controller -->> Console: return Task object
+deactivate Controller
+
+Console -->> View: returns response JSON object
 deactivate Console
 
-ReputationView -->> Authenticated User: Displays back to user "Report submitted successfully"
-deactivate ReputationView
+View -->> Authenticated User: Displays back to user "Report submitted successfully"
+deactivate View
 deactivate Authenticated User
