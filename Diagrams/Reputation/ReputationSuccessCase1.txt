@@ -13,6 +13,8 @@ participant ErrorResponse
 participant SQLServer
 activate Authenticated User
 
+note over Authenticated User: User must be Reputation View
+
 Authenticated User ->> View: User submits a report of\n					 				another User 
 activate View
 
