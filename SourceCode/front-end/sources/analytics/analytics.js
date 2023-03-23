@@ -7,12 +7,12 @@ document.querySelector("#analytics-logout").addEventListener('click', homeClicke
 const analyticsHealth = 'https://localhost:7259/analysis/health';
 const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
 const analyticsLogins = 'https://localhost:7259/analysis/logins';
-// var chartDoctor = document.querySelector(".test");
-// errorsDiv.innerHTML = "test";
+const analyticsMaps = 'https://localhost:7259/analysis/pins';
+const analyticsPins = 'https://localhost:7259/analysis/maps';
 document.querySelector("#analytics-registrations").addEventListener('click', showAnalyticsRegistrations);
 document.querySelector("#analytics-logins").addEventListener('click', showAnalyticsLogins);
 document.querySelector("#analytics-maps").addEventListener('click', showAnalyticsMaps);
-document.querySelector("#analytics-pins").addEventListener('click', showAnalyticsLogins);
+document.querySelector("#analytics-pins").addEventListener('click', showAnalyticsPins);
 
 
 
@@ -55,7 +55,7 @@ function showAnalyticsRegistrations()
     
     showAnalyticsRegistrationView()
     getData(analyticsRegistration, '.analytics-chart-registration')
-    setInterval(showAnalyticsRegistrations, 60 * 1000);
+    // setInterval(showAnalyticsRegistrations, 60 * 1000);
     
     
 }
@@ -70,8 +70,14 @@ function showAnalyticsLogins()
 
 function showAnalyticsMaps()
 {
-    getData(analyticsLogins, '.analytics-chart-maps')
+    getData(analyticsMaps, '.analytics-chart-maps')
     setInterval(showAnalyticsMaps, 60 * 1000);
+}
+
+function showAnalyticsPins()
+{
+    getData(analyticsPins, '.analytics-chart-pins')
+    setInterval(showAnalyticsPins, 60 * 1000);
 }
 
 // * Test if server is running
