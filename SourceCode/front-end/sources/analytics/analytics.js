@@ -10,25 +10,19 @@ const analyticsLogins = 'https://localhost:7259/analysis/logins';
 // var chartDoctor = document.querySelector(".test");
 // errorsDiv.innerHTML = "test";
 document.querySelector("#analytics-registrations").addEventListener('click', showAnalyticsRegistrations);
+document.querySelector("#analytics-logins").addEventListener('click', showAnalyticsLogins);
+document.querySelector("#analytics-maps").addEventListener('click', showAnalyticsMaps);
+document.querySelector("#analytics-pins").addEventListener('click', showAnalyticsLogins);
 
 
 
-
-
-function showAnalyticsRegistrations()
+function getData(server, chartClassname)
 {
-    
-    // let analyticsHome = document.querySelector(".analytics-home");
-    // let analyticsRegistrationView = document.querySelector(".analytics-registration-view");
-    // analyticsHome.style.display = "none";
-    // analyticsRegistrationView.style.display = "block";
-    showAnalyticsRegistrationView()
-
     // Days
     let xAxis = [];
     // Registered users
     let yAxis = [];
-    axios.get(analyticsRegistration).then(function (response)
+    axios.get(server).then(function (response)
     {
         // console.log(response.data);
         let reponseAfter = response.data;
@@ -46,12 +40,38 @@ function showAnalyticsRegistrations()
             low: 0,
             height: '90vh'
         }
-        new LineChart('.analytics-chart-registration', dataPoints, configs);
+        new LineChart(chartClassname, dataPoints, configs);
     }).catch(function (error)
     {
         errorsDiv.style.color = "red";
         errorsDiv.innerHTML= "Server down. Please check server status";
     });
+
+}
+
+
+function showAnalyticsRegistrations()
+{
+    
+    showAnalyticsRegistrationView()
+    getData(analyticsRegistration, '.analytics-chart-registration')
+    setInterval(showAnalyticsRegistrations, 60 * 1000);
+    
+    
+}
+
+function showAnalyticsLogins()
+{
+    getData(analyticsLogins, '.analytics-chart-logins')
+    setInterval(showAnalyticsLogins, 60 * 1000);
+
+}
+
+
+function showAnalyticsMaps()
+{
+    getData(analyticsLogins, '.analytics-chart-maps')
+    setInterval(showAnalyticsMaps, 60 * 1000);
 }
 
 // * Test if server is running
@@ -65,6 +85,7 @@ function health()
 
 }
 
+// * Test Graph using LineChart
 function testGraph()
 {
 
@@ -82,34 +103,6 @@ new LineChart(
 
 }
 
-function testGraph2()
-{
-    let xAxis = [];
-    // Registered users
-    let yAxis = [];
-    axios.get(analyticsRegistration).then(function (response)
-    {
-        // console.log(response.data);
-        let reponseAfter = response.data;
-        for (let k in reponseAfter)
-        {
-            xAxis.push(k);
-            yAxis.push(reponseAfter[k])
-        }
-    new LineChart(
-        '.analytics-registration-view',
-        {
-            labels: xAxis,
-            series: [yAxis]
-        },
-        {
-            low: 0,
-            // showArea: true
-            height: '80vh'
-        }
-    );
-    });
-}
 
 // health()
 // showAnalyticsRegistrations()
