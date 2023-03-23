@@ -18,13 +18,13 @@ document.querySelector("#analytics-pins").addEventListener('click', showAnalytic
 
 function getData(server, chartClassname)
 {
-    // Days
+    // * Days
     let xAxis = [];
-    // Registered users
+    // * Registered users
     let yAxis = [];
     axios.get(server).then(function (response)
     {
-        // console.log(response.data);
+        //console.log(response.data);
         let reponseAfter = response.data;
         for (let k in reponseAfter)
         {
@@ -55,7 +55,7 @@ function showAnalyticsRegistrations()
     
     showAnalyticsRegistrationView()
     getData(analyticsRegistration, '.analytics-chart-registration')
-    // setInterval(showAnalyticsRegistrations, 60 * 1000);
+    setInterval(showAnalyticsRegistrations, 60 * 1000);
     
     
 }
@@ -110,7 +110,7 @@ new LineChart(
 }
 
 
-// health()
-// showAnalyticsRegistrations()
-// testGraph()
-// testGraph2()
+//health()
+//showAnalyticsRegistrations()
+//testGraph()
+//testGraph2()
