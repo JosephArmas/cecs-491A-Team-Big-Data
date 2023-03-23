@@ -93,7 +93,7 @@ deactivate ReputationManager
 PinController -->> Console: return Task Object
 deactivate PinController
 
-Console -->> MapView: returns response JSON Object
+Console -->> MapView: return JSON Object
 deactivate Console
 
 MapView -->> Authenticated User: Displays back to user "Your reputation increased by 0.1"

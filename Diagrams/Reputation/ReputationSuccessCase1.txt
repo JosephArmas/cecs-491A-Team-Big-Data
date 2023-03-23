@@ -8,7 +8,6 @@ participant ReputationManager
 participant ReputationService
 participant Logging
 participant ReputationDataAccess
-participant ErrorResponse
 participant SQLServer
 activate Authenticated User
 
