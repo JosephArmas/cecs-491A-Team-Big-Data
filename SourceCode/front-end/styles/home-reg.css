@@ -1,0 +1,48 @@
+.home-header-container
+{
+    display:flex;
+    justify-content: space-between;
+    padding: 20px 20px;
+}
+.profile-container
+{
+    display: flex;
+    gap: 20px;
+
+
+}
+
+#home-logoutBtn
+{
+    min-width: 50px;
+    background-color: #00acb7;
+    color: white
+
+}
+
+.map
+{
+    border: 5px solid black;
+    height: 300px;
+    margin-left: 20%;
+    margin-right: 20%;
+
+}
+
+
+.misc
+{
+    display:flex;
+    justify-content: flex-end;
+}
+
+.reg-contact-home
+{
+    padding-right: 25px;
+
+}
+
+.home-container
+{
+    display: none;
+}
