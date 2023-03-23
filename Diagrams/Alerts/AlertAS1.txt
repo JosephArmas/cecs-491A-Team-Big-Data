@@ -1,0 +1,75 @@
+title As an Admin User, I want to send an alert, so that other users are notified
+actor User
+    
+    participant main.js
+    participant NotificationView
+    participant NotificationController
+    participant AlertManager
+    participant UserProfile
+    participant AlertServices
+    participant Logger
+    participant Pins
+    participant SqlDAO
+    
+    participant IDBSelector
+    participant App DB
+User->>main.js:Admin User posted a pin
+activate main.js
+main.js->>NotificationView: fucntion notifcationAnalysisView()\n{var notificationAnalysisView = document.querySelector(".notificationAnalysis-container");}
+activate NotificationView
+NotificationView->>NotificationView:const alertUrl = 'https://account/alert';
+NotificationView->>NotificationController:var request = axios.post(alertUrl)
+activate NotificationController
+NotificationController->>NotificationController:If User.jwt == true{\nresponse.ok\napp = request.then(response=>{}):Json\n}
+
+NotificationController->>AlertManager:app.Get()
+activate AlertManager
+AlertManager->>UserProfile:UserProfile userProfile = UserProfile.IsInRole("Admin User");
+activate UserProfile
+UserProfile->>UserProfile:{\nString _username\nString _firstname\nString _lastName\nint _age\nString _email\nString _address\nDateTime _birthday\nIIdentity? Identity\n}
+UserProfile-->>AlertManager: return Admin User
+deactivate UserProfile
+AlertManager->>AlertServices:[Route("AdminView")]\nAlerts alert = new Alerts
+activate AlertServices
+AlertServices->>AlertManager:return alert
+deactivate AlertServices
+AlertManager->>AlertManager:if User.this==true{\nalert.amount<= 20000\nalert.time(expected) <=20000\n}
+AlertManager->>AlertManager:if alert.alertPin ==true\n{}
+AlertManager->>AlertServices: var alerts = alert.PostAlerts()
+activate AlertServices
+AlertServices->>Logger:var sysLogger = new Logger();
+activate Logger
+Logger->>Pins:Logger pinsLogger = new PinsLogger
+activate Pins
+Pins-->>Logger: return pins
+deactivate Pins
+Logger->>AlertServices:return logger
+deactivate Logger
+AlertServices->>AlertServices:alert.log()\nvar pinAlert = alert.getPinsLogger()
+AlertServices->>SqlDAO:var connectionString = @"alertsconnectionstring"\npinAlert.postAlert():List<Alerts>
+activate SqlDAO
+SqlDAO->>IDBSelector:SqlDAO:IDBSelector
+activate IDBSelector
+IDBSelector->>IDBSelector: sqlAlert= new SqlDAO(connectionString)
+
+IDBSelector->>SqlDAO:return sqlAlert
+deactivate IDBSelector
+SqlDAO->>SqlDAO:pinAlert = new List<Alert>()string sqlStatement = "Select * FROM dbo.Alerts"\nusing(SqlConnection connect = new SqlConnection(_connectionString))\n{\nconnect.Open()\n}
+SqlDAO->>App DB:using(var reader = new SqlCommand(sqlStatement,connect)).ExecuterReader())
+activate App DB
+App DB->>App DB: dbo.Alerts add pin\nwhere Alert.zip = true 
+App DB-->>SqlDAO: return alerts table
+deactivate App DB
+SqlDAO->>SqlDAO:{\nconnect.Close()\n}
+SqlDAO-->>AlertServices:return alert for pin
+deactivate SqlDAO
+AlertServices-->>AlertManager:return list of alerts for pin
+deactivate AlertServices
+AlertManager->>AlertManager:if User.this==true{\nalert.amount<= 20000\nalertalert.time(expected) <=20000\n}
+AlertManager-->>NotificationController: list of Json(Alerts) returned
+deactivate AlertManager
+NotificationController-->>NotificationView: return axios response
+deactivate NotificationController
+NotificationView-->>main.js: updates content view
+deactivate NotificationView
+main.js-->>User:Alerts are sent
