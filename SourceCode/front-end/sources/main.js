@@ -2,15 +2,16 @@
 /*
  * check if a user is first logged in -> update-profile view
  * home view - hamburger menu
- * User management view - admin
+ * Refactor for Login 
+ * Refactor for Registration
+ * Move Analytics to Analytics.js
+ * All of main is anon view -> Homeview(admin or reg user)
 */
 
-// Reuse function to list on back button click
-// document.querySelector(".back-button").addEventListener("click", homeClicked());
 document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
 document.querySelector("#admin-logout").addEventListener("click", homeClicked);
 document.querySelector("#register").addEventListener("click", regClicked);
-// var globalErrors = document.querySelector("#errors");
+// * Considered cross cutting so can be called anywhere
 var errorsDiv = document.getElementById('errors');
 
 
@@ -18,9 +19,26 @@ function loginClicked()
 {
     var anonContainer = document.querySelector(".anon-container");
     var loginContainer = document.querySelector(".login-container");
+    let loginForm = document.createElement('form');
+    loginForm.setAttribute('action','/');
+    loginForm.setAttribute('method','POST');
+    loginForm.setAttribute('id','login-form');
+    let backBtnDiv = document.createElement('div');
+    backBtnDiv.setAttribute('class','back-button');
+    let backBtn = document.createElement('button');
+    backBtn.setAttribute('type','button');
+    backBtn.textContent = "Back";
+    backBtn.addEventListener('click',homeClicked);
+    // * Add the back button in side the div element
+    backBtnDiv.appendChild(backBtn);
+    // * Add this div element inside of the form element
+    loginForm.appendChild(backBtnDiv);
+
+
     anonContainer.style.display = "none";
     loginContainer.style.display = "block";
 }
+
 
 function homeClicked()
 {
