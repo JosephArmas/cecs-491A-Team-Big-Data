@@ -1,0 +1,102 @@
+title As a user, I should be able to gain 0.1 reputation from marking a pin as completed
+
+actor Authenticated User
+participant MapView
+participant Console
+participant PinController
+participant PinManager
+participant ReputationManager
+participant ReputationService
+participant Logging
+participant ReputationDataAccess
+participant LoggingDataAccess
+participant SQLServer
+activate Authenticated User
+
+note over Authenticated User: User must be on Map View
+
+Authenticated User ->> MapView: User marks pin as completed 
+activate MapView
+
+box over MapView: const webServiceUrl = "/account/pin";\nconst pin = {}; 
+ 
+MapView ->> Console:axios.post(webServiceUrl, pin).then(response=>{}): JSON Object
+activate Console
+
+Console ->> PinController: [Route("pin")]\n[HttpPost]\nCompletedPin(pin): Task Object
+activate PinController
+
+PinController ->> PinManager: MarkCompletedPin(Pin Object, UserAccount Object): Response Object
+activate PinManager
+
+note over PinManager: At the time this design was created,\nthe following functionality of the pin feature\nhad not yet been implemented.\nIn order not to inaccurately represent\nthe team member's code, it will be\nassumed that the unimplemented \nfunctionality was successful.
+PinManager -->> PinController: return Response Object
+deactivate PinManager
+
+
+group if (response.IsSuccessful) 
+PinController ->> ReputationManager: ReputationincreaseByPointOne(UserAccount Object): Response Object
+activate ReputationManager
+end 
+
+ReputationManager ->> ReputationService: AddPointOneReputation(UserAccount Object).ConfigureAwait(false): Task object
+activate ReputationService
+
+ReputationService ->> ReputationDataAccess: await InsertPointOneUserReputation(UserAccount Object): Task Object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: UPDATE dbo.UserProfile\nSET reputation = reputation + 0.1\nWHERE userID = UserAccount.userID;
+activate SQLServer
+
+SQLServer -->> SQLServer: returns the rating value from the dbo.UserReports\nrow that meets the condition
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return 1
+deactivate SQLServer
+
+ReputationDataAccess -->> ReputationService: return Task
+deactivate ReputationDataAccess
+
+ReputationService ->> Logging: Log(Log log): Response Object
+activate Logging
+
+Logging ->> LoggingDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate LoggingDataAccess
+
+LoggingDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.AddPointOneReputation()', 'app.Reputation', 'User Reputation Updated Successfully');
+activate SQLServer
+
+SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> LoggingDataAccess:  return 1 
+deactivate SQLServer
+
+LoggingDataAccess -->> Logging: return Task Object
+deactivate LoggingDataAccess
+
+Logging -->> ReputationService: return Response Object
+deactivate Logging
+
+ReputationService -->> ReputationManager: return Task Object
+deactivate ReputationService
+
+ReputationManager -->> PinController: return Response Object
+deactivate ReputationManager
+
+PinController -->> Console: return Task Object
+deactivate PinController
+
+Console -->> MapView: return JSON Object
+deactivate Console
+
+MapView -->> Authenticated User: Displays back to user "Your reputation increased by 0.1"
+deactivate MapView
+
+deactivate Authenticated User

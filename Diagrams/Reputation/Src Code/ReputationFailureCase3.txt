@@ -1,0 +1,92 @@
+title As a user, I want to report a user but the report is not received by the server
+
+actor Authenticated User
+participant ReputationView
+participant Console
+participant ReputationController
+participant ReputationManager
+participant ReputationService
+participant Logging
+participant ReputationDataAccess
+participant SQLServer
+activate Authenticated User
+
+note over Authenticated User: User must be on Reputation View
+
+Authenticated User ->> ReputationView: User submits a report of\n					 				another User 
+activate ReputationView
+
+box over ReputationView: const reputationService = "/reputation/report";\nlet userReport = {"userReportedID" : " ",\n																												"rating" : " ",\n																												"feedback: " ",\n																												"userReportingID" : " "}; 
+ 
+ReputationView ->> Console:axios.post(reputationService, userReport).then(response=>{}): JSON Object
+activate Console
+
+Console ->> ReputationController: [Route("report")]\n[HttpPost]\nPostUserReport(): Task Object
+activate ReputationController
+
+ReputationController ->> ReputationManager: RecordNewUserReport(Reputation Object, UserAccount Object): Task object
+activate ReputationManager
+
+ReputationManager ->> ReputationService: StoreNewUserReport(Reputation Object): Response Object
+activate ReputationService
+
+ReputationService ->> ReputationDataAccess: await InsertUserReport(Reputation Object).ConfigureAwait(false): Task Object
+activate ReputationDataAccess
+
+
+ReputationDataAccess ->> SQLServer:  ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.UserReports(rating, feedback, reportedUser)\nVALUES(newReport._rating, 'newReport._feedback', 'newReport_reportedUser);
+activate SQLServer
+
+SQLServer -->> SQLServer: returns error
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return 0
+deactivate SQLServer
+
+ReputationDataAccess -->> ReputationService: return Task Object
+deactivate ReputationDataAccess
+
+ReputationService ->> Logging: Log(Log log): Response Object
+activate Logging
+
+Logging ->> ReputationDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Error', 'log._userHash', 'ReputationService.StoreNewUserReport()', 'app.Reputation', 'Report was not received');
+activate SQLServer
+
+SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess:  return 1 
+deactivate SQLServer
+
+ReputationDataAccess -->> Logging: return Task Object
+deactivate ReputationDataAccess
+
+Logging -->> ReputationService: return Response Object
+deactivate Logging
+
+ReputationService -->> ReputationManager: return Response Object (Response.isSuccessful = false)
+deactivate ReputationService
+
+group if (!response.IsSuccessful) 
+ReputationManager -->> ReputationController: return Task Object (isSuccessful = false)
+deactivate ReputationManager
+end
+ReputationController -->> Console: return Task Object (isSuccessful = false)
+deactivate ReputationController
+
+Console -->> ReputationView: return JSON Object
+deactivate Console
+
+ReputationView -->> Authenticated User: Displays Error "Report was not received"
+deactivate ReputationView
+
+deactivate Authenticated User
