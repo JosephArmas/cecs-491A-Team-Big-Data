@@ -1,19 +1,19 @@
-title As a user, I want to successfully report another user and affect their reputation score
-
+title As a user, my role hasn't been updated even though I reached to 4.2 rating or higher
 actor Authenticated User
 participant ReputationView
 participant Console
 participant ReputationController
 participant ReputationManager
 participant ReputationService
-participant Logging
 participant ReputationDataAccess
+participant Logging
+participant LoggingDataAccess
 participant SQLServer
 activate Authenticated User
 
 note over Authenticated User: User must be on Reputation View
 
-Authenticated User ->> ReputationView: User submits a report of\n					 				another User 
+Authenticated User ->> ReputationView: User submits a report of\nanother User and their\nrating becomes >= 4.2
 activate ReputationView
 
 box over ReputationView: const reputationService = "/reputation/report";\nlet userReport = {"userReportedID" : " ",\n																												"rating" : " ",\n																												"feedback: " ",\n																												"userReportingID" : " "}; 
@@ -75,94 +75,67 @@ deactivate SQLServer
 ReputationDataAccess -->> ReputationService: return Task Object
 deactivate ReputationDataAccess
 
-ReputationService ->> Logging: Log(Log log): Response Object
-activate Logging
-
-Logging ->> ReputationDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+group if (reputation >= 4.2) 
+ReputationService ->> ReputationDataAccess: await RegularUserPromotion().ConfigureAwait(): Task Object
 activate ReputationDataAccess
-
-ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
-activate SQLServer
-
-SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.UpdateReputation()', 'app.Reputation', 'User Reputation Updated Successfully');
-activate SQLServer
-
-SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
-deactivate SQLServer
-
-SQLServer -->> ReputationDataAccess:  return 1 
-deactivate SQLServer
-
-ReputationDataAccess -->> Logging: return Task Object
-deactivate ReputationDataAccess
-
-Logging -->> ReputationService: return Response Object
-deactivate Logging
-
-ReputationService -->> ReputationManager: return Response Object
-deactivate ReputationService
-
-group if (response.isSuccessful) 
-ReputationManager ->> ReputationService: StoreNewUserReport(Reputation Object): Response Object
-activate ReputationService
 end
 
-ReputationService ->> ReputationDataAccess: await InsertUserReport(Reputation Object).ConfigureAwait(false): Task Object
-activate ReputationDataAccess
-
-
-ReputationDataAccess ->> SQLServer:  ExecuteNonQuery(): Int32
-activate SQLServer
-
-SQLServer ->> SQLServer: INSERT INTO dbo.UserReports(rating, feedback, reportedUser)\nVALUES(newReport._rating, 'newReport._feedback', 'newReport_reportedUser);
-activate SQLServer
-
-SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
-deactivate SQLServer
-
-SQLServer -->> ReputationDataAccess: return 1
-deactivate SQLServer
-
-ReputationDataAccess -->> ReputationService: return Task Object
-deactivate ReputationDataAccess
-
-ReputationService ->> Logging: Log(Log log): Response Object
-activate Logging
-
-Logging ->> ReputationDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
-activate ReputationDataAccess
-
 ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
 activate SQLServer
 
-SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.StoreNewUserReport()', 'app.Reputation', 'New Report Stored Successfully');
+SQLServer ->> SQLServer: UPDATE dbo.UserProfile\nSET roleType = "Reputable"\nWHERE userID = UserAccount.UserID 
+activate SQLServer
+
+SQLServer -->> SQLServer: returns error
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return 0
+deactivate SQLServer
+
+
+
+ReputationDataAccess ->> Logging: Log(Log log): Response Object
+activate Logging
+
+Logging ->> LoggingDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate LoggingDataAccess
+
+LoggingDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Error', 'log._userHash', 'ReputationService.UpdateReputation()', 'app.Reputation', 'User Reputation Updated Successfully');
 activate SQLServer
 
 SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
 deactivate SQLServer
 
-SQLServer -->> ReputationDataAccess:  return 1 
+SQLServer -->> LoggingDataAccess:  return 1 
 deactivate SQLServer
 
-ReputationDataAccess -->> Logging: return Task Object
-deactivate ReputationDataAccess
+LoggingDataAccess -->> Logging: return Task Object
+deactivate LoggingDataAccess
 
-Logging -->> ReputationService: return Response Object
+Logging -->> ReputationDataAccess: return Response Object
 deactivate Logging
 
-ReputationService -->> ReputationManager: return Response Object
+ReputationDataAccess -->> ReputationService: return Task Object (isSuccessful = false)
+deactivate ReputationDataAccess
+
+ReputationService -->> ReputationManager: return Response Object (Response.isSuccessful = false)
 deactivate ReputationService
 
-ReputationManager -->> ReputationController: return Task Object
+group if (!response.isSuccessful) 
+ReputationManager -->> ReputationController: return Task Object (isSuccessful = false)
 deactivate ReputationManager
+end
 
-ReputationController -->> Console: return Task Object
+ReputationController -->> Console: return Task Object (isSuccessful = false)
 deactivate ReputationController
 
 Console -->> ReputationView: returns response JSON Object
 deactivate Console
 
-ReputationView -->> Authenticated User: Displays back to user "Report submitted successfully"
+ReputationView -->> Authenticated User: Displays error "User's role type has not updated successfully"
 deactivate ReputationView
 
 deactivate Authenticated User

@@ -1,4 +1,4 @@
-title As a user, I want to successfully report another user and affect their reputation score
+title As a user, I want to successfully report another user but it does not impact their reputation score
 
 actor Authenticated User
 participant ReputationView
@@ -66,13 +66,13 @@ activate SQLServer
 SQLServer ->> SQLServer: UPDATE dbo.UserProfile\nSET reputation = newRating\nWHERE reportedUser = 'newReport._reportedUser';
 activate SQLServer
 
-SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+SQLServer -->> SQLServer: returns error
 deactivate SQLServer
 
-SQLServer -->> ReputationDataAccess: return 1
+SQLServer -->> ReputationDataAccess: return 0
 deactivate SQLServer
 
-ReputationDataAccess -->> ReputationService: return Task Object
+ReputationDataAccess -->> ReputationService: return Task Object (isSuccessful = false)
 deactivate ReputationDataAccess
 
 ReputationService ->> Logging: Log(Log log): Response Object
@@ -84,7 +84,7 @@ activate ReputationDataAccess
 ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
 activate SQLServer
 
-SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.UpdateReputation()', 'app.Reputation', 'User Reputation Updated Successfully');
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Error', 'log._userHash', 'ReputationService.UpdateReputation()', 'app.Reputation', 'User Reputation Update Failed');
 activate SQLServer
 
 SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
@@ -99,70 +99,21 @@ deactivate ReputationDataAccess
 Logging -->> ReputationService: return Response Object
 deactivate Logging
 
-ReputationService -->> ReputationManager: return Response Object
+ReputationService -->> ReputationManager: return Response Object (Response.isSuccessful = false)
 deactivate ReputationService
 
-group if (response.isSuccessful) 
-ReputationManager ->> ReputationService: StoreNewUserReport(Reputation Object): Response Object
-activate ReputationService
+group if (!response.isSuccessful) 
+ReputationManager -->> ReputationController: return Task Object (isSuccessful = false)
+deactivate ReputationManager
 end
 
-ReputationService ->> ReputationDataAccess: await InsertUserReport(Reputation Object).ConfigureAwait(false): Task Object
-activate ReputationDataAccess
-
-
-ReputationDataAccess ->> SQLServer:  ExecuteNonQuery(): Int32
-activate SQLServer
-
-SQLServer ->> SQLServer: INSERT INTO dbo.UserReports(rating, feedback, reportedUser)\nVALUES(newReport._rating, 'newReport._feedback', 'newReport_reportedUser);
-activate SQLServer
-
-SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
-deactivate SQLServer
-
-SQLServer -->> ReputationDataAccess: return 1
-deactivate SQLServer
-
-ReputationDataAccess -->> ReputationService: return Task Object
-deactivate ReputationDataAccess
-
-ReputationService ->> Logging: Log(Log log): Response Object
-activate Logging
-
-Logging ->> ReputationDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
-activate ReputationDataAccess
-
-ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
-activate SQLServer
-
-SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.StoreNewUserReport()', 'app.Reputation', 'New Report Stored Successfully');
-activate SQLServer
-
-SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
-deactivate SQLServer
-
-SQLServer -->> ReputationDataAccess:  return 1 
-deactivate SQLServer
-
-ReputationDataAccess -->> Logging: return Task Object
-deactivate ReputationDataAccess
-
-Logging -->> ReputationService: return Response Object
-deactivate Logging
-
-ReputationService -->> ReputationManager: return Response Object
-deactivate ReputationService
-
-ReputationManager -->> ReputationController: return Task Object
-deactivate ReputationManager
-
-ReputationController -->> Console: return Task Object
+ReputationController -->> Console: return Task Object (isSuccessful = false)
 deactivate ReputationController
 
 Console -->> ReputationView: returns response JSON Object
 deactivate Console
 
-ReputationView -->> Authenticated User: Displays back to user "Report submitted successfully"
+ReputationView -->> Authenticated User: Displays back to user "Report Failed to Submit. Please Try Again"
 deactivate ReputationView
 
 deactivate Authenticated User
