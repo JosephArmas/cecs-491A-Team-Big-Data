@@ -9,7 +9,6 @@ function registerUser()
 
    user.username = registerEmail.value;
    user.password = registerPassword.value;
-   // console.log(newUser)
    axios.post(registrationServer,user).then(function (response)
    {
       let responseAfter = response.data;

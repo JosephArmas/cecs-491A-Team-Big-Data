@@ -74,23 +74,19 @@ function buildLogin()
         event.preventDefault();
         if (email.value == '' || password.value == '')
         {
-            errorsDiv.innerHTML = "Please fill in all fields";
-            timeOut(errorsDiv);
+            timeOut('Please fill in all fields','red',errorsDiv);
         } else if(IsValidPassword(password.value) === false)
         {
-            errorsDiv.innerHTML = "Password must be at least 8 characters long";
-            timeOut(errorsDiv);
+            timeOut('Password must be at least 8 characters long', 'red', errorsDiv);
 
         } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
         {
+            
             loginUser();
-            timeOut(errorsDiv);
-            // sendOtp();
 
         } else
         {
-            errorsDiv.innerHTML = "Error with email or password. Please try again"; 
-            timeOut(errorsDiv);
+            timeOut('Error with email or password. Plrease try agian', 'red',errorsDiv);
         }
         // reset login form when button clicked
         loginForm.reset()
@@ -184,7 +180,7 @@ function buildRegistration()
         {
            timeOut('Please fill in all fields','red',errorsDiv);
 
-        } else if(!(password.value === confirmPassword.value))
+        } else if(password.value !== confirmPassword.value)
         {
             timeOut('Passwords do not match','red',errorsDiv);
 
@@ -196,7 +192,6 @@ function buildRegistration()
         }
         else if (IsValidPassword(password.value) === false)
         {
-           errorsDiv.innerHTML = "Password must be at least 8 characters long";
             timeOut('Password must be at least 8 characters long','red',errorsDiv)
         
         } else{
@@ -219,8 +214,8 @@ function buildRegistration()
     registerForm.appendChild(boxDiv);
     registrationContainer.appendChild(registerForm);
     
-    
 }
+
 
 function regClicked()
 {
@@ -240,7 +235,6 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
-    // var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
     homeContainer.style.display = "block";
@@ -248,12 +242,81 @@ function regView()
 
 function showOtp()
 {
-    var otpContainer = document.querySelector(".otp-container");
-    var loginContainer = document.querySelector(".login-container");
+    let otpContainer = document.querySelector(".otp-container");
+    let loginContainer = document.querySelector(".login-container");
     let anonContainer = document.querySelector(".anon-container");
-    anonContainer.style.display = "none";
+    let otpForm = document.querySelector("#otp-form");
+    if(!otpForm)
+    {
+        buildOTP();
+
+    }
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
+    anonContainer.style.display = "none";
+}
+
+function buildOTP()
+{
+
+    let otpContainer = document.querySelector(".otp-container");
+    let otpForm = document.createElement('form'); 
+    otpForm.id = "otp-form";
+    let backBtnDiv = document.createElement('div');
+    backBtnDiv.setAttribute('class','back-button');
+    let backBtn = document.createElement('button');
+    backBtn.setAttribute('type','button');
+    backBtn.textContent = "Back";
+    backBtn.addEventListener('click',homeClicked);
+    backBtnDiv.appendChild(backBtn);
+    otpForm.appendChild(backBtnDiv);
+    let otpTitle = document.createElement('h2');
+    otpTitle.id = "otp-title";
+    otpTitle.textContent = "Enter OTP";
+    otpForm.appendChild(otpTitle);
+    let otpDisplay = document.createElement('div');
+    let otpVal = generateOTP();
+    otpDisplay.setAttribute('class','otp-display');
+    otpDisplay.innerHTML = otpVal;
+    otpForm.appendChild(otpDisplay);
+    let otp = document.createElement('div');
+    otp.setAttribute('class','otp');
+    let otpInput = document.createElement('input');
+    otpInput.setAttribute('type','text');
+    otpInput.required = true;
+    otp.appendChild(otpInput);
+    otpForm.appendChild(otp);
+    let submitDiv = document.createElement('div');
+    submitDiv.setAttribute('class','submit')
+    let submit = document.createElement('button');
+    submit.setAttribute('type','submit');
+    submit.textContent = "Submit";
+    submit.addEventListener('click',function(event)
+    {
+        event.preventDefault();
+        if (otpInput.value == '')
+        {
+            timeOut('Please enter OTP','red',errorsDiv)
+    
+        } else if (otpInput.value == otpVal && roles.includes(userType))  
+        {
+            regView();
+            
+        } else if(otpInput.value == otpVal && userType === "Admin User")
+        {
+    
+            adminView();
+    
+        } else 
+        {
+            timeOut('Invalid OTP. Please try again','red', errorsDiv)
+        } 
+        otpForm.reset();
+    })
+    submitDiv.appendChild(submit);
+    otpForm.appendChild(submitDiv);
+    otpContainer.appendChild(otpForm);
+
 }
 
 function IsValidPassword(password)

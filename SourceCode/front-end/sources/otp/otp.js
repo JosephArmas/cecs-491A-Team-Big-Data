@@ -1,35 +1,3 @@
-var otpContainer = document.querySelector(".otp-container");
-// var errorsOtp = document.getElementById("errors");
-const otpBtn = document.querySelector("#otp-submit");
-const otpForm = document.querySelector("#otp-form");
-const otpDisplay = document.querySelector("#otp-display");
-var otpInput = document.querySelector("#otp-input");
-otpBtn.addEventListener('click', function (event)
-{
-    event.preventDefault();
-    if (otpInput.value == '')
-    {
-        errorsOtp.innerHTML = "Please enter OTP";
-
-    } else if (otpInput.value == otpVal && roles.includes(userType))  
-    {
-        errorsOtp.innerHTML = "";
-        regView();
-        
-    } else if(otpInput.value == otpVal && userType === "Admin User")
-    {
-
-        errorsOtp.innerHTML = "";
-        adminView();
-
-    } else 
-    {
-        errorsOtp.style.color = "red";
-        errorsOtp.innerHTML = "Invalid OTP. Please try again";
-    } 
-    otpForm.reset();
-});
-    
 
 function generateOTP()
 {
@@ -60,12 +28,4 @@ function generateOTP()
         random = Math.floor(Math.random() * 3);
     }
     return otp.toString();
-}
-
-function sendOtp()
-{
-    otpVal = generateOTP();
-    otpDisplay.style.color = "blue";
-    otpDisplay.innerHTML = otpVal;
-    otpDisplay.style.fontSize = "20px";
 }

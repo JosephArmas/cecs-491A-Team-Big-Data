@@ -5,23 +5,25 @@ const roles =  ['Regular User']
 
 function loginUser()
 {
+    let email = document.getElementById('email');
+    let password = document.getElementById('password');
     user.username = email.value;
     user.password = password.value;
+    let loginForm = document.getElementById('login-form');
     axios.post(authenticationServer, user).then(function (responseAfter)
     {
         var responseAfter = responseAfter.data
         if(responseAfter.identity.isAuthenticated === true && responseAfter.identity.authenticationType !== 'Anonymous User' )
         {
-            errorsDiv.innerHTML = "";
             userType = responseAfter.identity.authenticationType;
             showOtp();
-            sendOtp();
+            // sendOtp();
             
         } else if (responseAfter.identity.isAuthenticate === true && responseAfter.identity.authenticationType === 'Admin User')
         {
             userType = responseAfter.identity.authenticationType;
             showOtp();
-            sendOtp();
+            // sendOtp();
 
         }
     }).catch(function (error)
@@ -30,6 +32,7 @@ function loginUser()
                 let cleanError = errorAfter.replace(/"/g,"");
                 errorsDiv.innerHTML = cleanError; 
         });
+    loginForm.reset();
 }
 
 
