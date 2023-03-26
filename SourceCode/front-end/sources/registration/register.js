@@ -1,66 +1,28 @@
 
 const registrationServer= 'https://localhost:7259/account/registration';
-const registerEmail = document.getElementById('r-email');
-const registerPassword = document.getElementById('r-pw');
-const confirmedPassword = document.getElementById('r-cpw');
-const regBtn = document.getElementById('regBtn-submit');
-// var errorsCont = document.getElementById('errors');
-const regForm = document.getElementById('registration-form');
-var regHome = document.getElementById("reg-home");
-const newUser = {}
-regBtn.addEventListener('click', function (event)
-{
-   event.preventDefault();
-   if (registerEmail.value == '' || registerPassword.value == '' || confirmedPassword.value == '')
-   {
-      errorsDiv.innerHTML = "Please fill in all fields";
-   } else if(!(registerPassword.value === confirmedPassword.value))
-   {
-      errorsDiv.innerHTML = "Passwords do not match";
-
-   } else if(IsValidPassword(registerPassword.value) === true && IsValidEmail(registerEmail.value) === true)
-   {
-      registerUser();
-
-   }
-   else if (IsValidPassword(registerPassword.value) === false)
-   {
-      errorsDiv.innerHTML = "Password must be at least 8 characters long";
-   } else{
-      
-      errorsDiv.innerHTML = "Error with email or password. Please try again";
-      
-   }
-   regForm.reset()
-
-});
-
-regHome.addEventListener('click', function (event)
-{
-   // errorsCont.innerHTML= "";
-});
-
 
 function registerUser()
 {
-   
-   newUser.username = registerEmail.value;
-   newUser.password = registerPassword.value;
+   const registerEmail = document.getElementById('r-email');
+   const registerPassword = document.getElementById('r-email');
+   const registerForm = document.getElementById('registration-form');
+
+   user.username = registerEmail.value;
+   user.password = registerPassword.value;
    // console.log(newUser)
-   axios.post(registrationServer,newUser).then(function (response)
+   axios.post(registrationServer,user).then(function (response)
    {
-      let responseAfter = response.data
+      let responseAfter = response.data;
       let cleanResponse = responseAfter.replace(/"/g,"");
-         errorsDiv.style.color = "green";
-         errorsDiv.innerHTML = cleanResponse +  ". Please return to home screen to login.";
+      timeOut(cleanResponse + '. Please return to home screen to login.', 'green', errorsDiv);
    }).catch(function (error)
    {
       let errorAfter = error.response.data
       let cleanError = errorAfter.replace(/"/g,"");
-      errorsDiv.innerHTML = cleanError; 
+      timeOut(cleanError, 'red', errorsDiv);
 
    });
-   regForm.reset();
+   registerForm.reset();
    
 }
 

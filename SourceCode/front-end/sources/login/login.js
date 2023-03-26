@@ -1,52 +1,10 @@
-// * TODO: fix error validation 
 'use strict';
 const authenticationServer= 'https://localhost:7259/account/authentication';
-// const loginForm = document.getElementById('login-form');
-// const email = document.getElementById('email');
-// const password = document.getElementById('password');
-// const loginBtn = document.getElementById('sub-login');
-// const loginHome = document.getElementById('login-home');
-// var errorsDiv = document.getElementById('errors');
 var userType = "";
 const roles =  ['Regular User']
-const user = {}
-loginBtn.addEventListener('click', function (event)
-{
-    event.preventDefault();
-    if (email.value == '' || password.value == '')
-    {
-        errorsDiv.innerHTML = "Please fill in all fields";
-    } else if(IsValidPassword(password.value) === false)
-    {
-        errorsDiv.innerHTML = "Password must be at least 8 characters long";
-
-    } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
-    {
-        loginUser();
-        // sendOtp();
-
-    } else
-    {
-        errorsDiv.innerHTML = "Error with email or password. Please try again"; 
-    }
-    // reset login form when button clicked
-    loginForm.reset()
-
-});
-
-loginHome.addEventListener('click', function (event)
-{
-    errorsDiv.innerHTML= "";
-});
-
 
 function loginUser()
 {
-    const loginForm = document.getElementById('login-form');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const loginBtn = document.getElementById('sub-login');
-    const loginHome = document.getElementById('login-home');
     user.username = email.value;
     user.password = password.value;
     axios.post(authenticationServer, user).then(function (responseAfter)
@@ -68,12 +26,11 @@ function loginUser()
         }
     }).catch(function (error)
         {
-            let errorAfter = error.response.data;
-            let cleanError = errorAfter.replace(/"/g,"");
-            errorsDiv.innerHTML = cleanError; 
+                let errorAfter = error.response.data;
+                let cleanError = errorAfter.replace(/"/g,"");
+                errorsDiv.innerHTML = cleanError; 
         });
 }
-
 
 
 

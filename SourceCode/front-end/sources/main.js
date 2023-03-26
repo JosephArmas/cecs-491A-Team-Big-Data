@@ -8,12 +8,14 @@
  * All of main is anon view -> Homeview(admin or reg user)
 */
 
+
 document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
 document.querySelector("#admin-logout").addEventListener("click", homeClicked);
 document.querySelector("#register").addEventListener("click", regClicked);
 document.querySelector("#login").addEventListener("click", loginClicked);
 // * Considered cross cutting so can be called anywhere
 var errorsDiv = document.getElementById('errors');
+const user = {}
 
 
 function loginClicked()
@@ -35,8 +37,6 @@ function buildLogin()
 {
     let loginContainer = document.querySelector(".login-container");
     let loginForm = document.createElement('form');
-    loginForm.setAttribute('action','/');
-    loginForm.setAttribute('method','POST');
     loginForm.id = "login-form";
     let backBtnDiv = document.createElement('div');
     backBtnDiv.setAttribute('class','back-button');
@@ -68,6 +68,35 @@ function buildLogin()
     password.minLength = 8;
     submitBtn.id = "sub-login";
     submitBtn.textContent = "Submit";
+    submitBtn.addEventListener('click', function (event)
+    {
+            
+        event.preventDefault();
+        if (email.value == '' || password.value == '')
+        {
+            errorsDiv.innerHTML = "Please fill in all fields";
+            timeOut(errorsDiv);
+        } else if(IsValidPassword(password.value) === false)
+        {
+            errorsDiv.innerHTML = "Password must be at least 8 characters long";
+            timeOut(errorsDiv);
+
+        } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
+        {
+            loginUser();
+            timeOut(errorsDiv);
+            // sendOtp();
+
+        } else
+        {
+            errorsDiv.innerHTML = "Error with email or password. Please try again"; 
+            timeOut(errorsDiv);
+        }
+        // reset login form when button clicked
+        loginForm.reset()
+
+    });
+    
     inputDiv.appendChild(email);
     inputDiv.appendChild(password);
     inputDiv.appendChild(submitBtn);
@@ -104,7 +133,6 @@ function homeClicked()
     loginContainer.style.display = "none";
     analyticsView.style.display = "none";
     adminView.style.display = "none";
-    // errorsDiv.innerHTML = "";
 
 }
 
@@ -112,8 +140,6 @@ function buildRegistration()
 {
     let registrationContainer = document.querySelector(".registration-container");
     let registerForm = document.createElement('form');
-    registerForm.setAttribute('action','/');
-    registerForm.setAttribute('method','POST');
     registerForm.id = "registration-form";
     let backBtnDiv = document.createElement('div');
     backBtnDiv.setAttribute('class','back-button');
@@ -134,7 +160,7 @@ function buildRegistration()
     inputDiv.setAttribute('class','input-field');
     let email = document.createElement('input');
     let password = document.createElement('input');
-    let confirmPasswordm = document.createElement('input');
+    let confirmPassword = document.createElement('input');
     let submitBtn = document.createElement('button');
     email.setAttribute('type','email');
     email.id = "r-email";
@@ -145,14 +171,43 @@ function buildRegistration()
     password.setAttribute('placeholder','Password');
     password.required = true;
     password.minLength = 8;
-    confirmPasswordm.required = 'true';
-    confirmPasswordm.minLength = 8;
-    confirmPasswordm.setAttribute('placeholder','Confirm Password');
+    confirmPassword.setAttribute('type','password');
+    confirmPassword.required = 'true';
+    confirmPassword.minLength = 8;
+    confirmPassword.setAttribute('placeholder','Confirm Password');
     submitBtn.id = "regBtn-submit";
     submitBtn.textContent = "Submit";
+    submitBtn.addEventListener('click', function (event)
+    {
+        event.preventDefault();
+        if (password.value == '' || password.value == '' || password.value == '')
+        {
+           timeOut('Please fill in all fields','red',errorsDiv);
+
+        } else if(!(password.value === confirmPassword.value))
+        {
+            timeOut('Passwords do not match','red',errorsDiv);
+
+     
+        } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true)
+        {
+           registerUser();
+     
+        }
+        else if (IsValidPassword(password.value) === false)
+        {
+           errorsDiv.innerHTML = "Password must be at least 8 characters long";
+            timeOut('Password must be at least 8 characters long','red',errorsDiv)
+        
+        } else{
+           
+            timeOut('Error with email or password. Please try again','red',errorsDiv);
+           
+        }
+    });
     inputDiv.appendChild(email);
     inputDiv.appendChild(password);
-    inputDiv.appendChild(confirmPasswordm);
+    inputDiv.appendChild(confirmPassword);
     inputDiv.appendChild(submitBtn);
     let contactDiv = document.createElement('div');
     contactDiv.setAttribute('class','reg-contact');
@@ -195,6 +250,8 @@ function showOtp()
 {
     var otpContainer = document.querySelector(".otp-container");
     var loginContainer = document.querySelector(".login-container");
+    let anonContainer = document.querySelector(".anon-container");
+    anonContainer.style.display = "none";
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
 }
@@ -257,4 +314,14 @@ function showAnalyticsRegistrationView()
     // analyticsRegistration.insertBefore(analyticTitle ,analyticsRegistration.firstChild);
     analyticsHome.style.display = "none";
     
+}
+
+function timeOut(text,color,divElement)
+{
+    divElement.style.display = "block";
+    divElement.innerHTML = text;
+    divElement.style.color = color;
+    setTimeout(function(){
+        divElement.style.display = "none";
+    }, 3000);
 }
