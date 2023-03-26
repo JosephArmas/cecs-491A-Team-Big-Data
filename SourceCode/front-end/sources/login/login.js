@@ -1,11 +1,11 @@
 // * TODO: fix error validation 
 'use strict';
 const authenticationServer= 'https://localhost:7259/account/authentication';
-const loginForm = document.getElementById('login-form');
-const email = document.getElementById('email');
-const password = document.getElementById('password');
-const loginBtn = document.getElementById('sub-login');
-const loginHome = document.getElementById('login-home');
+// const loginForm = document.getElementById('login-form');
+// const email = document.getElementById('email');
+// const password = document.getElementById('password');
+// const loginBtn = document.getElementById('sub-login');
+// const loginHome = document.getElementById('login-home');
 // var errorsDiv = document.getElementById('errors');
 var userType = "";
 const roles =  ['Regular User']
@@ -42,6 +42,11 @@ loginHome.addEventListener('click', function (event)
 
 function loginUser()
 {
+    const loginForm = document.getElementById('login-form');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const loginBtn = document.getElementById('sub-login');
+    const loginHome = document.getElementById('login-home');
     user.username = email.value;
     user.password = password.value;
     axios.post(authenticationServer, user).then(function (responseAfter)

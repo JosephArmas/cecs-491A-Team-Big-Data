@@ -10,7 +10,7 @@
 
 document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
 document.querySelector("#admin-logout").addEventListener("click", homeClicked);
-// document.querySelector("#register").addEventListener("click", regClicked);
+document.querySelector("#register").addEventListener("click", regClicked);
 document.querySelector("#login").addEventListener("click", loginClicked);
 // * Considered cross cutting so can be called anywhere
 var errorsDiv = document.getElementById('errors');
@@ -37,16 +37,14 @@ function buildLogin()
     let loginForm = document.createElement('form');
     loginForm.setAttribute('action','/');
     loginForm.setAttribute('method','POST');
-    loginForm.setAttribute('id','login-form');
+    loginForm.id = "login-form";
     let backBtnDiv = document.createElement('div');
     backBtnDiv.setAttribute('class','back-button');
     let backBtn = document.createElement('button');
     backBtn.setAttribute('type','button');
     backBtn.textContent = "Back";
     backBtn.addEventListener('click',homeClicked);
-    // * Add the back button in side the div element
     backBtnDiv.appendChild(backBtn);
-    // * Add this div element inside of the form element
     loginForm.appendChild(backBtnDiv);
     let boxDiv = document.createElement('div');
     boxDiv.setAttribute('class', 'login-box') 
@@ -61,11 +59,11 @@ function buildLogin()
     let submitBtn = document.createElement('button');
     email.setAttribute('type','email');
     email.id = "email";
-    email.setAttribute('placeholder','email address');
+    email.setAttribute('placeholder','Email Address');
     email.required = true;
     password.setAttribute('type','password');
     password.id = "password";
-    password.setAttribute('placeholder','password');
+    password.setAttribute('placeholder','Password');
     password.required = true;
     password.minLength = 8;
     submitBtn.id = "sub-login";
@@ -88,6 +86,7 @@ function buildLogin()
 }
 
 
+
 function homeClicked()
 {
 
@@ -107,17 +106,78 @@ function homeClicked()
     adminView.style.display = "none";
     // errorsDiv.innerHTML = "";
 
-
-
 }
 
+function buildRegistration()
+{
+    let registrationContainer = document.querySelector(".registration-container");
+    let registerForm = document.createElement('form');
+    registerForm.setAttribute('action','/');
+    registerForm.setAttribute('method','POST');
+    registerForm.id = "registration-form";
+    let backBtnDiv = document.createElement('div');
+    backBtnDiv.setAttribute('class','back-button');
+    let backBtn= document.createElement('button');
+    backBtn.setAttribute('type','button');
+    backBtn.id = 'reg-home'
+    backBtn.textContent = 'Back'
+    backBtn.addEventListener('click',homeClicked);
+    backBtnDiv.appendChild(backBtn);
+    registerForm.appendChild(backBtnDiv);
+    let boxDiv = document.createElement('div');
+    boxDiv.setAttribute('class', 'reg-box')
+    let regTitle = document.createElement('h1');
+    regTitle.id = 'reg-title';
+    regTitle.textContent = "Register";
+    boxDiv.appendChild(regTitle);
+    let inputDiv = document.createElement('div');
+    inputDiv.setAttribute('class','input-field');
+    let email = document.createElement('input');
+    let password = document.createElement('input');
+    let confirmPasswordm = document.createElement('input');
+    let submitBtn = document.createElement('button');
+    email.setAttribute('type','email');
+    email.id = "r-email";
+    email.setAttribute('placeholder','Email Address');
+    email.required = true;
+    password.setAttribute('type','password');
+    password.id = "r-pw";
+    password.setAttribute('placeholder','Password');
+    password.required = true;
+    password.minLength = 8;
+    confirmPasswordm.required = 'true';
+    confirmPasswordm.minLength = 8;
+    confirmPasswordm.setAttribute('placeholder','Confirm Password');
+    submitBtn.id = "regBtn-submit";
+    submitBtn.textContent = "Submit";
+    inputDiv.appendChild(email);
+    inputDiv.appendChild(password);
+    inputDiv.appendChild(confirmPasswordm);
+    inputDiv.appendChild(submitBtn);
+    let contactDiv = document.createElement('div');
+    contactDiv.setAttribute('class','reg-contact');
+    let contactSupportBtn = document.createElement('button');
+    contactSupportBtn.textContent = "Contact Support";
+    contactDiv.appendChild(contactSupportBtn);
+    boxDiv.appendChild(inputDiv);
+    boxDiv.appendChild(contactDiv);
+    registerForm.appendChild(boxDiv);
+    registrationContainer.appendChild(registerForm);
+    
+    
+}
 
 function regClicked()
 {
     var regContainer = document.querySelector(".registration-container");
     var anonContainer = document.querySelector(".anon-container");
-    anonContainer.style.display = "none";
+    let regForm = document.querySelector("#registration-form");
+    if (!regForm)
+    {
+        buildRegistration();
+    }
     regContainer.style.display = "block";
+    anonContainer.style.display = "none";
 }
 
 function regView()
