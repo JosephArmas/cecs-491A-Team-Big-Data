@@ -10,15 +10,30 @@
 
 document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
 document.querySelector("#admin-logout").addEventListener("click", homeClicked);
-document.querySelector("#register").addEventListener("click", regClicked);
+// document.querySelector("#register").addEventListener("click", regClicked);
+document.querySelector("#login").addEventListener("click", loginClicked);
 // * Considered cross cutting so can be called anywhere
 var errorsDiv = document.getElementById('errors');
 
 
 function loginClicked()
 {
-    var anonContainer = document.querySelector(".anon-container");
-    var loginContainer = document.querySelector(".login-container");
+    let anonContainer = document.querySelector(".anon-container");
+    let loginContainer = document.querySelector(".login-container");
+    let loginForm = document.querySelector("#login-form");
+    // * Check if there is any created div element 
+    if (!loginForm)
+    {
+        buildLogin();
+    }
+
+    loginContainer.style.display = "block";
+    anonContainer.style.display = "none";
+}
+
+function buildLogin()
+{
+    let loginContainer = document.querySelector(".login-container");
     let loginForm = document.createElement('form');
     loginForm.setAttribute('action','/');
     loginForm.setAttribute('method','POST');
@@ -33,10 +48,43 @@ function loginClicked()
     backBtnDiv.appendChild(backBtn);
     // * Add this div element inside of the form element
     loginForm.appendChild(backBtnDiv);
-
-
-    anonContainer.style.display = "none";
-    loginContainer.style.display = "block";
+    let boxDiv = document.createElement('div');
+    boxDiv.setAttribute('class', 'login-box') 
+    let logintTitle = document.createElement('h1');
+    logintTitle.textContent = "Login";
+    logintTitle.style.textAlign = "center";
+    boxDiv.appendChild(logintTitle);
+    let inputDiv = document.createElement('div');
+    inputDiv.setAttribute('class','input-field-login');
+    let email = document.createElement('input');
+    let password = document.createElement('input');
+    let submitBtn = document.createElement('button');
+    email.setAttribute('type','email');
+    email.id = "email";
+    email.setAttribute('placeholder','email address');
+    email.required = true;
+    password.setAttribute('type','password');
+    password.id = "password";
+    password.setAttribute('placeholder','password');
+    password.required = true;
+    password.minLength = 8;
+    submitBtn.id = "sub-login";
+    submitBtn.textContent = "Submit";
+    inputDiv.appendChild(email);
+    inputDiv.appendChild(password);
+    inputDiv.appendChild(submitBtn);
+    boxDiv.appendChild(inputDiv);
+    let optionsDiv = document.createElement('div');
+    let forgotPassword = document.createElement('button');
+    let contactSupport = document.createElement('button');
+    optionsDiv.setAttribute('class','options-other');
+    forgotPassword.textContent = "Forgot Password";
+    contactSupport.textContent = "Contact Support";
+    optionsDiv.appendChild(forgotPassword);
+    optionsDiv.appendChild(contactSupport);
+    boxDiv.appendChild(optionsDiv)
+    loginForm.appendChild(boxDiv);
+    loginContainer.appendChild(loginForm);
 }
 
 
@@ -62,6 +110,7 @@ function homeClicked()
 
 
 }
+
 
 function regClicked()
 {

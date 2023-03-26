@@ -18,6 +18,11 @@
     background-color: #00acb7;
     color: white
 }
+.back-button button:hover
+{
+    background-color: #85f7ff;
+    color: white
+}
 
 .login-title
 {
@@ -25,7 +30,7 @@
     justify-content: center;
 }
 
-.input-field
+.input-field-login
 {
     display: flex;
     padding: 30px;
@@ -34,16 +39,24 @@
     gap: 30px;
 }
 
-.input-field input
+.input-field-login input
 {
     min-width: 50px;
 }
-.input-field button
+
+.input-field-login button
 {
     min-width: 100px;
     background-color: #ca74ff;
     color: white
 }
+
+.input-field-login button:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
 
 .options-other
 {

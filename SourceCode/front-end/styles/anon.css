@@ -30,12 +30,16 @@
     background-color: #ca74ff;
     /* align-self: flex-end; */
 }
-
-.title 
+    
+.login-register button:hover
 {
-    display: flex;
-    justify-content: center;
+    background-color: #eb61ff;
+    color: white
 
+}
+#anon-title
+{
+    text-align: center;
 }
 
 .content-container
@@ -65,13 +69,10 @@
 
 }
 
-.quote
+#anon-quote
 {
-    display: flex;
-    padding-top: 10px;
-    justify-content: center;
+    text-align: center;
 }
-
 
 .footer 
 {
