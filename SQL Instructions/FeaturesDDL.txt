@@ -1,0 +1,30 @@
+--TeamBigData.Utification.Features
+CREATE TABLE dbo."Events"
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+
+CREATE TABLE dbo.Pictures
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+
+CREATE TABLE dbo.Pins
+(
+pinID int NOT NULL Identity,
+userID int NOT NULL,
+lat varchar(50),
+lng varchar(50),
+pinType int,
+"description" varchar(MAX),
+"disabled" int DEFAULT 0,
+CONSTRAINT Pins_Candidate_Key_01 UNIQUE (lat,lng)
+);
+
+CREATE TABLE dbo."Services"
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
