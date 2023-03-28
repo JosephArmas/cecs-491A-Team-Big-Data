@@ -19,6 +19,8 @@
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/analytics.css">
         <link rel="stylesheet" href="styles/home-admin.css">
+        <link rel="stylesheet" href="deletion.css">
+        <link rel="stylesheet" href="deletion-admin.css">
     </head>
     <body>
 
@@ -41,6 +43,10 @@
                 <div class="usage-analysis">
                     <button type="button" id="usage-dashboard" onclick="">Usage Analysis Dashboard</button>
                 </div>
+                <div class="delete-admin">
+                    <button type="button" onclick="deleteAdminView()">Delete Users</button>
+                </div>
+
             </div>
         </div>
 
@@ -163,8 +169,25 @@
                 <footer>&copy; 2023 Utification</footer>
             </div>
         </div>
-
-
+        <!-- Deletion View-->
+        <div class="deletion-container">
+            <h1 class="title">Do you want to delete your account?</h1>
+            <button id="delete-btn" class="delete-btn">Delete Account</button>
+            <div class="back-button">
+              <button onclick="homeClicked()">Back</button>
+            </div>
+        </div>
+        <!-- Deletion Admin View-->
+        <div class="delete-admin-container">
+            <h1 class="title">Delete Admin</h1>
+            <div class="input-container">
+              <input type="text" class="input-field" placeholder="Enter User">
+              <button class="delete-btn">Delete User</button>
+            </div>
+            <div class="back-button">
+              <button onclick="adminView()">Back</button>
+            </div>
+        </div>
         <!-- Thirdparty dependency -->
         <script src="node_modules/axios/dist/axios.js"></script>
 
@@ -173,6 +196,8 @@
         <script src="sources/registration/register.js"></script>
         <script src="sources/otp/otp.js"></script>
         <script type="module" src="sources/analytics/analytics.js"></script>
+        <script src="sources/delete/delete.js"></script>
+        <script src="sources/delete-admin/delete-admin.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

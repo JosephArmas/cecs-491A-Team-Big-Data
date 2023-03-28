@@ -266,6 +266,7 @@ function adminView()
     var homeContainer = document.querySelector(".home-admin-container");
     var anonContainer = document.querySelector(".anon-container");
     var analyticsView = document.querySelector(".analytics-container");
+    var deletionAdminView = document.querySelector(".delete-admin-container")
     var otpContainer =document.querySelector(".otp-container");
     homeContainer.style.display = "block";
     analyticsView.style.display = "none";
@@ -294,6 +295,12 @@ function showAnalyticsRegistrationView()
     analyticsHome.style.display = "none";
     
 }
+function deleteAdminView() {
+    var homeContainer = document.querySelector(".home-admin-container");
+    var deleteAdminContainer = document.querySelector(".delete-admin-container");
+    homeContainer.style.display = "none";
+    deleteAdminContainer.style.display = "block";
+  }
 
 function timeOut(errorMsg,color,divElement)
 {
