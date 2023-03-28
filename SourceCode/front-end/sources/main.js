@@ -22,92 +22,9 @@ function loginClicked()
 {
     let anonContainer = document.querySelector(".anon-container");
     let loginContainer = document.querySelector(".login-container");
-    let loginForm = document.querySelector("#login-form");
-    // * Check if there is any created div element 
-    if (!loginForm)
-    {
-        buildLogin();
-    }
-
+    buildLogin();
     loginContainer.style.display = "block";
     anonContainer.style.display = "none";
-}
-
-function buildLogin()
-{
-    let loginContainer = document.querySelector(".login-container");
-    let loginForm = document.createElement('form');
-    loginForm.id = "login-form";
-    let backBtnDiv = document.createElement('div');
-    backBtnDiv.setAttribute('class','back-button');
-    let backBtn = document.createElement('button');
-    backBtn.setAttribute('type','button');
-    backBtn.textContent = "Back";
-    backBtn.addEventListener('click',homeClicked);
-    backBtnDiv.appendChild(backBtn);
-    loginForm.appendChild(backBtnDiv);
-    let boxDiv = document.createElement('div');
-    boxDiv.setAttribute('class', 'login-box') 
-    let logintTitle = document.createElement('h1');
-    logintTitle.textContent = "Login";
-    logintTitle.style.textAlign = "center";
-    boxDiv.appendChild(logintTitle);
-    let inputDiv = document.createElement('div');
-    inputDiv.setAttribute('class','input-field-login');
-    let email = document.createElement('input');
-    let password = document.createElement('input');
-    let submitBtn = document.createElement('button');
-    email.setAttribute('type','email');
-    email.id = "email";
-    email.setAttribute('placeholder','Email Address');
-    email.required = true;
-    password.setAttribute('type','password');
-    password.id = "password";
-    password.setAttribute('placeholder','Password');
-    password.required = true;
-    password.minLength = 8;
-    submitBtn.id = "sub-login";
-    submitBtn.textContent = "Submit";
-    submitBtn.addEventListener('click', function (event)
-    {
-            
-        event.preventDefault();
-        if (email.value == '' || password.value == '')
-        {
-            timeOut('Please fill in all fields','red',errorsDiv);
-        } else if(IsValidPassword(password.value) === false)
-        {
-            timeOut('Password must be at least 8 characters long', 'red', errorsDiv);
-
-        } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
-        {
-            
-            loginUser();
-
-        } else
-        {
-            timeOut('Error with email or password. Plrease try agian', 'red',errorsDiv);
-        }
-        // reset login form when button clicked
-        loginForm.reset()
-
-    });
-    
-    inputDiv.appendChild(email);
-    inputDiv.appendChild(password);
-    inputDiv.appendChild(submitBtn);
-    boxDiv.appendChild(inputDiv);
-    let optionsDiv = document.createElement('div');
-    let forgotPassword = document.createElement('button');
-    let contactSupport = document.createElement('button');
-    optionsDiv.setAttribute('class','options-other');
-    forgotPassword.textContent = "Forgot Password";
-    contactSupport.textContent = "Contact Support";
-    optionsDiv.appendChild(forgotPassword);
-    optionsDiv.appendChild(contactSupport);
-    boxDiv.appendChild(optionsDiv)
-    loginForm.appendChild(boxDiv);
-    loginContainer.appendChild(loginForm);
 }
 
 
@@ -322,8 +239,7 @@ function buildOTP()
 function IsValidPassword(password)
 {
     let passwordAllowed = new RegExp("^[a-zA-Z0-9@.,!\s-]")
-    // var passwordAllowed = /"^[a-zA-Z0-9@.,!\s-]"/;
-    if (passwordAllowed.test() && password.length > 7)
+    if (passwordAllowed.test(password) && password.length > 7)
     {
         return true;
     } else
@@ -379,10 +295,10 @@ function showAnalyticsRegistrationView()
     
 }
 
-function timeOut(text,color,divElement)
+function timeOut(errorMsg,color,divElement)
 {
     divElement.style.display = "block";
-    divElement.innerHTML = text;
+    divElement.innerHTML = errorMsg;
     divElement.style.color = color;
     setTimeout(function(){
         divElement.style.display = "none";

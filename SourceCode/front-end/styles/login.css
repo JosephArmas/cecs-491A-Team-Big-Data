@@ -65,6 +65,11 @@
     gap: 35px;
 }
 
+#login-title
+{
+    text-align: center;
+}
+
 .login-container
 {
     display: none;

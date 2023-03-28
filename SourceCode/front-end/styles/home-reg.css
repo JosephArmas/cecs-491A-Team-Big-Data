@@ -42,6 +42,11 @@
 
 }
 
+#home-title
+{
+    text-align: center;
+}
+
 .home-container
 {
     display: none;

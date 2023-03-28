@@ -2,6 +2,7 @@
 const authenticationServer= 'https://localhost:7259/account/authentication';
 var userType = "";
 const roles =  ['Regular User']
+let loginBuild = false;
 
 function loginUser()
 {
@@ -30,11 +31,72 @@ function loginUser()
         {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                errorsDiv.innerHTML = cleanError; 
+                timeOut(cleanError, 'red', errorsDiv)
+                // errorsDiv.innerHTML = cleanError; 
         });
     loginForm.reset();
 }
 
+    
+function buildLogin()
+{
+    if(!loginBuild)
+    {
+        let backBtnDiv = document.querySelector('.back-button');
+        let btn = document.createElement('button');
+        let inputDiv = document.querySelector('.input-field-login');
+        let optionsDiv = document.querySelector('.options-other');
+        btn.setAttribute('type','button');
+        btn.textContent = "Back";
+        btn.addEventListener('click',homeClicked);
+        backBtnDiv.appendChild(btn);
+        let email = document.createElement('input');
+        let password = document.createElement('input');
+        let submitBtn = document.createElement('button');
+        email.setAttribute('type','email');
+        email.id = "email";
+        email.setAttribute('placeholder','Email Address');
+        email.required = true;
+        password.setAttribute('type','password');
+        password.id = "password";
+        password.setAttribute('placeholder','Password');
+        password.required = true;
+        password.minLength = 8;
+        submitBtn.id = "sub-login";
+        submitBtn.textContent = "Submit";
+        submitBtn.addEventListener('click', function (event)
+        {
+            if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
+            {
+                loginUser();
+            } 
+            else
+            {
+                timeOut('Error with email or password. Plrease try agian', 'red', errorsDiv);
+            }
+            loginForm.reset()
+
+        });
+        inputDiv.appendChild(email);
+        inputDiv.appendChild(password);
+        inputDiv.appendChild(submitBtn);
+        let forgotPassword = document.createElement('button');
+        let contactSupport = document.createElement('button');
+        forgotPassword.textContent = "Forgot Password";
+        forgotPassword.addEventListener('click', function (event)
+        {
+            // * Place holder -> should go to Account Recovery view
+            timeOut('Redirecting to ')
+
+        });
+        contactSupport.textContent = "Contact Support";
+        optionsDiv.appendChild(forgotPassword);
+        optionsDiv.appendChild(contactSupport);
+
+        loginBuild = true;
+    }
+    
+}
 
 
 // * Debugging Purposes

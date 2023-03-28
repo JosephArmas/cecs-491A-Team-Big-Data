@@ -23,10 +23,6 @@
     padding-left: 320px;
 }
 
-#registration-container {
-    display: none;
-}
-
 .input-field
 {
     display: flex;
@@ -57,4 +53,8 @@
 #reg-title
 {
     text-align: center;
+}
+
+#registration-container {
+    display: none;
 }
