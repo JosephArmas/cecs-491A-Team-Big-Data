@@ -31,7 +31,7 @@ function loginUser()
         {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                timeOut(cleanError, 'red', errorsDiv)
+                timeOut(cleanError, 'red', responseDiv)
                 // errorsDiv.innerHTML = cleanError; 
         });
     loginForm.reset();
@@ -72,7 +72,7 @@ function buildLogin()
             } 
             else
             {
-                timeOut('Error with email or password. Plrease try agian', 'red', errorsDiv);
+                timeOut('Error with email or password. Plrease try agian', 'red', responseDiv);
             }
             loginForm.reset()
 

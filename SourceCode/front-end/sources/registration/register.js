@@ -1,5 +1,6 @@
 
 const registrationServer= 'https://localhost:7259/account/registration';
+let registerBuild = false;
 
 function registerUser()
 {
@@ -13,17 +14,18 @@ function registerUser()
    {
       let responseAfter = response.data;
       let cleanResponse = responseAfter.replace(/"/g,"");
-      timeOut(cleanResponse + '. Please return to home screen to login.', 'green', errorsDiv);
+      timeOut(cleanResponse + '. Please return to home screen to login.', 'green', responseDiv);
    }).catch(function (error)
    {
       let errorAfter = error.response.data
       let cleanError = errorAfter.replace(/"/g,"");
-      timeOut(cleanError, 'red', errorsDiv);
+      timeOut(cleanError, 'red', responseDiv);
 
    });
    registerForm.reset();
    
 }
+/*
 function buildRegistration()
 {
     let registrationContainer = document.querySelector(".registration-container");
@@ -106,6 +108,73 @@ function buildRegistration()
     registerForm.appendChild(boxDiv);
     registrationContainer.appendChild(registerForm);
     
+}
+*/
+   
+function buildRegistration()
+{
+   
+   if(!registerBuild)
+   {
+      let backBtnDiv = document.querySelector('.back-button');
+      let backBtn = document.createElement('button');
+      backBtn.setAttribute('type','button');
+      backBtn.textContent = 'Back';
+      // backBtn.addEventListener('click',homeClicked);
+      backBtnDiv.appendChild(backBtn);
+      /*
+      let inputDiv = document.querySelector('.input-field');
+      let email = document.createElement('input');
+      let password = document.createElement('input');
+      let confirmPassword = document.createElement('input');
+      let submitBtn = document.createElement('button');
+      email.setAttribute('type','email');
+      email.id = "r-email";
+      email.setAttribute('placeholder','Email Address');
+      email.required = true;
+      password.setAttribute('type','password');
+      password.id = "r-pw";
+      password.setAttribute('placeholder','Password');
+      password.required = true;
+      password.minLength = 8;
+      confirmPassword.setAttribute('type','password');
+      confirmPassword.required = 'true';
+      confirmPassword.minLength = 8;
+      confirmPassword.setAttribute('placeholder','Confirm Password');
+      submitBtn.id = "regBtn-submit";
+      submitBtn.textContent = "Submit";
+      submitBtn.addEventListener('click', function (event)
+      {
+         event.preventDefault();
+         if (password.value == '' || password.value == '' || password.value == '')
+         {
+            timeOut('Please fill in all fields','red',errorsDiv);
+
+         } else if(password.value !== confirmPassword.value)
+           {
+             timeOut('Passwords do not match','red',errorsDiv);
+           } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true)
+         {
+        
+         }
+         else if (IsValidPassword(password.value) === false)
+         {
+            timeOut('Password must be at least 8 characters long','red',responseDiv)
+           
+         } else{
+              
+            timeOut('Error with email or password. Please try again','red',responseDiv);
+              
+         }
+       });
+       inputDiv.appendChild(email);
+       inputDiv.appendChild(password);
+       inputDiv.appendChild(confirmPassword);
+       inputDiv.appendChild(submitBtn);
+      */
+      registerBuild = true;
+   }
+
 }
 
 // * Debugging Purposes

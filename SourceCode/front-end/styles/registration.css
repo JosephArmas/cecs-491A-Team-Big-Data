@@ -55,6 +55,7 @@
     text-align: center;
 }
 
-#registration-container {
+
+.registration-container {
     display: none;
 }
