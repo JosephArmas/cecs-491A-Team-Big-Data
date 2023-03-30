@@ -10,11 +10,13 @@
 
 
 document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
-document.querySelector("#admin-logout").addEventListener("click", homeClicked);
+// document.querySelector("#admin-logout").addEventListener("click", homeClicked);
 document.querySelector("#register").addEventListener("click", regClicked);
 document.querySelector("#login").addEventListener("click", loginClicked);
 // * Considered cross cutting so can be called anywhere
 var responseDiv = document.getElementById('response');
+let adminViewBuild = false;
+let regViewBuild = false
 const user = {}
 
 
@@ -105,6 +107,7 @@ function buildHomeUserView()
     profileBtn.id ="profileBtn"
     profileDiv.appendChild(profileBtn);
     logoutDiv.appendChild(logoutBtn);
+    regViewBuild = true;
     
 }
 
@@ -139,11 +142,42 @@ function adminView()
     var anonContainer = document.querySelector(".anon-container");
     var analyticsView = document.querySelector(".analytics-container");
     var otpContainer =document.querySelector(".otp-container");
+    buildAdminView();
     homeContainer.style.display = "block";
     analyticsView.style.display = "none";
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
 }
+
+function buildAdminView()
+{
+    let logoutContainer = document.querySelector(".logout-container");
+    let analyticsHome = document.querySelector(".home-admin-container");
+    let logoutBtn = document.createElement('button');
+    logoutBtn.setAttribute('type','button');
+    logoutBtn.textContent = 'Logout';
+    logoutBtn.id ="admin-logout"
+    logoutContainer.appendChild(logoutBtn);
+    let adminTitle = document.createElement('h1');
+    adminTitle.textContent = "Admin Home";
+    adminTitle.style.textAlign = "center";
+    analyticsHome.insertBefore(adminTitle, logoutContainer.nextSibling);
+    let userManagementDiv = document.querySelector(".user-management");
+    let usageAnalysisDiv = document.querySelector(".usage-analysis");
+    let userManagementBtn = document.createElement('button');
+    userManagementBtn.setAttribute('type','button');
+    userManagementBtn.textContent = 'User Management';
+    userManagementDiv.appendChild(userManagementBtn);
+    let usageAnalysisBtn = document.createElement('button');
+    usageAnalysisBtn.setAttribute('type','button');
+    usageAnalysisBtn.textContent = 'Usage Analysis';
+    usageAnalysisBtn.id = "usage-dashboard";
+    usageAnalysisDiv.appendChild(usageAnalysisBtn);
+    adminViewBuild = true;
+    
+}
+
+adminView();
 
 function showAnalytics()
 {

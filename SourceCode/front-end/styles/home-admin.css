@@ -23,6 +23,13 @@
     color: white
 }
 
+.logout-container button:hover
+{
+    background-color: #85f7ff;
+    color: white
+}
+
+
 .admin-features
 {
     display: flex;
@@ -65,5 +72,5 @@
 
 .home-admin-container
 {
-    display: none;
+    display: block;
 }
