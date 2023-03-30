@@ -129,7 +129,8 @@
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
-            errorsDiv.innerHTML = "Invalid Pin Input...";
+            // errorsDiv.innerHTML = "Invalid Pin Input...";
+            timeOut('invalid pin input...','red', responseDiv)
             return;
         };
 
@@ -137,14 +138,16 @@
         if (title == null || !titleLimit(title))
         //if (title == null)
         {
-            errorsDiv.innerHTML = "Invalid Title Input...";
+            // errorsDiv.innerHTML = "Invalid Title Input...";
+            timeOut('Invalid Title Input...','red', responseDiv)
             return;
         };
         let description = prompt("Enter pin description");
         if (description == null || !descriptionLimit(description))
         //if (description == null)
         {
-            errorsDiv.innerHTML = "Invalid Description Input...";
+            // errorsDiv.innerHTML = "Invalid Description Input...";
+            timeOut('Invalid Description Input...','red', responseDiv)
             return;
         };
 

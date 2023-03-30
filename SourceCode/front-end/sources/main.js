@@ -2,14 +2,10 @@
 /*
  * check if a user is first logged in -> update-profile view
  * home view - hamburger menu
- * Refactor for Login 
- * Refactor for Registration
- * Move Analytics to Analytics.js
  * All of main is anon view -> Homeview(admin or reg user)
 */
 
-
-document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
+// document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
 // document.querySelector("#admin-logout").addEventListener("click", homeClicked);
 document.querySelector("#register").addEventListener("click", regClicked);
 document.querySelector("#login").addEventListener("click", loginClicked);
@@ -157,6 +153,7 @@ function buildAdminView()
     logoutBtn.setAttribute('type','button');
     logoutBtn.textContent = 'Logout';
     logoutBtn.id ="admin-logout"
+    logoutBtn.addEventListener('click', homeClicked)
     logoutContainer.appendChild(logoutBtn);
     let adminTitle = document.createElement('h1');
     adminTitle.textContent = "Admin Home";
@@ -174,30 +171,6 @@ function buildAdminView()
     usageAnalysisBtn.id = "usage-dashboard";
     usageAnalysisDiv.appendChild(usageAnalysisBtn);
     adminViewBuild = true;
-    
-}
-
-adminView();
-
-function showAnalytics()
-{
-    var analyticsView = document.querySelector(".analytics-container");
-    var homeContainer = document.querySelector(".home-admin-container");
-    analyticsView.style.display = "block";
-    homeContainer.style.display = "none";
-}
-
-
-function showAnalyticsRegistrationView()
-{
-    let analyticsHome = document.querySelector(".analytics-home");
-    let analyticsRegistration = document.querySelector(".analytics-registration-view");
-    // let analyticTitle = document.createElement("h1");
-    // analyticTitle.textContent = "Analytics Registration";
-    // analyticTitle.style.textAlign = "center";
-    analyticsRegistration.style.display = "block";
-    // analyticsRegistration.insertBefore(analyticTitle ,analyticsRegistration.firstChild);
-    analyticsHome.style.display = "none";
     
 }
 

@@ -21,6 +21,12 @@
     background-color: #ca74ff;
 }
 
+#analytics-home:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
 #analytics-back
 {
     color: white;
@@ -28,11 +34,23 @@
     background-color: #ca74ff;
 }
 
+#analytics-back:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
 #analytics-logout
 {
     color: white;
     font-size: 1.55rem;
     background-color: #00acb7;
+}
+
+#analytics-logout:hover
+{
+    background-color: #85f7ff;
+    color: white;
 }
 
 .chart-options
