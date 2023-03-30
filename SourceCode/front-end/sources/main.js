@@ -28,7 +28,6 @@ function loginClicked()
 }
 
 
-
 function homeClicked()
 {
 
@@ -49,7 +48,6 @@ function homeClicked()
 
 }
 
-
 function regClicked()
 {
     var regContainer = document.querySelector(".registration-container");
@@ -65,88 +63,49 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
+    buildHomeUserView();
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
     homeContainer.style.display = "block";
 }
 
-function showOtp()
+function buildHomeUserView()
 {
-    let otpContainer = document.querySelector(".otp-container");
-    let loginContainer = document.querySelector(".login-container");
-    let anonContainer = document.querySelector(".anon-container");
-    let otpForm = document.querySelector("#otp-form");
-    if(!otpForm)
+    let logoutBtn = document.createElement('button');
+    let profileBtn = document.createElement('button');
+    let nav = document.querySelector(".ham-menu-container");
+    let featureBtn = document.createElement('button');
+    featureBtn.setAttribute('type','button');
+    featureBtn.textContent = 'Features';
+    nav.appendChild(featureBtn);
+    let features = document.querySelector(".features");
+    for (let i = 1; i <= 6; i++)
     {
-        buildOTP();
-
+        let li = document.createElement('li');
+        li.textContent = "feature " + i;
+        features.appendChild(li);
     }
-    otpContainer.style.display = "block";
-    loginContainer.style.display = "none";
-    anonContainer.style.display = "none";
-}
-
-function buildOTP()
-{
-
-    let otpContainer = document.querySelector(".otp-container");
-    let otpForm = document.createElement('form'); 
-    otpForm.id = "otp-form";
-    let backBtnDiv = document.createElement('div');
-    backBtnDiv.setAttribute('class','back-button');
-    let backBtn = document.createElement('button');
-    backBtn.setAttribute('type','button');
-    backBtn.textContent = "Back";
-    backBtn.addEventListener('click',homeClicked);
-    backBtnDiv.appendChild(backBtn);
-    otpForm.appendChild(backBtnDiv);
-    let otpTitle = document.createElement('h2');
-    otpTitle.id = "otp-title";
-    otpTitle.textContent = "Enter OTP";
-    otpForm.appendChild(otpTitle);
-    let otpDisplay = document.createElement('div');
-    let otpVal = generateOTP();
-    otpDisplay.setAttribute('class','otp-display');
-    otpDisplay.innerHTML = otpVal;
-    otpForm.appendChild(otpDisplay);
-    let otp = document.createElement('div');
-    otp.setAttribute('class','otp');
-    let otpInput = document.createElement('input');
-    otpInput.setAttribute('type','text');
-    otpInput.required = true;
-    otp.appendChild(otpInput);
-    otpForm.appendChild(otp);
-    let submitDiv = document.createElement('div');
-    submitDiv.setAttribute('class','submit')
-    let submit = document.createElement('button');
-    submit.setAttribute('type','submit');
-    submit.textContent = "Submit";
-    submit.addEventListener('click',function(event)
+    let profileDiv = document.querySelector("#profile");
+    let logoutDiv = document.querySelector("#logout");
+    let contactDiv = document.querySelector(".reg-contact-home");
+    let contactBtn = document.createElement('button');
+    contactBtn.setAttribute('type','button');
+    contactBtn.textContent = 'Contact Support';
+    contactBtn.addEventListener('click', function(event)
     {
-        event.preventDefault();
-        if (otpInput.value == '')
-        {
-            timeOut('Please enter OTP','red',errorsDiv)
+        alert("Contact Support");
+    });
+    contactDiv.appendChild(contactBtn);
+    nav.appendChild(features);
+    logoutBtn.setAttribute('type','button');
+    logoutBtn.id ="home-logoutBtn"
+    logoutBtn.textContent = 'Logout';
+    profileBtn.setAttribute('type','button');
+    profileBtn.textContent = 'Profile'
+    profileBtn.id ="profileBtn"
+    profileDiv.appendChild(profileBtn);
+    logoutDiv.appendChild(logoutBtn);
     
-        } else if (otpInput.value == otpVal && roles.includes(userType))  
-        {
-            regView();
-            
-        } else if(otpInput.value == otpVal && userType === "Admin User")
-        {
-    
-            adminView();
-    
-        } else 
-        {
-            timeOut('Invalid OTP. Please try again','red', errorsDiv)
-        } 
-        otpForm.reset();
-    })
-    submitDiv.appendChild(submit);
-    otpForm.appendChild(submitDiv);
-    otpContainer.appendChild(otpForm);
-
 }
 
 function IsValidPassword(password)

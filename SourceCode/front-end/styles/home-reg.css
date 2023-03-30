@@ -20,6 +20,12 @@
 
 }
 
+#home-logoutBtn:hover
+{
+    background-color: #85f7ff;
+    color: white
+}
+
 .map
 {
     border: 5px solid black;
@@ -49,5 +55,5 @@
 
 .home-container
 {
-    display: none;
+    display: block;
 }

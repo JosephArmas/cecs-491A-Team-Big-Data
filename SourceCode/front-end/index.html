@@ -86,39 +86,21 @@
 
         <!-- * Home view -->
         <div class="home-container" >
-            <!-- reused from anon  -->
             <div class="home-header-container">
                 <div class="menu-container">
                     <nav class="ham-menu-container">
-                        <button type="button">ham-menu</button>
-                        <ul class="features" >
-                            <li>feature 1</li>
-                            <li>feature 2</li>
-                            <li>feature 3</li>
-                            <li>feature 4</li>
-                            <li>feature 5</li>
-                            <li>feature 6</li>
-                        </ul>
+                        <ul class="features"></ul>
                     </nav>
                 </div>
-                <div class="title">
                     <h1>Utification</h1>
-                </div>
                 <div class="profile-container">
-                    <div>
-                        <!-- to not be bloated have a ajax call for the profile-nav -->
-                        <button type="button" id="profileBtn">Profile</button>
-                    </div>
-                    <div>
-                        <button type="button" id="home-logoutBtn" onclick="homeClicked()">Logout</button>
-                    </div>
+                    <div id="profile"></div>
+                    <div id="logout"></div>
                 </div>
             </div>
             <div class="map" id="map"></div>
                 <div class="misc">
-                    <div class="reg-contact-home">
-                        <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
-                    </div>
+                    <div class="reg-contact-home"></div>
                 </div>
             <div class="footer">
                 <footer>&copy; 2023 Utification</footer>
