@@ -31,11 +31,7 @@
 
 .submit
 {
-    /* display: relative; */
-    /* justify-content: center; */
     text-align: center;
-    /* padding-bottom: 40%; */
-    /* padding: 50px; */
 }
 
 #otp-title
@@ -53,5 +49,5 @@
 
 .otp-container
 {
-    display: none;
+    display: block;
 }

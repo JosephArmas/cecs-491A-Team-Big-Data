@@ -126,7 +126,15 @@
         </div>
 
         <!-- * OTP -->
-        <div class="otp-container"></div>
+        <div class="otp-container">
+            <form id="otp-form">
+                <div class="back-button"></div>
+                <h1 id="otp-title">OTP</h1>
+                <div class="otp-display"></div>
+                <div class="otp"></div>
+                <div class="submit"></div>
+            </form>
+        </div>
 
         <!-- * Login view -->
         <div class="login-container">
@@ -180,7 +188,6 @@
         <!-- App Dependency -->
         <script src="sources/login/login.js"></script>
         <script src="sources/registration/register.js"></script>
-        <script src="sources/otp/otp.js"></script>
         <script type="module" src="sources/analytics/analytics.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
@@ -188,6 +195,7 @@
 
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
+        <script src="sources/otp/otp.js"></script>
 
         
     </body>

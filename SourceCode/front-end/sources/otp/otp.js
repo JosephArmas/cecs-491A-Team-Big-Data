@@ -1,4 +1,4 @@
-
+let otpBuild = false;
 function generateOTP()
 {
     let otp = '';
@@ -29,17 +29,13 @@ function generateOTP()
     }
     return otp.toString();
 }
+
 function showOtp()
 {
     let otpContainer = document.querySelector(".otp-container");
     let loginContainer = document.querySelector(".login-container");
     let anonContainer = document.querySelector(".anon-container");
-    let otpForm = document.querySelector("#otp-form");
-    if(!otpForm)
-    {
-        buildOTP();
-
-    }
+    buildOTP();
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
     anonContainer.style.display = "none";
@@ -47,63 +43,45 @@ function showOtp()
 
 function buildOTP()
 {
-
-    let otpContainer = document.querySelector(".otp-container");
-    let otpForm = document.createElement('form'); 
-    otpForm.id = "otp-form";
-    let backBtnDiv = document.createElement('div');
-    backBtnDiv.setAttribute('class','back-button');
-    let backBtn = document.createElement('button');
-    backBtn.setAttribute('type','button');
-    backBtn.textContent = "Back";
-    backBtn.addEventListener('click',homeClicked);
-    backBtnDiv.appendChild(backBtn);
-    otpForm.appendChild(backBtnDiv);
-    let otpTitle = document.createElement('h2');
-    otpTitle.id = "otp-title";
-    otpTitle.textContent = "Enter OTP";
-    otpForm.appendChild(otpTitle);
-    let otpDisplay = document.createElement('div');
-    let otpVal = generateOTP();
-    otpDisplay.setAttribute('class','otp-display');
-    otpDisplay.innerHTML = otpVal;
-    otpForm.appendChild(otpDisplay);
-    let otp = document.createElement('div');
-    otp.setAttribute('class','otp');
-    let otpInput = document.createElement('input');
-    otpInput.setAttribute('type','text');
-    otpInput.required = true;
-    otp.appendChild(otpInput);
-    otpForm.appendChild(otp);
-    let submitDiv = document.createElement('div');
-    submitDiv.setAttribute('class','submit')
-    let submit = document.createElement('button');
-    submit.setAttribute('type','submit');
-    submit.textContent = "Submit";
-    submit.addEventListener('click',function(event)
+    if(!otpBuild)
     {
-        event.preventDefault();
-        if (otpInput.value == '')
+        let backBtnDiv = document.querySelector('#otp-form .back-button');   
+        let homeBtn = document.createElement('button');
+        let otpDisplay = document.querySelector('.otp-display');
+        let otp = document.querySelector('.otp');
+        let submitDiv = document.querySelector('.submit');
+        homeBtn.setAttribute('type','button');
+        homeBtn.textContent = 'Home';
+        homeBtn.addEventListener('click',homeClicked);
+        backBtnDiv.appendChild(homeBtn);
+        let otpVal = generateOTP();
+        otpDisplay.innerHTML = otpVal;
+        let otpInput = document.createElement('input');
+        otpInput.setAttribute('type','text');
+        otpInput.required = true;
+        otp.appendChild(otpInput);
+        let submitBtn = document.createElement('button');
+        submitBtn.setAttribute('type','submit');
+        submitBtn.textContent = 'Submit';
+        submitBtn.addEventListener('click', function(event)
         {
-            timeOut('Please enter OTP','red',errorsDiv)
-    
-        } else if (otpInput.value == otpVal && roles.includes(userType))  
-        {
-            regView();
-            
-        } else if(otpInput.value == otpVal && userType === "Admin User")
-        {
-    
-            adminView();
-    
-        } else 
-        {
-            timeOut('Invalid OTP. Please try again','red', errorsDiv)
-        } 
-        otpForm.reset();
-    })
-    submitDiv.appendChild(submit);
-    otpForm.appendChild(submitDiv);
-    otpContainer.appendChild(otpForm);
+            if (otpInput.value == otpVal && roles.includes(userType))
+            {
+                regView();
+            } else if (otpInput.value == otpVal && userType === 'Admin User')
+            {
+                adminView();
+            } else if (otpInput.value !== otpVal)
+            {
+                timeOut('Invalid OTP','red',responseDiv);
+            }
+            else
+            {
+                timeOut('You are not authorized to register','red',responseDiv);
+            }
+        })
+        submitDiv.appendChild(submitBtn);
+        otpBuild = true;
+    }
 
 }

@@ -18,13 +18,11 @@ function loginUser()
         {
             userType = responseAfter.identity.authenticationType;
             showOtp();
-            // sendOtp();
             
         } else if (responseAfter.identity.isAuthenticate === true && responseAfter.identity.authenticationType === 'Admin User')
         {
             userType = responseAfter.identity.authenticationType;
             showOtp();
-            // sendOtp();
 
         }
     }).catch(function (error)
@@ -37,7 +35,6 @@ function loginUser()
     loginForm.reset();
 }
 
-    
 function buildLogin()
 {
     if(!loginBuild)
