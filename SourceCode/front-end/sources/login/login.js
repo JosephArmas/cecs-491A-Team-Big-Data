@@ -42,7 +42,7 @@ function buildLogin()
 {
     if(!loginBuild)
     {
-        let backBtnDiv = document.querySelector('.back-button');
+        let backBtnDiv = document.querySelector('#login-form .back-button');
         let btn = document.createElement('button');
         let inputDiv = document.querySelector('.input-field-login');
         let optionsDiv = document.querySelector('.options-other');
@@ -74,7 +74,6 @@ function buildLogin()
             {
                 timeOut('Error with email or password. Plrease try agian', 'red', responseDiv);
             }
-            loginForm.reset()
 
         });
         inputDiv.appendChild(email);

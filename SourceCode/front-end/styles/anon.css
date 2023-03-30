@@ -81,10 +81,9 @@
     margin: 0 auto;
 }
 
-#errors
+#response
 {
     padding-top: 20px;
-    color:red;
     text-align: center;
 }
 

@@ -54,15 +54,11 @@ function regClicked()
 {
     var regContainer = document.querySelector(".registration-container");
     var anonContainer = document.querySelector(".anon-container");
-    // let regForm = document.querySelector("#registration-form");
-    // if (!regForm)
-    // {
-        // buildRegistration();
-    // }
     buildRegistration();
     regContainer.style.display = "block";
     anonContainer.style.display = "none";
 }
+
 
 function regView()
 {
