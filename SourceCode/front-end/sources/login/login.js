@@ -38,6 +38,48 @@ loginHome.addEventListener('click', function (event)
     errorsDiv.innerHTML= "";
 });
 
+var otpContainer = document.querySelector(".otp-container");
+var errorsOtp = document.getElementById("errors");
+const otpForm = document.querySelector("#otp-form");
+const otpDisplay = document.querySelector("#otp-display");
+var otpInput = document.querySelector("#otp-input");
+/*otpBtn.addEventListener('click', function (event)
+{
+    event.preventDefault();
+    if (otpInput.value == '')
+    {
+        errorsOtp.innerHTML = "Please enter OTP";
+
+    } else if (otpInput.value == otpVal) 
+    {
+        errorsOtp.innerHTML = "";
+        regView();
+        
+    } else 
+    {
+        errorsOtp.style.color = "red";
+        errorsOtp.innerHTML = "Invalid OTP. Please try again";
+    } 
+    otpForm.reset();
+});
+
+function sendOtp()
+{
+    otpVal = generateOTP();
+    otpDisplay.style.color = "blue";
+    otpDisplay.innerHTML = otpVal;
+    otpDisplay.style.fontSize = "20px";
+}
+
+function showOtp()
+{
+    
+    otpContainer.style.display = "block";
+    loginContainer.style.display = "none";
+}*/
+
+var otpContainer = document.querySelector(".otp-container");
+var loginContainer = document.querySelector(".login-container");
 
 function loginUser()
 {
@@ -45,13 +87,55 @@ function loginUser()
     user.password = password.value;
     axios.post(authenticationServer, user).then(function (responseAfter)
     {
-        var responseAfter = responseAfter.data
-        if(responseAfter.identity.isAuthenticated === true && responseAfter.identity.authenticationType !== 'Anonymous User' )
+        // turning jwt signature from the response into a json object
+        var base64Url = responseAfter.data.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const jsonObj = JSON.parse(jsonPayload);
+        
+        if(jsonObj.authenticated === "true" && jsonObj.role !== 'Anonymous User' )
         {
+            // save JWT token to local storage
+            localStorage.setItem("jwtToken", responseAfter.data)
+            localStorage.setItem("role", jsonObj.role)
+            localStorage.setItem("id",jsonObj.nameid)
+        
             errorsDiv.innerHTML = "";
-            showOtp();
-            sendOtp();
-            
+
+            // display otp
+            otpDisplay.style.color = "blue";
+            otpDisplay.innerHTML = jsonObj.otp;
+            otpDisplay.style.fontSize = "20px";
+            otpContainer.style.display = "block";
+            loginContainer.style.display = "none";
+
+            // take in otp value to post in the back end
+            const otpBtn = document.querySelector("#otp-submit");
+            otpBtn.addEventListener('click', function (event)
+            {
+                event.preventDefault();
+                if (otpInput.value == '')
+                {
+                    errorsOtp.innerHTML = "Please enter OTP";
+
+                } else if (otpInput.value == jsonObj.otp) 
+                {
+                    errorsOtp.innerHTML = "";
+                    regView();
+                    
+                } else 
+                {
+                    errorsOtp.style.color = "red";
+                    errorsOtp.innerHTML = "Invalid OTP. Please try again";
+                } 
+                otpForm.reset();
+            });
+        }
+        else 
+        {
+            // unauthorized user
         }
     }).catch(function (error)
         {

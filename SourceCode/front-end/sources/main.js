@@ -56,6 +56,12 @@ function regView()
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
     homeContainer.style.display = "block";
+
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
+    script.async = true;
+
+    document.head.appendChild(script);
 }
 
 function showOtp()

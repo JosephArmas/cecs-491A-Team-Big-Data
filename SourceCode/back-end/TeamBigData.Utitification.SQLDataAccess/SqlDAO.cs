@@ -1166,24 +1166,28 @@ namespace TeamBigData.Utification.SQLDataAccess
                     using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
                     {
                         // read through all rows
-                            while (reader.Read())
-                            {
-                                int pinID = 0;
-                                int userID = 0;
-                                string lat = "";
-                                string lng = "";
-                                int pinType = 0;
-                                string description = "";
-                                int disabled = 0;
-                                pinID = reader.GetInt32(0);
-                                userID = reader.GetInt32(1);
-                                lat = reader.GetString(2);
-                                lng = reader.GetString(3);
-                                pinType = reader.GetInt32(4);
-                                description = reader.GetString(5);
-                                disabled = reader.GetInt32(6);
-                                pins.Add(new Pin(pinID, userID, lat, lng, pinType, description, disabled));
-                            }
+                        while (reader.Read())
+                        {
+                            int pinID = 0;
+                            int userID = 0;
+                            string lat = "";
+                            string lng = "";
+                            int pinType = 0;
+                            string description = "";
+                            int disabled = 0;
+                            int completed = 0;
+                            string dateTime = "";
+                            pinID = reader.GetInt32(0);
+                            userID = reader.GetInt32(1);
+                            lat = reader.GetString(2);
+                            lng = reader.GetString(3);
+                            pinType = reader.GetInt32(4);
+                            description = reader.GetString(5);
+                            disabled = reader.GetInt32(6);
+                            completed = reader.GetInt32(7);
+                            dateTime = reader.GetString(8);
+                            pins.Add(new Pin(pinID, userID, lat, lng, pinType, description, disabled, completed, dateTime));
+                        }
                         reader.Close();
                     }
                     connect.Close();
@@ -1221,7 +1225,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var insertSql = "INSERT INTO dbo.Pins (userID,lat,lng,pinType,\"description\",\"disabled\") values('" + pin._userID + "', '" + pin._lat + "', '" + pin._lng + "', " + pin._pinType + ", '" + pin._description + "', " + pin._disabled + ")";
+                var insertSql = "INSERT INTO dbo.Pins (userID,lat,lng,pinType,\"description\",\"disabled\",completed,\"dateTime\") values(" + pin._userID + ", '" + pin._lat + "', '" + pin._lng + "', " + pin._pinType + ", '" + pin._description + "', " + pin._disabled + ", " + pin._completed + ", '" + pin._dateTime + "')";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
@@ -1229,6 +1233,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
+                        result.errorMessage = "Stored New Pin Successfully.";
                         result.isSuccessful = true;
                     }
                 }
@@ -1243,6 +1248,146 @@ namespace TeamBigData.Utification.SQLDataAccess
                 tcs.SetResult(result);
                 return tcs.Task;
             }
+        }
+
+        public Task<Response> UpdatePinToComplete(int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                string fulfill = "UPDATE dbo.Pins SET completed = 1 WHERE pinID = " + pinID;
+                try
+                {
+                    var command = new SqlCommand(fulfill, connect);
+                    if (command.ExecuteNonQuery() > 1)
+                    {
+                        result.isSuccessful = true;
+                        result.errorMessage = "Update Pin To Complete successfully for user";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No Request for Pin Found";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
+        }
+
+        public Task<Response> UpdatePinType(int pinID, int pinType)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                string fulfill = "UPDATE dbo.Pins SET pinType = " + pinType + " WHERE pinID = " + pinID;
+                try
+                {
+                    var command = new SqlCommand(fulfill, connect);
+                    if (command.ExecuteNonQuery() > 1)
+                    {
+                        result.isSuccessful = true;
+                        result.errorMessage = "Update Pin Type successfully for user";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No Request for Pin Found";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
+        }
+
+        public Task<Response> UpdatePinContent(int pinID, string description)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                string fulfill = "UPDATE dbo.Pins SET \"description\" = '" + description + "' WHERE pinID = " + pinID;
+                try
+                {
+                    var command = new SqlCommand(fulfill, connect);
+                    if (command.ExecuteNonQuery() > 1)
+                    {
+                        result.isSuccessful = true;
+                        result.errorMessage = "Update Pin Content successfully for user";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No Request for Pin Found";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
+        }
+
+        public Task<Response> UpdatePinToDisabled(int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                string fulfill = "UPDATE dbo.Pins SET \"disabled\" = 1 WHERE pinID = " + pinID;
+                try
+                {
+                    var command = new SqlCommand(fulfill, connect);
+                    if (command.ExecuteNonQuery() > 1)
+                    {
+                        result.isSuccessful = true;
+                        result.errorMessage = "Update Pin To Disabled successfully for user";
+                    }
+                    else
+                    {
+                        result.isSuccessful = false;
+                        result.errorMessage = "No Request for Pin Found";
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
         }
 
         public Task<Response> GetNewLogins(ref int[] rows)

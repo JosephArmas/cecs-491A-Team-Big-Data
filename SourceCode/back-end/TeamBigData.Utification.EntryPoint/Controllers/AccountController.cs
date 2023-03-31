@@ -4,6 +4,14 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.PinManagers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
@@ -16,16 +24,6 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         //TODO: add encryption Key parameter
     }
 
-    public class PinInfo
-    {
-        public int pinID { get; set; }
-        public int userID { get; set; }
-        public string lat { get; set; }
-        public string lng { get; set; }
-        public int pinType { get; set; }
-        public string description { get; set; }
-        public int disabled { get; set; }
-    }
 
     [ApiController]
     [Route("[controller]")]
@@ -34,11 +32,18 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         private readonly SecurityManager _securityManager;
         private UserAccount _userAccount;
         private UserProfile _userProfile;
-        public AccountController(SecurityManager secMan)
+        private readonly IConfiguration _configuration;
+        /*public AccountController(SecurityManager secMan)
         {
             _securityManager = secMan;
             _userAccount = new UserAccount();
             _userProfile = new UserProfile();
+        }*/
+
+        public AccountController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+
         }
 
         [Route("health")]
@@ -58,6 +63,10 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         //You have to specify where its coming from with the tags on the parameters, either make it [FromForm] or [FromBody] 
 
         //curl -H "Content-Type: application/json" -d "@data.json" -X Post "https://localhost:7259/account/authentication"
+        
+        
+        // Allow anonymous doesn't check for authorization header
+        [AllowAnonymous]
         [Route("authentication")]
         [HttpPost]
         public Task<IActionResult> Login([FromBody] AccountInfo login)
@@ -67,10 +76,40 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             var encryptedPassword = encryptor.encryptString(login.password);
             _userAccount = new UserAccount();
             _userProfile = new UserProfile();
-            var response = _securityManager.LoginUser(login.username, encryptedPassword, encryptor,ref _userAccount,ref _userProfile).Result;
+            var secMan = new SecurityManager();
+            var response = secMan.LoginUser(login.username, encryptedPassword, encryptor, ref _userAccount, ref _userProfile).Result;
             if (response.isSuccessful)
             {
-                tcs.SetResult(Ok(_userProfile));
+                //Create JWT token with our claims
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+                var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+
+                //Token specifications
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, _userAccount._userID.ToString()),
+                    new Claim(ClaimTypes.Name, _userAccount._username),
+                    new Claim(ClaimTypes.Role, _userProfile.Identity.AuthenticationType),
+                    new Claim("authenticated", "true", ClaimValueTypes.String),
+                    new Claim("otp", _userAccount._otp, ClaimValueTypes.String),
+                    new Claim("otpCreated", _userAccount._otpCreated, ClaimValueTypes.String),
+                    new Claim("userHash", _userAccount._userHash, ClaimValueTypes.String)
+                };
+
+                
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Audience = _configuration["JWT:Audience"],
+                    Issuer = _configuration["JWT:Issuer"],
+                    Expires = DateTime.UtcNow.AddHours(2),
+                    Subject = new ClaimsIdentity(claims),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyDetail), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                
+                //Send token signature back to client
+                tcs.SetResult(Ok(tokenHandler.WriteToken(token)));
             }
             else
             {
@@ -79,6 +118,8 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             return tcs.Task;
         }
 
+        //Authorize requires JWT signature in authorization header
+        [Authorize]
         [Route("authentication")]
         [HttpGet]
         public Task<IActionResult> Logout()
@@ -89,14 +130,16 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             return tcs.Task;
         }
 
+        [AllowAnonymous]
         [Route("registration")]
         [HttpPost]
         public Task<IActionResult> CreateAccount(AccountInfo newAccount)
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var encryptor = new Encryptor();
+            var secMan = new SecurityManager();
             var encryptedPassword = encryptor.encryptString(newAccount.password);
-            var response = _securityManager.RegisterUser(newAccount.username, encryptedPassword, encryptor).Result;
+            var response = secMan.RegisterUser(newAccount.username,  encryptedPassword, encryptor).Result;
             if(response.isSuccessful)
             {
                 tcs.SetResult(Ok(response.errorMessage));
@@ -105,38 +148,6 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             {
                 tcs.SetResult(Conflict(response.errorMessage));
             }
-            return tcs.Task;
-        }
-
-        [Route("pin")]
-        [HttpGet]
-        public Task<IActionResult> GetAllPins()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            if (_userProfile.Identity.AuthenticationType == "Anonymouse User")
-            {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
-            }
-            var pinMan = new PinManager();
-            List<Pin> list = pinMan.GetListOfAllPins(_userAccount);
-            tcs.SetResult(Ok(list));
-            return tcs.Task;
-        }
-        [Route("pin")]
-        [HttpPost]
-        public Task<IActionResult> PostNewPin(PinInfo newPin)
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            if (_userProfile.Identity.AuthenticationType == "Anonymouse User")
-            {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
-            }
-            Pin pin = new Pin(newPin.lat,newPin.lng,newPin.description,newPin.pinType);
-            var pinMan = new PinManager();
-            var response = pinMan.SaveNewPin(pin,_userAccount);
-            tcs.SetResult(Ok(response));
             return tcs.Task;
         }
     }
