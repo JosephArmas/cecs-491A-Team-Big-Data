@@ -147,33 +147,38 @@ function adminView()
 
 function buildAdminView()
 {
-    let logoutContainer = document.querySelector(".logout-container");
-    let analyticsHome = document.querySelector(".home-admin-container");
-    let logoutBtn = document.createElement('button');
-    logoutBtn.setAttribute('type','button');
-    logoutBtn.textContent = 'Logout';
-    logoutBtn.id ="admin-logout"
-    logoutBtn.addEventListener('click', homeClicked)
-    logoutContainer.appendChild(logoutBtn);
-    let adminTitle = document.createElement('h1');
-    adminTitle.textContent = "Admin Home";
-    adminTitle.style.textAlign = "center";
-    analyticsHome.insertBefore(adminTitle, logoutContainer.nextSibling);
-    let userManagementDiv = document.querySelector(".user-management");
-    let usageAnalysisDiv = document.querySelector(".usage-analysis");
-    let userManagementBtn = document.createElement('button');
-    userManagementBtn.setAttribute('type','button');
-    userManagementBtn.textContent = 'User Management';
-    userManagementDiv.appendChild(userManagementBtn);
-    let usageAnalysisBtn = document.createElement('button');
-    usageAnalysisBtn.setAttribute('type','button');
-    usageAnalysisBtn.textContent = 'Usage Analysis';
-    usageAnalysisBtn.id = "usage-dashboard";
-    usageAnalysisDiv.appendChild(usageAnalysisBtn);
-    adminViewBuild = true;
+    if(!adminViewBuild)
+    {
+        let logoutContainer = document.querySelector(".logout-container");
+        let analyticsHome = document.querySelector(".home-admin-container");
+        let logoutBtn = document.createElement('button');
+        logoutBtn.setAttribute('type','button');
+        logoutBtn.textContent = 'Logout';
+        logoutBtn.id ="admin-logout"
+        logoutBtn.addEventListener('click', homeClicked)
+        logoutContainer.appendChild(logoutBtn);
+        let adminTitle = document.createElement('h1');
+        adminTitle.textContent = "Admin Home";
+        adminTitle.style.textAlign = "center";
+        analyticsHome.insertBefore(adminTitle, logoutContainer.nextSibling);
+        let userManagementDiv = document.querySelector(".user-management");
+        let usageAnalysisDiv = document.querySelector(".usage-analysis");
+        let userManagementBtn = document.createElement('button');
+        userManagementBtn.setAttribute('type','button');
+        userManagementBtn.textContent = 'User Management';
+        userManagementDiv.appendChild(userManagementBtn);
+        let usageAnalysisBtn = document.createElement('button');
+        usageAnalysisBtn.setAttribute('type','button');
+        usageAnalysisBtn.textContent = 'Usage Analysis';
+        usageAnalysisBtn.id = "usage-dashboard";
+        usageAnalysisDiv.appendChild(usageAnalysisBtn);
+        usageAnalysisBtn.addEventListener('click', showAnalytics);
+        adminViewBuild = true;
+    }
     
 }
 
+showAnalytics();
 function timeOut(errorMsg,color,divElement)
 {
     divElement.style.display = "block";

@@ -26,7 +26,7 @@
         <div id="response"></div>
         
         <!-- * Test -->
-        <!-- <div class="test" ></div> -->
+        <div class="test" ></div>
 
         <!-- * Admin view -->
         <div class="home-admin-container">
@@ -75,8 +75,9 @@
         </div> -->
 
         <div class="analytics-container" >
-            <div class="analytics-home">
             <div class="analytics-header"></div>
+            <div class="analytics-home">
+            <!-- <div class="analytics-header"></div> -->
             <div class ="chart-options"></div>
             </div>
             <div>
@@ -84,7 +85,6 @@
                     <div class="analytics-chart-maps"></div>
                 </div>
                 <div class ="analytics-registration-view" >
-                    <div class="analytics-header"></div> 
                     <div class="analytics-chart-registration"></div>
                 </div>
                 <div class ="analytics-logins-view">
@@ -178,11 +178,12 @@
 
         <!-- Thirdparty dependency -->
         <script src="node_modules/axios/dist/axios.js"></script>
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 
         <!-- App Dependency -->
         <script src="sources/login/login.js"></script>
         <script src="sources/registration/register.js"></script>
-        <script type="module" src="sources/analytics/analytics.js"></script>
+        <script src="sources/analytics/analytics.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

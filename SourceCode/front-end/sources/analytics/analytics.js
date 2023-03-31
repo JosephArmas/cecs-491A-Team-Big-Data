@@ -1,5 +1,10 @@
 'use strict';
-import { LineChart } from '../../node_modules/chartist/dist/index.js';
+
+// const { LineChart } = require("chartist");
+
+// const { LineChart } = require("chartist");
+
+// import { LineChart } from '../../node_modules/chartist/dist/index.js';
 // import { homeClicked } from '../main.js';
 // * Event listerners for analytics view
 // document.querySelector("#usage-dashboard").addEventListener('click', showAnalytics);
@@ -42,11 +47,12 @@ function getData(server, chartClassname)
             low: 0,
             height: '90vh'
         }
-        new LineChart(chartClassname, dataPoints, configs);
+        new Chartist.Line(chartClassname, dataPoints, configs);
     }).catch(function (error)
     {
-        errorsDiv.style.color = "red";
-        errorsDiv.innerHTML= "Server down. Please check server status";
+        // errorsDiv.style.color = "red";
+        // errorsDiv.innerHTML= "Server down. Please check server status";
+        timeOut("Server down. Please check server status", 'red', responseDiv)
     });
 
 }
@@ -115,7 +121,8 @@ function buildAnalytics()
         let title = document.createElement("h1");
         title.textContent = "Analytics";
         title.id = 'home-title';
-        analyticsHomeDiv.insertBefore(title, analyticsHeader.nextSibling);
+        // analyticsHomeDiv.insertBefore(title, analyticsHeader.nextSibling);
+        analyticsHomeDiv.insertBefore(title,chartOptionsDiv);
         let analyticLoginBtn = document.createElement("button");
         analyticLoginBtn.setAttribute("type", "button");
         analyticLoginBtn.textContent = "Logins";
@@ -124,6 +131,7 @@ function buildAnalytics()
         analyticRegisterBtn.setAttribute("type", "button");
         analyticRegisterBtn.id = "analytics-registrations";
         analyticRegisterBtn.textContent = "Registrations";
+        analyticRegisterBtn.addEventListener('click', showAnalyticsRegistrations);
         let analyticMapBtn = document.createElement("button");
         analyticMapBtn.setAttribute("type", "button");
         analyticMapBtn.textContent = "Maps";
@@ -140,23 +148,24 @@ function buildAnalytics()
     }
 }
 
-showAnalytics();
 
 
 function showAnalyticsRegistrationView()
 {
     let analyticsHome = document.querySelector(".analytics-home");
     let analyticsRegistration = document.querySelector(".analytics-registration-view");
-    // let analyticTitle = document.createElement("h1");
-    // analyticTitle.textContent = "Analytics Registration";
-    // analyticTitle.style.textAlign = "center";
+    let analyticsDiv = document.querySelector(".analytics-chart-registration");
+    let title = document.createElement("h1");
+    title.textContent = "Analytics Registration";
+    title.style.textAlign = "center";
+    analyticsRegistration.insertBefore(title, analyticsDiv);
     analyticsRegistration.style.display = "block";
-    // analyticsRegistration.insertBefore(analyticTitle ,analyticsRegistration.firstChild);
     analyticsHome.style.display = "none";
     
 }
 
 // * Test Graph using LineChart
+/*
 function testGraph()
 {
 
@@ -172,20 +181,35 @@ new LineChart
     showArea: true
   }
 );
-
 }
+*/
+
+function testGraph()
+{
+    let data = {
+        labels: [1, 2, 3, 4, 5, 6, 7, 8],
+        series: [[5, 9, 7, 8, 5, 3, 5, 4]]
+    }
+    let configs = {
+        low: 0,
+        showArea: true
+    }
+    new Chartist.Line('.analytics-chart-registration', data, configs);
+}
+
 // * Test if server is running
 function health()
 {
     axios.get(analyticsHealth).then(function (response)
     {
         console.log(response.data);
-        errorsDiv.innerHTML = response.data;
+        // errorsDiv.innerHTML = response.data;
+        timeOut(response.data,'red', responseDiv)
     });
 
 }
 
 //health()
 //showAnalyticsRegistrations()
-//testGraph()
-//testGraph2()
+// testGraph()
+// testGraph2()
