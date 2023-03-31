@@ -330,7 +330,7 @@
     }
 
     function placeNewPin(latLng, map) {
-        const webServiceUrl = 'https://localhost:7259/Pin';
+        const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
         errorsDiv.innerHTML = "";
 
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
