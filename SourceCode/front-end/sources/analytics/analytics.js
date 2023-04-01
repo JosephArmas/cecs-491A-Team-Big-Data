@@ -1,31 +1,10 @@
 'use strict';
-
-// const { LineChart } = require("chartist");
-
-// const { LineChart } = require("chartist");
-
-// import { LineChart } from '../../node_modules/chartist/dist/index.js';
-// import { homeClicked } from '../main.js';
-// * Event listerners for analytics view
-// document.querySelector("#usage-dashboard").addEventListener('click', showAnalytics);
-// document.querySelector("#analytics-home").addEventListener('click', adminView);
-// document.querySelector("#analytics-logout").addEventListener('click', homeClicked);
-const analyticsHealth = 'https://localhost:7259/analysis/health';
-const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
-const analyticsLogins = 'https://localhost:7259/analysis/logins';
-const analyticsMaps = 'https://localhost:7259/analysis/pins';
-const analyticsPins = 'https://localhost:7259/analysis/maps';
-// document.querySelector("#analytics-registrations").addEventListener('click', showAnalyticsRegistrations);
-// document.querySelector("#analytics-logins").addEventListener('click', showAnalyticsLogins);
-// document.querySelector("#analytics-maps").addEventListener('click', showAnalyticsMaps);
-// document.querySelector("#analytics-pins").addEventListener('click', showAnalyticsPins);
-
 let analyticsBuild = false;
 let analyticRegBuild = false;
-let analyticsBtn = {};
+let buttonBuilt = false;
 
-
-function getData(server, chartClassname)
+// Get data from server and div class name to make chart
+function makeChart(server, chartClassname)
 {
     // * Days
     let xAxis = [];
@@ -52,8 +31,6 @@ function getData(server, chartClassname)
         new Chartist.Line(chartClassname, dataPoints, configs);
     }).catch(function (error)
     {
-        // errorsDiv.style.color = "red";
-        // errorsDiv.innerHTML= "Server down. Please check server status";
         timeOut("Server down. Please check server status", 'red', responseDiv)
     });
 
@@ -62,17 +39,19 @@ function getData(server, chartClassname)
 
 function showAnalyticsRegistrations()
 {
-    
+    // const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
+    let server = getServer();
     showAnalyticsRegistrationView()
-    getData(analyticsRegistration, '.analytics-chart-registration')
+    makeChart(server.analyticsRegistration, '.analytics-chart-registration')
     setInterval(showAnalyticsRegistrations, 60 * 1000);
-    
-    
 }
 
 function showAnalyticsLogins()
 {
-    getData(analyticsLogins, '.analytics-chart-logins')
+    // const analyticsLogins = 'https://localhost:7259/analysis/logins';
+    showAnalyticsLoginsView();
+    let server = getServer();
+    makeChart(server.analyticsLogins, '.analytics-chart-logins')
     setInterval(showAnalyticsLogins, 60 * 1000);
 
 }
@@ -80,13 +59,19 @@ function showAnalyticsLogins()
 
 function showAnalyticsMaps()
 {
-    getData(analyticsMaps, '.analytics-chart-maps')
+    // const analyticsMaps = 'https://localhost:7259/analysis/pins';
+    showAnalyticsMapsView();
+    let server = getServer();
+    makeChart(server.analyticsMaps, '.analytics-chart-maps')
     setInterval(showAnalyticsMaps, 60 * 1000);
 }
 
 function showAnalyticsPins()
 {
-    getData(analyticsPins, '.analytics-chart-pins')
+    // const analyticsPins = 'https://localhost:7259/analysis/maps';
+    showAnalyticsPinsView();
+    let server = getServer();
+    makeChart(server.analyticsPins, '.analytics-chart-pins')
     setInterval(showAnalyticsPins, 60 * 1000);
 }
 
@@ -100,8 +85,8 @@ function showAnalytics()
     let analyticsChart = document.querySelector(".charts");
     buildAnalytics();
     analyticsView.style.display = "block";
-    analyticsChart.style.display = "none";
     analyticsHome.style.display = "block";
+    analyticsChart.style.display = "none";
     homeContainer.style.display = "none";
 }
 
@@ -122,7 +107,6 @@ function buildAnalytics()
         analyticsLogoutBtn.textContent = "Logout";
         analyticsLogoutBtn.addEventListener('click', homeClicked);
         analyticsHomeBtn.addEventListener('click', adminView);
-        analyticsBtn.analyticsHomeBtn = analyticsHomeBtn;
         analyticsHeader.appendChild(analyticsHomeBtn);
         analyticsHeader.appendChild(analyticsLogoutBtn);
         let title = document.createElement("h1");
@@ -133,6 +117,7 @@ function buildAnalytics()
         analyticLoginBtn.setAttribute("type", "button");
         analyticLoginBtn.textContent = "Logins";
         analyticLoginBtn.id = "analytics-logins";
+        analyticLoginBtn.addEventListener('click', showAnalyticsLogins);
         let analyticRegisterBtn = document.createElement("button");
         analyticRegisterBtn.setAttribute("type", "button");
         analyticRegisterBtn.id = "analytics-registrations";
@@ -142,10 +127,12 @@ function buildAnalytics()
         analyticMapBtn.setAttribute("type", "button");
         analyticMapBtn.textContent = "Maps";
         analyticMapBtn.id = "analytics-maps";
+        analyticMapBtn.addEventListener('click', showAnalyticsMaps);
         let analyticPinBtn = document.createElement("button");
         analyticPinBtn.setAttribute("type", "button");
         analyticPinBtn.id = "analytics-pins";
         analyticPinBtn.textContent = "Pins";
+        analyticPinBtn.addEventListener('click', showAnalyticsPins);
         chartOptionsDiv.appendChild(analyticLoginBtn);
         chartOptionsDiv.appendChild(analyticRegisterBtn);
         chartOptionsDiv.appendChild(analyticPinBtn);
@@ -153,29 +140,113 @@ function buildAnalytics()
         analyticsBuild = true;
     }
 }
-
+function buildBackButton() 
+{
+        let headerDiv = document.querySelector(".charts .analytics-header");
+        let analyticsBackBtn = document.createElement("button");
+        let analyticsLogoutBtn = document.createElement("button");
+        analyticsBackBtn.setAttribute("type", "button");
+        analyticsBackBtn.id = "analytics-home";
+        analyticsBackBtn.textContent = "Back";
+        analyticsLogoutBtn.setAttribute("type", "button");
+        analyticsLogoutBtn.id = "analytics-logout";
+        analyticsLogoutBtn.textContent = "Logout";
+        analyticsLogoutBtn.addEventListener('click', homeClicked);
+        analyticsBackBtn.addEventListener('click', showAnalytics);
+        headerDiv.appendChild(analyticsBackBtn);
+        headerDiv.appendChild(analyticsLogoutBtn);
+        buttonBuilt = true;
+}
 
 function showAnalyticsRegistrationView()
 {
-        let analyticsHome = document.querySelector(".analytics-home");
-        let analyticCharts = document.querySelector(".charts");
-        let analyticsRegistration = document.querySelector(".analytics-registration-view");
-        let build = buildAnalytics(); 
-        console.log(build.analyticsHomeBtn);
-        // build.analyticsHomeBtn.text = "Back";
-        // build.analyticsHomeBtn.addEventListener('click', showAnalytics);
-        let title = document.querySelector(".analytics-registration-view h1");
-        title.style.textAlign = "center";
-        analyticCharts.style.display = "block";
-        analyticsRegistration.style.display = "block";
-        analyticsHome.style.display = "none";
-        analyticRegBuild = true;
-    
+    let analyticsHome = document.querySelector(".analytics-home");
+    let analyticCharts = document.querySelector(".charts");
+    let registrations = document.querySelector(".analytics-registration-view");
+    let logins = document.querySelector(".analytics-logins-view");
+    let maps = document.querySelector(".analytics-maps-view");
+    let pins = document.querySelector(".analytics-pins-view");
+    if(!buttonBuilt)
+    {
+        buildBackButton();
+    }
+    let title = document.querySelector(".analytics-registration-view h1");
+    title.style.textAlign = "center";
+    analyticCharts.style.display = "block";
+    registrations.style.display = "block";
+    logins.style.display = "none";
+    maps.style.display = "none";
+    pins.style.display = "none";
+    analyticsHome.style.display = "none";
 }
 
 function showAnalyticsLoginsView()
 {
-    let a
+    let analyticsHome = document.querySelector(".analytics-home"); 
+    let analyticCharts = document.querySelector(".charts");
+    let registrations = document.querySelector(".analytics-registration-view");
+    let logins = document.querySelector(".analytics-logins-view");
+    let maps = document.querySelector(".analytics-maps-view");
+    let pins = document.querySelector(".analytics-pins-view");
+    if(!buttonBuilt)
+    {
+        buildBackButton();
+    }
+    let title = document.querySelector(".analytics-logins-view h1");
+    title.style.textAlign = "center";
+    analyticCharts.style.display = "block";
+    logins.style.display = "block";
+    maps.style.display = "none";
+    pins.style.display = "none";
+    registrations.style.display = "none";
+    analyticsHome.style.display = "none";
+    
+}
+
+function showAnalyticsMapsView()
+{
+    let analyticsHome = document.querySelector(".analytics-home"); 
+    let analyticCharts = document.querySelector(".charts");
+    let registrations = document.querySelector(".analytics-registration-view");
+    let logins = document.querySelector(".analytics-logins-view");
+    let maps = document.querySelector(".analytics-maps-view");
+    let pins = document.querySelector(".analytics-pins-view");
+    if(!buttonBuilt)
+    {
+        buildBackButton();
+    }
+    let title = document.querySelector(".analytics-maps-view h1");
+    title.style.textAlign = "center";
+    analyticCharts.style.display = "block";
+    maps.style.display = "block";
+    logins.style.display = "none";
+    pins.style.display = "none";
+    registrations.style.display = "none";
+    analyticsHome.style.display = "none";
+    
+}
+
+function showAnalyticsPinsView()
+{
+    let analyticsHome = document.querySelector(".analytics-home"); 
+    let analyticCharts = document.querySelector(".charts");
+    let registrations = document.querySelector(".analytics-registration-view");
+    let logins = document.querySelector(".analytics-logins-view");
+    let maps = document.querySelector(".analytics-maps-view");
+    let pins = document.querySelector(".analytics-pins-view");
+    if(!buttonBuilt)
+    {
+        buildBackButton();
+    }
+    let title = document.querySelector(".analytics-pins-view h1");
+    title.style.textAlign = "center";
+    analyticCharts.style.display = "block";
+    pins.style.display = "block";
+    maps.style.display = "none";
+    logins.style.display = "none";
+    registrations.style.display = "none";
+    analyticsHome.style.display = "none";
+    
 }
 
 // * Test Graph using LineChart
@@ -214,7 +285,9 @@ function testGraph()
 // * Test if server is running
 function health()
 {
-    axios.get(analyticsHealth).then(function (response)
+    // const analyticsHealth = 'https://localhost:7259/analysis/health';
+    let server = getServer();
+    axios.get(server.analyticsHealth).then(function (response)
     {
         console.log(response.data);
         // errorsDiv.innerHTML = response.data;

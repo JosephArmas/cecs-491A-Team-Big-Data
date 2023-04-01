@@ -78,30 +78,13 @@
 {
     text-align: center;
 }
-/*
-.analytics-maps-view
-{
-    visibility: hidden;
-}
-*/
 
-/*
-.analytics-registration-view
-{
-    visibility: hidden;
-}
-*/
-/*
-.analytics-logins-view
-{
-    visibility: hidden;
-}
-.analytics-pins-view
-{
-    visibility: hidden;
-}
-*/
 .charts
+{
+    display: none;
+}
+
+.analytics-container
 {
     display: none;
 }

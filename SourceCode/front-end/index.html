@@ -25,8 +25,8 @@
         <!-- * Error response -->
         <div id="response"></div>
         
-        <!-- * Test -->
-        <div class="test" ></div>
+        <!-- * Test Div -->
+        <!-- <div class="test" ></div> -->
 
         <!-- * Admin view -->
         <div class="home-admin-container">
@@ -38,51 +38,16 @@
         </div>
 
         <!-- * Analytics -->
-        <!-- <div class="analytics-container" >
-            <div class="analytics-home" >
-            <div class="analytics-header">
-                <button type="button" id="analytics-home">Home</button>
-                <button type="button" id="analytics-logout">Logout</button>
-            </div>
-            <h1 id="home-title">Analytics</h1>
-            <div class ="chart-options">
-                <button type="button" id="analytics-logins">Logins</button>
-                <button type="button" id="analytics-registrations">Registrations</button>
-                <button type="button" id="analytics-maps">Maps</button>
-                <button type="button" id="analytics-pins">Pins</button>
-            </div>
-            </div>
-            <div>
-                <div class ="analytics-maps-view">
-                    <div class="analytics-chart-maps"></div>
-                </div>
-                <div class ="analytics-registration-view" >
-                    <div class="analytics-header"> 
-                        <button type="button" id="analytics-back">Back</button>
-                        <button type="button" id="analytics-logout">Logout</button>
-                    </div> 
-                    <h1 id="registration-title">Registrations Analytics</h1>
-                    <div class="analytics-chart-registration"></div>
-                </div>
-                <div class ="analytics-logins-view">
-                    <div class="analytics-chart-logins"></div>
-                </div>
-                <div class ="analytics-pins-view">
-                    <div class="analytics-chart-pins"></div>
-                </div>
-
-            </div>
-        </div> -->
-
         <div class="analytics-container" >
-            <div class="analytics-header"></div>
             <div class="analytics-home">
+            <div class="analytics-header"></div>
             <!-- <div class="analytics-header"></div> -->
             <div class ="chart-options"></div>
             </div>
             <div class="charts">
-                <!-- <div class="analytics-header"></div> -->
+                <div class="analytics-header"></div>
                 <div class ="analytics-maps-view">
+                    <h1>Analytics Maps</h1>
                     <div class="analytics-chart-maps"></div>
                 </div>
                 <div class ="analytics-registration-view" >
@@ -90,9 +55,11 @@
                     <div class="analytics-chart-registration"></div>
                 </div>
                 <div class ="analytics-logins-view">
+                    <h1>Analytics Logins</h1>
                     <div class="analytics-chart-logins"></div>
                 </div>
                 <div class ="analytics-pins-view">
+                    <h1>Analytics Pins</h1>
                     <div class="analytics-chart-pins"></div>
                 </div>
             </div>
@@ -183,6 +150,7 @@
         <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 
         <!-- App Dependency -->
+        <script src="sources/server/server.js"></script>
         <script src="sources/login/login.js"></script>
         <script src="sources/registration/register.js"></script>
         <script src="sources/analytics/analytics.js"></script>
