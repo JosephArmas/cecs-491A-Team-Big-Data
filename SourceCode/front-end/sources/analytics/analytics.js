@@ -21,6 +21,8 @@ const analyticsPins = 'https://localhost:7259/analysis/maps';
 // document.querySelector("#analytics-pins").addEventListener('click', showAnalyticsPins);
 
 let analyticsBuild = false;
+let analyticRegBuild = false;
+let analyticsBtn = {};
 
 
 function getData(server, chartClassname)
@@ -93,9 +95,13 @@ function showAnalyticsPins()
 function showAnalytics()
 {
     var analyticsView = document.querySelector(".analytics-container");
+    var analyticsHome = document.querySelector(".analytics-home");
     var homeContainer = document.querySelector(".home-admin-container");
+    let analyticsChart = document.querySelector(".charts");
     buildAnalytics();
     analyticsView.style.display = "block";
+    analyticsChart.style.display = "none";
+    analyticsHome.style.display = "block";
     homeContainer.style.display = "none";
 }
 
@@ -116,12 +122,12 @@ function buildAnalytics()
         analyticsLogoutBtn.textContent = "Logout";
         analyticsLogoutBtn.addEventListener('click', homeClicked);
         analyticsHomeBtn.addEventListener('click', adminView);
+        analyticsBtn.analyticsHomeBtn = analyticsHomeBtn;
         analyticsHeader.appendChild(analyticsHomeBtn);
         analyticsHeader.appendChild(analyticsLogoutBtn);
         let title = document.createElement("h1");
         title.textContent = "Analytics";
         title.id = 'home-title';
-        // analyticsHomeDiv.insertBefore(title, analyticsHeader.nextSibling);
         analyticsHomeDiv.insertBefore(title,chartOptionsDiv);
         let analyticLoginBtn = document.createElement("button");
         analyticLoginBtn.setAttribute("type", "button");
@@ -149,19 +155,27 @@ function buildAnalytics()
 }
 
 
-
 function showAnalyticsRegistrationView()
 {
-    let analyticsHome = document.querySelector(".analytics-home");
-    let analyticsRegistration = document.querySelector(".analytics-registration-view");
-    let analyticsDiv = document.querySelector(".analytics-chart-registration");
-    let title = document.createElement("h1");
-    title.textContent = "Analytics Registration";
-    title.style.textAlign = "center";
-    analyticsRegistration.insertBefore(title, analyticsDiv);
-    analyticsRegistration.style.display = "block";
-    analyticsHome.style.display = "none";
+        let analyticsHome = document.querySelector(".analytics-home");
+        let analyticCharts = document.querySelector(".charts");
+        let analyticsRegistration = document.querySelector(".analytics-registration-view");
+        let build = buildAnalytics(); 
+        console.log(build.analyticsHomeBtn);
+        // build.analyticsHomeBtn.text = "Back";
+        // build.analyticsHomeBtn.addEventListener('click', showAnalytics);
+        let title = document.querySelector(".analytics-registration-view h1");
+        title.style.textAlign = "center";
+        analyticCharts.style.display = "block";
+        analyticsRegistration.style.display = "block";
+        analyticsHome.style.display = "none";
+        analyticRegBuild = true;
     
+}
+
+function showAnalyticsLoginsView()
+{
+    let a
 }
 
 // * Test Graph using LineChart

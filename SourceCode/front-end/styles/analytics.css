@@ -101,3 +101,7 @@
     visibility: hidden;
 }
 */
+.charts
+{
+    display: none;
+}

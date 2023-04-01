@@ -134,12 +134,22 @@ function IsValidEmail(email)
 
 function adminView()
 {
-    var homeContainer = document.querySelector(".home-admin-container");
-    var anonContainer = document.querySelector(".anon-container");
-    var analyticsView = document.querySelector(".analytics-container");
-    var otpContainer =document.querySelector(".otp-container");
+    let homeContainer = document.querySelector(".home-admin-container");
+    let anonContainer = document.querySelector(".anon-container");
+    let analyticsView = document.querySelector(".analytics-container");
+    let otpContainer = document.querySelector(".otp-container");
+    let analyticsCharts = document.querySelector(".charts");
+    // let analyticsMaps = document.querySelector(".analytics-maps-view");
+    // let analyticsRegisters = document.querySelector(".analytics-registration-view");
+    // let analyticsLogins = document.querySelector(".analytics-logins-view");
+    // let analyticsPins = document.querySelector(".analytics-pins-view");
     buildAdminView();
     homeContainer.style.display = "block";
+    analyticsCharts.style.display = "none";
+    // analyticsMaps.style.display = "none";
+    // analyticsRegisters.style.display = "none";
+    // analyticsLogins.style.display = "none";
+    // analyticsPins.style.display = "none";
     analyticsView.style.display = "none";
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
@@ -177,7 +187,6 @@ function buildAdminView()
     }
     
 }
-
 showAnalytics();
 function timeOut(errorMsg,color,divElement)
 {
