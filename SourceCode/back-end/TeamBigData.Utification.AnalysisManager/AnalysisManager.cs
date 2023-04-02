@@ -6,7 +6,7 @@ namespace TeamBigData.Utification.AnalysisManagers
 {
     public class AnalysisManager
     {
-        private readonly string _logConnectionString = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
+        private readonly string _logConnectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
         public async Task<int[]> GetLogins()
         {
             IDBAnalysis analyzer = new SqlDAO(_logConnectionString);
