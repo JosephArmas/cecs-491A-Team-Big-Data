@@ -5,8 +5,6 @@
  * All of main is anon view -> Homeview(admin or reg user)
 */
 
-// document.querySelector("#analytics-logout").addEventListener("click", homeClicked);
-// document.querySelector("#admin-logout").addEventListener("click", homeClicked);
 document.querySelector("#register").addEventListener("click", regClicked);
 document.querySelector("#login").addEventListener("click", loginClicked);
 // * Considered cross cutting so can be called anywhere
@@ -66,22 +64,45 @@ function regView()
     homeContainer.style.display = "block";
 }
 
+regView();
+
 function buildHomeUserView()
 {
     let logoutBtn = document.createElement('button');
     let profileBtn = document.createElement('button');
     let nav = document.querySelector(".ham-menu-container");
+    let menu = document.querySelector('.menu-container')
     let featureBtn = document.createElement('button');
     featureBtn.setAttribute('type','button');
     featureBtn.textContent = 'Features';
-    nav.appendChild(featureBtn);
+    menu.insertBefore(featureBtn, nav);
     let features = document.querySelector(".features");
+    featureBtn.setAttribute('type','button');
+    featureBtn.textContent = 'Features';
+
     for (let i = 1; i <= 6; i++)
     {
-        let li = document.createElement('li');
-        li.textContent = "feature " + i;
-        features.appendChild(li);
+        let listFeatures = document.createElement('button');
+        listFeatures.textContent = "Feature " + i;
+        features.appendChild(listFeatures);
     }
+
+    features.style.display = 'none';
+    nav.append(features);
+
+    featureBtn.addEventListener('click',function()
+    {
+        if (features.style.display === 'none')
+        {
+            features.style.display = 'flex';
+
+        }
+        else{
+            features.style.display = 'none';
+        }
+
+    });
+
     let profileDiv = document.querySelector("#profile");
     let logoutDiv = document.querySelector("#logout");
     let contactDiv = document.querySelector(".reg-contact-home");

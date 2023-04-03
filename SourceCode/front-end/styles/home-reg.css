@@ -4,6 +4,7 @@
     justify-content: space-between;
     padding: 20px 20px;
 }
+
 .profile-container
 {
     display: flex;
@@ -53,6 +54,22 @@
     text-align: center;
 }
 
+
+/* Nav styling  */
+.features 
+{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.features button
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Home container display */
 .home-container
 {
     display: none;
