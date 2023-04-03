@@ -3,6 +3,7 @@ let registerBuild = false;
 
 function registerUser()
 {
+   const user = {};
    const server = getServer();
    const registerEmail = document.getElementById('r-email');
    const registerPassword = document.getElementById('r-pw');

@@ -1,16 +1,19 @@
 'use strict';
 var userType = "";
-const roles =  ['Regular User', 'Reputation User']
 let loginBuild = false;
-const user = {}
-
-function loginUser()
+const roles =  
 {
+    reg:['Regular User', 'Reputation User'],
+    service: ['Service User'],
+    admin: ['Admin User']
+}
+
+function loginUser(email, password)
+{
+    const user = {}
     const server = getServer();
-    let email = document.getElementById('email');
-    let password = document.getElementById('password');
-    user.username = email.value;
-    user.password = password.value;
+    user.username = email;
+    user.password = password;
     let loginForm = document.getElementById('login-form');
     console.log("inside of loginUser function");
     console.log(user.username);
@@ -24,65 +27,28 @@ function loginUser()
         var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
-        const jsonObj = JSON.parse(json)
+        const jsonObj = JSON.parse(jsonPayload)
         console.log(jsonObj);
-    });
-    /*
-    axios.post(server.authenticationServer, user).then(function (responseAfter)
-    {
-        // turning jwt signature from the response into a json object
-        var base64Url = responseAfter.data.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        const jsonObj = JSON.parse(jsonPayload);
-        console.log(jsonObj);
-        
-        /*
-        if(jsonObj.authenticated === "true" && jsonObj.role !== 'Anonymous User' )
+        // console.log(roles.reg.includes(jsonObj.role));
+
+        if (jsonObj.authenticated === "true" && roles.reg.includes(jsonObj.role) || roles.service.includes(jsonObj.role) || roles.admin.includes(jsonObj.role))
         {
-            // save JWT token to local storage
+
             localStorage.setItem("jwtToken", responseAfter.data)
             localStorage.setItem("role", jsonObj.role)
             localStorage.setItem("id",jsonObj.nameid)
-            userType = jsonObj.role;
-            showOtp();
-            let otpDisplay= document.querySelector('.otp-display');
-            let otpVal = jsonObj.otp;
-            otpDisplay.style.display = jsonObj.otp;
-            let otpBtn = document.querySelector('#otp-submit');
-            let otpInput = document.querySelector('#otp-input');
-            otpBtn.addEventListener('click', function (event)
-            {
-                if (otpInput.value == otpVal && roles.includes(userType))
-                {
-                    regView();
-                } else if (otpInput.value == otpVal && userType == 'Admin User')
-                {
-                    adminView();
-                } else if (otpInput.value !== otpVal)
-                {
-                    timeOut('Invalid OTP','red',responseDiv);
-                }
-                else
-                {
-                    timeOut('You are not authorized to register','red',responseDiv);
-                }
-
-            })
+            console.log('user is authenticated and has a role lets go to otp view');
+            showOtp(jsonObj.otp,jsonObj.role);
 
         }
 
-    }).catch(function (error)
-        {
-                let errorAfter = error.response.data;
-                let cleanError = errorAfter.replace(/"/g,"");
-                timeOut(cleanError, 'red', responseDiv)
-        });
-    */
-
-    // loginForm.reset();
+    }).catch (function (error)
+    {
+        let errorAfter = error.response.data;
+        let cleanError = errorAfter.replace(/"/g,"");
+        timeOut(cleanError, 'red', responseDiv);
+    });
+    loginForm.reset();
 }
 
 function buildLogin()
@@ -111,12 +77,12 @@ function buildLogin()
         password.minLength = 8;
         submitBtn.id = "sub-login";
         submitBtn.textContent = "Submit";
-        /*
         submitBtn.addEventListener('click', function (event)
         {
             if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
             {
-                loginUser();
+                // console.log(IsValidPassword(password.value));
+                loginUser(email.value,password.value);
             } 
             else
             {
@@ -124,7 +90,6 @@ function buildLogin()
             }
 
         });
-        */
         inputDiv.appendChild(email);
         inputDiv.appendChild(password);
         inputDiv.appendChild(submitBtn);
