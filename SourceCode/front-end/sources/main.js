@@ -13,7 +13,6 @@ document.querySelector("#login").addEventListener("click", loginClicked);
 var responseDiv = document.getElementById('response');
 let adminViewBuild = false;
 let regViewBuild = false
-const user = {}
 
 
 function loginClicked()
@@ -23,6 +22,25 @@ function loginClicked()
     buildLogin();
     loginContainer.style.display = "block";
     anonContainer.style.display = "none";
+    let submitBtn = document.querySelector("#sub-login");
+    let email = document.querySelector("#email");
+    let password = document.querySelector("#password");
+    let loginForm = document.getElementById('login-form');
+    submitBtn.addEventListener('click', function(event)
+    {
+        event.preventDefault();
+        if(IsValidPassword(password.value) == true && IsValidEmail(email.value) == true) 
+        {
+            // console.log(IsValidPassword(password.value));
+            // console.log(IsValidEmail(email.value));
+            loginUser();
+        } 
+        else
+        {
+            timeOut('Error with email or password. Plrease try agian', 'red', responseDiv);
+        }
+        loginForm.reset();
+    });
 }
 
 

@@ -2,6 +2,7 @@
 var userType = "";
 const roles =  ['Regular User', 'Reputation User']
 let loginBuild = false;
+const user = {}
 
 function loginUser()
 {
@@ -11,28 +12,77 @@ function loginUser()
     user.username = email.value;
     user.password = password.value;
     let loginForm = document.getElementById('login-form');
+    console.log("inside of loginUser function");
+    console.log(user.username);
+    console.log(user.password);
+    console.log(server.authenticationServer);
+    console.log(user);
     axios.post(server.authenticationServer, user).then(function (responseAfter)
     {
-        var responseAfter = responseAfter.data
-        if(responseAfter.identity.isAuthenticated === true && responseAfter.identity.authenticationType !== 'Anonymous User' )
+        var base64Url = responseAfter.data.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const jsonObj = JSON.parse(json)
+        console.log(jsonObj);
+    });
+    /*
+    axios.post(server.authenticationServer, user).then(function (responseAfter)
+    {
+        // turning jwt signature from the response into a json object
+        var base64Url = responseAfter.data.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const jsonObj = JSON.parse(jsonPayload);
+        console.log(jsonObj);
+        
+        /*
+        if(jsonObj.authenticated === "true" && jsonObj.role !== 'Anonymous User' )
         {
-            userType = responseAfter.identity.authenticationType;
+            // save JWT token to local storage
+            localStorage.setItem("jwtToken", responseAfter.data)
+            localStorage.setItem("role", jsonObj.role)
+            localStorage.setItem("id",jsonObj.nameid)
+            userType = jsonObj.role;
             showOtp();
-            
-        } else if (responseAfter.identity.isAuthenticate === true && responseAfter.identity.authenticationType === 'Admin User')
-        {
-            userType = responseAfter.identity.authenticationType;
-            showOtp();
+            let otpDisplay= document.querySelector('.otp-display');
+            let otpVal = jsonObj.otp;
+            otpDisplay.style.display = jsonObj.otp;
+            let otpBtn = document.querySelector('#otp-submit');
+            let otpInput = document.querySelector('#otp-input');
+            otpBtn.addEventListener('click', function (event)
+            {
+                if (otpInput.value == otpVal && roles.includes(userType))
+                {
+                    regView();
+                } else if (otpInput.value == otpVal && userType == 'Admin User')
+                {
+                    adminView();
+                } else if (otpInput.value !== otpVal)
+                {
+                    timeOut('Invalid OTP','red',responseDiv);
+                }
+                else
+                {
+                    timeOut('You are not authorized to register','red',responseDiv);
+                }
+
+            })
 
         }
+
     }).catch(function (error)
         {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
                 timeOut(cleanError, 'red', responseDiv)
-                // errorsDiv.innerHTML = cleanError; 
         });
-    loginForm.reset();
+    */
+
+    // loginForm.reset();
 }
 
 function buildLogin()
@@ -61,6 +111,7 @@ function buildLogin()
         password.minLength = 8;
         submitBtn.id = "sub-login";
         submitBtn.textContent = "Submit";
+        /*
         submitBtn.addEventListener('click', function (event)
         {
             if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
@@ -73,6 +124,7 @@ function buildLogin()
             }
 
         });
+        */
         inputDiv.appendChild(email);
         inputDiv.appendChild(password);
         inputDiv.appendChild(submitBtn);

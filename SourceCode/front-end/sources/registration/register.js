@@ -5,12 +5,13 @@ function registerUser()
 {
    const server = getServer();
    const registerEmail = document.getElementById('r-email');
-   const registerPassword = document.getElementById('r-email');
+   const registerPassword = document.getElementById('r-pw');
    const registerForm = document.getElementById('registration-form');
    user.username = registerEmail.value;
    user.password = registerPassword.value;
    axios.post(server.registrationServer,user).then(function (response)
    {
+      console.log('sucess, logging to database ' + response.data)
       let responseAfter = response.data;
       let cleanResponse = responseAfter.replace(/"/g,"");
       timeOut(cleanResponse + '. Please return to home screen to login.', 'green', responseDiv);
@@ -51,6 +52,7 @@ function buildRegistration()
       password.minLength = 8;
       confirmPassword.setAttribute('type','password');
       confirmPassword.required = 'true';
+      confirmPassword.id = "r-cpw"
       confirmPassword.minLength = 8;
       confirmPassword.setAttribute('placeholder','Confirm Password');
       submitBtn.id = "regBtn-submit";

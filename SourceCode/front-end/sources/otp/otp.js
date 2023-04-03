@@ -54,15 +54,18 @@ function buildOTP()
         homeBtn.textContent = 'Home';
         homeBtn.addEventListener('click',homeClicked);
         backBtnDiv.appendChild(homeBtn);
-        let otpVal = generateOTP();
-        otpDisplay.innerHTML = otpVal;
+        // let otpVal = generateOTP();
+        // otpDisplay.innerHTML = otpVal;
         let otpInput = document.createElement('input');
         otpInput.setAttribute('type','text');
+        otpInput.id = 'otp-input';
         otpInput.required = true;
         otp.appendChild(otpInput);
         let submitBtn = document.createElement('button');
         submitBtn.setAttribute('type','submit');
         submitBtn.textContent = 'Submit';
+        submitBtn.id = 'otp-submit'
+        /*
         submitBtn.addEventListener('click', function(event)
         {
             if (otpInput.value == otpVal && roles.includes(userType))
@@ -80,6 +83,7 @@ function buildOTP()
                 timeOut('You are not authorized to register','red',responseDiv);
             }
         })
+        */
         submitDiv.appendChild(submitBtn);
         otpBuild = true;
     }
