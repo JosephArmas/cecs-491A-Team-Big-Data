@@ -1,15 +1,15 @@
 
-const registrationServer= 'https://localhost:7259/account/registration';
 let registerBuild = false;
 
 function registerUser()
 {
+   const server = getServer();
    const registerEmail = document.getElementById('r-email');
    const registerPassword = document.getElementById('r-email');
    const registerForm = document.getElementById('registration-form');
    user.username = registerEmail.value;
    user.password = registerPassword.value;
-   axios.post(registrationServer,user).then(function (response)
+   axios.post(server.registrationServer,user).then(function (response)
    {
       let responseAfter = response.data;
       let cleanResponse = responseAfter.replace(/"/g,"");

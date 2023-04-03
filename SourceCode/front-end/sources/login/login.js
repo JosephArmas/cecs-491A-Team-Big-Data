@@ -1,17 +1,17 @@
 'use strict';
-const authenticationServer= 'https://localhost:7259/account/authentication';
 var userType = "";
-const roles =  ['Regular User']
+const roles =  ['Regular User', 'Reputation User']
 let loginBuild = false;
 
 function loginUser()
 {
+    const server = getServer();
     let email = document.getElementById('email');
     let password = document.getElementById('password');
     user.username = email.value;
     user.password = password.value;
     let loginForm = document.getElementById('login-form');
-    axios.post(authenticationServer, user).then(function (responseAfter)
+    axios.post(server.authenticationServer, user).then(function (responseAfter)
     {
         var responseAfter = responseAfter.data
         if(responseAfter.identity.isAuthenticated === true && responseAfter.identity.authenticationType !== 'Anonymous User' )
