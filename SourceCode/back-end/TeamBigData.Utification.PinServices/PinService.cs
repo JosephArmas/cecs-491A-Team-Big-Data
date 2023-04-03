@@ -9,14 +9,15 @@ namespace TeamBigData.Utification.PinServices
 {
     public class PinService
     {
+        private readonly DBConnectionString connectionString = new DBConnectionString();
         public async Task<List<Pin>> GetPinTable(string userHash)
         {
             var tcs = new TaskCompletionSource<List<Pin>>();
             List<Pin> pins = new List<Pin>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBSelecter sqlSelect = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            IDBSelecter sqlSelect = new SqlDAO(connectionString._connectionStringFeatures);
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
             var result = await sqlSelect.SelectPinTable().ConfigureAwait(false);
             if (result.Count== 0)
             {
@@ -36,10 +37,10 @@ namespace TeamBigData.Utification.PinServices
         public async Task<Response> StoreNewPin(Pin pin, string userHash)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlInsert = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            IDBInserter sqlInsert = new SqlDAO(connectionString._connectionStringFeatures);
             Log log = new Log(1, "info", userHash, "PinService.GetPinTable()", "Data", "Get pins table successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
             var result = await sqlInsert.InsertPin(pin).ConfigureAwait(false);
             if (!result.isSuccessful)
             {
@@ -59,10 +60,10 @@ namespace TeamBigData.Utification.PinServices
         public async Task<Response> MarkAsCompleted(int pinID, string userHash)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBUpdater sqlUpdate = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            IDBUpdater sqlUpdate = new SqlDAO(connectionString._connectionStringFeatures);
             Log log = new Log(1, "info", userHash, "PinService.MarkAsCompleted()", "Data", "Mark pin as completed successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
             var result = await sqlUpdate.UpdatePinToComplete(pinID);
             if (!result.isSuccessful)
             {
@@ -83,10 +84,10 @@ namespace TeamBigData.Utification.PinServices
         public async Task<Response> ChangePinTypeTo(int pinID, int pinType, string userHash)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBUpdater sqlUpdate = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            IDBUpdater sqlUpdate = new SqlDAO(connectionString._connectionStringFeatures);
             Log log = new Log(1, "info", userHash, "PinService.ChangePinTypeTo()", "Data", "Change pin type successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
             var result = await sqlUpdate.UpdatePinType(pinID, pinType);
             if (!result.isSuccessful)
             {
@@ -107,10 +108,10 @@ namespace TeamBigData.Utification.PinServices
         public async Task<Response> ChangePinContentTo(int pinID, string description, string userHash)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBUpdater sqlUpdate = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            IDBUpdater sqlUpdate = new SqlDAO(connectionString._connectionStringFeatures);
             Log log = new Log(1, "info", userHash, "PinService.ChangePinContentTo()", "Data", "Change pin content successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
             var result = await sqlUpdate.UpdatePinContent(pinID, description);
             if (!result.isSuccessful)
             {
@@ -131,10 +132,10 @@ namespace TeamBigData.Utification.PinServices
         public async Task<Response> DisablingPin(int pinID, string userHash)
         {
             var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBUpdater sqlUpdate = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            IDBUpdater sqlUpdate = new SqlDAO(connectionString._connectionStringFeatures);
             Log log = new Log(1, "info", userHash, "PinService.DisablingPin()", "Data", "Disabled pin successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
             var result = await sqlUpdate.UpdatePinToDisabled(pinID);
             if (!result.isSuccessful)
             {

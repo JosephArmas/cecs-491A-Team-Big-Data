@@ -14,10 +14,7 @@ namespace TeamBigData.Utification.SQLDataAccess
          _connectionStringLogs = @"Server=localhost,1433;Database=TeamBigData.Utification.Logs;Uid=AppUser;Pwd=t;TrustServerCertificate=True;Encrypt=True;";
          _connectionStringUserHash = @"Server=localhost,1433;Database=TeamBigData.Utification.UserHash;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=True;"; 
          _connectionStringUserProfile = @"Server=localhost,1433;Database=TeamBigData.Utification.UserProfile;Uid=root;Pwd=root;TrustServerCertificate=True;Encryption=False;";
-         /*
-         _connectionStringUsers = @"Server=localhost,1433;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=True;";
-         _connectionStringUsers = @"Server=localhost,1433;Database=TeamBigData.Utification.Users;Uid=root;Pwd=root;TrustServerCertificate=True;Encrypt=True;";
-         */
+         _connectionStringFeatures = @"Server=localhost,1433;Database=TeamBigData.Utification.Features;Uid=root;Pwd=root;TrustServerCertificate=True;Encryption=False;";
          
       }
       
