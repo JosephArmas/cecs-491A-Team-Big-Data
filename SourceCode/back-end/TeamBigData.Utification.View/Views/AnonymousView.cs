@@ -173,7 +173,7 @@ namespace TeamBigData.Utification.View.Views
                     securityManager.GenerateOTP();
                     Console.WriteLine("Please Enter the OTP: " + securityManager.SendOTP());
                     String otp = Console.ReadLine();
-                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor, otp).Result.errorMessage);
+                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor).Result.errorMessage);
                     break;
                 default:
                     Console.WriteLine("Invalid Input\nPress Enter to Try Again...");

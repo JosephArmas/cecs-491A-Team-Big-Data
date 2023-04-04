@@ -1,5 +1,5 @@
 var otpContainer = document.querySelector(".otp-container");
-var errorsOtp = document.getElementById("errors");
+var errorsHeader = document.getElementById("errors");
 const otpBtn = document.querySelector("#otp-submit");
 const otpForm = document.querySelector("#otp-form");
 const otpDisplay = document.querySelector("#otp-display");
@@ -9,17 +9,17 @@ otpBtn.addEventListener('click', function (event)
     event.preventDefault();
     if (otpInput.value == '')
     {
-        errorsOtp.innerHTML = "Please enter OTP";
+        errorsHeader.innerHTML = "Please enter OTP";
 
     } else if (otpInput.value == otpVal) 
     {
-        errorsOtp.innerHTML = "";
+        errorsHeader.innerHTML = "";
         regView();
         
     } else 
     {
-        errorsOtp.style.color = "red";
-        errorsOtp.innerHTML = "Invalid OTP. Please try again";
+        errorsHeader.style.color = "red";
+        errorsHeader.innerHTML = "Invalid OTP. Please try again";
     } 
     otpForm.reset();
 });

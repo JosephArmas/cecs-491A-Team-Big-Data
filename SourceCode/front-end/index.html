@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="styles/home-reg.css">
         <link rel="stylesheet" href="styles/registration.css">
         <link rel="stylesheet" href="styles/map.css">
+        <link rel="stylesheet" href="styles/recovery.css">
     </head>
     <body>
         <div id="test-data"></div>
@@ -79,6 +80,26 @@
             </form>
         </div>
 
+        <!-- * Recovery OTP -->
+        <div class="recOTP-container" hidden>
+            <form action="/" method="POST" id="recOTP-form">
+            <div class="home">
+                <button type="button" onclick="homeClicked()">Home</button>
+            </div>
+            <div class="recOTP-header">
+                <h2>Enter OTP</h2>
+            </div>
+            <div id="recOTP-display"></div>
+            <div class="otp">
+                <input id="recOTP-input" type="password"> 
+            </div>
+
+            <div class="submit">
+                <button type="button" id="recOTP-submit" onclick="">Submit</button>
+            </div>
+            </form>
+        </div>
+
         <!-- * Login view -->
         <div class="login-container" id="login-contianer" hidden>
             <form action="/" method="POST" id="login-form">
@@ -96,7 +117,7 @@
             </div>
 
             <div class="options-other">
-                <button type="button" onclick="alert('redirect to account recovery view')">Forgot Password</button>
+                <button type="button" onclick="recoveryClickedLogin()">Forgot Password</button>
                 <button type="button" class="button2" onclick="alert('redirect to contact support')">Contact Support</button>
             </div>
             </div>
@@ -126,12 +147,34 @@
             </form>
         </div>
 
+        <!-- * Recovery View -->
+        <div class="recovery-container" id="recovery-container" hidden>
+            <form action="/" method="POST" id="recovery-form">
+            <div class="back-button">
+                <button type="button" id="recovery-home" onclick="homeClicked()">Back</button>
+            </div>
+            <div class="recovery-box">
+            <div class="recovery-title">
+                <h1>Forgot My Password</h1>
+            </div>
+            <div class="input-field">
+                <input type="username" id ="username" placeholder="email address" required data-error="email required" />
+                <input type="password" id="newPassword" placeholder="perferred new password" minlength="8" required  />
+                <button type="button" id="recoveryButton" >Submit</button>
+            </div>
+            </div>
+            </form>
+        </div>
+
         <!-- * Anon View -->
         <div class="anon-container" id="anon-container">
             <div class="header-container">
                 <div class="login-register">
                     <button type="button" id="login" onclick="loginClicked()">Login</button>
                     <button type="button" id="register" onclick="regClicked()">Register</button>
+                </div>
+                <div class="forgotPassword">
+                    <button type="button" id="forgotPassword" onclick="recoveryClicked()">Forgot Password</button>
                 </div>
             </div>
             <div class="title">
@@ -159,6 +202,8 @@
         <script src="sources/login/login.js"> </script>
         <script src="sources/registration/register.js"> </script>
         <!--<script src="sources/otp/otp.js"> </script>-->
+        <script src="sources/otp/recOTP.js"></script>
+        <script src="sources/recovery/recovery.js"> </script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

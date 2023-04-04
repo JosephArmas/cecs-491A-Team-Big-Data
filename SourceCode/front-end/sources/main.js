@@ -22,21 +22,22 @@ function loginClicked()
 
 function homeClicked()
 {
-
     var regContainer = document.querySelector(".registration-container");
     var otpContainer = document.querySelector(".otp-container");
     var anonContainer = document.querySelector(".anon-container");
     var loginContainer = document.querySelector(".login-container");
     var homeContainer = document.querySelector(".home-container")
     var globalErrors = document.querySelector("#errors");
+    var recoveryContainer = document.querySelector(".recovery-container");
+    var recoveryOTPContainer = document.querySelector(".recOTP-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
     regContainer.style.display = "none";     
     loginContainer.style.display = "none";
+    recoveryContainer.style.display = "none";
+    recoveryOTPContainer.style.display = "none";
     globalErrors.innerHTML = "";
-
-
 }
 
 function regClicked()
@@ -45,6 +46,22 @@ function regClicked()
     var anonContainer = document.querySelector(".anon-container");
     anonContainer.style.display = "none";
     regContainer.style.display = "block";
+}
+
+function recoveryClicked()
+{
+    var recoveryContainer = document.querySelector(".recovery-container");
+    var anonContainer = document.querySelector(".anon-container");
+    anonContainer.style.display = "none";
+    recoveryContainer.style.display = "block";
+}
+
+function recoveryClickedLogin()
+{
+    var loginContainer = document.querySelector(".login-container");
+    var recoveryContainer = document.querySelector(".recovery-container");
+    loginContainer.style.display = "none";
+    recoveryContainer.style.display = "block";
 }
 
 function regView()
@@ -71,6 +88,15 @@ function showOtp()
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
 }
+
+function showRecOTP()
+{
+    var otpContainer = document.querySelector(".recOTP-container");
+    var recoveryContainer = document.querySelector(".recovery-container");
+    otpContainer.style.display = "block";
+    recoveryContainer.style.display = "none";
+}
+
 
 function IsValidPassword(password)
 {

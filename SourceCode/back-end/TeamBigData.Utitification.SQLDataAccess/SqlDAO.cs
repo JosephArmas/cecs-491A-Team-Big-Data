@@ -960,13 +960,17 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public Task<Response> GetRecoveryRequests(ref List<int> requests)
+        public Task<Response> GetRecoveryRequests(ref List<UserProfile> requests)
         {
             var response = new Response();
             var tcs = new TaskCompletionSource<Response>();
-            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests WHERE fulfilled = 0 ORDER BY [TimeStamp]";
+            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests join dbo.UserProfiles on(dbo.RecoveryRequests.userId = dbo.UserProfiles.userId) WHERE fulfilled = 0 ORDER BY [TimeStamp] asc";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
+                int userId = 0;
+                int ordinal = 0;
+                String firstname = "", lastname = "", role = "";
+                DateTime birthday = new DateTime();
                 try
                 {
                     connect.Open();
@@ -974,14 +978,33 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         while (reader.Read())
                         {
-                            int userId = 0;
-
-                            int ordinal = reader.GetOrdinal("userID");
+                            ordinal = reader.GetOrdinal("userID");
                             if (!reader.IsDBNull(ordinal))
                             {
                                 userId = reader.GetInt32(ordinal);
                             }
-                            requests.Add(userId);
+                            ordinal = reader.GetOrdinal("firstName");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                firstname = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("lastName");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                lastname = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("role");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                role = reader.GetString(role);
+                            }
+                            ordinal = reader.GetOrdinal("birthday");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                birthday = reader.GetDateTime(ordinal);
+                            }
+                            UserProfile profile = new UserProfile(userId, firstname, lastname, "", birthday, new GenericIdentity(role));
+                            requests.Add(profile);
                         }
                         reader.Close();
                         response.isSuccessful = true;

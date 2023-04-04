@@ -26,13 +26,13 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var username = "testUser@yahoo.com";
             var newPassword = "password";
             var encryptedPassword = encryptor.encryptString(newPassword);
-            List<int> listRequests = new List<int>();
+            List<UserProfile> listRequests = new List<UserProfile>();
             //Act
             //Insert Request and Check if its Available
             stopwatch.Start();
             secManager.GenerateOTP();
             var otp = secManager.SendOTP();
-            Response insertResult = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
+            Response insertResult = secManager.RecoverAccount(username, encryptedPassword, encryptor).Result;
             Response fetchResult = secManagerAccRecovery.GetRecoveryRequests(ref listRequests, userProfile);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
@@ -53,11 +53,11 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var userProfile = new UserProfile(new GenericIdentity("username", "Admin User"));
             var stopwatch = new Stopwatch();
             long expected = 5 * 1000;
-            var list = new List<int>();
+            var list = new List<UserProfile>();
             var getResponse = adminManager.GetRecoveryRequests(ref list, userProfile);
             //Act
             stopwatch.Start();
-            var enableResponse = adminManager.ResetAccount(list[0], userProfile);
+            var enableResponse = adminManager.ResetAccount(list[0]._userID, userProfile);
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;
 
@@ -82,7 +82,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Act
             secManager.GenerateOTP();
             var otp = secManager.SendOTP();
-            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
+            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor).Result;
             //Assert
             Assert.IsFalse(actual.isSuccessful);
             Assert.AreEqual(expected, actual.errorMessage);
@@ -103,7 +103,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Act
             secManager.GenerateOTP();
             var otp = "wrongOTP";
-            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
+            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor).Result;
             //Assert
             Assert.IsFalse(actual.isSuccessful);
             Assert.AreEqual(expected, actual.errorMessage);
@@ -124,7 +124,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Act
             secManager.GenerateOTP();
             var otp = "wrongOTP";
-            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
+            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor).Result;
             //Assert
             Assert.IsFalse(actual.isSuccessful);
             Assert.AreEqual(expected, actual.errorMessage);

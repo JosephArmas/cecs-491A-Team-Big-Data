@@ -693,7 +693,7 @@ namespace TeamBigData.Utification.Manager
             return response;
         }
 
-        public async Task<Response> RecoverAccount(String username, Byte[] encryptedPassword, Encryptor encryptor, String enteredOTP)
+        public async Task<Response> RecoverAccount(String username, Byte[] encryptedPassword, Encryptor encryptor)
         {
             Response result = new Response();
             result.isSuccessful = false;
@@ -703,12 +703,6 @@ namespace TeamBigData.Utification.Manager
             if(!AccountRegisterer.IsValidPassword(newPassword))
             {
                 result.errorMessage = "Invalid new password. Please make it at least 8 characters and no weird symbols";
-                return result;
-            }
-            Response otpResponse = VerifyOTP(enteredOTP);
-            if (!otpResponse.isSuccessful)
-            {
-                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
                 return result;
             }
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
@@ -728,7 +722,7 @@ namespace TeamBigData.Utification.Manager
             return result;
         }
 
-        public Response GetRecoveryRequests(ref List<int> requests, UserProfile userProfile)
+        public Response GetRecoveryRequests(ref List<UserProfile> requests, UserProfile userProfile)
         {
             var response = new Response();
             if(!((IPrincipal)userProfile).IsInRole("Admin User"))
