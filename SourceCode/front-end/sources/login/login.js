@@ -1,12 +1,5 @@
 'use strict';
-var userType = "";
 let loginBuild = false;
-const roles =  
-{
-    reg:['Regular User', 'Reputation User'],
-    service: ['Service User'],
-    admin: ['Admin User']
-}
 
 function loginUser(email, password)
 {
@@ -15,6 +8,7 @@ function loginUser(email, password)
     user.username = email;
     user.password = password;
     let loginForm = document.getElementById('login-form');
+    const role = getRole();
     console.log("inside of loginUser function");
     console.log(user.username);
     console.log(user.password);
@@ -31,7 +25,7 @@ function loginUser(email, password)
         console.log(jsonObj);
         // console.log(roles.reg.includes(jsonObj.role));
 
-        if (jsonObj.authenticated === "true" && roles.reg.includes(jsonObj.role) || roles.service.includes(jsonObj.role) || roles.admin.includes(jsonObj.role))
+        if (jsonObj.authenticated === "true" && role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role) || role.admin.includes(jsonObj.role))
         {
 
             localStorage.setItem("jwtToken", responseAfter.data)

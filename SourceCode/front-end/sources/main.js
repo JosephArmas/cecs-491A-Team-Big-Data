@@ -201,12 +201,3 @@ function buildAdminView()
     
 }
 
-function timeOut(errorMsg,color,divElement)
-{
-    divElement.style.display = "block";
-    divElement.innerHTML = errorMsg;
-    divElement.style.color = color;
-    setTimeout(function(){
-        divElement.style.display = "none";
-    }, 3000);
-}

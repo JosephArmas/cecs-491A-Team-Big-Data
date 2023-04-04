@@ -6,9 +6,9 @@ let buttonBuilt = false;
 // Get data from server and div class name to make chart
 function makeChart(server, chartClassname)
 {
-    // * Days
+    // Days
     let xAxis = [];
-    // * Registered users
+    // Registered users
     let yAxis = [];
     axios.get(server).then(function (response)
     {
@@ -39,8 +39,8 @@ function makeChart(server, chartClassname)
 
 function showAnalyticsRegistrations()
 {
-    // const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
-    let server = getServer();
+    //const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
+    const server = getServer();
     showAnalyticsRegistrationView()
     makeChart(server.analyticsRegistration, '.analytics-chart-registration')
     setInterval(showAnalyticsRegistrations, 60 * 1000);
@@ -48,10 +48,11 @@ function showAnalyticsRegistrations()
 
 function showAnalyticsLogins()
 {
-    // const analyticsLogins = 'https://localhost:7259/analysis/logins';
+    //const analyticsLogins = 'https://localhost:7259/analysis/logins';
     showAnalyticsLoginsView();
-    let server = getServer();
+    const server = getServer();
     makeChart(server.analyticsLogins, '.analytics-chart-logins')
+    // Miliseconds to Seconds
     setInterval(showAnalyticsLogins, 60 * 1000);
 
 }
@@ -59,19 +60,21 @@ function showAnalyticsLogins()
 
 function showAnalyticsMaps()
 {
-    // const analyticsMaps = 'https://localhost:7259/analysis/pins';
+    //const analyticsMaps = 'https://localhost:7259/analysis/pins';
     showAnalyticsMapsView();
-    let server = getServer();
+    const server = getServer();
     makeChart(server.analyticsMaps, '.analytics-chart-maps')
+    // Miliseconds to Seconds
     setInterval(showAnalyticsMaps, 60 * 1000);
 }
 
 function showAnalyticsPins()
 {
-    // const analyticsPins = 'https://localhost:7259/analysis/maps';
+    //const analyticsPins = 'https://localhost:7259/analysis/maps';
     showAnalyticsPinsView();
-    let server = getServer();
+    const server = getServer();
     makeChart(server.analyticsPins, '.analytics-chart-pins')
+    // Miliseconds to Seconds
     setInterval(showAnalyticsPins, 60 * 1000);
 }
 
@@ -79,9 +82,9 @@ function showAnalyticsPins()
 
 function showAnalytics()
 {
-    var analyticsView = document.querySelector(".analytics-container");
-    var analyticsHome = document.querySelector(".analytics-home");
-    var homeContainer = document.querySelector(".home-admin-container");
+    let analyticsView = document.querySelector(".analytics-container");
+    let analyticsHome = document.querySelector(".analytics-home");
+    let homeContainer = document.querySelector(".home-admin-container");
     let analyticsChart = document.querySelector(".charts");
     buildAnalytics();
     analyticsView.style.display = "block";
@@ -250,7 +253,6 @@ function showAnalyticsPinsView()
 }
 
 // * Test Graph using LineChart
-/*
 function testGraph()
 {
 
@@ -267,8 +269,8 @@ new LineChart
   }
 );
 }
-*/
 
+// * Test Graph importing { LineChart }
 function testGraph()
 {
     let data = {

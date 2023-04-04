@@ -1,6 +1,6 @@
 function getServer()
 {
-    const servers =
+    const routes =
     {
         analyticsHealth: 'https://localhost:7259/analysis/health',
         analyticsRegistration: 'https://localhost:7259/analysis/registrations',
@@ -10,8 +10,7 @@ function getServer()
         registrationServer: 'https://localhost:7259/account/registration',
         authenticationServer: 'https://localhost:7259/account/authentication',
     }
-    
-    return servers;
 
+    return routes;
 }
 
