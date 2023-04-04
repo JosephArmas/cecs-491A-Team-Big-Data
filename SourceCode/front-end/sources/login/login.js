@@ -83,6 +83,8 @@ var loginContainer = document.querySelector(".login-container");
 
 function loginUser()
 {
+    showAnalytics();
+    /*
     user.username = email.value;
     user.password = password.value;
     axios.post(authenticationServer, user).then(function (responseAfter)
@@ -143,6 +145,7 @@ function loginUser()
             let cleanError = errorAfter.replace(/"/g,"");
             errorsDiv.innerHTML = cleanError; 
         });
+        */
 }
 
 

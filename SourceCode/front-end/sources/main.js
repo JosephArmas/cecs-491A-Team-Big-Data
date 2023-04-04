@@ -6,7 +6,6 @@
  * home view - hamburger menu
  * do error screen - show message validations & status codes
 */
-
 // reuse function to list on back button click
 document.querySelector(".back-button").addEventListener("click", homeClicked());
 // document.querySelector("#regBtn-submit").addEventListener("click", homeClicked());
@@ -30,6 +29,7 @@ function homeClicked()
     var globalErrors = document.querySelector("#errors");
     var recoveryContainer = document.querySelector(".recovery-container");
     var recoveryOTPContainer = document.querySelector(".recOTP-container");
+    var analyticsContainer = document.querySelector(".analytics-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
@@ -37,6 +37,7 @@ function homeClicked()
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
+    analyticsContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 
@@ -95,6 +96,32 @@ function showRecOTP()
     var recoveryContainer = document.querySelector(".recovery-container");
     otpContainer.style.display = "block";
     recoveryContainer.style.display = "none";
+}
+
+function showAnalytics()
+{
+    var analyticsView = document.querySelector(".analytics-container");
+    var homeContainer = document.querySelector(".home-admin-container");
+    var loginContainer = document.querySelector(".login-container");
+    var anonContainer = document.querySelector(".anon-container");
+    analyticsView.style.display = "block";
+    //homeContainer.style.display = "none";
+    loginContainer.style.display = "none";
+    anonContainer.style.display = "none";
+}
+
+
+function showAnalyticsRegistrationView()
+{
+    let analyticsHome = document.querySelector(".analytics-home");
+    let analyticsRegistration = document.querySelector(".analytics-registration-view");
+    // let analyticTitle = document.createElement("h1");
+    // analyticTitle.textContent = "Analytics Registration";
+    // analyticTitle.style.textAlign = "center";
+    analyticsRegistration.style.display = "block";
+    // analyticsRegistration.insertBefore(analyticTitle ,analyticsRegistration.firstChild);
+    analyticsHome.style.display = "none";
+    
 }
 
 
