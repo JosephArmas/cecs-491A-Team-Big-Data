@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+
+}
+
+.logout-container 
+{
+    display: flex;
+    justify-content: space-between; 
+    padding: 20px 20px;
+}
+
+.logout-container button
+{
+    min-width: 100px;
+    background-color: #00ACB7;
+    color: white
+}
+
+.feature-container
+{
+    display: flex;
+    /* justify-content: space-between; */
+    flex-direction: column;
+    /* padding: 20px 20px; */
+}
+
+.feature-container button
+{
+    min-width: 100px;
+    background-color: lightgrey;
+    color: black;
+}
+
+.create-account 
+{
+    padding: 20px 20px;
+
+}
+
+.update-account 
+{
+    padding: 20px 20px;
+
+}
+.del-account 
+{
+    padding: 20px 20px;
+
+}
+.disable-account 
+{
+    padding: 20px 20px;
+
+}
+.enable-account 
+{
+    padding: 20px 20px;
+
+}
+.del-pic 
+{
+    padding: 20px 20px;
+
+}
+.del-events 
+{
+    padding: 20px 20px;
+
+}
+.del-pins 
+{
+    padding: 20px 20px;
+
+}
+.del-services 
+{
+    padding: 20px 20px;
+
+}
+.adjust-user-rep 
+{
+    padding: 20px 20px;
+
+}
+.authorize-user-rep 
+{
+    padding: 20px 20px;
+
+}

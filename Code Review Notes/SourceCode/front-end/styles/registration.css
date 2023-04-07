@@ -1,0 +1,23 @@
+.login-title
+{
+    padding-top: 10px;
+}
+
+.reg-box
+{
+    padding: 6px;
+    border: 4px solid black;
+    margin-left: 30%;
+    margin-right: 30%;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+
+.reg-contact
+{
+    display: flex;
+    justify-content: center;
+    /* padding: 20px 10px; */
+    padding-left: 320px;
+}

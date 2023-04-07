@@ -1,0 +1,19 @@
+Cluster pins 
+Doesn't show who the user is.
+NO value if you can't anything with the map.
+No indication whether which
+Explain quirks to not seem hide things.
+More both succes and fails to not be surprised and user friendly message to get notified.
+Dont assume that if this is there that it would explain that.
+Make sure everything is validated.
+Window is the global object and if its done limit the access that it get. function to call for the function.
+Code Review: Lacks to be able why code is created that way and the reasoning why I created it that way.
+		
+
+Make peer review through with the reasons, ups, and downs
+
+Javascript geolocation library
+
+Understand the design and implement based on the layers responsibilities.
+Front end have an abstraction layer to talk to the back end to have a more maintainable design.
+Front end, back end, and database should follow the same principles to be more maintainable.
