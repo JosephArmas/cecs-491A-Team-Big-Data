@@ -1,4 +1,4 @@
-# As a Reputable User, I can create an event
+# As a Reputable User or Admin, I can create an event
 ```mermaid
 sequenceDiagram
     actor User
