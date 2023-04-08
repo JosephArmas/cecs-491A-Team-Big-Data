@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Data.SqlClient;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,26 +14,29 @@ namespace TeamBigData.Utification.SQLDataAccess
 {
     public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDBAnalysis
     {
-        private readonly String _connectionString;
-
+        private readonly SqlConnection _connectionString;
+        private readonly Response _result;
+        private readonly SqlDataAdapter _dataAdapter;
+        private readonly SqlCommand _command;
+       
         public SqlDAO(String connectionString)
         {
-            _connectionString = connectionString;
+            _connectionString = new SqlConnection(connectionString);
         }
 
         public Task<Response> InsertUser(UserAccount user)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var insertSql = "INSERT INTO dbo.Users (username, \"password\", \"disabled\", salt, userHash) values('" + user._username + "', '" + user._password + "', 0, '" + user._salt +  "', '" + user._userHash + "')";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
-                    var command = new SqlCommand(insertSql, connection);
+                    var command = new SqlCommand(insertSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -55,9 +59,9 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, \"role\") values('" +
                     user._userID + "', '" + user._firstName + "', '" + user._lastName + "', '" +
@@ -65,7 +69,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
-                    var command = new SqlCommand(insertSql, connection);
+                    var command = new SqlCommand(insertSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -88,16 +92,16 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var insertSql = "INSERT into dbo.UserHash(userHash, \"userID\") values('" +
                     userHash + "', '" + userID + "')";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
-                    var command = new SqlCommand(insertSql, connection);
+                    var command = new SqlCommand(insertSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -120,13 +124,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 var updateSql = "UPDATE dbo.Users set \"disabled\" += 1 Where userID = " + userAccount._userID + "";
                 try
                 {
-                    var command = new SqlCommand(updateSql, connection);
+                    var command = new SqlCommand(updateSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -149,9 +153,9 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var updateSql = "UPDATE dbo.UserProfiles set firstname = '" + user._firstName + "', lastname = '" +
                     user._lastName + "', \"address\" = '" + user._address +
@@ -159,7 +163,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
-                    var command = new SqlCommand(updateSql, connection);
+                    var command = new SqlCommand(updateSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -183,13 +187,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "' where username = '" + username + "'";
                 try
                 {
-                    var command = new SqlCommand(updateSql, connection);
+                    var command = new SqlCommand(updateSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -224,14 +228,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var deleteSql = "DELETE FROM dbo.UserProfiles WHERE userID = '" + userID + "';";
                 try
                 {
-                    var command = new SqlCommand(deleteSql, connection);
+                    var command = new SqlCommand(deleteSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     result.isSuccessful = true;
                 }
@@ -246,7 +250,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 deleteSql = "DELETE FROM dbo.Users WHERE userID = '" + userID + "';";
                 try
                 {
-                    var command = new SqlCommand(deleteSql, connection);
+                    var command = new SqlCommand(deleteSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     result.isSuccessful = true;
                 }
@@ -267,14 +271,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var deleteSql = "DELETE FROM dbo.UserProfiles WHERE username = '" + username + "';";
                 try
                 {
-                    var command = new SqlCommand(deleteSql, connection);
+                    var command = new SqlCommand(deleteSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     result.isSuccessful = true;
                 }
@@ -289,7 +293,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 deleteSql = "DELETE FROM dbo.Users WHERE username = '" + username + "';";
                 try
                 {
-                    var command = new SqlCommand(deleteSql, connection);
+                    var command = new SqlCommand(deleteSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     result.isSuccessful = true;
                 }
@@ -312,16 +316,16 @@ namespace TeamBigData.Utification.SQLDataAccess
             var list = new Object[8];
             Response result = new Response();
             result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select dbo.users.userid, firstname, lastname, \"address\", birthday, role " +
                     "from dbo.Users left join dbo.UserProfiles on (dbo.Users.username = dbo.UserProfiles.username)" +
                     " Where dbo.Users.username = '" + user._username + "' AND " + "password = '" + user._password + "'";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var reader = command.ExecuteReader();
                     if (reader.Read())
                     {
@@ -356,15 +360,15 @@ namespace TeamBigData.Utification.SQLDataAccess
             var list = new ArrayList();
             Response result = new Response();
             result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + username + "' AND " +
                     "\"timestamp\" >= DATEADD(day, -1, getDate()) order by \"timestamp\" asc";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -390,9 +394,9 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName + " WHERE ";
                 if (collumnNames.Length == values.Length)
@@ -415,7 +419,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                 }
                 try
                 {
-                    var command = new SqlCommand(countSql, connection);
+                    var command = new SqlCommand(countSql, _connectionString);
                     result.data = command.ExecuteScalar();
                     result.isSuccessful = true;
                 }
@@ -436,14 +440,14 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var countSql = "SELECT COUNT(" + countedCollumn + ") FROM " + tableName;
                 try
                 {
-                    var command = new SqlCommand(countSql, connection);
+                    var command = new SqlCommand(countSql, _connectionString);
                     result.data = command.ExecuteScalar();
                     result.isSuccessful = true;
                 }
@@ -464,14 +468,14 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 // Creates an Insert SQL statements using the collumn names and values given
                 var countSql = "SELECT COUNT (salt) FROM dbo.Users Where salt = '" + salt + "'";
                 try
                 {
-                    var command = new SqlCommand(countSql, connection);
+                    var command = new SqlCommand(countSql, _connectionString);
                     result.data = command.ExecuteScalar();
                     result.isSuccessful = true;
                 }
@@ -500,12 +504,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                 tcs.SetResult(result);
                 return tcs.Task;
             }
-            using (SqlConnection connect = new SqlConnection(_connectionString.ToString()))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 try
                 {
-                    result.data = (new SqlCommand(req.ToString(), connect)).ExecuteNonQuery();
+                    result.data = (new SqlCommand(req.ToString(), _connectionString)).ExecuteNonQuery();
                     result.isSuccessful = true;
                 }
                 catch (SqlException s)
@@ -533,12 +537,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
             string sqlStatement = "SELECT * FROM dbo.UserProfile";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 try
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    _connectionString.Open();
+                    using (var reader = (new SqlCommand(sqlStatement, _connectionString)).ExecuteReader())
                     {
                         // read through all rows
                         while (reader.Read())
@@ -586,7 +590,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         }
                         reader.Close();
                     }
-                    connect.Close();
+                    _connectionString.Close();
                 }
                 catch (SqlException s)
                 {
@@ -615,12 +619,12 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.UserProfiles WHERE userID = '" + userID + "'";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 try
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    _connectionString.Open();
+                    using (var reader = (new SqlCommand(sqlStatement, _connectionString)).ExecuteReader())
                     {
                         // read through all rows
                         while (reader.Read())
@@ -668,7 +672,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         }
                         reader.Close();
                     }
-                    connect.Close();
+                    _connectionString.Close();
                 }
                 catch (SqlException s)
                 {
@@ -687,12 +691,12 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<bool>();
             String sqlStatement = "Select COUNT(Username) FROM dbo.Users WHERE Username = \'" + username + "\'";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 try
                 {
-                    connect.Open();
-                    var command = new SqlCommand(sqlStatement, connect);
+                    _connectionString.Open();
+                    var command = new SqlCommand(sqlStatement, _connectionString);
                     if ((int)command.ExecuteScalar() == 1)
                     {
                         tcs.SetResult(true);
@@ -713,10 +717,10 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             String insertSql = "Insert into dbo.RecoveryRequests(userID, newPassword) " +
                 "values (\'" + userID + "\', \'" + newPassword + "\')";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
-                var command = new SqlCommand(insertSql, connect);
+                _connectionString.Open();
+                var command = new SqlCommand(insertSql, _connectionString);
                 try
                 {
                     if(command.ExecuteNonQuery() == 1)
@@ -752,12 +756,12 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.Users WHERE username = '" + username +"'";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 try
                 {
-                connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                _connectionString.Open();
+                using (var reader = (new SqlCommand(sqlStatement, _connectionString)).ExecuteReader())
                 {
                     // read through all rows
                     while (reader.Read())
@@ -810,7 +814,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                     }
                     reader.Close();
                 }
-                connect.Close();
+                _connectionString.Close();
                 }
                 catch (SqlException s)
                 {
@@ -846,12 +850,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
             string sqlStatement = "SELECT * FROM dbo.Users";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 try
                 {
-                connect.Open();
-                using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                _connectionString.Open();
+                using (var reader = (new SqlCommand(sqlStatement, _connectionString)).ExecuteReader())
                     {
                         // read through all rows
                         while (reader.Read())
@@ -903,7 +907,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         }
                         reader.Close();
                     }
-                connect.Close();
+                _connectionString.Close();
                 }
                 catch (SqlException s)
                 {
@@ -931,15 +935,15 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "SELECT TOP(1) userID FROM dbo.Users ORDER BY userID DESC";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var rows = command.ExecuteReader();
                     while (rows.Read()) 
                     {
@@ -965,7 +969,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             var response = new Response();
             var tcs = new TaskCompletionSource<Response>();
             string sqlStatement = "SELECT * FROM dbo.RecoveryRequests join dbo.UserProfiles on(dbo.RecoveryRequests.userId = dbo.UserProfiles.userId) WHERE fulfilled = 0 ORDER BY [TimeStamp] asc";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 int userId = 0;
                 int ordinal = 0;
@@ -973,8 +977,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 DateTime birthday = new DateTime();
                 try
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    _connectionString.Open();
+                    using (var reader = (new SqlCommand(sqlStatement, _connectionString)).ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -1009,7 +1013,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         reader.Close();
                         response.isSuccessful = true;
                     }
-                    connect.Close();
+                    _connectionString.Close();
                 }
                 catch (SqlException s)
                 {
@@ -1028,15 +1032,15 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND userId = " + userID + " Order by [timestamp] desc; ";
                 try
                 {
-                    var command = new SqlCommand(sqlSelect, connect);
+                    var command = new SqlCommand(sqlSelect, _connectionString);
                     String newPassword = (String)command.ExecuteScalar();
-                    if(newPassword != null && newPassword != "")
+                    if (newPassword != null && newPassword != "")
                     {
                         result.data = newPassword;
                         result.isSuccessful = true;
@@ -1066,15 +1070,15 @@ namespace TeamBigData.Utification.SQLDataAccess
             var list = new ArrayList();
             Response result = new Response();
             result.isSuccessful = false;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select LogLevel from dbo.Logs Where \"user\" = '" + userId + "' AND " +
                     "\"timestamp\" >= DATEADD(day, -1, getDate()) order by \"timestamp\" asc";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -1100,13 +1104,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 var updateSql = "UPDATE dbo.Users set password = '" + newPassword + "', \"disabled\" = 0 where userID = " + userID;
                 try
                 {
-                    var command = new SqlCommand(updateSql, connection);
+                    var command = new SqlCommand(updateSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -1144,13 +1148,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 string fulfill = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE userID = " + userID;
                 try
                 {
-                    var command = new SqlCommand(fulfill, connect);
+                    var command = new SqlCommand(fulfill, _connectionString);
                     if (command.ExecuteNonQuery() > 1)
                     {
                         result.isSuccessful = true;
@@ -1181,12 +1185,12 @@ namespace TeamBigData.Utification.SQLDataAccess
             List<Pin> pins = new List<Pin>();
             Response result = new Response();
             string sqlStatement = "SELECT * FROM dbo.Pins";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
                 try
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    _connectionString.Open();
+                    using (var reader = (new SqlCommand(sqlStatement, _connectionString)).ExecuteReader())
                     {
                         // read through all rows
                         while (reader.Read())
@@ -1213,7 +1217,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         }
                         reader.Close();
                     }
-                    connect.Close();
+                    _connectionString.Close();
                 }
                 catch (SqlException s)
                 {
@@ -1244,15 +1248,15 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var insertSql = "INSERT INTO dbo.Pins (userID,lat,lng,pinType,\"description\",\"disabled\",completed,\"dateTime\") values(" + pin._userID + ", '" + pin._lat + "', '" + pin._lng + "', " + pin._pinType + ", '" + pin._description + "', " + pin._disabled + ", " + pin._completed + ", '" + pin._dateTime + "')";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
-                    var command = new SqlCommand(insertSql, connection);
+                    var command = new SqlCommand(insertSql, _connectionString);
                     var rows = command.ExecuteNonQuery();
                     if (rows == 1)
                     {
@@ -1277,13 +1281,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 string fulfill = "UPDATE dbo.Pins SET completed = 1 WHERE pinID = " + pinID;
                 try
                 {
-                    var command = new SqlCommand(fulfill, connect);
+                    var command = new SqlCommand(fulfill, _connectionString);
                     if (command.ExecuteNonQuery() > 1)
                     {
                         result.isSuccessful = true;
@@ -1312,13 +1316,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 string fulfill = "UPDATE dbo.Pins SET pinType = " + pinType + " WHERE pinID = " + pinID;
                 try
                 {
-                    var command = new SqlCommand(fulfill, connect);
+                    var command = new SqlCommand(fulfill, _connectionString);
                     if (command.ExecuteNonQuery() > 1)
                     {
                         result.isSuccessful = true;
@@ -1347,13 +1351,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 string fulfill = "UPDATE dbo.Pins SET \"description\" = '" + description + "' WHERE pinID = " + pinID;
                 try
                 {
-                    var command = new SqlCommand(fulfill, connect);
+                    var command = new SqlCommand(fulfill, _connectionString);
                     if (command.ExecuteNonQuery() > 1)
                     {
                         result.isSuccessful = true;
@@ -1382,13 +1386,13 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connect.Open();
+                _connectionString.Open();
                 string fulfill = "UPDATE dbo.Pins SET \"disabled\" = 1 WHERE pinID = " + pinID;
                 try
                 {
-                    var command = new SqlCommand(fulfill, connect);
+                    var command = new SqlCommand(fulfill, _connectionString);
                     if (command.ExecuteNonQuery() > 1)
                     {
                         result.isSuccessful = true;
@@ -1419,14 +1423,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             Response result = new Response();
             result.isSuccessful = false;
             int daysAgo, logins, i;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select * from dbo.loginsPast3Months order by DaysAgo";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -1457,15 +1461,15 @@ namespace TeamBigData.Utification.SQLDataAccess
             Response result = new Response();
             result.isSuccessful = false;
             int daysAgo, registrations, i;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select * from dbo.registrationsPast3Months order by DaysAgo";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
-                    var reader = command.ExecuteReader();
+                    var command = new SqlCommand(selectSql, _connectionString);
+                    var reader = command.ExecuteReader();   
                     while (reader.Read())
                     {
                         result.isSuccessful = true;
@@ -1495,14 +1499,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             Response result = new Response();
             result.isSuccessful = false;
             int daysAgo, pins, i;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select * from dbo.newPinsPastWeek order by DaysAgo";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -1533,14 +1537,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             Response result = new Response();
             result.isSuccessful = false;
             int daysAgo, pinPulls, i;
-            using (var connection = new SqlConnection(_connectionString))
+            using (_connectionString)
             {
-                connection.Open();
+                _connectionString.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
                 var selectSql = "Select * from dbo.pinPullsPastMonth order by DaysAgo";
                 try
                 {
-                    var command = new SqlCommand(selectSql, connection);
+                    var command = new SqlCommand(selectSql, _connectionString);
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -1563,6 +1567,39 @@ namespace TeamBigData.Utification.SQLDataAccess
                 tcs.SetResult(result);
                 return tcs.Task;
             }
+        }
+
+        public async Task<Response> InsertUserReport(Report report)
+        {         
+            _dataAdapter.InsertCommand.Parameters.Add("@rating", SqlDbType.Decimal).Value = report._rating;
+            _dataAdapter.InsertCommand.Parameters.Add("@reportedUserID", SqlDbType.Int).Value = report._reportedUserID;
+            _dataAdapter.InsertCommand.Parameters.Add("@reportingUserID", SqlDbType.Int).Value = report._reportingUserID;
+            _dataAdapter.InsertCommand.Parameters.Add("@feedback", SqlDbType.VarChar).Value = report._feedback;
+
+            using (_connectionString)
+            {
+                try
+                {
+                    await _connectionString.OpenAsync();
+                                        
+                    _command.Connection = _connectionString;
+                    _command.CommandText = "InsertUserReport";
+                    _command.CommandType = CommandType.StoredProcedure;
+                    _command.Parameters.Add(_dataAdapter);
+
+                    int execute = _command.ExecuteNonQuery();
+
+                    if(execute == 1)
+                    {
+                        _result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s) 
+                {
+                    _result.errorMessage = s.Message;
+                }
+            }
+            return _result;
         }
     }
 }
