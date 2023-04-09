@@ -37,18 +37,4 @@ sequenceDiagram
     map.js->>map.js: populate the pin
     map.js-->>User: display event pin
 
-
-
-
-
-
-
-    
-
-
-    
-    
-
-
-
 ```
