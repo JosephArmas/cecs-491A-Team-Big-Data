@@ -1,0 +1,81 @@
+title I am a Regular User, I want to request a service
+
+actor User
+participant main.js
+participant servicerequestview
+participant servicerequestcontroller
+participant ServRequestManager
+participant service
+participant SqlDAO
+participant response
+participant datastore
+
+User->main.js:User selects element on pin pop-up that says request service
+activate main.js
+main.js->servicerequestview:event listener for element 
+activate servicerequestview
+servicerequestview->servicerequestview:Start service request div for front-end
+servicerequestview->servicerequestcontroller:http request for services related to pin information
+activate servicerequestcontroller
+servicerequestcontroller->servicerequestcontroller:Security check
+servicerequestcontroller->ServRequestManager:Var RequestServRequestManager = new ServRequestManager():ServRequestManager
+activate ServRequestManager
+ServRequestManager->ServRequestManager:Consturctor()
+servicerequestcontroller<--ServRequestManager:return ServRequestManager object
+deactivate ServRequestManager
+servicerequestcontroller->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+servicerequestcontroller<--response:return response
+deactivate response
+servicerequestcontroller->ServRequestManager:ServRequestManager.getservice():List<Servs>
+activate ServRequestManager
+ServRequestManager->ServRequestManager:Security Check
+ServRequestManager->ServRequestManager:input validation
+ServRequestManager->ServRequestManager:Business Requirement compliancy 
+ServRequestManager->ServRequestManager:Log user action attempt
+ServRequestManager->service:Var RequestService = new service():service
+activate service
+service->service:Constructor()
+ServRequestManager<--service:return service object
+deactivate service
+ServRequestManager->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+ServRequestManager<--response:return response
+deactivate response
+ServRequestManager->service:service.getservice():List<Servs>
+activate service
+service->SqlDAO:Var RequestDAO = new SqlDAO():SqlDAO
+activate SqlDAO
+SqlDAO->SqlDAO:Constructor()
+service<--SqlDAO:return SqlDAO object
+deactivate SqlDAO
+service->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+service<--response:return response
+deactivate response
+service->SqlDAO:dao.getnearbyservice():response
+activate SqlDAO
+SqlDAO->SqlDAO:Assemble any data into database format
+SqlDAO->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+SqlDAO<--response:return response
+deactivate response
+SqlDAO->datastore:Using(ConnectionString)
+activate datastore
+datastore->datastore:SELECT * WHERE column = 25 miles
+SqlDAO<--datastore:return rows
+deactivate datastore
+service<--SqlDAO:return response
+deactivate SqlDAO
+ServRequestManager<--service:return List<Servs>
+deactivate service
+servicerequestcontroller<--ServRequestManager:return List<Servs>
+deactivate ServRequestManager
+servicerequestview<--servicerequestcontroller:return http response
+deactivate servicerequestcontroller
+main.js<--servicerequestview:Fill in area with div servicerequest
+User<--main.js:Displays to user the list of available services

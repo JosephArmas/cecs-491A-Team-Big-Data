@@ -1,0 +1,15 @@
+title I’m a regular user, I want to view service requests
+
+actor User
+participant main.js
+participant servicerequestview
+participant servicecontroller
+
+box over User:Precondition(s):\nUser is in an authenticated session.
+
+User->main.js: User selects service application element on HTML
+main.js->servicerequestview: function servicecreationview() \n{let Servicerequestview = document.queryselector('.servicerequestor');}
+servicerequestview->servicerequestview: let creationurl = 'https://account/servicerequest'
+servicerequestview->servicecontroller:axios.geturl(requesturl:string):http response
+servicecontroller-->servicerequestview:return https response
+servicerequestview-->User: return view of service request
