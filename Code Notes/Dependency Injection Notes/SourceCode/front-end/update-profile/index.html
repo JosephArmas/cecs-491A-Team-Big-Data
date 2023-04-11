@@ -1,0 +1,63 @@
+<!-- TODO: -->
+<!-- * AJAX REQUEST -->
+<!-- * CSS for different views -->
+<!-- * test check required elements-->
+<!-- * test limitations -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles/update-profile.css">
+    </head>
+    <body>
+        <div class="logout-container">
+            <div class="logout">
+                <button type="button" onclick="alert('Redirect to anon')">Logout</button>
+            </div>
+        </div>
+        <h1>Update Profile</h1>
+
+        <div class="name-container">
+            <div class="fname">
+                <input type="text" placeholder="First name"required>
+            </div>
+
+            <div class="lname">
+                <input type="text" placeholder="Last name" required>
+            </div>
+        </div>
+
+        <div class="personal-container">
+            <div class="age">
+                <input type="number" min="1" placeholder="Age" required>
+            </div>
+            <div class="city">
+                <input text="input" placeholder="City" required>
+            </div>
+            <div class="zip-code">
+                <input type="number" placeholder="Postal Code" pattern="[0-9]{5}" minlength="5" maxlength="5" required>
+            </div>
+            <div class="address">
+                <input type="text" placeholder="Address">
+            </div>
+            <div class="update-username">
+                <input type="text" placeholder="Update Username">
+            </div>
+        </div>
+
+        <div class="submission">
+            <div class="check-mark">
+                <input type="checkbox" required>
+            </div>
+            <div class="submit">
+                <button type="button" onclick="alert('Redirect to home or parental consent form')">Submit</button>
+            </div>
+        </div>
+
+
+    </body>
+</html>
