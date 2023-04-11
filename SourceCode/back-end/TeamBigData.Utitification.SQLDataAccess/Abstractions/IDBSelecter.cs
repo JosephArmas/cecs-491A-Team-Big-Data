@@ -16,5 +16,6 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> SelectUserAccountTable(ref List<UserAccount> listAccounts, String role);
         public Task<Response> SelectLastUserID();
         public Task<List<Pin>> SelectPinTable();
+        //public Task<Response> SelectNewReputation(Report report);
     }
 }
