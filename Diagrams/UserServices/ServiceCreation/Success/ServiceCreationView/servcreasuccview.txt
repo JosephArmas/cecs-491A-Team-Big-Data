@@ -1,0 +1,15 @@
+title I’m a regular user, I want to view service creation
+
+actor User
+participant main.js
+participant servicecreationview
+participant servicecontroller
+
+box over User:Precondition(s):\nUser is in an authenticated session.
+
+User->main.js: User selects service application element on HTML
+main.js->servicecreationview: function servicecreationview() \n{let Servicecreationview = document.queryselector('.servicecreator');}
+servicecreationview->servicecreationview: let creationurl = 'https://account/servicecreation'
+servicecreationview->servicecontroller:axios.geturl(creationurl:string):http response
+servicecontroller-->servicecreationview:return https response
+servicecreationview-->User: return view of service creation
