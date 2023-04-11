@@ -42,7 +42,7 @@ namespace Utification.EntryPoint.Controllers
         [Authorize]
         [Route("GetAllPins")]
         [HttpGet]
-        public Task<IActionResult> GetAllPins()
+        public async Task<IActionResult> GetAllPins()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             // get authorization header
@@ -58,13 +58,18 @@ namespace Utification.EntryPoint.Controllers
             // check role of user
             if (claims.ElementAt(2).Value == "Anonymouse User")
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                return Conflict("Unauthorized User.");
             }
             var pinMan = new PinManager();
-            List<Pin> list = pinMan.GetListOfAllPins(claims.ElementAt(6).Value);
-            tcs.SetResult(Ok(list));
-            return tcs.Task;
+            var result = await pinMan.GetListOfAllPins(claims.ElementAt(6).Value);
+            if(result.isSuccessful)
+            {
+                return Ok(result.data);
+            }
+            else
+            {
+                return Conflict(result.errorMessage);
+            }
         }
         [Authorize]
         [Route("PostNewPin")]

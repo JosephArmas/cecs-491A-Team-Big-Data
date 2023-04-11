@@ -17,19 +17,17 @@ namespace TeamBigData.Utification.AuthenticationTests
     public class AuthenticationIntegrationTest
     {
         [TestMethod]
-        public void SucessfullyLogin()
+        public async Task SucessfullyLogin()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
-            var userAccount = new UserAccount();
             var userProfile = new UserProfile();
             var username = "testUser@yahoo.com";
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             var message = securityManager.SendOTP();
             var result2 = securityManager.LoginOTP(message);
             //Assert
@@ -37,10 +35,9 @@ namespace TeamBigData.Utification.AuthenticationTests
         }
 
         [TestMethod]
-        public void FailsWhenWrongOTPEntered()
+        public async Task FailsWhenWrongOTPEntered()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var userAccount = new UserAccount();
@@ -49,7 +46,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "password";
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             var result2 = securityManager.LoginOTP("wrongOTP");
             //Assert
             Assert.IsFalse(result2.isSuccessful);
@@ -57,10 +54,9 @@ namespace TeamBigData.Utification.AuthenticationTests
         }
 
         [TestMethod]
-        public void AccountDisabledAfter3Attempts()
+        public async Task AccountDisabledAfter3Attempts()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var userAccount = new UserAccount();
@@ -69,9 +65,9 @@ namespace TeamBigData.Utification.AuthenticationTests
             var password = "wrongPassword";
             //Act
             var digest = encryptor.encryptString(password);
-            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
-            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            await securityManager.LoginUser(username, digest, encryptor, userProfile);
+            await securityManager.LoginUser(username, digest, encryptor, userProfile);
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             //Assert
             Console.WriteLine(result.isSuccessful);
             Assert.IsFalse(result.isSuccessful);
@@ -79,10 +75,9 @@ namespace TeamBigData.Utification.AuthenticationTests
         }
 
         [TestMethod]
-        public void CantLoginWhenDisabled()
+        public async Task CantLoginWhenDisabled()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var sqlDAO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
@@ -97,7 +92,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var response = enabler.DisableAccount("disabledUser@yahoo.com");
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert
@@ -106,10 +101,9 @@ namespace TeamBigData.Utification.AuthenticationTests
         }
 
         [TestMethod]
-        public void CantLoginWhenDisabledLogFail()
+        public async Task CantLoginWhenDisabledLogFail()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "disabledUser@yahoo.com";
@@ -121,7 +115,7 @@ namespace TeamBigData.Utification.AuthenticationTests
 
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert

@@ -90,7 +90,7 @@ namespace TeamBigData.Utification.Manager
                         break;
                     case RequestType.DELETE:
                         line.password = null;
-                        response = securityManager.DeleteProfile(line.email, userProfile);
+                        response = securityManager.DeleteProfile(line.email, userProfile).Result;
                         break;
                     case RequestType.UPDATE:
                         //var hasher = new SecureHasher();
@@ -105,7 +105,7 @@ namespace TeamBigData.Utification.Manager
                         response = securityManager.EnableAccount(line.email, userProfile).Result;
                         break;
                     case RequestType.DISABLE:
-                        response = securityManager.DisableAccount(line.email, userProfile);
+                        response = securityManager.DisableAccount(line.email, userProfile).Result;
                         break;
                     
                 }

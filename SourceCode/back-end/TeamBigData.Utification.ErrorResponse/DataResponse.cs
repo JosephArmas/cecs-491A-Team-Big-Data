@@ -1,12 +1,18 @@
-﻿namespace TeamBigData.Utification.ErrorResponse
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TeamBigData.Utification.ErrorResponse
 {
-    public class Response
+    public class DataResponse<T>
     {
         public bool isSuccessful;
         public string errorMessage;
-        public Object data;
+        public T data;
 
-        public Response()
+        public DataResponse()
         {
             isSuccessful = false;
             errorMessage = "";

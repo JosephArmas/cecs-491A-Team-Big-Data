@@ -8,7 +8,12 @@ userID int NOT NULL,
 CREATE TABLE dbo.Pictures
 (
 userID int NOT NULL,
+pinID int NOT NULL,
+picData varbinary(max),
+extension varchar(5),
 "disabled" int DEFAULT 0,
+CONSTRAINT Foreign_KEY_01 Foreign KEY (pinID) references dbo.Pins.pinID
+
 );
 
 CREATE TABLE dbo.Pins

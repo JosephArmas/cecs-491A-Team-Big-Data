@@ -9,7 +9,7 @@ namespace TeamBigData.Utification.AnalysisTests
     public class AnalysisIntegrationTest
     {
         [TestMethod]
-        public void ChecksTodaysLogins()
+        public async Task ChecksTodaysLogins()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
@@ -18,15 +18,15 @@ namespace TeamBigData.Utification.AnalysisTests
             var insertSQl = @"Insert into dbo.logs values ('1', 'Info', '', GetDate(), 'SecurityManager.LoginUser()', 'Testing', 'Sucessful Login')";
             //Act
             var before = manager.GetLogins().Result;
-            var response = loginSqlDAO.Execute(insertSQl).Result;
+            var response = await loginSqlDAO.Execute(insertSQl);
             var after = manager.GetLogins().Result;
             //Assert
             Assert.IsTrue(response.isSuccessful);
-            Assert.AreEqual(before[90] + 1, after[90]);
+            Assert.AreEqual(before.data[90] + 1, after.data[90]);
         }
 
         [TestMethod]
-        public void ChecksFurthestLogins()
+        public async Task ChecksFurthestLogins()
         {
             //Arrange
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
@@ -34,12 +34,12 @@ namespace TeamBigData.Utification.AnalysisTests
             var manager = new AnalysisManager();
             var insertSQl = @"Insert into dbo.logs values ('1', 'Info', '', DateAdd(Hour, -24*90 + 1, GetDate()), 'SecurityManager.LoginUser()', 'Testing', 'Sucessful Login')";
             //Act
-            var before = manager.GetLogins().Result;
-            var response = loginSqlDAO.Execute(insertSQl).Result;
-            var after = manager.GetLogins().Result;
+            var before = await manager.GetLogins();
+            var response = await loginSqlDAO.Execute(insertSQl);
+            var after = await manager.GetLogins();
             //Assert
             Assert.IsTrue(response.isSuccessful);
-            Assert.AreEqual(before[0] + 1, after[0]);
+            Assert.AreEqual(before.data[0] + 1, after.data[0]);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         [AllowAnonymous]
         [Route("authentication")]
         [HttpPost]
-        public Task<IActionResult> Login([FromBody] AccountInfo login)
+        public async Task<IActionResult> Login([FromBody] AccountInfo login)
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var encryptor = new Encryptor();
@@ -77,7 +77,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             _userAccount = new UserAccount();
             _userProfile = new UserProfile();
             var secMan = new SecurityManager();
-            var response = secMan.LoginUser(login.username, encryptedPassword, encryptor, ref _userAccount, ref _userProfile).Result;
+            var response = await secMan.LoginUser(login.username, encryptedPassword, encryptor, _userProfile);
             if (response.isSuccessful)
             {
                 //Create JWT token with our claims
@@ -109,13 +109,12 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 
                 //Send token signature back to client
-                tcs.SetResult(Ok(tokenHandler.WriteToken(token)));
+                return Ok(tokenHandler.WriteToken(token));
             }
             else
             {
-                tcs.SetResult(Conflict(response.errorMessage));
+                return Conflict(response.errorMessage);
             }
-            return tcs.Task;
         }
 
         //Authorize requires JWT signature in authorization header

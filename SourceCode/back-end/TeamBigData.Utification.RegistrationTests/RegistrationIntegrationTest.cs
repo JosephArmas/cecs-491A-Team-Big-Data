@@ -32,12 +32,16 @@ namespace TeamBigData.Utification.RegistrationTests
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
-            int before = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
-            var result = register.RegisterUser(username, encryptedPassword, encryptor).Result;
-            int after = (int)logDBO.CountAll("dbo.Logs", "LogID").Result.data;
+            var response1 = await logDBO.CountLogs();
+            var before = (int)response1.data;
+            var result = await register.RegisterUser(username, encryptedPassword, encryptor);
+            var response2 = await logDBO.CountLogs();
+            var after = (int)response2.data;
             //Assert
             Assert.IsTrue(after > before);
             Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue(response1.isSuccessful);
+            Assert.IsTrue(response2.isSuccessful);
         }
 
         [TestMethod]
@@ -47,16 +51,17 @@ namespace TeamBigData.Utification.RegistrationTests
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
             IDBSelecter testDBO = new SqlDAO(connectionString);
             IRegister register = new SecurityManager();
-            UserAccount userAccount = new UserAccount();
             var username = "ShouldAddUserToDBTest" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
             //Act
             var test = await register.RegisterUser(username, encryptedPassword, encryptor);
-            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            var response = await testDBO.SelectUserAccount(username);
+            var expected = response.data;
             //Assert
-            Assert.IsTrue(username == userAccount._username);
+            Assert.IsTrue(username == expected._username);
             Assert.IsTrue(test.isSuccessful);
+            Assert.IsTrue(response.isSuccessful);
         }
 
         [TestMethod]
@@ -97,31 +102,5 @@ namespace TeamBigData.Utification.RegistrationTests
             Assert.IsTrue(actual < 5000);
             Assert.IsTrue(result.isSuccessful);
         }
-        //Dont know why there are 2
-        /*
-        [TestMethod]
-        public async Task ShouldRegisterWithin5Seconds()
-        {
-            //Arrange
-            Stopwatch stopwatch = new Stopwatch();
-            long expected = 5 * 1000;
-            var manager = new SecurityManager();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO testDBO = new SqlDAO(connectionString);
-            AccountRegisterer testRegister = new AccountRegisterer(testDBO);
-            //Act
-            await testDBO.DeleteUser(new UserProfile("testUser@yahoo.com"));
-            stopwatch.Start();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString("password");
-            var result = manager.InsertUser("testUser@yahoo.com", encryptedPassword, encryptor);
-            stopwatch.Stop();
-            var actual = stopwatch.ElapsedMilliseconds;
-
-            //Assert
-            Assert.IsTrue(actual < expected);
-            Assert.IsTrue(result.isSuccessful);
-        }
-        */
     }
 }

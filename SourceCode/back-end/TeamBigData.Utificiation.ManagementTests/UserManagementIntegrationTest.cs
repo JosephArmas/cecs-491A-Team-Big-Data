@@ -23,18 +23,18 @@ namespace TeamBigData.Utification.UserManagementTests
         {
             //Admin is only allowed to acess UserManagementView
             //Arrange
-            var userAccount = new UserAccount();
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
             IView view = new UserManagementView();
+            String userHash = "Testing";
             //Act
             Console.SetIn(new StringReader("0"));
-            var logResultAnonymous = view.DisplayMenu(ref userAccount, ref sysUnderTestAnonymous);
+            var logResultAnonymous = view.DisplayMenu(ref sysUnderTestAnonymous, ref userHash);
             Console.SetIn(new StringReader("0"));
-            var logResultAdmin = view.DisplayMenu(ref userAccount, ref sysUnderTestAdmin);
+            var logResultAdmin = view.DisplayMenu(ref sysUnderTestAdmin, ref userHash);
             Console.SetIn(new StringReader("0"));
-            var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
+            var logResultRegular = view.DisplayMenu(ref sysUnderTestRegular, ref userHash);
             //Assert
             bool pass = false;
             if (!logResultAnonymous.isSuccessful && logResultAnonymous.errorMessage == "")
@@ -57,7 +57,7 @@ namespace TeamBigData.Utification.UserManagementTests
             Assert.IsFalse(pass);
         }
         [TestMethod]
-        public void CreateWithinFiveSeconds()
+        public async Task CreateWithinFiveSeconds()
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
@@ -74,7 +74,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            response = securityManager.RegisterUser(email, encryptedPassword, encryptor).Result;
+            response = await securityManager.RegisterUser(email, encryptedPassword, encryptor);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
@@ -90,7 +90,7 @@ namespace TeamBigData.Utification.UserManagementTests
             }
         }
         [TestMethod]
-        public void DeleteWithinFiveSeconds()
+        public async Task DeleteWithinFiveSeconds()
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
@@ -108,7 +108,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            response = securityManager.DeleteProfile(email, sysUnderTestAdmin);
+            response = await securityManager.DeleteProfile(email, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
@@ -123,7 +123,7 @@ namespace TeamBigData.Utification.UserManagementTests
         }
 
         [TestMethod]
-        public void DisableWithinFiveSeconds()
+        public async Task DisableWithinFiveSeconds()
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
@@ -141,7 +141,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            response = securityManager.DisableAccount(email, sysUnderTestAdmin);
+            response = await securityManager.DisableAccount(email, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
@@ -155,7 +155,7 @@ namespace TeamBigData.Utification.UserManagementTests
                 Assert.IsTrue(false);
         }
         [TestMethod]
-        public void EnableWithinFiveSeconds()
+        public async Task EnableWithinFiveSeconds()
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
@@ -169,12 +169,12 @@ namespace TeamBigData.Utification.UserManagementTests
             SecurityManager securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString(userPassword);
-            var madeUser = securityManager.RegisterUser(email, encryptedPassword, encryptor);
-            var disabledUser = securityManager.DisableAccount(email, sysUnderTestAdmin);
+            var madeUser = await securityManager.RegisterUser(email, encryptedPassword, encryptor);
+            var disabledUser = await securityManager.DisableAccount(email, sysUnderTestAdmin);
 
             //Act
             stopwatch.Start();
-            response = securityManager.EnableAccount(email, sysUnderTestAdmin).Result;
+            response = await securityManager.EnableAccount(email, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
@@ -324,7 +324,7 @@ namespace TeamBigData.Utification.UserManagementTests
         }*/
 
         [TestMethod]
-        public void BulkUploadLength()
+        public async Task BulkUploadLength()
         {
             //Testing ability to not handle large files
             //Arrange
@@ -386,7 +386,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
+            response = await csvReader.BulkFileUpload(filename, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
@@ -404,7 +404,7 @@ namespace TeamBigData.Utification.UserManagementTests
                 Assert.IsTrue(false);
         }
         [TestMethod]
-        public void BulkUploadTest()
+        public async Task BulkUploadTest()
         {
             //Testing ability to not handle large files
             //Arrange
@@ -466,7 +466,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
+            response = await csvReader.BulkFileUpload(filename, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
@@ -486,7 +486,7 @@ namespace TeamBigData.Utification.UserManagementTests
                 Assert.IsTrue(false);
         }
         [TestMethod]
-        public void BulkUploadCreateAndDelete()
+        public async Task BulkUploadCreateAndDelete()
         {
             //Testing ability to not handle large files
             //Arrange
@@ -549,7 +549,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Act
             stopwatch.Start();
-            response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
+            response = await csvReader.BulkFileUpload(filename, sysUnderTestAdmin);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 

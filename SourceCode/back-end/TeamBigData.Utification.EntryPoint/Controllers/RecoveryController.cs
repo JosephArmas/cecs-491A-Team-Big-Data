@@ -49,42 +49,38 @@ namespace Utification.EntryPoint.Controllers
         [Route("admin")]
         [HttpGet]
         //admin only
-        public Task<IActionResult> GetRequests()
+        public async Task<IActionResult> GetRequests()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var manager = new SecurityManager();
-            var requests = new List<UserProfile>();
             var adminUser = new UserProfile(7780, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
-            var response = manager.GetRecoveryRequests(ref requests, adminUser);
+            var response = await manager.GetRecoveryRequests(adminUser);
             if(response.isSuccessful)
             {
-                tcs.SetResult(Ok(requests));
+                return Ok(response.data);
             }
             else
             {
-                tcs.SetResult(Conflict(response.errorMessage));
+                return Conflict(response.errorMessage);
             }
-            return tcs.Task;
         }
 
         [Route("admin")]
         [HttpPost]
         //admin only
-        public Task<IActionResult> CompleteRequest([FromBody]int userID)
+        public async Task<IActionResult> CompleteRequest([FromBody]int userID)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
             var manager = new SecurityManager();
             var adminUser = new UserProfile(7780, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
-            var response = manager.ResetAccount(userID, adminUser);
+            var response = await manager.ResetAccount(userID, adminUser);
             if(response.isSuccessful)
             {
-                tcs.SetResult(Ok());
+                return(Ok());
             }
             else
             {
-                tcs.SetResult(Conflict(response.errorMessage));
+                return Conflict(response.errorMessage);
             }
-            return tcs.Task;
         }
     }
 }

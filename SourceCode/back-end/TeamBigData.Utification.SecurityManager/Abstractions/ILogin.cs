@@ -6,6 +6,6 @@ namespace TeamBigData.Utification.Manager.Abstractions
 {
     public interface ILogin
     {
-        public Task<Response> LoginUser(String email, byte[] encryptedPassword, Encryptor encryptor, ref UserAccount userAccount, ref UserProfile userProfile);
+        public Task<DataResponse<UserProfile>> LoginUser(String email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfile);
     }
 }

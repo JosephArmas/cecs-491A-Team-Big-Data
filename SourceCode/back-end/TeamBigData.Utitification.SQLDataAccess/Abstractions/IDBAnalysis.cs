@@ -10,10 +10,10 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
 {
     public interface IDBAnalysis
     {
-        public Task<Response> GetNewLogins(ref int[] rows);
-        public Task<Response> GetNewRegistrations(ref int[] rows);
-        public Task<Response> GetPinsAdded(ref int[] rows);
-        public Task<Response> GetPinPulls(ref int[] rows);
+        public Task<DataResponse<int[]>> GetNewLogins();
+        public Task<DataResponse<int[]>> GetNewRegistrations();
+        public Task<DataResponse<int[]>> GetPinsAdded();
+        public Task<DataResponse<int[]>> GetPinPulls();
 
     }
 }

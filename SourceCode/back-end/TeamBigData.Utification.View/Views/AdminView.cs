@@ -14,7 +14,7 @@ namespace TeamBigData.Utification.View.Views
         /// <summary>
         /// Display all startup options.
         /// </summary>
-        public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
+        public Response DisplayMenu(ref UserProfile userProfile, ref String userHash)
         {
             Response response = new Response();
             if (!((IPrincipal)userProfile).IsInRole("Admin User"))
@@ -33,7 +33,7 @@ namespace TeamBigData.Utification.View.Views
             Console.WriteLine("[6] Delete User");
             Console.WriteLine("[7] LogOut");
             Console.WriteLine("[0] exit");
-            Console.WriteLine("Enter 0-5");
+            Console.WriteLine("Enter 0-7");
             string input = Console.ReadLine();
             switch (Int32.Parse(input))
             {
@@ -46,40 +46,40 @@ namespace TeamBigData.Utification.View.Views
                 case 1:
                     Console.Clear();
                     SecurityManager secManagerAcc = new SecurityManager();
-                    List<UserAccount> listAcc = new List<UserAccount>();
-                    //response = secManagerAcc.GetUserAccountTable(listAcc, userProfile);
-                    if (!response.isSuccessful)
+                    var dataResponse = secManagerAcc.GetUserAccountTable(userProfile).Result;
+                    if (!dataResponse.isSuccessful)
                     {
                         Console.Clear();
-                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine(dataResponse.errorMessage);
                         Console.WriteLine("\nPress Enter to exit...");
                         Console.ReadLine();
                         response.isSuccessful = false;
                         return response;
                     }
+                    var listAcc = dataResponse.data;
                     Console.WriteLine("\nPrinting out User Account Table");
                     for (int i = 0; i < listAcc.Count; i++)
-                        Console.WriteLine(((UserAccount)listAcc[i]).ToString());
+                        Console.WriteLine(listAcc[i].ToString());
                     Console.WriteLine("\nPress Enter to continue...");
                     Console.ReadLine();
                     break;
                 case 2:
                     Console.Clear();
                     SecurityManager secManager = new SecurityManager();
-                    List<UserProfile> list = new List<UserProfile>();
-                    response = secManager.GetUserProfileTable(ref list, userProfile);
-                    if (!response.isSuccessful)
+                    var dataResponse2 = secManager.GetUserProfileTable(userProfile).Result;
+                    if (!dataResponse2.isSuccessful)
                     {
                         Console.Clear();
-                        Console.WriteLine(response.errorMessage);
+                        Console.WriteLine(dataResponse2.errorMessage);
                         Console.WriteLine("\nPress Enter to exit...");
                         Console.ReadLine();
                         response.isSuccessful = false;
                         return response;
                     }
+                    var list = dataResponse2.data;
                     Console.WriteLine("\nPrinting out User Profile Table");
                     for (int i = 0; i < list.Count; i++)
-                        Console.WriteLine(((UserProfile)list[i]).ToString());
+                        Console.WriteLine(list[i].ToString());
                     Console.WriteLine("\nPress Enter to continue...");
                     Console.ReadLine();
                     break;
@@ -87,8 +87,17 @@ namespace TeamBigData.Utification.View.Views
                     Console.Clear();
                     Console.WriteLine("Printing out Recovery Requests");
                     SecurityManager manager = new SecurityManager();
-                    List<UserProfile> listRequests = new List<UserProfile>();
-                    manager.GetRecoveryRequests(ref listRequests, userProfile);
+                    dataResponse2 = manager.GetRecoveryRequests(userProfile).Result;
+                    if(!dataResponse2.isSuccessful)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(dataResponse2.errorMessage);
+                        Console.WriteLine("\nPress Enter to exit...");
+                        Console.ReadLine();
+                        response.isSuccessful = false;
+                        return response;
+                    }
+                    var listRequests = dataResponse2.data;
                     for (int i = 0; i < listRequests.Count; i++)
                         Console.WriteLine(listRequests[i].ToString());
                     Console.WriteLine("press Enter to exit...");
@@ -116,7 +125,7 @@ namespace TeamBigData.Utification.View.Views
                 case 5:
                     Console.Clear();
                     IView menu = new UserManagementView();
-                    response = menu.DisplayMenu(ref userAccount, ref userProfile);
+                    response = menu.DisplayMenu(ref userProfile, ref userHash);
                     break;
                 case 6:
                     Console.Clear();

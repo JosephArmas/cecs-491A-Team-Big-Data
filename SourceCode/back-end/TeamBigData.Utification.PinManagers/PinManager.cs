@@ -8,44 +8,44 @@ namespace TeamBigData.Utification.PinManagers
 {
     public class PinManager
     {
-        public List<Pin> GetListOfAllPins(string userHash)
+        public async Task<DataResponse<List<Pin>>> GetListOfAllPins(string userHash)
         {
             PinService pinSer = new PinService();
-            List<Pin> pins = pinSer.GetPinTable(userHash).Result;
+            var pins = await pinSer.GetPinTable(userHash);
             return pins;
         }
 
-        public Response SaveNewPin(Pin newPin, string userHash)
+        public async Task<Response> SaveNewPin(Pin newPin, string userHash)
         {
             PinService pinSer = new PinService();
-            Response response = pinSer.StoreNewPin(newPin, userHash).Result;
+            Response response = await pinSer.StoreNewPin(newPin, userHash);
             return response;
         }
 
-        public Response MarkAsCompletedPin(int pinID, string userHash)
+        public async Task<Response> MarkAsCompletedPin(int pinID, string userHash)
         {
             PinService pinSer = new PinService();
-            Response response = pinSer.MarkAsCompleted(pinID, userHash).Result;
+            Response response = await pinSer.MarkAsCompleted(pinID, userHash);
             return response;
         }
 
-        public Response ChangePinType(int pinID, int pinType, string userHash) {
+        public async Task<Response> ChangePinType(int pinID, int pinType, string userHash) {
             PinService pinSer = new PinService();
-            Response response = pinSer.ChangePinTypeTo(pinID, pinType, userHash).Result;
+            Response response = await pinSer.ChangePinTypeTo(pinID, pinType, userHash);
             return response;
         }
 
-        public Response ChangePinContent(int pinID, string description, string userHash)
+        public async Task<Response> ChangePinContent(int pinID, string description, string userHash)
         {
             PinService pinSer = new PinService();
-            Response response = pinSer.ChangePinContentTo(pinID, description, userHash).Result;
+            Response response = await pinSer.ChangePinContentTo(pinID, description, userHash);
             return response;
         }
 
-        public Response DisablePin(int pinID, string userHash)
+        public async Task<Response> DisablePin(int pinID, string userHash)
         {
             PinService pinSer = new PinService();
-            Response response = pinSer.DisablingPin(pinID, userHash).Result;
+            Response response = await pinSer.DisablingPin(pinID, userHash);
             return response;
         }
 
