@@ -1,0 +1,51 @@
+title As a User, I can Download a File
+ 
+   actor User
+   
+    participant index.html
+    participant fileUpload.js
+    participant AWS S3 Bucket
+    participant EntryPoint
+    participant SecurityManager
+    participant FileService
+    participant SqlDAO
+    participant Database
+    
+entryspacing 1.1
+    activate User
+    User->>index.html: User loads website
+    activate index.html
+    index.html ->>fileUpload.js: User clicks on Pin or Profile
+    activate fileUpload.js
+    fileUpload.js ->>fileUpload.js: check UserID and pinID
+    fileUpload.js ->>EntryPoint: Get from /fileUpload
+    activate EntryPoint
+    EntryPoint ->>SecurityManager: DownloadFile(String filename, int userId, pinID)
+    activate SecurityManager
+    SecurityManager ->> FileService: DownloadFile(String filename, int userId, pinID)
+    activate FileService
+    FileService ->>SqlDAO: DownloadFile(String fileName, int userID, pinID)
+    activate SqlDAO
+    SqlDAO ->>Database: Select filename from dbo.Pictures\nWhere userID = userID and pinID = pinID
+    activate Database
+    Database -->>SqlDAO: return filename if Successful
+    deactivate Database
+    SqlDAO -->>FileService: return filename if successful
+    deactivate SqlDAO
+    FileService ->>FileService: Check if filename.length > 0
+    FileService ->>FileService: Check error message and isSuccessful\nThen write better message
+    FileService -->>SecurityManager: return response
+    deactivate FileService
+    SecurityManager -->>EntryPoint: return response
+    deactivate SecurityManager
+    EntryPoint -->>fileUpload.js: If successful return OK(filename)\nElse return Conflict(messsage)
+    deactivate EntryPoint
+    fileUpload.js ->>AWS S3 Bucket: If(200 response)\nDownload file with filename from S3 bucket
+    activate AWS S3 Bucket
+    AWS S3 Bucket -->>fileUpload.js: return file
+    deactivate AWS S3 Bucket
+    fileUpload.js -->>index.html: Insert File into div
+    deactivate fileUpload.js
+    index.html -->>User: Display Picture
+    
+    
