@@ -1,4 +1,5 @@
-# As a Reputable User or Admin, I can modify the title of an event
+
+# As a Reputable User or Admin, I can modify the title of an event but fails
 ```mermaid
 sequenceDiagram
     actor User
@@ -25,8 +26,8 @@ sequenceDiagram
     EntryPoint->>EntryPoint: JWT implementation
     EntryPoint->>EntryPoint: try{var eventDto = new EventsDTO() <br> var dao = new SqlDAO(string conString) <br> var eventManager = new EventManager(dao) <br> var eventService = new EventService(eventManager)} catch
     EntryPoint->>+EventManager: app.Get()
-    EventManager-->>EventManager: checkEventTitleUpdate(string title, string userHash): Task<Response>
-    EventManager->>+EventService: UpdateTitleEvent(updateTitleModel): obj
+    EventManager-->>EventManager: CheckEventTitleUpdate(string title, string userHash, UserProfile userProfile): Task<Response>
+    EventManager-->>+EventService: UpdateTitleEvent(updateTitleModel): obj
     EventService->>+Logger: var logger = new Logger()
     Logger->>-EventService: return logger obj
     EventService-->>+DataAccess: UpdateEventTableTitle(string title): Task<Response> obj
@@ -42,9 +43,9 @@ sequenceDiagram
     EventManager-->>-EntryPoint: return response
     EntryPoint-->>-events.js: return axios json obj
     events.js->>events.js: check json obj
-    events.js->>events.js: return true
-    events.js-->>-map.js: return json obj 
-    map.js-->>-User: return "Event title successfully updated"
+    events.js->>events.js: parse jason obj { errorMessage: "Unable to update title. Please try again" }
+    events.js-->>-map.js: return data.errorMessage 
+    map.js-->>-User: display "Unable to upadate title. Please try again"
     
 
 ```

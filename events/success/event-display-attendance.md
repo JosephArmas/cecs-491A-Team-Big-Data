@@ -16,31 +16,32 @@ sequenceDiagram
     map.js->>map.js: checkUser(user: obj): bool
     map.js->>map.js: return true
     map.js->>+events.js: displayEventPin(pinPos)
-    events.js-->>map.js: return build function  
-    map.js-->>User: returns "show attendance button"
-    User->>map.js: User clicks on "show attendance"
-    map.js->>events.js: getAttendance()
-    events.js->>EntryPoint: axios.post(string: endPoint, obj: eventDescription, obj: configs)
+    events.js-->>-map.js: return build function  
+    map.js-->>-User: returns "show attendance button"
+    User->>+map.js: User clicks on "show attendance"
+    map.js->>+events.js: getAttendance(pinEvent obj): int
+    events.js->>+EntryPoint: axios.post(string: endPoint, obj: eventDescription, obj: configs)
     EntryPoint->>+EventManager: app.Run()
-    EventManager->>EventManager: checkEvent(obj EventDto): Task<Response> 
-    EventManager->>+EventService: GetEventCount(obj EventDto): Task<EventCountDto>
-    EventService->>+Response: Response result = new Response()
-    Response->>-EventService: return result instance
+    EventManager-->>EventManager: GetEvent(int eventID, string userHash): Task<Response> obj
+    EventManager-->>+EventService: GetEventCount(int eventID, string userHash): Task<Response> obj
     EventService->>+Logger: Logger logger = new Logger()
     Logger->>-EventService: return logger obj
-    EventService->>+DataAccess: IDBSelector sqldao = new SqlDAO(string conString)<br>var result = await sqldao.ConfigureAwait(false)
-    DataAccess-->>+DataStore: Select(string tableName, string column, string value)
-    DataStore-->>-DataAccess: return raw table
-    DataAccess-->>-EventService: return count of events
+    EventService->>+DataAccess: SelectEventCount(int eventID): Task<Response> obj
+    DataAccess-->>+DataStore: ExecNonQuery
+    note right of DataStore: exec sql
+    DataStore-->>-DataAccess: return 1 
+    DataAccess-->>-EventService: return response obj
     EventService-->>+DataStore: log = new log()<br> logger.log(logId,CorrelationId,Loglevel,UserHash,User,TimeStamp,Event,Category,Message)
+    note right of DataStore: exec sql
     DataStore-->>-EventService: return 1
-    EventService-->>-EventManager: return event count
-    EventManager-->>EntryPoint: return event count
-    EntryPoint-->>events.js: return axios json obj
+    EventService->>EventService: CheckCount(Response response): bool
+    EventService-->>-EventManager: return response obj
+    EventManager-->>-EntryPoint: return response obj
+    EntryPoint-->>-events.js: return axios json obj
     events.js->>events.js: checkCount(json obj): bool
-    events.js->>events.js: return true
-    events.js-->>map.js: return json obj 
-    map.js-->>User: return show number of attendees
+    events.js-->>-map.js: return json obj 
+    map.js->>map.js: parse json obj {"count": }
+    map.js-->>-User: return show number of attendees
     
 
 ```

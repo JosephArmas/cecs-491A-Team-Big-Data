@@ -24,28 +24,26 @@ sequenceDiagram
     events.js->>events.js: return true
     events.js->>+EntryPoint: sendEventsData(eventData obj){axios.post(endPoint,configs,eventData)}
     EntryPoint->>+EventManager: app.Get()
-    EventManager->>EventManager: checkEventData(title,description): bool
-    EventManager->>EventManager: checkRole(UserProfile profile): bool
-    EventManager->>+EventService: JoinEvent(entityModel): Task<Response> 
-    EventService->>+Response: var result = new Response()
-    Response->>-EventService: return response instance
+    EventManager-->>EventManager: JoinNewEvent(int eventID, string userHash): Task<Response> obj
+    note right of EventManager: check for input validation and authorization (role)
+    EventManager-->>+EventService: JoinEvent(entityModel): Task<Response> 
     EventService->>+Logger: Logger logger = new Loggger() 
     Logger-->>-EventService: return log instance
-    EventService->>DataAccess: IDBInsert dao = new SQLDAO(string conString)
-    DataAccess-->>+DataStore: sql to store into data store
-    DataStore-->>-DataAccess: return raw table (UserHash,title, description,)
-    DataAccess->>DataAccess: convert raw data into entity model
-    DataAccess-->>EventService: return event pin entity model 
-    EventService->>EventService: IsLimitCapacity(event): bool 
+    EventService->>+DataAccess: IncerementEventCount(int eventID): Task<Response> obj
+    DataAccess-->>+DataStore: ExecuteNonQuery
+    note right of DataStore: sql exe
+    DataStore-->>-DataAccess: return 1
+    DataAccess-->>EventService: return response obj
+    EventService->>EventService: CheckCount(repsonse obj): bool 
     EventService->>EventService: return false
-    EventService-->>DataStore: log = new log()<br> logger.log(logId,CorrelationId,Loglevel,UserHash,User,TimeStamp,Event,Category,Message)
-    DataStore-->>EventService: return 1
-    EventService-->>-EventManager: return response.isSuccessful = false
-    EventManager-->>-EntryPoint: return response.errorMessage
+    EventService-->>+DataStore: log = new log()<br> logger.log(logId,CorrelationId,Loglevel,UserHash,User,TimeStamp,Event,Category,Message)
+    DataStore-->>-EventService: return 1
+    EventService-->>-EventManager: return response obj
+    EventManager-->>-EntryPoint: return response obj
     EntryPoint-->>-events.js: return axios response
     events.js->>events.js: isFull(jsonObj): bool
     events.js->>events.js: return true
-    events.js-->>-map.js: return jsonObj data  
+    events.js-->>-map.js: return data.errorMessage
     map.js-->>User: display "Unable to join event. Attendance Limit has been met"
 
 ```

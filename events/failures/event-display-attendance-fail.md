@@ -1,4 +1,4 @@
-# As a Reputable, Service, Regular User or Admin, I can see the attendance of an event pin
+# As a Reputable, Service, Regular User or Admin, fails to display attendance on event
 ```mermaid
 sequenceDiagram
     actor User
@@ -17,29 +17,26 @@ sequenceDiagram
     map.js->>map.js: return true
     map.js->>+events.js: displayEventPin(pinPos)
     events.js-->>map.js: return build function  
-    map.js-->>User: returns "show attendance button"
-    User->>map.js: User clicks on "show attendance"
+    map.js-->>-User: returns "show attendance button"
+    User->>+map.js: User clicks on "show attendance"
     map.js->>events.js: getAttendance()
-    events.js->>EntryPoint: axios.post(string: endPoint, obj: eventDescription, obj: configs)
+    events.js->>+EntryPoint: axios.post(string: endPoint, obj: eventDescription, obj: configs)
     EntryPoint->>+EventManager: app.Run()
-    EventManager->>EventManager: checkEvent(obj EventDto): Task<Response> 
-    EventManager->>+EventService: GetEventCount(obj EventDto): Task<EventCountDto>
-    EventService->>+Response: Response result = new Response()
-    Response->>-EventService: return result instance
-    EventService->>+Logger: Logger logger = new Logger()
-    Logger->>-EventService: return logger obj
-    EventService->>+DataAccess: IDBSelector sqldao = new SqlDAO(string conString)<br>var result = await sqldao.SelectCount()ConfigureAwait(false)
-    DataAccess-->>+DataStore: Select(string tableName, string column, string value)
-    DataStore-->>-DataAccess: return raw table
-    DataAccess-->>-EventService: return count of events
-    EventService-->>+DataStore: log = new log()<br> logger.log(logId,CorrelationId,Loglevel,UserHash,User,TimeStamp,Event,Category,Message)
-    DataStore-->>-EventService: return 1
-    EventService-->>-EventManager: return response
-    EventManager-->>EntryPoint: return response
-    EntryPoint-->>events.js: return axios json obj
-    events.js->>events.js: return json obj
-    events.js-->>map.js: timeOut() 
-    map.js-->>User: return "Error Updating Attendance Display Preference"
+    EventManager->>EventManager: GetEvent(int eventID, string userHash): Task<Response> obj
+    note right of EventManager: input validations and check for role
+    EventManager->>+EventService: GetEventCount(int eventID, string userHash): Task<EventCountDto>
+    EventService->>+DataAccess: SelectEventCount(string eventID): Task<Response> obj
+    DataAccess-->>+DataStore: ExecuteNonQuery
+    note right of DataStore: sql exec
+    DataStore-->>-DataAccess: return 1
+    DataAccess-->>-EventService: return response obj
+    EventService->>EventService: CheckCount(response): bool
+    EventService-->>-EventManager: return response obj
+    EventManager-->>-EntryPoint: return response obj
+    EntryPoint-->>-events.js: return axios json obj
+    events.js->>events.js: check json obj
+    events.js-->>-map.js: return data.errorMessage
+    map.js-->>-User: return "Error Updating Attendance Display Preference"
     
 
 ```
