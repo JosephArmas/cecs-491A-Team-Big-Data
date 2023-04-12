@@ -1,4 +1,4 @@
-title I am a Regular or Reputable User, I want to request a service
+title I am a Regular User, I want to request a service but it doesn’t process
 
 actor User
 participant main.js
@@ -75,7 +75,7 @@ SqlDAO<--datastore:return rows
 deactivate datastore
 ServReqService<--SqlDAO:return response
 deactivate SqlDAO
-ServReqService->ServReqService:response validation
+ServReqService->ServReqService:if(response.data == 0)\n{response.isSuccessful = false;\nresponse.errorMessage = "Runtime Error. Service Process Failed to be Requested"}
 ServRequestManager<--ServReqService:return response
 deactivate ServReqService
 servicerequestcontroller<--ServRequestManager:return response
@@ -83,4 +83,4 @@ deactivate ServRequestManager
 servicerequestview<--servicerequestcontroller:return http response
 deactivate servicerequestcontroller
 main.js<--servicerequestview:Fill in area with div servicerequest
-User<--main.js:Displays to user the list of available services
+User<--main.js:Displays to user "Runtime Error. Service Process Failed to be Requested"

@@ -1,4 +1,4 @@
-title I am a Regular or Reputable User, I want to request a service
+title I am a Regular or Reputable User,I want to view a list of services
 
 actor User
 participant main.js
@@ -10,14 +10,14 @@ participant SqlDAO
 participant response
 participant datastore
 
-box over User:Precondtion\nUser must have an active pin\nUser must be looking at the service list
+box over User:Precondtion\nUser must have an active pin
 
-User->main.js:User selects service from list
+User->main.js:User selects element on pin pop-up that says request service
 activate main.js
 main.js->servicerequestview:event listener for element 
 activate servicerequestview
 servicerequestview->servicerequestview:Start service request div for front-end
-servicerequestview->servicerequestcontroller:axios.post():http response
+servicerequestview->servicerequestcontroller:axios.get():http response
 activate servicerequestcontroller
 servicerequestcontroller->ServRequestManager:Var RequestServRequestManager = new ServRequestManager():ServRequestManager
 activate ServRequestManager
@@ -31,7 +31,7 @@ servicerequestcontroller<--response:return response
 deactivate response
 servicerequestcontroller->servicerequestcontroller:JWTverification():bool
 servicerequestcontroller->servicerequestcontroller:Try Catch
-servicerequestcontroller->ServRequestManager:ServRequestManager.ServiceRequest(Company:Serv):response
+servicerequestcontroller->ServRequestManager:ServRequestManager.getservice():List<Servs>
 activate ServRequestManager
 ServRequestManager->ServRequestManager:Security Check
 ServRequestManager->ServRequestManager:input validation
@@ -47,7 +47,7 @@ activate response
 response->response:Constructor()
 ServRequestManager<--response:return response
 deactivate response
-ServRequestManager->ServReqService:RequestService.ServiceRequest():response
+ServRequestManager->ServReqService:service.getservice():List<Servs>
 activate ServReqService
 ServReqService->SqlDAO:Var RequestDAO = new SqlDAO():SqlDAO
 activate SqlDAO
@@ -59,7 +59,7 @@ activate response
 response->response:Constructor()
 ServReqService<--response:return response
 deactivate response
-ServReqService->SqlDAO:dao.InsertServiceReq():response
+ServReqService->SqlDAO:dao.getnearbyservice():response
 activate SqlDAO
 SqlDAO->SqlDAO:Assemble any data into database format
 SqlDAO->response:var RequestResponse():response
@@ -69,16 +69,16 @@ SqlDAO<--response:return response
 deactivate response
 SqlDAO->datastore:Using(ConnectionString)
 activate datastore
-datastore->datastore:INSERT INTO dbo.ServRequest \nVALUES RequestID = a, CompanyName = b,\nUserhash = c, PinLat = d, PinLong = e,\nRequestor = f, Active = g, Accept = h
+datastore->datastore:SELECT * FROM dbo.ServRequest \nWHERE distance = x miles, pintypes = y
 
 SqlDAO<--datastore:return rows
 deactivate datastore
 ServReqService<--SqlDAO:return response
 deactivate SqlDAO
 ServReqService->ServReqService:response validation
-ServRequestManager<--ServReqService:return response
+ServRequestManager<--ServReqService:return List<Servs>
 deactivate ServReqService
-servicerequestcontroller<--ServRequestManager:return response
+servicerequestcontroller<--ServRequestManager:return List<Servs>
 deactivate ServRequestManager
 servicerequestview<--servicerequestcontroller:return http response
 deactivate servicerequestcontroller

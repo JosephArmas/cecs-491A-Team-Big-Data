@@ -1,4 +1,4 @@
-title I am a Regular User, I want to cancel my service request
+title I am a Regular or Reputable User, I want to cancel my service request
 
 actor User
 participant servicerequestview
@@ -12,14 +12,14 @@ participant datastore
 box over User:Precondition\nUser is on Service Request View\nUser must have requested a service
 User->servicerequestview:User interacts with view showing requests
 activate servicerequestview
-servicerequestview->servicerequestcontroller:http request
+servicerequestview->servicerequestcontroller:axios.post():http response
 activate servicerequestcontroller
 servicerequestcontroller->servicerequestcontroller:JWTverification():bool
 servicerequestcontroller->servicerequestcontroller:Try Catch 
 servicerequestcontroller->ServRequestManager:var ServManager = new ServRequestManager()
 activate ServRequestManager
 ServRequestManager->ServRequestManager:ctor()
-servicerequestcontroller<--ServRequestManager:return ServRequestManager object
+servicerequestcontroller<<--ServRequestManager:return ServRequestManager object
 deactivate ServRequestManager
 
 servicerequestcontroller->ServRequestManager:ServManager.CancelRequest(CompanyTitle:String, Userhash:String):response

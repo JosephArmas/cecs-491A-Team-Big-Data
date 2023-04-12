@@ -1,0 +1,34 @@
+title I’m a regular user, I want to become a Service provider but my title is too long and I somehow made it past the front-end
+
+actor User
+participant ServiceCreationView
+participant ServiceProviderController
+participant ServiceProviderManager
+
+box over User:Precondition\nUser is in an authenticated session.\nUser is in Service creation view
+
+
+User->ServiceCreationView: User enters their information
+activate ServiceCreationView
+ServiceCreationView->ServiceCreationView:let CompanyName = GetElementbyID(name)\nif(CompanyName.length()>30 || Companyame.length()<4)\n{return error}\nif(CompanyName.includes(listofunacceptable))\n{return error}
+ServiceCreationView->ServiceCreationView:let CompanyDesc = GetElementbyID(description)\nif(CompanyDesc.length()>1000 || CompanyDesc.split(' ').length > 150)\n{return error}
+ServiceCreationView->ServiceCreationView:let CompanyPhone = GetElementbyID(phone)\nif(CompanyPhone.length()>10)\n{return error}\nif(CompanyPhone.substring(0,3).includes(listofbadarea))\n{return error}
+ServiceCreationView->ServiceProviderController:axios.set(company:json):http response
+activate ServiceProviderController
+ServiceProviderController->ServiceProviderController:JWTverification():bool
+ServiceProviderController->ServiceProviderManager:var ServManager = new ServiceProviderManager()
+activate ServiceProviderManager
+ServiceProviderManager->ServiceProviderManager:Constructor()
+ServiceProviderController<--ServiceProviderManager:return ServiceProviderManager object
+deactivate ServiceProviderManager
+ServiceProviderController->ServiceProviderManager:CreateService(Server:Serv):response
+activate ServiceProviderManager
+ServiceProviderManager->ServiceProviderManager:Check Security
+ServiceProviderManager->ServiceProviderManager:validate company name,\ndescription,\nand phone number
+ServiceProviderManager->ServiceProviderManager:if(Server.CompanyName.length >30 || Server.Company.length<4)\n{response.isSuccessful = false; response.errorMessage = 'title length'}\nif(Server.CompanyName.Contains(listofunacceptable))\n{response.isSuccessful = false; response.errorMessage = 'title char'}
+
+ServiceProviderController<--ServiceProviderManager:return response
+deactivate ServiceProviderManager
+ServiceCreationView<--ServiceProviderController:return http response
+deactivate ServiceProviderController
+User<--ServiceCreationView:display to user "Syntax Error. Title is over 30 Character Limit."

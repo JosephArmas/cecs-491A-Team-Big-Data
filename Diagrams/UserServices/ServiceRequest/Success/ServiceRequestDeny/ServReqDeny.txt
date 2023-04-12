@@ -12,7 +12,7 @@ participant datastore
 box over User:Precondition\nUser is on Service Request View\nUser must have a pending service request
 User->servicerequestview:User interacts with view showing requests
 activate servicerequestview
-servicerequestview->servicerequestcontroller:http request
+servicerequestview->servicerequestcontroller:axios.post():http response
 activate servicerequestcontroller
 servicerequestcontroller->servicerequestcontroller:JWTverification():bool
 servicerequestcontroller->servicerequestcontroller:Try Catch 

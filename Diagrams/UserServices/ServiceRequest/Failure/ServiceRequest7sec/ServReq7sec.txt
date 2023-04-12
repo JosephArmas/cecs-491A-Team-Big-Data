@@ -1,4 +1,4 @@
-title I am a Regular or Reputable User, I want to request a service
+title I am a Regular User, I want to request a service but it takes longer than 7 seconds
 
 actor User
 participant main.js
@@ -80,7 +80,9 @@ ServRequestManager<--ServReqService:return response
 deactivate ServReqService
 servicerequestcontroller<--ServRequestManager:return response
 deactivate ServRequestManager
+servicerequestcontroller->servicerequestcontroller:7 second time to see if the process completes in valid time
 servicerequestview<--servicerequestcontroller:return http response
 deactivate servicerequestcontroller
+servicerequestview->servicerequestview:7 second check to see if it received a return value
 main.js<--servicerequestview:Fill in area with div servicerequest
-User<--main.js:Displays to user the list of available services
+User<--main.js:Displays to user "Service has been requested"
