@@ -55,7 +55,6 @@ namespace TeamBigData.Utification.Models
             _address = "";
             _birthday = new DateTime();
             _reputation = reputation;
-            Identity = new GenericIdentity(_userID.ToString(), "Anonymous User");
         }
 
         public UserProfile(int userID, string role)
@@ -65,6 +64,7 @@ namespace TeamBigData.Utification.Models
             _lastName = "";
             _address = "";
             _birthday = new DateTime();
+            _reputation = 2.0;
             Identity = new GenericIdentity(_userID.ToString(), role);
         }
         public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, GenericIdentity identity)

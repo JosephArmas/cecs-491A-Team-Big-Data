@@ -65,9 +65,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Ana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AnalysisTests", "TeamBigData.Utification.AnalysisTests\TeamBigData.Utification.AnalysisTests.csproj", "{70477B88-0FAE-4193-88B3-B1524A8CA84A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.ReputationServices", "TeamBigData.Utification.ReputationService\TeamBigData.Utification.ReputationServices.csproj", "{1C2ACF32-0B4B-40A8-9D4D-7B9282A9B5C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ReputationServices", "TeamBigData.Utification.ReputationService\TeamBigData.Utification.ReputationServices.csproj", "{1C2ACF32-0B4B-40A8-9D4D-7B9282A9B5C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.ReputationTests", "TeamBigData.Utification.ReputationTests\TeamBigData.Utification.ReputationTests.csproj", "{F4A0C68E-A734-4768-BF11-B18D362A7D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ReputationTests", "TeamBigData.Utification.ReputationTests\TeamBigData.Utification.ReputationTests.csproj", "{F4A0C68E-A734-4768-BF11-B18D362A7D53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.ReputationManager", "TeamBigData.Utification.ReputationManager\TeamBigData.Utification.ReputationManager.csproj", "{432842A0-7CF5-4A51-9CFB-AABECF17C9D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -179,6 +181,10 @@ Global
 		{F4A0C68E-A734-4768-BF11-B18D362A7D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4A0C68E-A734-4768-BF11-B18D362A7D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4A0C68E-A734-4768-BF11-B18D362A7D53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{432842A0-7CF5-4A51-9CFB-AABECF17C9D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{432842A0-7CF5-4A51-9CFB-AABECF17C9D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{432842A0-7CF5-4A51-9CFB-AABECF17C9D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{432842A0-7CF5-4A51-9CFB-AABECF17C9D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -210,6 +216,7 @@ Global
 		{70477B88-0FAE-4193-88B3-B1524A8CA84A} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 		{1C2ACF32-0B4B-40A8-9D4D-7B9282A9B5C0} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
 		{F4A0C68E-A734-4768-BF11-B18D362A7D53} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
+		{432842A0-7CF5-4A51-9CFB-AABECF17C9D8} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3DAF13A-2974-4087-87BE-B77C46741866}

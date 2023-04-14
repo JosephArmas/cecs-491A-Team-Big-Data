@@ -11,6 +11,6 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> UpdatePinType(int pinID, int pinType);
         public Task<Response> UpdatePinContent(int pinID, string description);
         public Task<Response> UpdatePinToDisabled(int pinID);
-        //public Task<Response> UpdateReputation(double newReputation);
+        public Task<Response> UpdateUserReputation(UserProfile userProfile, double newReputation);
     }
 }

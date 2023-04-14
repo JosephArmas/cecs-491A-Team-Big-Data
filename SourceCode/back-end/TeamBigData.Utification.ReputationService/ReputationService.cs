@@ -1,60 +1,72 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utification.SQLDataAccess;
-using TeamBigData.Utification.Logging;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.ReputationServices
 {
     public class ReputationService
     {
         private readonly Response _result;
-        private readonly SqlDAO _reportsSqlDAO;
-        private readonly SqlDAO _userAccountSqlDAO;
-        private Report _report;
+        private readonly IDBSelecter _selectReport;
+        private readonly IDBInserter _insertReport;
+        private readonly IDBUpdater _updateUserProfile;
+        private readonly IDBSelecter _selectUserProfile;
+        private readonly Report _report;
         private UserAccount _userAccount;
         private UserProfile _userProfile;
-        private Logger _logger;
-        public ReputationService(Response result, SqlDAO reportsSqlDao, SqlDAO userAccountSqlDAO, Report report, UserAccount userAccount, UserProfile userProfile, Logger logger)
+        public ReputationService(Response result, IDBSelecter selectReport, IDBInserter insertReport, IDBUpdater updateUserProfile, IDBSelecter selectUserProfile, Report report, UserAccount userAccount, UserProfile userProfile)
         {
             _result = result;
-            _reportsSqlDAO = reportsSqlDao;
-            _userAccountSqlDAO = userAccountSqlDAO;
+            _selectReport = selectReport;
+            _insertReport = insertReport;
+            _updateUserProfile = updateUserProfile;
+            _selectUserProfile = selectUserProfile;
             _report = report; 
             _userAccount = userAccount; 
             _userProfile = userProfile;
-            _logger = logger;
         }
 
-        public async Task<Response> UpdateUserReputation()
+        public async Task<Response> UpdateReputation(double reputation)
         {
-            var getReputation = await _reportsSqlDAO.SelectNewReputation(_report).ConfigureAwait(false);
+            var update = await _updateUserProfile.UpdateUserReputation(_userProfile, reputation).ConfigureAwait(false);
 
-            Console.WriteLine("Got Reputation");
-            var getHash = _userAccountSqlDAO.SelectUserAccount(ref _userAccount, _userAccount._username);
-
-            if (getReputation.isSuccessful)
+            if (update.isSuccessful)
             {
                 _result.isSuccessful = true;
-                var log = _logger.Log(new Log(1, "Info", _userAccount._userHash, "SelectNewReputation()", "dbo.UserProfile", "Successfully retrieved user reputation"));
-                Console.WriteLine("Logging success case result: " + log.Result.isSuccessful.ToString());
-                //var updateReputation
-            }
-            else
-            {
-                var log = _logger.Log(new Log(1, "Error", _userAccount._userHash, "SelectUserProfile()", "dbo.UserProfile", "Failed to retrieve user reputation"));
-                Console.WriteLine("Logs failed case result: " + log.Result.isSuccessful.ToString());
+            }                        
+            return _result;
+        }
+
+        public async Task<Response> GetUpdatedTotalReputation()
+        {
+            var getNewReputation = await _selectReport.SelectNewReputation(_report).ConfigureAwait(false);
+            
+            var getOldReputation = _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID);                   
+                        
+            if (getNewReputation.isSuccessful)
+            {               
+                if (getOldReputation.Result.isSuccessful)
+                {                    
+                    _result.isSuccessful = getOldReputation.Result.isSuccessful;
+
+                    var newRatings = getNewReputation.data as Tuple<double, int>;
+
+                    double currentReputation = _userProfile._reputation;
+                    double cumulativeRatings = (double)newRatings.Item1;
+                    double numberOfReports = (double)newRatings.Item2;
+
+                    _result.data = (currentReputation + cumulativeRatings) / (numberOfReports + 1);
+                }               
             }
             return _result;
         }
                 
         public async Task<Response> StoreNewReport()
         {
-            Console.WriteLine("Accessing DAO");
-            var insertReport = await _reportsSqlDAO.InsertUserReport(_report).ConfigureAwait(false);
+            var insertReport = await _insertReport.InsertUserReport(_report).ConfigureAwait(false);
 
             if(insertReport.isSuccessful) 
             {
-                Console.WriteLine("Got passed the DAO");
                 _result.isSuccessful = true;
             }
 

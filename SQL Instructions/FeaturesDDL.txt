@@ -24,6 +24,17 @@ completed int DEFAULT 0,
 "dateTime" varchar(50),
 );
 
+CREATE TABLE dbo.Reports
+(
+rating decimal(2,1) NOT NULL,
+reportedUserID int NOT NULL,
+reportingUserID int NOT NULL,
+feedback varchar(150),
+createDate datetime,
+updateDate datetime,
+lastModifierUserID int
+);
+
 CREATE TABLE dbo."Services"
 (
 userID int NOT NULL,

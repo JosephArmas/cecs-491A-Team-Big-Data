@@ -60,9 +60,9 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the collumn names and values given
-                var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, \"role\") values('" +
+                var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, reputation, \"role\") values('" +
                     user._userID + "', '" + user._firstName + "', '" + user._lastName + "', '" +
-                    user._address + "', '" + user._birthday + "', '" + user.Identity.AuthenticationType + "')";
+                    user._address + "', '" + user._birthday + "', '" + user._reputation + "', '" + user.Identity.AuthenticationType + "')";
                 //Executes the SQL Insert Statement using the Connection String provided
                 try
                 {
@@ -626,6 +626,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                         // read through all rows
                         while (reader.Read())
                         {
+                            Console.WriteLine("Looped");
                             userID = 0;
                             String firstName = "";
                             String lastName = "";
@@ -633,6 +634,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                             String address = "";
                             DateTime birthday = new DateTime();
                             String role = "";
+                            decimal reputation = 0;
 
                             int ordinal = reader.GetOrdinal("userID");
                             if (!reader.IsDBNull(ordinal))
@@ -665,11 +667,17 @@ namespace TeamBigData.Utification.SQLDataAccess
                             {
                                 birthday = reader.GetDateTime(ordinal);
                             }
-                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, new GenericIdentity(userID.ToString(), role));
+                            ordinal = reader.GetOrdinal("reputation");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                reputation = reader.GetDecimal(ordinal);
+                            }
+                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, Decimal.ToDouble(reputation), new GenericIdentity(userID.ToString(), role));
                         }
                         reader.Close();
-                    }
+                        }
                     connect.Close();
+                    result.isSuccessful = true;
                 }
                 catch (SqlException s)
                 {
@@ -1577,14 +1585,13 @@ namespace TeamBigData.Utification.SQLDataAccess
                 try
                 {
                     await connection.OpenAsync().ConfigureAwait(false);
-                    Console.WriteLine("Connection opened properly");
-
+                    
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
                         command.CommandText = "NumberOfUserReports";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("@reportedUser", SqlDbType.Int).Value = report._reportedUser);
+                        command.Parameters.AddWithValue("@reportedUser", report._reportedUser);
 
                         using (SqlDataReader execute = await command.ExecuteReaderAsync().ConfigureAwait(false))
                         {
@@ -1608,32 +1615,47 @@ namespace TeamBigData.Utification.SQLDataAccess
                 }
 
             }
-            Console.WriteLine("Reads contents asynchronously");
+            
             Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
             result.isSuccessful = true;
             result.data = updateReputation;
-            Console.WriteLine(result.data.ToString());
             return result;
         }
 
-        /*public async Task<Response> UpdateReputation(double newReputation)
+        public async Task<Response> UpdateUserReputation(UserProfile userProfile, double newReputation)
         {
-            using (_connectionString)
-            {
+            Response result = new Response();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {                
                 try
                 {
-                    await _connectionString.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(false);
+                    Console.WriteLine(connection.State);
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "UpdateUserReputation";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                        command.Parameters.AddWithValue("@newReputation", newReputation);
 
-                    _command.Connection = _connectionString;
-                    _command.CommandText = "";
+                        int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        Console.WriteLine(execute);
+                        if (execute == 1 )
+                        {
+                            result.data = 1;
+                            result.isSuccessful = true;
+                        }                           
+                    }
                 }
                 catch (SqlException s)
                 {
-                    _result.errorMessage = s.Message;
+                    result.errorMessage = s.Message;
                 }
             }
-            return _result;
-        }*/
+            return result;
+        }
 
         public async Task<Response> InsertUserReport(Report report)
         {
