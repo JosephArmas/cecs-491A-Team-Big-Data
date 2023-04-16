@@ -1,0 +1,167 @@
+<!-- * only uncomment line 169 if you have maps API key setup -->
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Utification</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="node_modules/chartist/dist/index.css">
+        <link rel="stylesheet" href="styles/anon.css">
+        <link rel="stylesheet" href="styles/login.css">
+        <link rel="stylesheet" href="styles/otp.css">
+        <link rel="stylesheet" href="styles/home-reg.css">
+        <link rel="stylesheet" href="styles/registration.css">
+        <link rel="stylesheet" href="styles/map.css">
+        <link rel="stylesheet" href="styles/analytics.css">
+        <link rel="stylesheet" href="styles/home-admin.css">
+    </head>
+    <body>
+
+        <!-- * Error response -->
+        <div id="response"></div>
+        
+        <!-- * Test Div -->
+        <!-- <div class="test" ></div> -->
+
+        <!-- * Admin view -->
+        <div class="home-admin-container">
+            <div class="logout-container"></div>
+            <div class="admin-features">
+                <div class="user-management"></div>
+                <div class="usage-analysis"></div>
+            </div>
+        </div>
+
+        <!-- * Analytics -->
+        <div class="analytics-container" >
+            <div class="analytics-home">
+            <div class="analytics-header"></div>
+            <div class ="chart-options"></div>
+            </div>
+            <div class="charts">
+                <div class="analytics-header"></div>
+                <div class ="analytics-maps-view">
+                    <h1>Analytics Maps</h1>
+                    <div class="analytics-chart-maps"></div>
+                </div>
+                <div class ="analytics-registration-view" >
+                    <h1>Analytics Registration</h1>
+                    <div class="analytics-chart-registration"></div>
+                </div>
+                <div class ="analytics-logins-view">
+                    <h1>Analytics Logins</h1>
+                    <div class="analytics-chart-logins"></div>
+                </div>
+                <div class ="analytics-pins-view">
+                    <h1>Analytics Pins</h1>
+                    <div class="analytics-chart-pins"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- * Home view -->
+        <div class="home-container" >
+            <div class="home-header-container">
+                <div class="menu-container">
+                    <nav class="ham-menu-container">
+                        <ul class="features"></ul>
+                    </nav>
+                </div>
+                    <h1>Utification</h1>
+                <div class="profile-container">
+                    <div id="profile"></div>
+                    <div id="logout"></div>
+                </div>
+            </div>
+            <div class="map" id="map"></div>
+                <div class="misc">
+                    <div class="reg-contact-home"></div>
+                </div>
+            <div class="footer">
+                <footer>&copy; 2023 Utification</footer>
+            </div>
+        </div>
+
+        <!-- * OTP -->
+        <div class="otp-container">
+            <form id="otp-form">
+                <div class="back-button"></div>
+                <h1 id="otp-title">OTP</h1>
+                <div class="otp-display"></div>
+                <div class="otp"></div>
+                <div class="submit"></div>
+            </form>
+        </div>
+
+        <!-- * Login view -->
+        <div class="login-container">
+            <form id="login-form">
+                <div class="back-button"></div>
+                <div class ="login-box">
+                    <h1 id="login-title">Login</h1>
+                    <div class="input-field-login"></div>
+                    <div class="options-other"></div>
+                </div>
+            </form>
+        </div>
+
+        <!-- * Registration View -->
+        <div class="registration-container">
+            <form id="registration-form">
+                <div class="back-button"></div>
+                <div class="reg-box">
+                    <h1 id="reg-title">Registration</h1>
+                    <div class="input-field"></div>
+                    <div class="reg-contact"></div>
+                </div>
+            </form>
+        </div>
+
+        <!-- * Anon View -->
+        <div class="anon-container" id="anon-container"> 
+            <div class="header-container">
+                <div class="login-register">
+                    <button type="button" id="login" onclick="">Login</button>
+                    <button type="button" id="register" onclick="">Register</button>
+                </div>
+            </div>
+            <h1 id="anon-title">Utification</h1>
+            <div class="content-container">
+                <div class="box-1">
+                </div>
+                <div class="box-2">
+                </div> 
+            </div>
+            <h4 id="anon-quote">"Unify communities. Together we build cleaner and comfortable environments" </h4>
+            <div class="footer">
+                <footer>&copy; 2023 Utification</footer>
+            </div>
+        </div>
+
+
+        <!-- Thirdparty dependency -->
+        <script src="node_modules/axios/dist/axios.js"></script>
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
+        <!-- App Dependency -->
+        <script src="sources/server/server.js"></script>
+        <script src="sources/login/login.js"></script>
+        <script src="sources/registration/register.js"></script>
+        <script src="sources/analytics/analytics.js"></script>
+        <script src="sources/map/map.js"></script>
+
+        <!-- Page specific (js file) -->
+        <script src="sources/main.js"></script>
+        <script src="sources/response/response.js"></script>
+        <script src="sources/otp/otp.js"></script>
+        <script src="sources/roles/roles.js"></script>
+        <script src="sources/server/server.js"></script>
+
+
+        
+    </body>
+</html>

@@ -21,14 +21,14 @@ describe('map e2e test cases', () => {
     // Act
     cy.get('div[id=map]').should('not.visible')
     cy.get('button[id=login]').click()
-    cy.get('#email').type('test@gmail.com')
+    cy.get('#email').type('admin@gmail.com')
     cy.get('#password').type('password')
     cy.get('button[id=sub-login]').click()
-    cy.get('#otp-display').invoke('text')
+    cy.get('#otp-display').invoke('text').wait(500)
     cy.get('#otp-display').invoke('text').then((text) => {
       cy.get('#otp-input').type(text)
       cy.get('button[id=otp-submit]').click()
-    })
+    }).wait(500)
     
     // Assert
     // Checks if map css has loaded in
@@ -39,14 +39,14 @@ describe('map e2e test cases', () => {
     // Act
     cy.get('div[id=map]').should('not.visible')
     cy.get('button[id=login]').click()
-    cy.get('#email').type('test@gmail.com')
+    cy.get('#email').type('admin@gmail.com')
     cy.get('#password').type('password')
     cy.get('button[id=sub-login]').click()
-    cy.get('#otp-display').invoke('text')
+    cy.get('#otp-display').invoke('text').wait(500)
     cy.get('#otp-display').invoke('text').then((text) => {
     cy.get('#otp-input').type(text)
     cy.get('button[id=otp-submit]').click()
-    })
+    }).wait(500)
     cy.get('button[title="Zoom in"]')
     .click()
     .click()
@@ -61,14 +61,14 @@ describe('map e2e test cases', () => {
     // Act
     cy.get('div[id=map]').should('not.visible')
     cy.get('button[id=login]').click()
-    cy.get('#email').type('test@gmail.com')
+    cy.get('#email').type('admin@gmail.com')
     cy.get('#password').type('password')
     cy.get('button[id=sub-login]').click()
-    cy.get('#otp-display').invoke('text')
+    cy.get('#otp-display').invoke('text').wait(500)
     cy.get('#otp-display').invoke('text').then((text) => {
       cy.get('#otp-input').type(text)
       cy.get('button[id=otp-submit]').click()
-    })
+    }).wait(500)
     cy.get('button[title="Zoom out"]')
     .click()
     .click()
@@ -90,7 +90,7 @@ describe('map e2e test cases', () => {
     // Inserts invalid user credentials and is not authenticated
     cy.get('#email').type('failtest@gmail.com')
     cy.get('#password').type('failpassword')
-    cy.get('button[id=sub-login]').click()
+    cy.get('button[id=sub-login]').click().wait(500)
 
     // Assert
     cy.get('#errors').invoke('text').should('eq','User doesn\'t exist.')
