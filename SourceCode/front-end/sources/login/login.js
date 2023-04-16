@@ -1,151 +1,109 @@
-// * TODO: fix error validation 
 'use strict';
-const authenticationServer= 'https://localhost:7259/account/authentication';
-const loginForm = document.getElementById('login-form');
-const email = document.getElementById('email');
-const password = document.getElementById('password');
-const loginBtn = document.getElementById('sub-login');
-const loginHome = document.getElementById('login-home');
-var errorsDiv = document.getElementById('errors');
-const roles =  ['Regular User']
-const user = {}
-loginBtn.addEventListener('click', function (event)
+let loginBuild = false;
+
+function loginUser(email, password)
 {
-    event.preventDefault();
-    if (email.value == '' || password.value == '')
+    const user = {}
+    const server = getServer();
+    user.username = email;
+    user.password = password;
+    let loginForm = document.getElementById('login-form');
+    const role = getRole();
+    console.log("inside of loginUser function");
+    console.log(user.username);
+    console.log(user.password);
+    console.log(server.authenticationServer);
+    console.log(user);
+    axios.post(server.authenticationServer, user).then(function (responseAfter)
     {
-        errorsDiv.innerHTML = "Please fill in all fields";
-    } else if(IsValidPassword(password.value) === false)
-    {
-        errorsDiv.innerHTML = "Password must be at least 8 characters long";
-
-    } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
-    {
-        loginUser();
-        // sendOtp();
-
-    } else
-    {
-        errorsDiv.innerHTML = "Error with email or password. Please try again"; 
-    }
-    // reset login form when button clicked
-    loginForm.reset()
-
-});
-
-loginHome.addEventListener('click', function (event)
-{
-    errorsDiv.innerHTML= "";
-});
-
-var otpContainer = document.querySelector(".otp-container");
-var errorsOtp = document.getElementById("errors");
-const otpForm = document.querySelector("#otp-form");
-const otpDisplay = document.querySelector("#otp-display");
-var otpInput = document.querySelector("#otp-input");
-/*otpBtn.addEventListener('click', function (event)
-{
-    event.preventDefault();
-    if (otpInput.value == '')
-    {
-        errorsOtp.innerHTML = "Please enter OTP";
-
-    } else if (otpInput.value == otpVal) 
-    {
-        errorsOtp.innerHTML = "";
-        regView();
-        
-    } else 
-    {
-        errorsOtp.style.color = "red";
-        errorsOtp.innerHTML = "Invalid OTP. Please try again";
-    } 
-    otpForm.reset();
-});
-
-function sendOtp()
-{
-    otpVal = generateOTP();
-    otpDisplay.style.color = "blue";
-    otpDisplay.innerHTML = otpVal;
-    otpDisplay.style.fontSize = "20px";
-}
-
-function showOtp()
-{
-    
-    otpContainer.style.display = "block";
-    loginContainer.style.display = "none";
-}*/
-
-var otpContainer = document.querySelector(".otp-container");
-var loginContainer = document.querySelector(".login-container");
-
-function loginUser()
-{
-    user.username = email.value;
-    user.password = password.value;
-    axios.post(authenticationServer, user).then(function (responseAfter)
-    {
-        // turning jwt signature from the response into a json object
         var base64Url = responseAfter.data.split('.')[1];
         var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
-        const jsonObj = JSON.parse(jsonPayload);
-        
-        if(jsonObj.authenticated === "true" && jsonObj.role !== 'Anonymous User' )
+        const jsonObj = JSON.parse(jsonPayload)
+        console.log(jsonObj);
+        // console.log(roles.reg.includes(jsonObj.role));
+
+        if (jsonObj.authenticated === "true" && role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role) || role.admin.includes(jsonObj.role))
         {
-            // save JWT token to local storage
+
             localStorage.setItem("jwtToken", responseAfter.data)
             localStorage.setItem("role", jsonObj.role)
             localStorage.setItem("id",jsonObj.nameid)
-        
-            errorsDiv.innerHTML = "";
+            console.log('user is authenticated and has a role lets go to otp view');
+            showOtp(jsonObj.otp,jsonObj.role);
 
-            // display otp
-            otpDisplay.style.color = "blue";
-            otpDisplay.innerHTML = jsonObj.otp;
-            otpDisplay.style.fontSize = "20px";
-            otpContainer.style.display = "block";
-            loginContainer.style.display = "none";
-
-            // take in otp value to post in the back end
-            const otpBtn = document.querySelector("#otp-submit");
-            otpBtn.addEventListener('click', function (event)
-            {
-                event.preventDefault();
-                if (otpInput.value == '')
-                {
-                    errorsOtp.innerHTML = "Please enter OTP";
-
-                } else if (otpInput.value == jsonObj.otp) 
-                {
-                    errorsOtp.innerHTML = "";
-                    regView();
-                    
-                } else 
-                {
-                    errorsOtp.style.color = "red";
-                    errorsOtp.innerHTML = "Invalid OTP. Please try again";
-                } 
-                otpForm.reset();
-            });
         }
-        else 
-        {
-            // unauthorized user
-        }
-    }).catch(function (error)
-        {
-            let errorAfter = error.response.data;
-            let cleanError = errorAfter.replace(/"/g,"");
-            errorsDiv.innerHTML = cleanError; 
-        });
+
+    }).catch (function (error)
+    {
+        let errorAfter = error.response.data;
+        let cleanError = errorAfter.replace(/"/g,"");
+        timeOut(cleanError, 'red', responseDiv);
+    });
+    loginForm.reset();
 }
 
+function buildLogin()
+{
+    if(!loginBuild)
+    {
+        let backBtnDiv = document.querySelector('#login-form .back-button');
+        let btn = document.createElement('button');
+        let inputDiv = document.querySelector('.input-field-login');
+        let optionsDiv = document.querySelector('.options-other');
+        btn.setAttribute('type','button');
+        btn.textContent = "Back";
+        btn.addEventListener('click',homeClicked);
+        backBtnDiv.appendChild(btn);
+        let email = document.createElement('input');
+        let password = document.createElement('input');
+        let submitBtn = document.createElement('button');
+        email.setAttribute('type','email');
+        email.id = "email";
+        email.setAttribute('placeholder','Email Address');
+        email.required = true;
+        password.setAttribute('type','password');
+        password.id = "password";
+        password.setAttribute('placeholder','Password');
+        password.required = true;
+        password.minLength = 8;
+        submitBtn.id = "sub-login";
+        submitBtn.textContent = "Submit";
+        submitBtn.addEventListener('click', function (event)
+        {
+            if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
+            {
+                // console.log(IsValidPassword(password.value));
+                loginUser(email.value,password.value);
+            } 
+            else
+            {
+                timeOut('Error with email or password. Plrease try agian', 'red', responseDiv);
+            }
 
+        });
+        inputDiv.appendChild(email);
+        inputDiv.appendChild(password);
+        inputDiv.appendChild(submitBtn);
+        let forgotPassword = document.createElement('button');
+        let contactSupport = document.createElement('button');
+        forgotPassword.textContent = "Forgot Password";
+        forgotPassword.addEventListener('click', function (event)
+        {
+            // * Place holder -> should go to Account Recovery view
+            timeOut('Redirecting to ')
+
+        });
+        contactSupport.textContent = "Contact Support";
+        optionsDiv.appendChild(forgotPassword);
+        optionsDiv.appendChild(contactSupport);
+
+        loginBuild = true;
+    }
+    
+}
 
 
 // * Debugging Purposes

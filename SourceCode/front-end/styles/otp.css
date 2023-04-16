@@ -1,13 +1,3 @@
-.home{
-    margin-top: 2%;
-    margin-left: 2%;
-}
-.home button
-{
-    background-color: #00ACB7;
-    color: white;
-    min-width: 15px;
-}
 
 .otp 
 {
@@ -17,21 +7,7 @@
     padding: 50px;
 } 
 
-.recOTP 
-{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 50px;
-} 
-
 .otp input
-{
-    border-color: black;
-    padding: 15px;
-}
-
-.recOTP input
 {
     border-color: black;
     padding: 15px;
@@ -47,35 +23,31 @@
     width: 15%
 }
 
+.submit button:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
 .submit
 {
-    /* display: relative; */
-    /* justify-content: center; */
     text-align: center;
-    /* padding-bottom: 40%; */
-    /* padding: 50px; */
 }
 
-.otp-header
+#otp-title
 {
-    display: flex;
-    justify-content: center;
+    text-align: center;
 }
 
-.recOTP-header
+.otp-display
 {
-    display: flex;
-    justify-content: center;
-}
-
-#otp-display
-{
+    color: blue;
     padding-top: 20px;
+    font-size: 20px;
     text-align: center;
 }
 
-#recOTP-display
+.otp-container
 {
-    padding-top: 20px;
-    text-align: center;
+    display: none;
 }

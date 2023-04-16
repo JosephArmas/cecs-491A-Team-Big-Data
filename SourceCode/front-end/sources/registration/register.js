@@ -1,69 +1,94 @@
 
-const registrationServer= 'https://localhost:7259/account/registration';
-const registerEmail = document.getElementById('r-email');
-const registerPassword = document.getElementById('r-pw');
-const confirmedPassword = document.getElementById('r-cpw');
-const regBtn = document.getElementById('regBtn-submit');
-var errorsCont = document.getElementById('errors');
-const regForm = document.getElementById('registration-form');
-var regHome = document.getElementById("reg-home");
-const newUser = {}
-regBtn.addEventListener('click', function (event)
-{
-   event.preventDefault();
-   if (registerEmail.value == '' || registerPassword.value == '' || confirmedPassword.value == '')
-   {
-      errorsDiv.innerHTML = "Please fill in all fields";
-   } else if(!(registerPassword.value === confirmedPassword.value))
-   {
-      errorsDiv.innerHTML = "Passwords do not match";
-
-   } else if(IsValidPassword(registerPassword.value) === true && IsValidEmail(registerEmail.value) === true)
-   {
-      registerUser();
-
-   }
-   else if (IsValidPassword(registerPassword.value) === false)
-   {
-      errorsDiv.innerHTML = "Password must be at least 8 characters long";
-   } else{
-      
-      errorsDiv.innerHTML = "Error with email or password. Please try again";
-      
-   }
-   regForm.reset()
-
-});
-
-regHome.addEventListener('click', function (event)
-{
-   errorsCont.innerHTML= "";
-});
-
+let registerBuild = false;
 
 function registerUser()
 {
-   
-   newUser.username = registerEmail.value;
-   newUser.password = registerPassword.value;
-   // console.log(newUser)
-   axios.post(registrationServer,newUser).then(function (response)
+   const user = {};
+   const server = getServer();
+   const registerEmail = document.getElementById('r-email');
+   const registerPassword = document.getElementById('r-pw');
+   const registerForm = document.getElementById('registration-form');
+   user.username = registerEmail.value;
+   user.password = registerPassword.value;
+   axios.post(server.registrationServer,user).then(function (response)
    {
-      let responseAfter = response.data
+      console.log('sucess, logging to database ' + response.data)
+      let responseAfter = response.data;
       let cleanResponse = responseAfter.replace(/"/g,"");
-         errorsCont.style.color = "green";
-         errorsCont.innerHTML = cleanResponse +  ". Please return to home screen to login.";
+      timeOut(cleanResponse + '. Please return to home screen to login.', 'green', responseDiv);
    }).catch(function (error)
    {
       let errorAfter = error.response.data
       let cleanError = errorAfter.replace(/"/g,"");
-      errorsCont.innerHTML = cleanError; 
+      timeOut(cleanError, 'red', responseDiv);
 
    });
-   regForm.reset();
+   registerForm.reset();
    
 }
+   
+function buildRegistration()
+{
+   if(!registerBuild)
+   {
+      let backBtnDiv = document.querySelector('#registration-form .back-button');
+      let backBtn = document.createElement('button');
+      backBtn.setAttribute('type','button');
+      backBtn.textContent = 'Back';
+      backBtn.addEventListener('click',homeClicked);
+      backBtnDiv.appendChild(backBtn);
+      let inputDiv = document.querySelector('.input-field');
+      let email = document.createElement('input');
+      let password = document.createElement('input');
+      let confirmPassword = document.createElement('input');
+      let submitBtn = document.createElement('button');
+      email.setAttribute('type','email');
+      email.id = "r-email";
+      email.setAttribute('placeholder','Email Address');
+      email.required = true;
+      password.setAttribute('type','password');
+      password.id = "r-pw";
+      password.setAttribute('placeholder','Password');
+      password.required = true;
+      password.minLength = 8;
+      confirmPassword.setAttribute('type','password');
+      confirmPassword.required = 'true';
+      confirmPassword.id = "r-cpw"
+      confirmPassword.minLength = 8;
+      confirmPassword.setAttribute('placeholder','Confirm Password');
+      submitBtn.id = "regBtn-submit";
+      submitBtn.textContent = "Submit";
+      submitBtn.addEventListener('click', function (event)
+      {
+         if(password.value !== confirmPassword.value)
+         {
+            timeOut('Passwords do not match','red',responseDiv);
 
+         } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true)
+         {
+            registerUser();
+
+         } else{
+            timeOut('Error with email or password. Please try again','red',responseDiv);
+         }
+      });
+      inputDiv.appendChild(email);
+      inputDiv.appendChild(password);
+      inputDiv.appendChild(confirmPassword);
+      inputDiv.appendChild(submitBtn);
+      let contactDiv = document.querySelector('.reg-contact');
+      let contactSupportBtn = document.createElement('button');
+      contactSupportBtn.textContent = "Contact Support";
+      contactSupportBtn.addEventListener('click', function (event)
+      {
+         alert('Contact Support')
+
+      });
+      contactDiv.appendChild(contactSupportBtn);
+      registerBuild = true;
+   }
+
+}
 
 // * Debugging Purposes
 /*

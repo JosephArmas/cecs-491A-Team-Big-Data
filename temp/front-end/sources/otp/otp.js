@@ -1,4 +1,30 @@
-let otpBuild = false;
+var otpContainer = document.querySelector(".otp-container");
+var errorsHeader = document.getElementById("errors");
+const otpBtn = document.querySelector("#otp-submit");
+const otpForm = document.querySelector("#otp-form");
+const otpDisplay = document.querySelector("#otp-display");
+var otpInput = document.querySelector("#otp-input");
+otpBtn.addEventListener('click', function (event)
+{
+    event.preventDefault();
+    if (otpInput.value == '')
+    {
+        errorsHeader.innerHTML = "Please enter OTP";
+
+    } else if (otpInput.value == otpVal) 
+    {
+        errorsHeader.innerHTML = "";
+        regView();
+        
+    } else 
+    {
+        errorsHeader.style.color = "red";
+        errorsHeader.innerHTML = "Invalid OTP. Please try again";
+    } 
+    otpForm.reset();
+});
+    
+
 function generateOTP()
 {
     let otp = '';
@@ -30,70 +56,10 @@ function generateOTP()
     return otp.toString();
 }
 
-function showOtp(otpVal, role)
+function sendOtp()
 {
-    let otpContainer = document.querySelector(".otp-container");
-    let loginContainer = document.querySelector(".login-container");
-    let anonContainer = document.querySelector(".anon-container");
-    let otpDisplay = document.querySelector('.otp-display');
-    console.log('inside showOtp')
-    console.log('otpVal: ' + otpVal)
-    buildOTP(otpVal,role);
+    otpVal = generateOTP();
+    otpDisplay.style.color = "blue";
     otpDisplay.innerHTML = otpVal;
-    otpContainer.style.display = "block";
-    loginContainer.style.display = "none";
-    anonContainer.style.display = "none";
-}
-
-function buildOTP(otpVal,userType)
-{
-    if(!otpBuild)
-    {
-        console.log('inside build OTP')
-        console.log(userType)
-        let backBtnDiv = document.querySelector('#otp-form .back-button');   
-        let homeBtn = document.createElement('button');
-        let otpDisplay = document.querySelector('.otp-display');
-        let otpForm = document.querySelector('#otp-form');
-        let otp = document.querySelector('.otp');
-        let submitDiv = document.querySelector('.submit');
-        homeBtn.setAttribute('type','button');
-        homeBtn.textContent = 'Home';
-        homeBtn.addEventListener('click',homeClicked);
-        backBtnDiv.appendChild(homeBtn);
-        // let otpVal = generateOTP();
-        // otpDisplay.innerHTML = otpVal;
-        let otpInput = document.createElement('input');
-        otpInput.setAttribute('type','text');
-        otpInput.id = 'otp-input';
-        otpInput.required = true;
-        otp.appendChild(otpInput);
-        let submitBtn = document.createElement('button');
-        submitBtn.setAttribute('type','submit');
-        submitBtn.textContent = 'Submit';
-        submitBtn.id = 'otp-submit'
-        submitBtn.addEventListener('click', function(event)
-        {
-            if (otpInput.value == otpVal && roles.reg.includes(userType))
-            {
-                regView();
-            } else if (otpInput.value == otpVal && roles.admin.includes(userType))
-            {
-                console.log(userType)
-                adminView();
-            } else if (otpInput.value !== otpVal)
-            {
-                timeOut('Invalid OTP','red',responseDiv);
-            }
-            else
-            {
-                timeOut('You are not authorized to register','red',responseDiv);
-            }
-            
-            otpForm.reset();
-        });
-        submitDiv.appendChild(submitBtn);
-        otpBuild = true;
-    }
-
+    otpDisplay.style.fontSize = "20px";
 }

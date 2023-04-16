@@ -4,6 +4,7 @@
     justify-content: space-between;
     padding: 20px 20px;
 }
+
 .profile-container
 {
     display: flex;
@@ -18,6 +19,12 @@
     background-color: #00acb7;
     color: white
 
+}
+
+#home-logoutBtn:hover
+{
+    background-color: #85f7ff;
+    color: white
 }
 
 .map
@@ -40,4 +47,42 @@
 {
     padding-right: 25px;
 
+}
+
+#home-title
+{
+    text-align: center;
+}
+
+.menu-container button:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
+
+/* Nav styling  */
+.features 
+{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.features button
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.features button:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
+/* Home container display */
+.home-container
+{
+    display: none;
 }
