@@ -626,7 +626,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                         // read through all rows
                         while (reader.Read())
                         {
-                            Console.WriteLine("Looped");
                             userID = 0;
                             String firstName = "";
                             String lastName = "";
@@ -1574,6 +1573,40 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
+        public async Task<Response> UpdateUserRole(UserProfile userProfile)
+        {
+            Response result = new Response();
+            using(SqlConnection connection = new SqlConnection(_connectionString)) 
+            {
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using(SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "UpdateUserRole";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                        command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
+
+                        int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        
+                        if(updateRole == 1)
+                        {
+                            result.data = 1;
+                            result.isSuccessful = true;
+                        }
+                    }
+                }
+                catch(SqlException e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                return result;
+            }            
+        }
+
         public async Task<Response> SelectNewReputation(Report report)
         {
             Response result = new Response();
@@ -1625,13 +1658,15 @@ namespace TeamBigData.Utification.SQLDataAccess
         public async Task<Response> UpdateUserReputation(UserProfile userProfile, double newReputation)
         {
             Response result = new Response();
+            CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            CancellationToken token = cts.Token;
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {                
                 try
                 {
                     await connection.OpenAsync().ConfigureAwait(false);
-                    Console.WriteLine(connection.State);
+                    
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
@@ -1640,8 +1675,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                         command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
                         command.Parameters.AddWithValue("@newReputation", newReputation);
 
-                        int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-                        Console.WriteLine(execute);
+                        int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
                         if (execute == 1 )
                         {
                             result.data = 1;

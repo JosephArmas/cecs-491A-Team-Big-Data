@@ -1,4 +1,6 @@
-﻿using TeamBigData.Utification.ErrorResponse;
+﻿using TeamBigData.Utification.Logging.Abstraction;
+using System.Security.Principal;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
@@ -12,18 +14,41 @@ namespace TeamBigData.Utification.ReputationServices
         private readonly IDBUpdater _updateUserProfile;
         private readonly IDBSelecter _selectUserProfile;
         private readonly Report _report;
+        private readonly ILogger _logger;
         private UserAccount _userAccount;
         private UserProfile _userProfile;
-        public ReputationService(Response result, IDBSelecter selectReport, IDBInserter insertReport, IDBUpdater updateUserProfile, IDBSelecter selectUserProfile, Report report, UserAccount userAccount, UserProfile userProfile)
+        public ReputationService(Response result, IDBSelecter selectReport, IDBInserter insertReport, IDBUpdater updateUserProfile, IDBSelecter selectUserProfile, Report report, UserAccount userAccount, UserProfile userProfile, ILogger logger)
         {
             _result = result;
             _selectReport = selectReport;
             _insertReport = insertReport;
             _updateUserProfile = updateUserProfile;
             _selectUserProfile = selectUserProfile;
-            _report = report; 
+            _report = report;
+            _logger = logger;
             _userAccount = userAccount; 
             _userProfile = userProfile;
+        }
+
+        public async Task<Response> UpdateRole(UserProfile userProfile, string role)
+        {
+            Log log;
+            _userProfile = new UserProfile(userProfile._userID, role);
+
+            var update = await _updateUserProfile.UpdateUserRole(_userProfile).ConfigureAwait(true);
+
+            if(update.isSuccessful)
+            {
+                log = new Log(1, "Info", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Successfully updated users role to {role}");
+                _result.isSuccessful = true;
+            }
+            else 
+            {
+                log = new Log(1, "Error", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Failed to update users role to {role}");
+            }
+
+            await _logger.Log(log).ConfigureAwait(false);
+            return _result;
         }
 
         public async Task<Response> UpdateReputation(double reputation)
@@ -37,8 +62,13 @@ namespace TeamBigData.Utification.ReputationServices
             return _result;
         }
 
-        public async Task<Response> GetUpdatedTotalReputation()
+        /// <summary>
+        /// Calculates a user's new reputation when a new report is submitted
+        /// </summary>
+        /// <returns><see cref="UserProfile"/></returns>
+        public async Task<Response> GetUserReputationInfo()
         {
+            
             var getNewReputation = await _selectReport.SelectNewReputation(_report).ConfigureAwait(false);
             
             var getOldReputation = _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID);                   
@@ -55,7 +85,8 @@ namespace TeamBigData.Utification.ReputationServices
                     double cumulativeRatings = (double)newRatings.Item1;
                     double numberOfReports = (double)newRatings.Item2;
 
-                    _result.data = (currentReputation + cumulativeRatings) / (numberOfReports + 1);
+                    double newReputation = (double)((currentReputation + cumulativeRatings) / (numberOfReports + 1));
+                    _result.data = new UserProfile(_userProfile._userID, newReputation, _userProfile.Identity.AuthenticationType);
                 }               
             }
             return _result;

@@ -1,7 +1,9 @@
 ﻿using TeamBigData.Utification.ReputationServices;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging.Abstraction;
+using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Models;
+using System.Security.Principal;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -9,54 +11,76 @@ namespace TeamBigData.Utification.Manager
     {
         private readonly ReputationService _reputationService;
         private readonly Response _result;
+        private readonly Report _report;
         private readonly ILogger _logger;
         private UserAccount _userAccount;
+        private UserProfile _userProfile;
 
-        public ReputationManager(ReputationService reputationService, Response result, ILogger logger, UserAccount userAccount)
+        public ReputationManager(ReputationService reputationService, Response result, Report report, Logger logger, UserAccount userAccount, UserProfile userProfile)
         {
             _reputationService = reputationService;
             _result = result;
+            _report = report;
             _logger = logger;
             _userAccount = userAccount;
+            _userProfile = userProfile;
         }
 
-        public async Task<Response> RecordNewUserReport()
+        public async Task<Response> RecordNewUserReport(double minimumRating)
         {
-            var newReputation = await _reputationService.GetUpdatedTotalReputation();
+            Log getReputationLog;
+            Log updateReputationLog;
+            Log storeReportLog;
+            Log updateRoleLog;
 
-            if (newReputation.isSuccessful) 
+            var newReputation = await _reputationService.GetUserReputationInfo().ConfigureAwait(false);
+
+            if (newReputation.isSuccessful)
             {
-                await _logger.Log(new Log(1, "Info", _userAccount._userHash, "GetUpdatedTotalReputation()", "Data", "Successfully retrieved user's new calculated reputation"));
 
-                var updateReputation = await _reputationService.UpdateReputation((double)newReputation.data);
+                getReputationLog = new Log(1, "Info", _userAccount._userHash, "GetUpdatedTotalReputation()", "Data", "Successfully retrieved users new calculated reputation");
+                _userProfile = newReputation.data as UserProfile;
+                var updateReputation = await _reputationService.UpdateReputation(_userProfile._reputation).ConfigureAwait(false);
 
-                if(updateReputation.isSuccessful)
+                if (updateReputation.isSuccessful)
                 {
-                    await _logger.Log(new Log(1, "Info", _userAccount._userHash, "UpdateReputation()", "Data Store", "Successfully updated user's reputation"));
 
-                    var storeReport = await _reputationService.StoreNewReport();
-
-                    if(storeReport.isSuccessful)
+                    if (_userProfile._reputation >= minimumRating && _userProfile.Identity.AuthenticationType == "Regular User")
                     {
-                        await _logger.Log(new Log(1, "Info", _userAccount._userHash, "StoreNewReport()", "Data Store", "Successfully stored new report of the reported user"));
+                        await _reputationService.UpdateRole(_userProfile, "Reputable User").ConfigureAwait(false);
+                    }
+                    else if (_userProfile._reputation < minimumRating && _userProfile.Identity.AuthenticationType == "Reputable User")
+                    {
+                        await _reputationService.UpdateRole(_userProfile, "Regular User").ConfigureAwait(false);
+                    }
 
+                    updateReputationLog = new Log(1, "Info", _userAccount._userHash, "UpdateReputation()", "Data Store", "Successfully updated users reputation");
+                    var storeReport = await _reputationService.StoreNewReport().ConfigureAwait(false);
+
+                    if (storeReport.isSuccessful)
+                    {
                         _result.isSuccessful = storeReport.isSuccessful;
+                        storeReportLog = new Log(1, "Info", _userAccount._userHash, "StoreNewReport()", "Data Store", "Successfully stored new report of the reported user");
                     }
                     else
                     {
-                        await _logger.Log(new Log(1, "Error", _userAccount._userHash, "StoreNewReport()", "Data Store", "Failed to store new report of the reported user"));
+                        storeReportLog = new Log(1, "Error", _userAccount._userHash, "StoreNewReport()", "Data Store", "Failed to store new report of the reported user");
                     }
+                    await _logger.Log(storeReportLog).ConfigureAwait(false);
                 }
                 else
                 {
-                    await _logger.Log(new Log(1, "Error", _userAccount._userHash, "UpdateReputation()", "Data Store", "Failed to update user's reputation"));
+                    updateReputationLog = new Log(1, "Error", _userAccount._userHash, "UpdateReputation()", "Data Store", "Failed to update user's reputation");
                 }
+                var updateLogResult = await _logger.Log(updateReputationLog).ConfigureAwait(false);
+                Console.WriteLine($"updateReputation log = {updateLogResult.isSuccessful}, {updateLogResult.ToString()}");
             }
             else
             {
-                await _logger.Log(new Log(1, "Error", _userAccount._userHash, "GetUpdatedTotalReputation()", "Data", "Failed to retrieve user's new calculated reputation"));
+                getReputationLog= new Log(1, "Error", _userAccount._userHash, "GetUpdatedTotalReputation()", "Data", "Failed to retrieve user's new calculated reputation");
             }
-                        
+            var reputationLogResult = await _logger.Log(getReputationLog).ConfigureAwait(false);
+            Console.WriteLine(reputationLogResult.isSuccessful + reputationLogResult.ToString());
             return _result;
         }
     }
