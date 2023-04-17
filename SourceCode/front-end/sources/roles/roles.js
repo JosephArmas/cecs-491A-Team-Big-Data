@@ -1,11 +1,11 @@
 function getRole()
 {
-    const roles = Object.freeze 
+    const roles = 
     {
-        reg:['Regular User', 'Reputation User'];
-        service: ['Service User'];
-        admin: ['Admin User'];
+        reg:['Regular User', 'Reputation User'],
+        service: ['Service User'],
+        admin: ['Admin User'],
     } 
 
-    return roles
+    return Object.freeze(roles)
 }

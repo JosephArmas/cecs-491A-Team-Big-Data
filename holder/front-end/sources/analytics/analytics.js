@@ -39,19 +39,19 @@ function makeChart(server, chartClassname)
 
 function showAnalyticsRegistrations()
 {
-    const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
-    // const server = getEndPoint();
+    //const analyticsRegistration = 'https://localhost:7259/analysis/registrations';
+    const server = getServer();
     showAnalyticsRegistrationView()
-    makeChart(analyticsRegistration, '.analytics-chart-registration')
+    makeChart(server.analyticsRegistration, '.analytics-chart-registration')
     setInterval(showAnalyticsRegistrations, 60 * 1000);
 }
 
 function showAnalyticsLogins()
 {
-    const analyticsLogins = 'https://localhost:7259/analysis/logins';
+    //const analyticsLogins = 'https://localhost:7259/analysis/logins';
     showAnalyticsLoginsView();
-    // const server = getEndPoint();
-    makeChart(analyticsLogins, '.analytics-chart-logins')
+    const server = getServer();
+    makeChart(server.analyticsLogins, '.analytics-chart-logins')
     // Miliseconds to Seconds
     setInterval(showAnalyticsLogins, 60 * 1000);
 

@@ -4,13 +4,13 @@ let registerBuild = false;
 function registerUser()
 {
    const user = {};
-   const endPoint = getEndPoint();
+   const server = getServer();
    const registerEmail = document.getElementById('r-email');
    const registerPassword = document.getElementById('r-pw');
    const registerForm = document.getElementById('registration-form');
    user.username = registerEmail.value;
    user.password = registerPassword.value;
-   axios.post(endPoint.registrationServer,user).then(function (response)
+   axios.post(server.registrationServer,user).then(function (response)
    {
       console.log('sucess, logging to database ' + response.data)
       let responseAfter = response.data;

@@ -64,8 +64,7 @@ function regView()
     homeContainer.style.display = "block";
 }
 
-// regView();
-// adminView();
+regView();
 
 function buildHomeUserView()
 {

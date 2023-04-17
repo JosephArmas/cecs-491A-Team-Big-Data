@@ -18,13 +18,6 @@
 {
     display: flex;
     gap: 20px;
-    padding: 10px 0px;
-}
-
-.forgotPassword
-{
-    display: flex;
-    gap: 10px;
     padding: 10px 20px;
 }
 
@@ -37,22 +30,16 @@
     background-color: #ca74ff;
     /* align-self: flex-end; */
 }
-
-.forgotPassword button
+    
+.login-register button:hover
 {
-    /* min-width: 50px; */
-    /* min-width: 1.55rem; */
-    color: white;
-    font-size: 1.55rem;
-    background-color: #ca74ff;
-    /* align-self: flex-end; */
+    background-color: #eb61ff;
+    color: white
+
 }
-
-.title 
+#anon-title
 {
-    display: flex;
-    justify-content: center;
-
+    text-align: center;
 }
 
 .content-container
@@ -82,13 +69,10 @@
 
 }
 
-.quote
+#anon-quote
 {
-    display: flex;
-    padding-top: 10px;
-    justify-content: center;
+    text-align: center;
 }
-
 
 .footer 
 {
@@ -97,9 +81,14 @@
     margin: 0 auto;
 }
 
-#errors
+#response
 {
     padding-top: 20px;
-    color:red;
     text-align: center;
 }
+
+#anon-container
+{
+    display: none;
+}
+

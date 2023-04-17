@@ -6,7 +6,6 @@
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
     script.async = true;
-    console.log(localStorage.getItem("role"));
     // Dependency check
     const isValid = root;
     if(!isValid){
@@ -192,13 +191,12 @@
     window.modifyPinHandler = function(pos)
     {
         infoWindows[pos].close();
-        // errorsDiv.innerHTML = "";
+        errorsDiv.innerHTML = "";
 
         let userAction = prompt("1. Modify Pin Type\n2. Modify Pin Content\n3. Delete Pin\nPick Options 1-3: ");
         if (!(userAction == "1" || userAction == "2" || userAction == "3")||userAction == null)
         {
-            // errorsDiv.innerHTML = "Invalid Pin Input...";
-            timeOut('Invalid Pin Input...',red,'response')
+            errorsDiv.innerHTML = "Invalid Pin Input...";
             return;
         };
         switch (userAction) { 
@@ -218,7 +216,7 @@
     function modifyPinTypeHandler(pos)
     {
         const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinType';
-        // errorsDiv.innerHTML = "";
+        errorsDiv.innerHTML = "";
 
         let pinType = prompt("Modifying Pin Type\n1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
@@ -335,7 +333,7 @@
 
     function placeNewPin(latLng, map) {
         const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
-        // errorsDiv.innerHTML = "";
+        errorsDiv.innerHTML = "";
 
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
@@ -409,7 +407,7 @@
     }
    
     window.initMap = function() {
-        // errorsDiv.innerHTML = "";
+        errorsDiv.innerHTML = "";
         map = new google.maps.Map(document.getElementById('map'), {
             center: CSULB,
             minZoom: 8,
@@ -437,6 +435,5 @@
             });
         }
     }
-    document.head.appendChild(script);
 })(window, window.ajaxClient);
 

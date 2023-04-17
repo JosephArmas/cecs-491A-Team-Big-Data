@@ -4,7 +4,7 @@ let loginBuild = false;
 function loginUser(email, password)
 {
     const user = {}
-    const endPoint = getEndPoint();
+    const server = getServer();
     user.username = email;
     user.password = password;
     let loginForm = document.getElementById('login-form');
@@ -12,9 +12,9 @@ function loginUser(email, password)
     console.log("inside of loginUser function");
     console.log(user.username);
     console.log(user.password);
-    // console.log(server.authenticationServer);
+    console.log(server.authenticationServer);
     console.log(user);
-    axios.post(endPoint.authenticationServer, user).then(function (responseAfter)
+    axios.post(server.authenticationServer, user).then(function (responseAfter)
     {
         var base64Url = responseAfter.data.split('.')[1];
         var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
