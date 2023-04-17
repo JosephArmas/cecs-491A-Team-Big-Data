@@ -1,4 +1,5 @@
 ﻿
+using System.Text.RegularExpressions;
 using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.EventManager
@@ -27,11 +28,42 @@ namespace TeamBigData.Utification.EventManager
             {
                 response.errorMessage = "Trouble Displaying title or description. Please Try again";
             }
+            else if (!IsValidTitle(title))
+            {
+                response.errorMessage = "Error in Title. Please try again.";
+            }
+            else if (!IsValidDescription(description))
+            {
+                response.errorMessage = "Error in Description. Please Try again.";
+            }
             else
             {
+                response.isSuccessful = true;
                 response.errorMessage = "Success";
+                    
             }
             return response;
+
+        }
+
+        public bool IsValidTitle(string title)
+        {
+            Regex titleAllowedCharacters = new Regex(@"^[a-zA-Z0-9\s.@áéíóúüñ¿¡ÁÉÍÓÚÜÑ-]*$");
+            if (titleAllowedCharacters.IsMatch(title) && title.Length >= 8 && title.Length <= 30)
+                return true;
+            else
+                return false;
+        }
+
+        public bool IsValidDescription(string description)
+        {
+            Regex descriptionAllowedCharacters = new Regex(@"^[a-zA-Z0-9\s.@áéíóúüñ¿¡ÁÉÍÓÚÜÑ-]*$");
+            if (descriptionAllowedCharacters.IsMatch(description) && description.Length <= 150)
+                return true;
+            else
+            {
+                return false;
+            }
 
         }
         
