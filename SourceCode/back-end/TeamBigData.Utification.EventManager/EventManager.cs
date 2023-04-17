@@ -1,6 +1,8 @@
 ﻿
 using System.Text.RegularExpressions;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.EventManager
 {
@@ -11,8 +13,9 @@ namespace TeamBigData.Utification.EventManager
          * Check description
          * check if pin posted within 7 days
          */
-        // private readonly EventService.EventService _eventService;
-
+        private readonly DBConnectionString connString = new DBConnectionString();
+        private EventService.EventService _eventService;
+        
         /*
         public EventManager(EventService.EventService eventService)
         {
@@ -20,7 +23,8 @@ namespace TeamBigData.Utification.EventManager
         }
         */
         
-        public Response CreateNewEvent(string title, string description)
+        
+        public async Task<Response> CreateNewEvent(string title, string description)
         {
             Response response = new Response();
             // Checking to see title or description is null or empty
@@ -38,9 +42,13 @@ namespace TeamBigData.Utification.EventManager
             }
             else
             {
+                // response.isSuccessful = true;
+                // response.errorMessage = "Success";
+                Console.WriteLine("processing...");
                 response.isSuccessful = true;
-                response.errorMessage = "Success";
-                    
+                response = await _eventService.CreateEvent(title, description).ConfigureAwait(false);
+
+
             }
             return response;
 

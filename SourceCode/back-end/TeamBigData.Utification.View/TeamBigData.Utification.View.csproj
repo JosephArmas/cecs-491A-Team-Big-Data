@@ -11,6 +11,7 @@
     <ProjectReference Include="..\TeamBigData.Utification.AnalysisManager\TeamBigData.Utification.AnalysisManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.DeletionManager\TeamBigData.Utification.DeletionManager.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.EventManager\TeamBigData.Utification.EventManager.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />

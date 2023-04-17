@@ -1244,6 +1244,23 @@ namespace TeamBigData.Utification.SQLDataAccess
                 tcs.SetResult(result);
                 return tcs.Task;
             }
+            
+        }
+
+
+        public async Task<Response> InsertEvent(string title, string description)
+        {
+            var result = new Response();
+            var currentDate = DateTime.Now.Date;
+            var connection = new SqlConnection(_connectionString);
+            var insertSql =
+                    "INSERT INTO dbo.Events (title, description) values(@title,@description)";
+            var command = new SqlCommand(insertSql, connection);
+            command.Parameters.AddWithValue("@title", title);
+            command.Parameters.AddWithValue("@description", description);
+            // command.Parameters.AddWithValue("@eventCreated", currentDate);
+            result = await ExecuteSqlCommand(connection, command);
+            return result;
         }
     }
 }

@@ -9,13 +9,27 @@ using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.View.Abstraction;
 using TeamBigData.Utification.View.Views;
+using TeamBigData.Utification.EventService;
 
 namespace TeamBigData.Utification // Note: actual namespace depends on the project name.
 {
     internal class Program
     {
+        private static readonly DBConnectionString connString = new DBConnectionString();
         static void Main(string[] args)
         {
+            var dao = new SqlDAO(connString._connectionStringFeatures);
+            var eventService = new EventService.EventService();
+            var eventManager = new EventManager.EventManager();
+            Console.WriteLine("title: ");
+            var title = Console.ReadLine();
+            Console.WriteLine("description: ");
+            var description = Console.ReadLine();
+            eventManager.CreateNewEvent(title, description);
+            // Console.WriteLine(result);
+            
+
+            /*
             var response = new Response();
             UserProfile userProfile = new UserProfile(0);
             String userHash = "";
@@ -80,7 +94,9 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                     Console.ReadLine();
                     return;
                 }
+                
             }
+            */
         }
     }
 }

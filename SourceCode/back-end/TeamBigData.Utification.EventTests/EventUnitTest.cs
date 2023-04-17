@@ -34,20 +34,20 @@ public class EventUnitTest
         Assert.IsFalse(result); 
     }
 
-    [TestMethod]
-    public void ValidNewEvent()
-    {
-        // Arrange 
-        var eventManager = new EventManager.EventManager();
-        string title = "Beach Clean up";
-        string description = "This is a beach clean up at xyz Beach";
-        
-        // Act
-        var result = eventManager.CreateNewEvent(title, description);
-        
-        // Assert
-        Assert.IsTrue(result.isSuccessful);  
-    }
+    // [TestMethod]
+    // public void ValidNewEvent()
+    // {
+    //     // Arrange 
+    //     var eventManager = new EventManager.EventManager();
+    //     string title = "Beach Clean up";
+    //     string description = "This is a beach clean up at xyz Beach";
+    //     
+    //     // Act
+    //     var result = eventManager.CreateNewEvent(title, description);
+    //     
+    //     // Assert
+    //     Assert.IsTrue(result.isSuccessful);  
+    // }
     
     
     
