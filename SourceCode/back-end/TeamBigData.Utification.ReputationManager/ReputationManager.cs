@@ -35,8 +35,15 @@ namespace TeamBigData.Utification.Manager
 
             if(getReports.isSuccessful) 
             {
-
+                getReportsLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Successfully retrieved reports from the data store");
             }
+            else
+            {
+                getReportsLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Failed to retrieve reports from the data store");
+            }
+
+            await _logger.Log(getReportsLog).ConfigureAwait(false);
+
             return _result;
         }
         public async Task<Response> IncreaseReputationByPointOne()

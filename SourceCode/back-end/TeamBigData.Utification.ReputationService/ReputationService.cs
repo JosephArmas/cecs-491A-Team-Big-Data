@@ -34,7 +34,7 @@ namespace TeamBigData.Utification.ReputationServices
 
         public async Task<Response> GetUserReports(int amount)
         {
-            List<DataRow> dataRows = new List<DataRow>();
+            List<DataRow> dataReports = new List<DataRow>();
             var getReports = await _selectReports.SelectUserReports(_userProfile).ConfigureAwait(false);
 
             if(getReports.data != null)
@@ -45,12 +45,13 @@ namespace TeamBigData.Utification.ReputationServices
                 int start = 0 + amount;
                 int max = 5 + amount;
                 Range range = new Range(start, max);
+
                 foreach (DataRow report in data.Take(range))
                 {
-                    Console.WriteLine($"Report: {report[0].ToString()}, {report[1].ToString()}");
+                    dataReports.Add(report);
                 }
                 _result.isSuccessful = true;
-
+                _result.data = dataReports;
             }
             return _result;
         }
