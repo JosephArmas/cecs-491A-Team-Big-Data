@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -15,10 +16,12 @@ namespace TeamBigData.Utification.SQLDataAccess
     public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDBAnalysis
     {
         private readonly String _connectionString;
+        private readonly IConfiguration _configuration;
 
-        public SqlDAO(String connectionString)
+        public SqlDAO(String connectionString, IConfiguration configuration)
         {
             _connectionString = connectionString;
+            _configuration = configuration;
         }
 
         public Task<Response> InsertUser(UserAccount user)
@@ -1612,35 +1615,44 @@ namespace TeamBigData.Utification.SQLDataAccess
         public async Task<Response> UpdateUserRole(UserProfile userProfile)
         {
             Response result = new Response();
-            using(SqlConnection connection = new SqlConnection(_connectionString)) 
+
+            try
             {
-                try
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    await connection.OpenAsync().ConfigureAwait(false);
-
-                    using(SqlCommand command = new SqlCommand())
+                    try
                     {
-                        command.Connection = connection;
-                        command.CommandText = "UpdateUserRole";
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
-                        command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
+                        await connection.OpenAsync().ConfigureAwait(false);
 
-                        int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-                        
-                        if(updateRole == 1)
+                        using (SqlCommand command = new SqlCommand())
                         {
-                            result.data = 1;
-                            result.isSuccessful = true;
+                            command.Connection = connection;
+                            command.CommandText = "UpdateUserRole";
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                            command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
+
+                            int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                            if (updateRole == 1)
+                            {
+                                result.data = 1;
+                                result.isSuccessful = true;
+                            }
                         }
                     }
+                    catch (SqlException e)
+                    {
+                        result.errorMessage = e.Message;
+                    }
                 }
-                catch(SqlException e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                return result;
-            }            
+            }
+            catch (SqlException e)
+            {
+                result.errorMessage = e.Message;
+            }
+            
+            return result;                        
         }
 
         public async Task<Response> SelectNewReputation(Report report)

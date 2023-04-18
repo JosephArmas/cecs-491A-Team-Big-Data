@@ -51,6 +51,7 @@ builder.Services.AddAuthentication(f =>
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddSingleton<SecurityManager>();
+builder.Services.AddTransient<SqlDAO>(reportsDAO => { return new SqlDAO(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection"), builder.Configuration); }) ;
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
