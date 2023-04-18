@@ -29,7 +29,7 @@ CREATE TABLE dbo.Reports
 rating decimal(2,1) NOT NULL,
 reportedUserID int NOT NULL,
 reportingUserID int NOT NULL,
-feedback varchar(150),
+feedback varchar(150) NOT NULL,
 createDate datetime,
 updateDate datetime,
 lastModifierUserID int

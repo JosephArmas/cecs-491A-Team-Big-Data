@@ -1573,6 +1573,42 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
+        public async Task<Response> SelectUserReports(UserProfile userProfile)
+        {
+            Response result = new Response();
+
+            SqlDataAdapter adapter = new SqlDataAdapter();            
+            DataSet set = new DataSet();                   
+            
+            using(SqlConnection connection = new SqlConnection( _connectionString)) 
+            {
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "PartitionSelectUserReports";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+
+                        adapter.SelectCommand = command;
+                        
+                        adapter.Fill(set, "dbo.Reports");                                             
+
+                    }
+                    result.isSuccessful = true;
+                    result.data = set;
+                }
+                catch(SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+            }
+            return result;
+        }
+
         public async Task<Response> UpdateUserRole(UserProfile userProfile)
         {
             Response result = new Response();
@@ -1634,7 +1670,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                                 newReputation += Decimal.ToDouble(execute.GetDecimal(rating));
 
                                 numberOfReports++;
-                            }                                                       
+                            }
                         }
                     }                    
                 }
@@ -1646,12 +1682,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
-
             }
             
             Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
             result.isSuccessful = true;
             result.data = updateReputation;
+
             return result;
         }
 

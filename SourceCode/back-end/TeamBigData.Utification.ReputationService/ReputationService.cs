@@ -3,13 +3,14 @@ using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using System.Data;
 
 namespace TeamBigData.Utification.ReputationServices
 {
     public class ReputationService
     {
         private readonly Response _result;
-        private readonly IDBSelecter _selectReport;
+        private readonly IDBSelecter _selectReports;
         private readonly IDBInserter _insertReport;
         private readonly IDBUpdater _updateUserProfile;
         private readonly IDBSelecter _selectUserProfile;
@@ -17,10 +18,11 @@ namespace TeamBigData.Utification.ReputationServices
         private readonly ILogger _logger;
         private UserAccount _userAccount;
         private UserProfile _userProfile;
-        public ReputationService(Response result, IDBSelecter selectReport, IDBInserter insertReport, IDBUpdater updateUserProfile, IDBSelecter selectUserProfile, Report report, UserAccount userAccount, UserProfile userProfile, ILogger logger)
+        public ReputationService(Response result, IDBSelecter selectReports, IDBInserter insertReport, IDBUpdater updateUserProfile,
+                    IDBSelecter selectUserProfile, Report report, UserAccount userAccount, UserProfile userProfile, ILogger logger)
         {
-            _result = result;
-            _selectReport = selectReport;
+            _result = result;            
+            _selectReports = selectReports;
             _insertReport = insertReport;
             _updateUserProfile = updateUserProfile;
             _selectUserProfile = selectUserProfile;
@@ -28,6 +30,38 @@ namespace TeamBigData.Utification.ReputationServices
             _logger = logger;
             _userAccount = userAccount; 
             _userProfile = userProfile;
+        }
+
+        public async Task<Response> GetUserReports(int amount)
+        {
+            List<DataRow> dataRows = new List<DataRow>();
+            var getReports = await _selectReports.SelectUserReports(_userProfile).ConfigureAwait(false);
+
+            if(getReports.data != null)
+            {
+               var reports = getReports.data as DataSet;
+
+                IEnumerable<DataRow> data = reports.Tables[0].AsEnumerable();
+                int start = 0 + amount;
+                int max = 5 + amount;
+                Range range = new Range(start, max);
+                foreach (DataRow report in data.Take(range))
+                {
+                    Console.WriteLine($"Report: {report[0].ToString()}, {report[1].ToString()}");
+                }
+                _result.isSuccessful = true;
+
+            }
+            return _result;
+        }
+        public async Task<Response> GetCurrentReputation()
+        {
+            var getReputation = await _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID).ConfigureAwait(false);
+            
+            _result.isSuccessful = getReputation.isSuccessful;
+            _result.data = _userProfile._reputation;
+
+            return _result;
         }
 
         public async Task<Response> UpdateRole(UserProfile userProfile, string role)
@@ -48,6 +82,7 @@ namespace TeamBigData.Utification.ReputationServices
             }
 
             await _logger.Log(log).ConfigureAwait(false);
+
             return _result;
         }
 
@@ -58,7 +93,8 @@ namespace TeamBigData.Utification.ReputationServices
             if (update.isSuccessful)
             {
                 _result.isSuccessful = true;
-            }                        
+            }                     
+            
             return _result;
         }
 
@@ -66,10 +102,10 @@ namespace TeamBigData.Utification.ReputationServices
         /// Calculates a user's new reputation when a new report is submitted
         /// </summary>
         /// <returns><see cref="UserProfile"/></returns>
-        public async Task<Response> GetUserReputationInfo()
+        public async Task<Response> CalculateNewUserReputation()
         {
             
-            var getNewReputation = await _selectReport.SelectNewReputation(_report).ConfigureAwait(false);
+            var getNewReputation = await _selectReports.SelectNewReputation(_report).ConfigureAwait(false);
             
             var getOldReputation = _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID);                   
                         
@@ -89,6 +125,7 @@ namespace TeamBigData.Utification.ReputationServices
                     _result.data = new UserProfile(_userProfile._userID, newReputation, _userProfile.Identity.AuthenticationType);
                 }               
             }
+
             return _result;
         }
                 
@@ -103,6 +140,5 @@ namespace TeamBigData.Utification.ReputationServices
 
             return _result;
         }
-
     }
 }
