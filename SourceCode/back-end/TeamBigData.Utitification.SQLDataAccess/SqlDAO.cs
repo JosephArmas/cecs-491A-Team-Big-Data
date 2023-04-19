@@ -16,12 +16,10 @@ namespace TeamBigData.Utification.SQLDataAccess
     public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDBAnalysis
     {
         private readonly String _connectionString;
-        private readonly IConfiguration _configuration;
 
-        public SqlDAO(String connectionString, IConfiguration configuration)
+        public SqlDAO(String connectionString)
         {
             _connectionString = connectionString;
-            _configuration = configuration;
         }
 
         public Task<Response> InsertUser(UserAccount user)

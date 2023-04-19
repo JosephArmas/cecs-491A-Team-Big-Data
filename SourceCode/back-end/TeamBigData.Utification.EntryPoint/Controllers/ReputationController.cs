@@ -19,6 +19,12 @@ namespace Utification.EntryPoint.Controllers
         }
 #endif
 
+        public Task<IActionResult> ViewReports()
+        {
+            var tcs = new TaskCompletionSource<IActionResult>();
 
+            tcs.SetResult(Ok("Healthy"));
+            return tcs.Task;
+        }
     }
 }

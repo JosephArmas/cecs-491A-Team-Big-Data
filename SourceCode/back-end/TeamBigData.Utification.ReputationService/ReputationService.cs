@@ -5,7 +5,7 @@ using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using System.Data;
 
-namespace TeamBigData.Utification.ReputationServices
+namespace TeamBigData.Utification.Services
 {
     public class ReputationService
     {

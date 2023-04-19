@@ -1,4 +1,4 @@
-﻿using TeamBigData.Utification.ReputationServices;
+﻿using TeamBigData.Utification.Services;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Logging;
