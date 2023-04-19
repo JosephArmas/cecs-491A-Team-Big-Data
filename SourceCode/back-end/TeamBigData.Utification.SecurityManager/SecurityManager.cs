@@ -19,14 +19,15 @@ namespace TeamBigData.Utification.Manager
     {
         
         // Does Insert user and doesnt need AccountRegisterer.
+        private readonly DBConnectionString connectionString = new DBConnectionString();
         public async Task<Response> RegisterUser(string email, byte[] encryptedPassword, Encryptor encryptor)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
             UserProfile userProfile = new UserProfile();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
-            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString._connectionStringUsers);
+            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString._connectionStringUsers);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             int userID = 0;
@@ -58,10 +59,10 @@ namespace TeamBigData.Utification.Manager
                 response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
                 stopwatch.Stop();
                 Log log;
-                var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+                var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
                 if (response.isSuccessful)
                 {
-                    IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                    IDBInserter insertUserHash = new SqlDAO(connectionString._connectionStringUserHash);
                     await insertUserHash.InsertUserHash(userHash, userID).ConfigureAwait(false);
                     if (stopwatch.ElapsedMilliseconds > 5000)
                     {

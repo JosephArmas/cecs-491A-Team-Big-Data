@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.Eve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.EventTests", "TeamBigData.Utification.EventTests\TeamBigData.Utification.EventTests.csproj", "{B4BE6AA0-03EA-4CCF-BAC1-D3BFF57C3A76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.ConsoleTestBench", "TeamBigData.Utification.ConsoleTestBench\TeamBigData.Utification.ConsoleTestBench.csproj", "{3768EFA7-CB4B-472E-8F57-0AB2D88E9327}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -185,6 +187,10 @@ Global
 		{B4BE6AA0-03EA-4CCF-BAC1-D3BFF57C3A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4BE6AA0-03EA-4CCF-BAC1-D3BFF57C3A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4BE6AA0-03EA-4CCF-BAC1-D3BFF57C3A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3768EFA7-CB4B-472E-8F57-0AB2D88E9327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3768EFA7-CB4B-472E-8F57-0AB2D88E9327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3768EFA7-CB4B-472E-8F57-0AB2D88E9327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3768EFA7-CB4B-472E-8F57-0AB2D88E9327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -217,6 +223,7 @@ Global
 		{FA111A63-03F5-400F-AE06-96855899E686} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
 		{6CA1A0AD-75E7-4D62-A44F-20C9CEC7AEA0} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
 		{B4BE6AA0-03EA-4CCF-BAC1-D3BFF57C3A76} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
+		{3768EFA7-CB4B-472E-8F57-0AB2D88E9327} = {26F76CFC-975F-489C-ADBA-C2D8AC22A516}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3DAF13A-2974-4087-87BE-B77C46741866}

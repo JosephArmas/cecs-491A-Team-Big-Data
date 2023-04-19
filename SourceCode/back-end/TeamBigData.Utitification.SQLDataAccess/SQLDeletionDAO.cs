@@ -55,6 +55,51 @@ namespace TeamBigData.Utification.SQLDataAccess
                 return tcs.Task;
             }
         }
+        
+        private Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            //Executes the SQL Insert Statement using the Connection String provided
+            try
+            {
+                connection.Open();
+                var rows = command.ExecuteNonQuery();
+                if (rows > 0)
+                {
+                    result.isSuccessful = true;
+                }
+                else if(rows == 0)
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "Nothing Affected";
+                }
+                connection.Close();
+            }
+            catch (SqlException s)
+            {
+                result.errorMessage = s.Message;
+            }
+            catch (Exception e)
+            {
+                result.errorMessage = e.Message;
+            }
+            tcs.SetResult(result);
+            return tcs.Task;
+        } 
+
+        public Task<Response> DeleteJoinedEvent(int userID, int eventID)
+        {
+            var sqlstatement = "DELETE FROM dbo.EventsJoined WHERE userID = @userID and eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@userID", userID);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            
+            return ExecuteSqlCommand(connection, cmd);
+
+        }
+
         /// <summary>
         /// Deletes the user information from users table and userprofiles through one sql statement. Borrowed from the DeleteUser method from SqlDAO by David
         /// </summary>

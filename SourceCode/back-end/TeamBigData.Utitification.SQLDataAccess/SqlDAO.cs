@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Buffers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Collections;
@@ -1248,19 +1249,226 @@ namespace TeamBigData.Utification.SQLDataAccess
         }
 
 
-        public async Task<Response> InsertEvent(string title, string description)
+        public Task<Response> InsertEvent(string title, string description, int userID)
         {
-            var result = new Response();
             var currentDate = DateTime.Now.Date;
             var connection = new SqlConnection(_connectionString);
-            var insertSql =
-                    "INSERT INTO dbo.Events (title, description) values(@title,@description)";
-            var command = new SqlCommand(insertSql, connection);
-            command.Parameters.AddWithValue("@title", title);
-            command.Parameters.AddWithValue("@description", description);
-            // command.Parameters.AddWithValue("@eventCreated", currentDate);
-            result = await ExecuteSqlCommand(connection, command);
-            return result;
+            var insertSql = "INSERT INTO dbo.Events (title, description,eventCreated, userID) values(@title,@description,@eventCreated,@userID)";
+            var cmd = new SqlCommand(insertSql, connection);
+            cmd.Parameters.AddWithValue("@title", title);
+            cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@eventCreated",currentDate);
+            cmd.Parameters.AddWithValue("@userID", userID);
+            return ExecuteSqlCommand(connection,cmd);
         }
+
+        public async Task<List<EventDTO>> SelectUserEvents(int userID)
+        {
+            var sqlstatement = "SELECT title, description FROM Events JOIN EventsJoined EJ on Events.eventID = EJ.eventID WHERE EJ.userID = @userID";
+            List<EventDTO> events = new List<EventDTO>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        string title = reader.GetString(reader.GetOrdinal("title"));
+                        string description = reader.GetString(reader.GetOrdinal("description"));
+                        events.Add(new EventDTO(title,description));
+                    }
+                    
+                }
+
+            }
+
+            return events;
+        }
+        public async Task<Response> SelectUserProfileRole(int userID)
+        {
+            string sqlStatement = "SELECT role FROM dbo.UserProfiles WHERE userID = @userID";
+            /*
+            var connection = new SqlConnection(_connectionString);
+            cmd.Parameters.AddWithValue("@ID", userID);
+            */
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlStatement,connection);
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string role = reader.GetString(reader.GetOrdinal("role"));
+                            response.data = role;
+                            response.isSuccessful = true;
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "No role associated with user ID";
+
+                    }
+                }
+            }
+
+
+            return response;
+        }
+
+        public async Task<Response> SelectUserHash(int userID)
+        {
+            var sqlstatement = "SELECT userHash FROM dbo.Users WHERE userID = @userID";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            string userHash = reader.GetString(reader.GetOrdinal("userHash"));
+                            
+                            // Response obj stores the userHash value inside of the data property
+                            response.data = userHash;
+                            response.isSuccessful = true;
+
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error getting User Hash";
+
+                    }
+                }
+            }
+
+            return response;
+        }
+
+        public async Task<Response> SelectUserID(string email)
+        {
+            var sqlstatement = "SELECT userID FROM dbo.Users WHERE username = @email";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@email", email);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            int userID = reader.GetInt32(reader.GetOrdinal("userID"));
+                            
+                            // Response obj stores the userHash value inside of the data property
+                            response.data = userID;
+                            response.isSuccessful = true;
+
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error getting User Hash";
+
+                    }
+                }
+            }
+
+            return response;
+
+        }
+
+        public async Task<Response> SelectEventCount(int eventID)
+        {
+            var sqlstatement = "SELECT count FROM dbo.Events WHERE eventID = @eventID";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@eventID", eventID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            int count = reader.GetInt32(reader.GetOrdinal("count"));
+                            
+                            // Response obj stores the userHash value inside of the data property
+                            response.data = count;
+                            response.isSuccessful = true;
+
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error getting event count";
+
+                    }
+                }
+            }
+
+            return response; 
+        }
+
+        public Task<Response> IncrementEvent(int eventID)
+        {
+            // Sql statement to increment the value
+            var sqlstatement = "UPDATE dbo.Events SET count = count + 1 WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            return ExecuteSqlCommand(connection, cmd);
+        }
+        public Task<Response> InsertJoinEvent(int eventID, int userID)
+        {
+            var connection = new SqlConnection(_connectionString);
+            var insertSql = "INSERT INTO dbo.EventsJoined (userID, eventID) values(@userID,@eventID)";
+            var cmd = new SqlCommand(insertSql, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            cmd.Parameters.AddWithValue("@userID", userID);
+            return ExecuteSqlCommand(connection,cmd);
+        }
+
+        public Task<Response> DecrementEvent(int eventID)
+        {
+            // Sql statement to increment the value
+            var sqlstatement = "UPDATE dbo.Events SET count = count - 1 WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            return ExecuteSqlCommand(connection, cmd);
+        }
+
+        /*
+        public Task<Response> DeleteJoinedEvent(int userID)
+        
+        {
+        }
+        */
+
     }
 }

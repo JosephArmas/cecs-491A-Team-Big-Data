@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TeamBigData.Utification.EventManager\TeamBigData.Utification.EventManager.csproj" />
+      <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
     </ItemGroup>
 
 </Project>
