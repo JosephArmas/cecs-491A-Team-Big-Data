@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TeamBigData.Utification.Manager;
 
 namespace Utification.EntryPoint.Controllers
 {
@@ -6,6 +7,11 @@ namespace Utification.EntryPoint.Controllers
     [Route("[controller]")]
     public class ReputationController : ControllerBase
     {
+        private readonly ReputationManager _reputationManager;
+        public ReputationController(ReputationManager reputationManager) 
+        {
+            _reputationManager = reputationManager;
+        }
 
 #if DEBUG
         [Route("health")]
@@ -17,7 +23,23 @@ namespace Utification.EntryPoint.Controllers
 
             return tcs.Task;
         }
-#endif
+#endif        
+
+        [Route("GetReputation")]
+        [HttpGet]
+        public async Task<IActionResult> GetReports()
+        {
+            var result = await _reputationManager.ViewUserReportsAsync().ConfigureAwait(false);
+            return Ok(result);
+        }
+
+        [Route("PostNewReport")]
+        [HttpPost]
+        public async Task<IActionResult> PostNewReport()
+        {
+            var result = await _reputationManager.RecordNewUserReportAsync(4.2).ConfigureAwait(false);
+            return Ok(result);
+        }
 
         public Task<IActionResult> ViewReports()
         {

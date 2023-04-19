@@ -32,10 +32,10 @@ namespace TeamBigData.Utification.Services
             _userProfile = userProfile;
         }
 
-        public async Task<Response> GetUserReports(int amount)
+        public async Task<Response> GetUserReportsAsync(int amount)
         {
             List<DataRow> dataReports = new List<DataRow>();
-            var getReports = await _selectReports.SelectUserReports(_userProfile).ConfigureAwait(false);
+            var getReports = await _selectReports.SelectUserReportsAsync(_userProfile).ConfigureAwait(false);
 
             if(getReports.data != null)
             {
@@ -55,7 +55,7 @@ namespace TeamBigData.Utification.Services
             }
             return _result;
         }
-        public async Task<Response> GetCurrentReputation()
+        public async Task<Response> GetCurrentReputationAsync()
         {
             var getReputation = await _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID).ConfigureAwait(false);
             
@@ -65,12 +65,12 @@ namespace TeamBigData.Utification.Services
             return _result;
         }
 
-        public async Task<Response> UpdateRole(UserProfile userProfile, string role)
+        public async Task<Response> UpdateRoleAsync(UserProfile userProfile, string role)
         {
             Log log;
             _userProfile = new UserProfile(userProfile._userID, role);
 
-            var update = await _updateUserProfile.UpdateUserRole(_userProfile).ConfigureAwait(true);
+            var update = await _updateUserProfile.UpdateUserRoleAsync(_userProfile).ConfigureAwait(true);
 
             if(update.isSuccessful)
             {
@@ -87,9 +87,9 @@ namespace TeamBigData.Utification.Services
             return _result;
         }
 
-        public async Task<Response> UpdateReputation(double reputation)
+        public async Task<Response> UpdateReputationAsync(double reputation)
         {
-            var update = await _updateUserProfile.UpdateUserReputation(_userProfile, reputation).ConfigureAwait(false);
+            var update = await _updateUserProfile.UpdateUserReputationAsync(_userProfile, reputation).ConfigureAwait(false);
 
             if (update.isSuccessful)
             {
@@ -103,10 +103,10 @@ namespace TeamBigData.Utification.Services
         /// Calculates a user's new reputation when a new report is submitted
         /// </summary>
         /// <returns><see cref="UserProfile"/></returns>
-        public async Task<Response> CalculateNewUserReputation()
+        public async Task<Response> CalculateNewUserReputationAsync()
         {
             
-            var getNewReputation = await _selectReports.SelectNewReputation(_report).ConfigureAwait(false);
+            var getNewReputation = await _selectReports.SelectNewReputationAsync(_report).ConfigureAwait(false);
             
             var getOldReputation = _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID);                   
                         
@@ -130,9 +130,9 @@ namespace TeamBigData.Utification.Services
             return _result;
         }
                 
-        public async Task<Response> StoreNewReport()
+        public async Task<Response> StoreNewReportAsync()
         {
-            var insertReport = await _insertReport.InsertUserReport(_report).ConfigureAwait(false);
+            var insertReport = await _insertReport.InsertUserReportAsync(_report).ConfigureAwait(false);
 
             if(insertReport.isSuccessful) 
             {

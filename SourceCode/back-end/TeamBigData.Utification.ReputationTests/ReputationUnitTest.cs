@@ -27,11 +27,9 @@ namespace TeamBigData.Utification.ReputationTests
             ReputationManager repMan = new ReputationManager(repSer, result, report, logger, userAccount, userProfile);
 
             //Act
-            //var act0 = repMan.IncreaseReputationByPointOne();
             //var act = repMan.RecordNewUserReport(4.2);
 
             //Assert
-            //Assert.IsTrue(act0.Result.isSuccessful);
             //Assert.IsTrue(act.Result.isSuccessful);
         }
 
