@@ -1,11 +1,20 @@
-const webServiceUrl = 'https://localhost:7259/account/delete';
+//const webServiceUrl = 'https://localhost:7259/account/delete';
+const user = {}
+user.userID = 0;
+user.fName = ''
+user.lName = ''
+user.address = ''
+user.DateTime = System.DateTime.UtcNow
+user.GenericIdentity = "Admin User"
 const deleteAccount = async () => {
     const confirmation = window.confirm('Are you sure you want to delete this account?');
         if (!confirmation) {
           return;
         }
         try {
-            var request = axios.post(webServiceUrl);
+            const del = document.getElementById('input-container').value;
+            const webServiceUrl = 'https://localhost:7259/account/deletesA/${del}/${user}'
+            var request = await axios.delete(webServiceUrl, del, user);
             request.then(response => {
                 if (response.status === 200) {
                   alert("Account deleted successfully");

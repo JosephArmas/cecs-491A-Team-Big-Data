@@ -8,7 +8,7 @@ using TeamBigData.Utification.DeletionService;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 
-namespace TeamBigData.Utification.Manager
+namespace TeamBigData.Utification.DeletionManager
 {
     public class DeletionManager
     {
@@ -19,7 +19,7 @@ namespace TeamBigData.Utification.Manager
         /// <param name="user">The account that will activate the deletion</param>
         /// <param name="del">The account that will be deleted</param>
         /// <returns>Response if the account was deleted</returns>
-        public Response DeleteAccount(UserProfile del, UserProfile user)
+        public async Task<Response> DeleteAccount(UserProfile del, UserProfile user)
         {
             bool isAdmin()
             {
@@ -31,7 +31,7 @@ namespace TeamBigData.Utification.Manager
             if ((user._userID == del._userID) || isAdmin())
             {
                 Task<Response> taskF = deletionService.DeletePIIFeatures();
-                Task<Response> taskP = deletionService.DeletePIIProfile();
+                Task<Response> taskP =  deletionService.DeletePIIProfile();
                 if (taskF.Result.isSuccessful == false)
                 {
                     answer = taskF.Result;

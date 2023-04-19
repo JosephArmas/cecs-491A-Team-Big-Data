@@ -1,11 +1,11 @@
-const webServiceUrl = 'https://localhost:7259/account/delete';
+const webServiceUrl = 'https://localhost:7259/account/deletes';
 const deleteAccount = async () => {
     const confirmation = window.confirm('Are you sure you want to delete your account?');
         if (!confirmation) {
           return;
         }
         try {
-            var request = axios.post(webServiceUrl);
+            var request = axios.delete(webServiceUrl);
             request.then(response => {
                 if (response.status === 200) {
                   alert("Account deleted successfully");
