@@ -77,8 +77,24 @@ CONSTRAINT UserProfiles_Foreign_Key_01 FOREIGN KEY (userID) references dbo.Users
 ```
 CREATE TABLE dbo."Events"
 (
-userID int NOT NULL,
-"disabled" int DEFAULT 0,
+title        char(30)      not null,
+    description  char(150)     not null,
+    eventID      int identity (200, 1)
+        constraint Events_pk
+            primary key,
+    eventCreated date          not null,
+    count        int default 0 not null,
+    userID       int           not null
+);
+
+create table dbo.EventsJoined
+(
+    userID  int not null,
+    eventID int not null
+        constraint EventsJoined_Events_eventID_fk
+            references dbo.Events,
+    constraint EventsJoined_pk
+        primary key (userID, eventID)
 );
 
 CREATE TABLE dbo.Pictures
