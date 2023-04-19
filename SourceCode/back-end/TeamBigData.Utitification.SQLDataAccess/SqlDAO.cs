@@ -16,12 +16,10 @@ namespace TeamBigData.Utification.SQLDataAccess
     public class SqlDAO : IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDBAnalysis
     {
         private readonly String _connectionString;
-        private readonly IConfiguration _configuration;
 
-        public SqlDAO(String connectionString, IConfiguration configuration)
+        public SqlDAO(String connectionString)
         {
             _connectionString = connectionString;
-            _configuration = configuration;
         }
 
         public Task<Response> InsertUser(UserAccount user)
@@ -1576,7 +1574,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             }
         }
 
-        public async Task<Response> SelectUserReports(UserProfile userProfile)
+        public async Task<Response> SelectUserReportsAsync(UserProfile userProfile)
         {
             Response result = new Response();
 
@@ -1612,7 +1610,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return result;
         }
 
-        public async Task<Response> UpdateUserRole(UserProfile userProfile)
+        public async Task<Response> UpdateUserRoleAsync(UserProfile userProfile)
         {
             Response result = new Response();
 
@@ -1655,7 +1653,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return result;                        
         }
 
-        public async Task<Response> SelectNewReputation(Report report)
+        public async Task<Response> SelectNewReputationAsync(Report report)
         {
             Response result = new Response();
             double newReputation = report._rating;
@@ -1703,7 +1701,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return result;
         }
 
-        public async Task<Response> UpdateUserReputation(UserProfile userProfile, double newReputation)
+        public async Task<Response> UpdateUserReputationAsync(UserProfile userProfile, double newReputation)
         {
             Response result = new Response();
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -1740,7 +1738,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return result;
         }
 
-        public async Task<Response> InsertUserReport(Report report)
+        public async Task<Response> InsertUserReportAsync(Report report)
         {
             Response result = new Response();
             using (SqlConnection connection = new SqlConnection(_connectionString))
