@@ -36,8 +36,21 @@ namespace Utification.EntryPoint.Controllers
         [Route("deletes")]
         //[HttpPost]
         //[HttpDelete("{user}/{del}")]
-        [HttpDelete("deletes/{del}/{user}")]
-        public async Task<IActionResult> DeleteAccount([FromRoute]UserProfile del, [FromRoute]UserProfile user)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            //var tcs = new TaskCompletionSource<IActionResult>();
+            
+            var response = await _deletionManager.DeleteAccount(_userProfile, _userProfile).ConfigureAwait(false);
+            //tcs.SetResult(Ok(response.data));
+            return Ok(response);
+        }
+
+        [Route("deletesA")]
+        //[HttpPost]
+        //[HttpDelete("{user}/{del}")]
+        [HttpDelete("deletesA/{del}/{user}")]
+        public async Task<IActionResult> DeleteAccountAdmin([FromRoute]UserProfile del, [FromRoute]UserProfile user)
         {
             //var tcs = new TaskCompletionSource<IActionResult>();
             var response = await _deletionManager.DeleteAccount(del, user).ConfigureAwait(false);

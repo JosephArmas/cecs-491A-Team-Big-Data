@@ -31,7 +31,7 @@ namespace TeamBigData.Utification.DeletionManager
             if ((user._userID == del._userID) || isAdmin())
             {
                 Task<Response> taskF = deletionService.DeletePIIFeatures();
-                Task<Response> taskP =  deletionService.DeletePIIProfile();
+                Task<Response> taskP = deletionService.DeletePIIProfile();
                 if (taskF.Result.isSuccessful == false)
                 {
                     answer = taskF.Result;

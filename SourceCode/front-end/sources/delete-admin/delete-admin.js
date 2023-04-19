@@ -1,3 +1,4 @@
+(function (root) {
 //const webServiceUrl = 'https://localhost:7259/account/delete';
 const user = {}
 user.userID = 0;
@@ -7,7 +8,7 @@ user.address = ''
 user.DateTime = System.DateTime.UtcNow
 user.GenericIdentity = "Admin User"
 const deleteAccount = async () => {
-    const confirmation = window.confirm('Are you sure you want to delete this account?');
+    const confirmation = root.confirm('Are you sure you want to delete this account?');
         if (!confirmation) {
           return;
         }
@@ -31,3 +32,4 @@ const deleteAccount = async () => {
 }
 
 document.getElementById("delete-btn").addEventListener("click", deleteAccount);
+})(window, window.ajaxClient);
