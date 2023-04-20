@@ -19,33 +19,22 @@ completed int DEFAULT 0,
 CONSTRAINT Pins_PK PRIMARY KEY (pinID)
 );
 
-CREATE TABLE dbo.Extensions
-(
-extension varchar(5) NOT NULL
-CONSTRAINT Ext_PK PRIMARY KEY (extension)
-);
-
-INSERT INTO dbo.Extensions values ('.png'), ('.jpeg');
-
 CREATE TABLE dbo.PinPic
 (
-pinID int,
-"filename" varchar(50) NOT NULL,
-extension varchar(5) NOT NULL,
+pinID int NOT NULL,
+"key" varchar(100) NOT NULL,
 CONSTRAINT PinPic_PK PRIMARY KEY(pinID),
 CONSTRAINT PinPic_FK_01 Foreign KEY (pinID) references dbo.Pins(pinID),
-CONSTRAINT PinPic_FK_02 Foreign Key (extension) references dbo.Extensions(extension),
-CONSTRAINT PinPic_UK_01 UNIQUE ("filename")
+CONSTRAINT PinPic_UK_01 UNIQUE ("key")
 );
 
 CREATE TABLE dbo.ProfilePic
 (
-userID int,
-"filename" varchar(50),
+userID int NOT NULL,
+"key" varchar(100),
 extension varchar(5),
-PRIMARY KEY(userID),
-CONSTRAINT ProfilePic_FK_01 Foreign Key (extension) references dbo.Extensions(extension),
-CONSTRAINT ProfilePic_UK_01 UNIQUE ("filename")
+CONSTRAINT ProfilePic_PK PRIMARY KEY(userID),
+CONSTRAINT ProfilePic_UK_01 UNIQUE ("key")
 );
 
 CREATE TABLE dbo."Services"

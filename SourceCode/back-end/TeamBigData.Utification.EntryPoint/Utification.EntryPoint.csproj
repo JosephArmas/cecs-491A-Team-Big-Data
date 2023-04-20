@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -14,6 +14,7 @@
     <ProjectReference Include="..\TeamBigData.Utification.AnalysisManager\TeamBigData.Utification.AnalysisManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
   </ItemGroup>

@@ -25,20 +25,12 @@ namespace Utification.EntryPoint.Controllers
     }
     [ApiController]
     [Route("[controller]")]
-    public class PinController : Controller
+    public class PinController : ControllerBase
     {
         public PinController()
         {
         }
-        [Authorize]
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
+
         [Authorize]
         [Route("GetAllPins")]
         [HttpGet]

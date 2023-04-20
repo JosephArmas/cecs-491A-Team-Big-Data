@@ -125,6 +125,8 @@
                 if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
                 {
                     pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
+                    pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
+                    pinContent = pinContent + `<button id='deletePin' onclick='deletePicture(${i})'>Delete Picture</button>`;
                 }
     
                 const infowindow = new google.maps.InfoWindow({
@@ -152,6 +154,12 @@
                 }
             }
         });
+    }
+
+    window.uploadPicture = async function(pos)
+    {
+        let pinID = pinsInfo[pos]._pinID;
+        uploadPinPic(pinID);
     }
 
     window.completePinHandler = function(pos)
@@ -354,7 +362,7 @@
         };
 
         let content = `<h1>${title}</h1><p>${description}</p>`;
-
+        
         const marker = new google.maps.Marker({
             position: latLng,
             map: map,

@@ -15,17 +15,8 @@ namespace Utification.EntryPoint.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    public class RecoveryController : Controller
+    public class RecoveryController : ControllerBase
     {
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
-
         [Route("request")]
         [HttpPost]
         public Task<IActionResult> SendRequest([FromBody] RequestBody r)

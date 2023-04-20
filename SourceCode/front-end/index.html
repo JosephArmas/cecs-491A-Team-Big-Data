@@ -31,7 +31,8 @@
                             <li>feature 3</li>
                             <li>feature 4</li>
                             <li>feature 5</li>
-                            <li>feature 6</li>
+                            <li>File Selector</li>
+                            <li><input type="file" id="fileSelector" name="Select File" accept="image/jpg, image/png"></li>
                         </ul>
                     </nav>
                 </div>
@@ -182,8 +183,9 @@
             </div>
             <div class="content-container">
                 <div class="box-1">
+                    <img src="blank image.jpg" style="height:100%; width:100%; object-fit:contain">
                 </div>
-                <div class="box-2">
+                <div class="box-2" id="file-container">
                 </div> 
             </div>
             <div class="quote">
@@ -204,6 +206,7 @@
         <!--<script src="sources/otp/otp.js"> </script>-->
         <script src="sources/otp/recOTP.js"></script>
         <script src="sources/recovery/recovery.js"> </script>
+        <script src="sources/fileUpload/file.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>
@@ -211,6 +214,5 @@
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
 
-        
     </body>
 </html>

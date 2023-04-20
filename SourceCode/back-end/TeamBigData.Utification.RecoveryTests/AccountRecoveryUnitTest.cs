@@ -6,7 +6,6 @@ using System.Security.Principal;
 using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
-using Microsoft.AspNetCore.Identity;
 
 namespace TeamBigData.Utification.AccountRecoveryTests
 {

@@ -94,7 +94,6 @@ function loginUser()
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
         const jsonObj = JSON.parse(jsonPayload);
-        
         if(jsonObj.authenticated === "true" && jsonObj.role !== 'Anonymous User' )
         {
             // save JWT token to local storage
@@ -106,10 +105,10 @@ function loginUser()
 
             // display otp
             otpDisplay.style.color = "blue";
-            otpDisplay.innerHTML = jsonObj.otp;
+            otpDisplay.innerHTML = "<h3>" + jsonObj.otp + "</h3>";
             otpDisplay.style.fontSize = "20px";
-            otpContainer.style.display = "block";
             loginContainer.style.display = "none";
+            showOtp();
 
             // take in otp value to post in the back end
             const otpBtn = document.querySelector("#otp-submit");

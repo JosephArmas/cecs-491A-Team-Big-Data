@@ -5,16 +5,8 @@ namespace Utification.EntryPoint.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AnalysisController : Controller
+    public class AnalysisController : ControllerBase
     {
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
         [Route("logins")]
         [HttpGet]
         public Task<IActionResult> GetLogins()

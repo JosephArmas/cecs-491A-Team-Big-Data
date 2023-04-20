@@ -1,12 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Net.NetworkInformation;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
@@ -1244,6 +1237,150 @@ namespace TeamBigData.Utification.SQLDataAccess
                 tcs.SetResult(result);
                 return tcs.Task;
             }
+        }
+
+        public Task<Response> GetPinOwner(int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                // Creates an Insert SQL statements using the collumn names and values given
+                var sql = "SELECT userID FROM dbo.Pins Where pinID = @p";
+                try
+                {
+                    var command = new SqlCommand(sql, connection);
+                    command.Parameters.Add(new SqlParameter("@p", pinID));
+                    int id = (int)command.ExecuteScalar();
+                    if(id > 0)
+                    {
+                        result.data = id;
+                        result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> UploadPinPic(String key, int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            var sql = "Insert into dbo.PinPic(\"key\", pinID) values (@k, @ID)";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@k", key));
+            command.Parameters.Add(new SqlParameter("@ID", pinID));
+            return ExecuteSqlCommand(connection, command);
+        }
+
+        public Task<Response> UploadProfilePic(String key, int userID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            var sql = "Insert into dbo.ProfilePic(\"key\", pinID) values (@k, @ID)";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@k", key));
+            command.Parameters.Add(new SqlParameter("@ID", userID));
+            return ExecuteSqlCommand(connection, command);
+        }
+        public Task<Response> DownloadPinPic(int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                // Creates an Insert SQL statements using the collumn names and values given
+                var sql = "SELECT \"key\" FROM dbo.PinPic Where pinID = @p";
+                try
+                {
+                    var command = new SqlCommand(sql, connection);
+                    command.Parameters.Add(new SqlParameter("@p", pinID));
+                    String id = (String)command.ExecuteScalar();
+                    if (id.Length > 0)
+                    {
+                        result.data = id;
+                        result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> DownloadProfilePic(int userID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                // Creates an Insert SQL statements using the collumn names and values given
+                var sql = "SELECT \"key\" FROM dbo.ProfilePic Where userID = @ID";
+                try
+                {
+                    var command = new SqlCommand(sql, connection);
+                    command.Parameters.Add(new SqlParameter("@ID", userID));
+                    String id = (String)command.ExecuteScalar();
+                    if (id.Length > 0)
+                    {
+                        result.data = id;
+                        result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public Task<Response> DeletePinPic(int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            var sql = "Delete from dbo.PinPic where pinID = @ID";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@ID", pinID));
+            return ExecuteSqlCommand(connection, command);
+        }
+
+        public Task<Response> DeleteProfilePic(int userID) 
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            var sql = "Delete from dbo.ProfilePic where userID = @ID";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@ID", userID));
+            return ExecuteSqlCommand(connection, command);
         }
     }
 }

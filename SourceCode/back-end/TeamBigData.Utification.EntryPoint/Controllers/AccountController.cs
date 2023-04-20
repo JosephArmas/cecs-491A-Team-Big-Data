@@ -27,7 +27,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly SecurityManager _securityManager;
         private UserAccount _userAccount;
@@ -46,14 +46,6 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
         }
 
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
         //try curl -i -X GET "https://localhost:7259/account/health"
 
         //2 Main ways to send parameters forms which curl uses on the top
@@ -75,11 +67,13 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString(login.password);
             _userAccount = new UserAccount();
+            _userAccount.GenerateOTP();
             _userProfile = new UserProfile();
             var secMan = new SecurityManager();
             var response = await secMan.LoginUser(login.username, encryptedPassword, encryptor, _userProfile);
             if (response.isSuccessful)
             {
+                _userProfile = response.data;
                 //Create JWT token with our claims
                 var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -88,13 +82,13 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
                 //Token specifications
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, _userAccount._userID.ToString()),
-                    new Claim(ClaimTypes.Name, _userAccount._username),
+                    new Claim(ClaimTypes.NameIdentifier, _userProfile._userID.ToString()),
+                    new Claim(ClaimTypes.Name, login.username),
                     new Claim(ClaimTypes.Role, _userProfile.Identity.AuthenticationType),
                     new Claim("authenticated", "true", ClaimValueTypes.String),
                     new Claim("otp", _userAccount._otp, ClaimValueTypes.String),
                     new Claim("otpCreated", _userAccount._otpCreated, ClaimValueTypes.String),
-                    new Claim("userHash", _userAccount._userHash, ClaimValueTypes.String)
+                    //new Claim("userHash", _userAccount._userHash, ClaimValueTypes.String)
                 };
 
                 
@@ -118,7 +112,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         }
 
         //Authorize requires JWT signature in authorization header
-        [Authorize]
+        //[Authorize]
         [Route("authentication")]
         [HttpGet]
         public Task<IActionResult> Logout()
