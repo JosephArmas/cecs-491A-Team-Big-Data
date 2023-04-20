@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.logout-container 
+{
+    display: flex;
+    justify-content: flex-end; 
+    padding-top: 20px; 
+    padding-right: 20px;
+}
+
+
+.logout-container button
+{
+    min-width: 100px;
+    background-color: #00ACB7;
+    color: white
+}
+
+.admin-features
+{
+    display: flex;
+    /* justify-content: space-around; */
+    flex-direction: column;
+}
+
+.user-management button
+{
+    min-width: 200px;
+    min-height: 30px;
+}
+
+.usage-analysis button
+{
+    min-width: 200px;
+    min-height: 30px;
+} 
+
+.user-management
+{
+    display: flex;
+    padding-top: 100px;
+    padding-left: 20px;
+}
+
+.usage-analysis
+{
+    display: flex;
+    padding-top: 100px;
+    padding-left: 20px;
+}
+
+

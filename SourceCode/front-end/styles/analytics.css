@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#home-title
+{
+    text-align: center;
+}
+.analytics-header
+{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px; 
+}
+
+#analytics-home
+{
+    color: white;
+    font-size: 1.55rem;
+    background-color: #ca74ff;
+}
+
+#analytics-home:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
+#analytics-back
+{
+    color: white;
+    font-size: 1.55rem;
+    background-color: #ca74ff;
+}
+
+#analytics-back:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
+#analytics-logout
+{
+    color: white;
+    font-size: 1.55rem;
+    background-color: #00acb7;
+}
+
+#analytics-logout:hover
+{
+    background-color: #85f7ff;
+    color: white;
+}
+
+.chart-options
+{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.chart-options button
+{
+    width: 100px;
+    height: 30px;
+}
+
+.chart-options button:hover
+{
+    background-color: #ca74ff;
+    color: white;
+}
+
+#registration-title
+{
+    text-align: center;
+}
+
+.charts
+{
+    display: none;
+}
+
+.analytics-container
+{
+    display: none;
+}
