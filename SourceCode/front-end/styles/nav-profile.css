@@ -53,6 +53,12 @@
     cursor: pointer;
 }
 
+#events-option:hover
+{
+    color: #ca74ff;
+    cursor: pointer;
+}
+
 #container
 {
     display: none;
@@ -60,7 +66,7 @@
 
 .profile-container
 {
-    display: block;
+    display: none;
 }
 
 
