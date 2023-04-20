@@ -1,10 +1,11 @@
 // TODO:
-// * input validations
-// * check if passwords match when confirming
-// * have the ability to see password?
+
 // document.querySelector("#container").addEventListener("click",secClicked());
-profileBuild = false;
-eventsBuild = false;
+let profileBuild = false;
+let eventsBuild = false;
+let eventsCreatedBuild = false;
+let eventsJoinedBuild = false;
+
 function secClicked()
 {
     // var btnContainer = document.querySelector(".container");
@@ -28,6 +29,7 @@ function updateClicked()
     updateContainer.style.display = "block";
 
 }
+
 /*
 function homeClicked()
 {
@@ -105,11 +107,12 @@ function buildEvents()
 {
     if(!eventsBuild)
     {
-        let titleContainer = document.querySelector('.title')
+        let titleContainer = document.querySelector('.events-container .title')
         let headerDiv = document.querySelector('.events-container .top-button-container')
         let backBtn = document.createElement('button');
         backBtn.textContent = "Back"
         backBtn.id = "b-h"
+
         // * Add Event Listener
         headerDiv.appendChild(backBtn);
         let title = document.createElement('h1')
@@ -119,20 +122,69 @@ function buildEvents()
         let optionsDiv = document.querySelector('.options')
         // * Add Event Listener
         let ceBtn = document.createElement('button');
-        ceBtn.textContent = "Create Events"
+        ceBtn.textContent = "Create Events";
+        ceBtn.id = "create-event";
 
         // * Add Event Listener
         let jeBtn = document.createElement('button');
-        jeBtn.textContent = "Joined Events"
+        jeBtn.textContent = "Joined Events";
+        jeBtn.id = "join-event";
         
         optionsDiv.appendChild(ceBtn);
         optionsDiv.appendChild(jeBtn);
+        
+        eventsBuild = true;
         
 
         
     }
 }
 
+function buildEventsCreated()
+{
+    if(!eventsCreatedBuild)
+    {
+        let titleContainer = document.querySelector('.events-created-container .title')
+        let headerDiv = document.querySelector('.events-created-container .top-button-container')
+        let backBtn = document.createElement('button');
+        backBtn.textContent = "Back"
+        backBtn.id = "b-h"
+
+        // * Add Event Listener
+        headerDiv.appendChild(backBtn);
+        let title = document.createElement('h1')
+        title.textContent = "Events Created"
+        title.style.textAlign = "center";
+        titleContainer.appendChild(title);
+        eventsCreatedBuild = true;
+
+        // * Do injection 
+        
+    }
+}
+
+function buildEventsJoined()
+{
+    if(!eventsJoinedBuild)
+    {
+        let titleContainer = document.querySelector('.events-joined-container .title')
+        let headerDiv = document.querySelector('.events-joined-container .top-button-container')
+        let backBtn = document.createElement('button');
+        backBtn.textContent = "Back"
+        backBtn.id = "b-h"
+
+        // * Add Event Listener
+        headerDiv.appendChild(backBtn);
+        let title = document.createElement('h1')
+        title.textContent = "Events Joined"
+        title.style.textAlign = "center";
+        titleContainer.appendChild(title);
+        eventsJoinedBuild = true;
+
+        // * Do injection 
+        
+    }
+}
 
 
 function changePasswordClicked()
@@ -153,4 +205,7 @@ function changeUsernameClicked()
 }
 
 // buildProfileView();
-buildEvents();
+// buildEvents();
+// buildEventsCreated();
+// buildEventsJoined();
+

@@ -3,14 +3,50 @@
     padding: 0;
 }
 
-.events-container
-{
-    display: block;
-}
-
 .options
 {
     display: flex;
-    justify-content: space-between;
-    padding: 20px 20px;
+    justify-content: center;
+    padding: 30px 30px;
+}
+
+#create-event
+{
+    margin-right: 50px;
+}
+
+#join-event
+{
+    margin-left: 50px;
+}
+
+#create-event:hover
+{
+    background-color: #ca74ff;
+    color: white;
+
+}
+
+#join-event:hover
+{
+    background-color: #ca74ff;
+    color: white;
+}
+
+/* events home */
+.events-container
+{
+    display: none;
+}
+
+/* events created */
+.events-created-container
+{
+    display: none;
+}
+
+/* events joined */
+.events-joined-container
+{
+    display: none;
 }

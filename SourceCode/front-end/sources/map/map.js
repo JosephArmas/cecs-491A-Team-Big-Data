@@ -408,24 +408,30 @@
         });
     }
    
-    window.initMap = function() {
-        // errorsDiv.innerHTML = "";
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: CSULB,
-            minZoom: 8,
-            maxZoom: 18,
-            zoom: 15,
-            mapId: 'bb1d4678c71528ff',
-            restriction: {
-                latLngBounds: CALIFORNIA_BOUNDS,
-                strictBounds: false
-            },
-            mapTypeControl: false,
-            clickableIcons: false
-        });
-        getMarkerHandler();
+    window.initMap = function() 
+    {
+        // Selects all the map elements on html (admin & reg user)
+        const mapElements = document.querySelectorAll(".map");
+
+        // Loop through each of the maps elements on html (admin & reg user)
+        mapElements.forEach(mapElement => {
+            map = new google.maps.Map(mapElement, {
+                center: CSULB,
+                minZoom: 8,
+                maxZoom: 18,
+                zoom: 15,
+                mapId: 'bb1d4678c71528ff',
+                restriction: {
+                    latLngBounds: CALIFORNIA_BOUNDS,
+                    strictBounds: false
+                },
+                mapTypeControl: false,
+                clickableIcons: false
+            });
+            getMarkerHandler();
         //checks jwt signature for role
-        if (localStorage.getItem("role")==="Admin User"||localStorage.getItem("role")==="Reputable User"){
+        if (localStorage.getItem("role")==="Admin User"||localStorage.getItem("role")==="Reputable User")
+        {
             //user can add pins to map
             map.addListener("click", (e) => 
             {
@@ -436,6 +442,10 @@
                 placeNewPin(e.latLng, map);
             });
         }
+        });
+
+        
+                
     }
     document.head.appendChild(script);
 })(window, window.ajaxClient);

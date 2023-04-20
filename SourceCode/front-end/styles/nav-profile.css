@@ -24,7 +24,7 @@
     color: white;
 }
 
-.options-container{
+.options-container {
 
     display: flex;
     justify-content: space-around;
@@ -32,6 +32,7 @@
 }
 
 
+/*
 .box-container
 {
     display: flex;
@@ -40,6 +41,7 @@
     margin-left: 18%
 
 }
+*/
 
 #sec:hover
 {
@@ -64,10 +66,18 @@
     display: none;
 }
 
-.profile-container
+
+/*
+#profile-container
 {
     display: none;
 }
+*/
+.nav-profile-container
+{
+    display: none;
+}
+
 
 
 

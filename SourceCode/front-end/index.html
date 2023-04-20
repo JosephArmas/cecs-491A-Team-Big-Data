@@ -17,9 +17,9 @@
         <link rel="stylesheet" href="styles/registration.css">
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/analytics.css">
-        <link rel="stylesheet" href="styles/home-admin.css">
         <link rel="stylesheet" href="styles/nav-profile.css">
         <link rel="stylesheet" href="styles/nav-profile-events.css">
+        <link rel="stylesheet" href="styles/home-admin.css">
     </head>
     <body>
 
@@ -33,13 +33,14 @@
         <div class="confirm"></div>
 
         <!-- * Nav Profile -->
-        <div class="profile-container">
+        <div class="nav-profile-container" id="profile-container">
            <div class="top-button-container"></div> 
            <div class="options-container"></div>
            <div class="container">
             <div class="box-container"></div>
            </div>
         </div>
+
         <!-- * Events -->
         <div class="events-container">
            <div class="top-button-container"></div> 
@@ -47,14 +48,47 @@
            <div class="options"></div>
         </div>
 
+        <!-- * Events Created -->
+        <div class="events-created-container">
+           <div class="top-button-container"></div> 
+           <div class="title"></div>
+           <!-- * Injecting needs to be done-->
+           <div class="events-created"></div>
+        </div>
+
+        <!-- * Events Joined-->
+        <div class="events-joined-container">
+           <div class="top-button-container"></div> 
+           <div class="title"></div>
+           <!-- * Injecting needs to be done-->
+           <div class="events-joined"></div>
+        </div>
+
+
         <!-- * Admin view -->
+        <!-- 
         <div class="home-admin-container">
             <div class="logout-container"></div>
             <div class="admin-features">
                 <div class="user-management"></div>
                 <div class="usage-analysis"></div>
             </div>
+        </div> -->
+        <div class="home-admin-container">
+            <div class="home-header-container">
+                <div class="menu-container">
+                    <nav class="ham-menu-container">
+                        <ul class="features"></ul>
+                    </nav>
+                </div>
+                <div class="title"></div>
+                <div class="profile-container">
+                    <div id="logout"></div>
+                </div>
+            </div>
+            <div class="map" id="map"></div>
         </div>
+
 
         <!-- * Analytics -->
         <div class="analytics-container" >
@@ -176,13 +210,12 @@
 
         <!-- Page specific (js file) -->
         <script src="sources/main.js"></script>
+        <script src="sources/profile/nav-profile.js"></script>
         <script src="sources/end-point/endpoint.js"></script>
         <script src="sources/response/response.js"></script>
         <script src="sources/otp/otp.js"></script>
         <script src="sources/roles/roles.js"></script>
         <script src="sources/server/server.js"></script>
-        <script src="sources/profile/nav-profile.js"></script>
-
 
         
     </body>
