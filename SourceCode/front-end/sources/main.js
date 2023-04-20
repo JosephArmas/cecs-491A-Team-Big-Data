@@ -30,6 +30,7 @@ function homeClicked()
     var globalErrors = document.querySelector("#errors");
     var recoveryContainer = document.querySelector(".recovery-container");
     var recoveryOTPContainer = document.querySelector(".recOTP-container");
+    var reportsContainer = document.querySelector(".reports-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
@@ -37,6 +38,7 @@ function homeClicked()
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
+    reportsContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 

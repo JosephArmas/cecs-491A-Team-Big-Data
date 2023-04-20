@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Services;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
+using System.Linq.Expressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,8 +57,9 @@ builder.Services.AddSingleton<SecurityManager>();
 
 // Reputation Dependencies
 builder.Services.AddTransient<SqlDAO>(reportsDAO => { return new SqlDAO(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")); });
-builder.Services.AddTransient<ReputationManager>();
-builder.Services.AddTransient<ReputationService>();
+//builder.Services.AddTransient<ReputationService>(reputationService => { return new ReputationService(new Response(), reportsDAO, )});
+//builder.Services.AddTransient<ReputationManager>(reputationManager => { return new ReputationManager()});
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

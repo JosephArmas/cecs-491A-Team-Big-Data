@@ -27,26 +27,49 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("GetReputation")]
         [HttpGet]
-        public async Task<IActionResult> GetReports()
+        public async Task<IActionResult> GetReportsAsync()
         {
-            var result = await _reputationManager.ViewUserReportsAsync().ConfigureAwait(false);
-            return Ok(result);
+            var result = await _reputationManager.ViewCurrentReputationAsync().ConfigureAwait(false);
+
+            if (result.isSuccessful)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
         [Route("PostNewReport")]
         [HttpPost]
-        public async Task<IActionResult> PostNewReport()
+        public async Task<IActionResult> PostNewReportAsync()
         {
             var result = await _reputationManager.RecordNewUserReportAsync(4.2).ConfigureAwait(false);
-            return Ok(result);
+
+            if (result.errorMessage != null)
+            {
+                IActionResult error = Unauthorized(result.errorMessage);
+                switch(result.errorMessage)
+                {
+                    case "Bad Request":
+                        error = BadRequest(result);
+                        break;
+
+                }
+                return error;
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
 
-        public Task<IActionResult> ViewReports()
+        [Route("ViewReports")]
+        public async Task<IActionResult> ViewReportsAsync()
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-
-            tcs.SetResult(Ok("Healthy"));
-            return tcs.Task;
+            var result = _reputationManager.ViewUserReportsAsync().ConfigureAwait(false);     
+            return Ok(result);
         }
     }
 }

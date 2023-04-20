@@ -6,6 +6,7 @@ using TeamBigData.Utification.Models;
 using System.Security.Principal;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -26,6 +27,27 @@ namespace TeamBigData.Utification.Manager
             _logger = logger;
             _userAccount = userAccount;
             _userProfile = userProfile;
+        }
+
+        public async Task<Response> ViewCurrentReputationAsync()
+        {
+            Log getReputationLog;
+
+            var getReputation = await _reputationService.GetCurrentReputationAsync().ConfigureAwait(false);
+
+            if(getReputation.isSuccessful)
+            {
+                _result.isSuccessful = true;
+                getReputationLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Successfully retrieved the users reputation from the data store.");    
+            }
+            else
+            {
+                getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Failed to retrieve users reputation from the data store");
+            }
+
+            await _logger.Log(getReputationLog).ConfigureAwait(false);
+
+            return _result;
         }
 
         public async Task<Response> ViewUserReportsAsync()
@@ -51,6 +73,7 @@ namespace TeamBigData.Utification.Manager
         {
             Log getReputationLog;
             Log updateReputationLog;
+
             var getReputation = await _reputationService.GetCurrentReputationAsync().ConfigureAwait(false);
 
             if (getReputation.isSuccessful)
@@ -96,10 +119,10 @@ namespace TeamBigData.Utification.Manager
 
             Regex feedbackValidation = new Regex(@"^[a-zA-Z0-9\s.@áéíóúüñ¿¡ÁÉÍÓÚÜÑ-]*$");
 
-            if (!(feedbackValidation.IsMatch(_report._feedback) && _report._feedback.Length > 7 && _report._feedback.Length < 151))
+            if (!(feedbackValidation.IsMatch(_report._feedback) && _report._feedback.Length > 7 && _report._feedback.Length <= 150))
             {
                 feedbackValidationLog = new Log(1, "Error", _userAccount._userHash, "Report Feedback Validation", "Business", "Users feedback violates validation check");
-                _result.errorMessage = feedbackValidation.Match(_report._feedback).ToString();
+                _result.errorMessage = "Bad Request";
             }
             else
             {
