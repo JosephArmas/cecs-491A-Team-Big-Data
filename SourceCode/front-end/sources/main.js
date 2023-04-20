@@ -64,8 +64,6 @@ function regView()
     homeContainer.style.display = "block";
 }
 
-// regView();
-// adminView();
 
 function buildHomeUserView()
 {
@@ -201,4 +199,7 @@ function buildAdminView()
     }
     
 }
-
+// * UnComment to work on either view to work on it
+// regView();
+// adminView();
+// buildProfileView();
