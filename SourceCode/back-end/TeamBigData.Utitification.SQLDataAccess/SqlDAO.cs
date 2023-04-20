@@ -69,6 +69,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@uID", user._userID));
             command.Parameters.Add(new SqlParameter("@n", user._firstName));
             command.Parameters.Add(new SqlParameter("@ln", user._lastName));
+            command.Parameters.Add(new SqlParameter("@add", user._address));
             command.Parameters.Add(new SqlParameter("@bday", user._birthday));
             command.Parameters.Add(new SqlParameter("@role", user.Identity.AuthenticationType));
             return ExecuteSqlCommand(connection, command);

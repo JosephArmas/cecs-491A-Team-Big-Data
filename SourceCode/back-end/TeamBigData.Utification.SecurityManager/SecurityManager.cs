@@ -56,6 +56,7 @@ namespace TeamBigData.Utification.Manager
                 userID = (int)response2.data;
                 userProfile = new UserProfile(userID, "Regular User");
                 response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
+                Console.WriteLine(response.errorMessage);
                 stopwatch.Stop();
                 Log log;
                 var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
