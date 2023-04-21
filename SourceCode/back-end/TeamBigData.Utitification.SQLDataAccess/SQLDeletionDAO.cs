@@ -88,6 +88,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         } 
 
+        // Events Start
         public Task<Response> DeleteJoinedEvent(int userID, int eventID)
         {
             var sqlstatement = "DELETE FROM dbo.EventsJoined WHERE userID = @userID and eventID = @eventID";
@@ -98,6 +99,16 @@ namespace TeamBigData.Utification.SQLDataAccess
             
             return ExecuteSqlCommand(connection, cmd);
 
+        }
+
+        public Task<Response> DeleteEvent(int eventID)
+        {
+            var sqlstatement = "DELETE FROM dbo.Events WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            
+            return ExecuteSqlCommand(connection, cmd); 
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace TeamBigData.Utification.Models
             _firstName = "";
             _lastName = "";
             _address = "";
-            _birthday = new DateTime();
+            _birthday = new DateTime(2000,1,1);
             Identity = new GenericIdentity("0", "Anonymous User");
         }
 
@@ -41,7 +41,7 @@ namespace TeamBigData.Utification.Models
             _firstName = "";
             _lastName = "";
             _address = "";
-            _birthday = new DateTime();
+            _birthday = new DateTime(2000,1,1);
             Identity = new GenericIdentity(_userID.ToString(), "Anonymous User");
         }
 
@@ -51,7 +51,7 @@ namespace TeamBigData.Utification.Models
             _firstName = "";
             _lastName = "";
             _address = "";
-            _birthday = new DateTime();
+            _birthday = new DateTime(2000,1,1);
             Identity = new GenericIdentity(_userID.ToString(), role);
         }
 

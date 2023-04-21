@@ -8,7 +8,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.EventService
 {
-    public class EventService: ICreate, IRead, IUpdate
+    public class EventService: ICreate, IRead, IUpdate, IDelete 
     {
         // Private
         private readonly DBConnectionString connString = new DBConnectionString();
@@ -35,18 +35,18 @@ namespace TeamBigData.Utification.EventService
             return await dao.SelectEventCount(eventID).ConfigureAwait(false);
         }
 
-        public async Task<Response> CreateEvent(string title, string description, int ownerID)
+        public async Task<Response> CreateEvent(EventDTO eventDto)
         {
             
-            IDBInserter dao = new SqlDAO(connString._connectionStringFeatures);
+            IDBInserter daoInserter = new SqlDAO(connString._connectionStringFeatures);
             IDBSelecter hashDao = new SqlDAO(connString._connectionStringUsers);
             var logDao = new SqlDAO(connString._connectionStringLogs);
-            var hashObj = await hashDao.SelectUserHash(ownerID).ConfigureAwait(false);
+            var hashObj = await hashDao.SelectUserHash(eventDto._userID).ConfigureAwait(false);
             // Convert from obj to string
             string userHash = hashObj.data.ToString();
             Log log;
             ILogger logger = new Logger(logDao);
-            var result = await dao.InsertEvent(title, description,ownerID).ConfigureAwait(false);
+            var result = await daoInserter.InsertEvent(eventDto).ConfigureAwait(false);
             if (result.isSuccessful)
             {
                 log = new Log(1, "Info", userHash,"EventService.CreateEvent()", "Data", "Event Created Successful");
@@ -91,10 +91,55 @@ namespace TeamBigData.Utification.EventService
             return result;
         }
 
+        public async Task<Response> ReadEventOwner(int eventID)
+        {
+            IDBSelecter daoSelecter = new SqlDAO(connString._connectionStringFeatures);
 
+            return await daoSelecter.SelectEventOwner(eventID);
+            
+        }
 
-        
+        public async Task<Response> DeleteCreatedEvent(int eventID,int userID)
+        {
+            IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
 
+            return await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
+        }
+
+        public async Task<Response> ModifyEventTitle(string title, int eventID)
+        {
+            IDBUpdater daoUpdate = new SqlDAO(connString._connectionStringFeatures);
+            return await daoUpdate.UpdateEventTitle(title, eventID).ConfigureAwait(false);
+            
+        }
+
+        public async Task<Response> ModifyEventDescription(string description, int eventID)
+        {
+            IDBUpdater daoUpdate = new SqlDAO(connString._connectionStringFeatures);
+
+            return await daoUpdate.UpdateEventDescription(description, eventID);
+        }
+
+        public async Task<Response> ReadEventDateCreated(int userID)
+        {
+            IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
+            
+             return await daoSelect.SelectEventDate(userID).ConfigureAwait(false);
+        }
+
+        public async Task<Response> ModifyEventDisabled(int eventID)
+        {
+            IDBUpdater daoUpdate = new SqlDAO(connString._connectionStringFeatures);
+
+            return await daoUpdate.UpdateEventToDisabled(eventID).ConfigureAwait(false);
+        }
+
+        public async Task<List<EventDTO>> ReadAllEvents()
+        {
+            IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
+            List<EventDTO> events = await daoSelect.SelectAllEvents().ConfigureAwait(false);
+            return events;
+        }
 
     }
     

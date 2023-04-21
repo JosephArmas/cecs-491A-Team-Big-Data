@@ -20,6 +20,11 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> SelectUserHash(int userID);
         public Task<Response> SelectUserID(string email);
         public Task<Response> SelectEventCount(int eventID);
+        public Task<Response> SelectEventOwner(int eventID);
+        public Task<Response> SelectEventDate(int userID);
+        public Task<List<EventDTO>> SelectAllEvents();
+        public Task<List<EventDTO>> SelectUserEvents(int userID);
+        public Task<Response> SelectEventID(int userID);
 
     }
 }

@@ -2,22 +2,25 @@ namespace TeamBigData.Utification.Models
 {
     public class EventDTO
     {
-        public int _pinID { get; set; }
+        public int _eventID { get; set; }
         public int _userID { get; set; }
         public int _count { get; set; }
         public string _title { get; set; }
         public string _description { get; set; }
         public DateTime _postDate { get; set; }
+        public double _lng { get; set; }
+        
+        public double _lat { get; set; }
         
         // Ctor assign mapping
-        public EventDTO(int pinID, int userID, int count, string title, string description, DateTime postDate)
+        
+        public EventDTO(string title, string description, int userID, double lat, double lng)
         {
-            _pinID = pinID;
             _userID = userID;
-            _count = count;
             _title = title;
             _description = description;
-            _postDate = postDate;
+            _lat = lat;
+            _lng = lng;
         }
 
         public EventDTO(string title, string description)
@@ -28,8 +31,8 @@ namespace TeamBigData.Utification.Models
         
         public string ToString()
         {
-            return "PinID: " + _pinID + ", UserID: " + _userID + ", Title: " + _title + ", Description: " +
-                   _description + ", PostDate:" + _postDate;
+            return "EventID: " + _eventID + ", UserID: " + _userID + ", Title: " + _title + ", Description: " +
+                   _description + ", PostDate:" + _postDate + ", Latitude: " + _lat + ", Longitude: " + _lng;
         }
         
     }
