@@ -10,6 +10,6 @@ namespace TeamBigData.Utification.View.Abstraction
 {
     public interface IView
     {
-        public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile);
+        public Response DisplayMenu(ref UserProfile userProfile, ref String userhash);
     }
 }

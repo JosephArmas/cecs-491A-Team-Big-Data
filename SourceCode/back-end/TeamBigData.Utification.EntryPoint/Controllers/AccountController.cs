@@ -1,149 +1,114 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.Manager;
-using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Cryptography;
-using System.Diagnostics;
-using TeamBigData.Utification.Models;
-using TeamBigData.Utification.PinManagers;
-using System.Linq.Expressions;
-using Azure.Identity;
-using System.Net.NetworkInformation;
-using System.Security.Principal;
-using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
     [BindProperties]
-    public class AccountInfo
-    {
-        public String username { get; set; }
-        public String password { get; set; }
 
-        //TODO: add encryption Key parameter
-    }
-
-    public class PinInfo
-    {
-        public int pinID { get; set; }
-        public int userID { get; set; }
-        public string lat { get; set; }
-        public string lng { get; set; }
-        public int pinType { get; set; }
-        public string description { get; set; }
-        public int disabled { get; set; }
-    }
 
     [ApiController]
     [Route("[controller]")]
-    public class AccountController : Controller
+
+    public class AccountController : ControllerBase
     {
+        // TODO: Need to take out of Controller and put into different file
+        // Taking it out will break current code
+
+        [BindProperties]
+        public class IncomingUser
+        {
+            public String _username { get; set; }
+            public String _password { get; set; }
+        }
+
         private readonly SecurityManager _securityManager;
-        private UserAccount _userAccount;
-        private UserProfile _userProfile;
-        public AccountController(SecurityManager secMan)
+        private readonly IConfiguration _configuration;
+
+        // TODO: variables to pull from jwt
+
+        public AccountController(IConfiguration configuration,SecurityManager securityManager)
         {
-            _securityManager = secMan;
-            _userAccount = new UserAccount();
-            _userProfile = new UserProfile();
+            _securityManager = securityManager;
+            _configuration = configuration;
         }
 
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
-        //try curl -i -X GET "https://localhost:7259/account/health"
-
-        //2 Main ways to send parameters forms which curl uses on the top
-        //curl -d "username=testUser@yahoo.com&password=password" -X POST "https://localhost:7259/account/authentication"
-        //And in the body of the http request
-        //curl -H "Content-Type: application/json" -d "{"username":"testUser@yahoo.com", "password":"password"}" -X POST "https://localhost:7259/account/authentication"
-        //You have to specify where its coming from with the tags on the parameters, either make it [FromForm] or [FromBody] 
-
-        //curl -H "Content-Type: application/json" -d "@data.json" -X Post "https://localhost:7259/account/authentication"
         [Route("authentication")]
         [HttpPost]
-        public Task<IActionResult> Login([FromBody] AccountInfo login)
+        public async Task<IActionResult> Login([FromBody]IncomingUser login)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(login.password);
-            _userAccount = new UserAccount();
-            _userProfile = new UserProfile();
-            var response = _securityManager.LoginUser(login.username, encryptedPassword, encryptor,ref _userAccount,ref _userProfile).Result;
-            if (response.isSuccessful)
+            // Validate user role
+            // Validate inputs
+            // Check if user is a user
+            var dataResponse = await _securityManager.LoginUser(login._username, login._password).ConfigureAwait(false);
+            if (!dataResponse.isSuccessful)
             {
-                tcs.SetResult(Ok(_userProfile));
+                return Conflict(dataResponse.errorMessage + ", {failed: _securityManager.LoginUser}");
             }
-            else
+
+            // Create JWT
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+
+            //Token specifications
+            var claims = new List<Claim>
             {
-                tcs.SetResult(Conflict(response.errorMessage));
-            }
-            return tcs.Task;
+                new Claim(ClaimTypes.NameIdentifier, dataResponse.data._userId.ToString()),
+                new Claim(ClaimTypes.Name, dataResponse.data._username),
+                new Claim(ClaimTypes.Role, dataResponse.data._role),
+                new Claim("authenticated", "true", ClaimValueTypes.String),
+                new Claim("otp", dataResponse.data._otp, ClaimValueTypes.String),
+                new Claim("otpCreated", dataResponse.data._otpCreated, ClaimValueTypes.String),
+                new Claim("userHash", dataResponse.data._userhash, ClaimValueTypes.String)
+            };
+
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Audience = _configuration["JWT:Audience"],
+                Issuer = _configuration["JWT:Issuer"],
+                Expires = DateTime.UtcNow.AddHours(2),
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyDetail), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            //Send token signature back to client
+            return Ok(tokenHandler.WriteToken(token));
         }
 
+        
         [Route("authentication")]
         [HttpGet]
-        public Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout()
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            var user = new UserProfile();
-            tcs.SetResult(Ok(user));
-            return tcs.Task;
+            return Ok("");
         }
 
         [Route("registration")]
         [HttpPost]
-        public Task<IActionResult> CreateAccount(AccountInfo newAccount)
+        public async Task<IActionResult> CreateAccount([FromBody]IncomingUser newAccount)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(newAccount.password);
-            var response = _securityManager.RegisterUser(newAccount.username, encryptedPassword, encryptor).Result;
+            
+            // TODO: Decrypt incoming encryptedpassword with incoming key
+            // TODO: Validate they are an anonymous user from jwt key
+            //          If no JWT in Authentication header the  user is anonymous 
+
+
+            var response = await _securityManager.RegisterUser(newAccount._username,  newAccount._password).ConfigureAwait(false);
             if(response.isSuccessful)
             {
-                tcs.SetResult(Ok(response.errorMessage));
+                return Ok(response.errorMessage);
             }
             else
             {
-                tcs.SetResult(Conflict(response.errorMessage));
+                return Conflict(response.errorMessage + ", {failed:_securityManager.RegisterUser}");
             }
-            return tcs.Task;
-        }
-
-        [Route("pin")]
-        [HttpGet]
-        public Task<IActionResult> GetAllPins()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            if (_userProfile.Identity.AuthenticationType == "Anonymouse User")
-            {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
-            }
-            var pinMan = new PinManager();
-            List<Pin> list = pinMan.GetListOfAllPins(_userAccount);
-            tcs.SetResult(Ok(list));
-            return tcs.Task;
-        }
-        [Route("pin")]
-        [HttpPost]
-        public Task<IActionResult> PostNewPin(PinInfo newPin)
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            if (_userProfile.Identity.AuthenticationType == "Anonymouse User")
-            {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
-            }
-            Pin pin = new Pin(newPin.lat,newPin.lng,newPin.description,newPin.pinType);
-            var pinMan = new PinManager();
-            var response = pinMan.SaveNewPin(pin,_userAccount);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
         }
     }
 }

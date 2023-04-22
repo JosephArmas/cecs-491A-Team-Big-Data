@@ -8,6 +8,8 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Manager.Abstractions;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.View.Abstraction;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.AnalysisManagers;
 
 namespace TeamBigData.Utification.View.Views
 {
@@ -18,7 +20,7 @@ namespace TeamBigData.Utification.View.Views
         /// <summary>
         /// Display all startup options.
         /// </summary>
-        public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
+        public Response DisplayMenu(ref UserProfile userProfile, ref String userHash)
         {
             Response response = new Response();
             IRegister registerer = new SecurityManager();
@@ -124,8 +126,8 @@ namespace TeamBigData.Utification.View.Views
                     }
                     var encryptorLogin = new Encryptor();
                     var encryptedPasswordLogin = encryptorLogin.encryptString(userPass);
-                    response = login.LoginUser(email, encryptedPasswordLogin, encryptorLogin, ref userAccount, ref userProfile).Result;
-                    if (!response.isSuccessful)
+                    var dataResponse = login.LoginUser(email, encryptedPasswordLogin, encryptorLogin, userProfile).Result;
+                    if (!dataResponse.isSuccessful)
                     {
                         Console.WriteLine(response.errorMessage + "\nPress Enter to Continue...");
                         Console.ReadLine();
@@ -133,14 +135,18 @@ namespace TeamBigData.Utification.View.Views
                     }
                     flag= false;
                     Console.Clear();
+                    var secManager = new SecurityManager();
                     while (!flag)
                     {
                         // Implement Count to Disable
-                        Console.WriteLine("\nOTP: "+userAccount._otp);
+                        secManager.GenerateOTP();
+                        Console.WriteLine("\nOTP: "+ secManager.SendOTP());
                         Console.Write("Please enter the OTP to finish Authentication: ");
                         String enteredOTP = Console.ReadLine();
-                        if (userAccount.VerifyOTP(enteredOTP).isSuccessful)
+                        if (secManager.VerifyOTP(enteredOTP).isSuccessful)
                         {
+                            userProfile = dataResponse.data;
+                            userHash = dataResponse.errorMessage;
                             Console.WriteLine("\nYou have been Successfully Authenticated.\nPress Enter to Continue...");
                             Console.ReadLine();
                             response.isSuccessful = true;
@@ -152,7 +158,6 @@ namespace TeamBigData.Utification.View.Views
                         string retry = Console.ReadLine();
                         if (retry == "0")
                         {
-                            userAccount = new UserAccount();
                             userProfile = new UserProfile();
                             response.isSuccessful = true;
                             response.errorMessage = "Failed OTP.";
@@ -171,7 +176,7 @@ namespace TeamBigData.Utification.View.Views
                     securityManager.GenerateOTP();
                     Console.WriteLine("Please Enter the OTP: " + securityManager.SendOTP());
                     String otp = Console.ReadLine();
-                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor, otp).Result.errorMessage);
+                    Console.WriteLine(securityManager.RecoverAccount(inputUsername, newEncryptedPassword, passwordEncryptor).Result.errorMessage);
                     break;
                 default:
                     Console.WriteLine("Invalid Input\nPress Enter to Try Again...");

@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.View.Views
         /// <summary>
         /// Display options for User Management. Admin Use only.
         /// </summary>
-        public  Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
+        public  Response DisplayMenu(ref UserProfile userProfile, ref String userhash)
         {
             Response response = new Response();
             SecurityManager securityManager = new SecurityManager();
@@ -123,7 +123,7 @@ namespace TeamBigData.Utification.View.Views
                     var pii = 1;
 
                     stopwatch.Start();
-                    response = secManagerDelete.DeleteProfile(delUser, userProfile);
+                    response = secManagerDelete.DeleteProfile(delUser, userProfile).Result;
                     stopwatch.Stop();
                     var actualDel = stopwatch.ElapsedMilliseconds;
                     if (response.isSuccessful & (actualDel < expected))
@@ -163,7 +163,7 @@ namespace TeamBigData.Utification.View.Views
 
                     //var digest = SecureHasher.HashString(updatedUser, updatePass);
                     //response = userDao.ChangePassword(line.email, digest).Result;
-                    response = secManagerUpdate.ChangePassword(updatedUser, userProfile, encryptorU, encryptedPasswordU);
+                    response = secManagerUpdate.ChangePassword(updatedUser, userProfile, encryptorU, encryptedPasswordU).Result;
                     stopwatch.Stop();
                     var actualUpdate = stopwatch.ElapsedMilliseconds;
                     if (response.isSuccessful & (actualUpdate < expected))
@@ -192,7 +192,7 @@ namespace TeamBigData.Utification.View.Views
                     Console.WriteLine("Please Enter the name of the User to be disabled");
                     String disabledUser = Console.ReadLine();
                     stopwatch.Start();
-                    response = secManagerDisable.DisableAccount(disabledUser, userProfile);
+                    response = secManagerDisable.DisableAccount(disabledUser, userProfile).Result;
                     stopwatch.Stop();
                     var actualDisable = stopwatch.ElapsedMilliseconds;
                     if (response.isSuccessful & (actualDisable < expected))

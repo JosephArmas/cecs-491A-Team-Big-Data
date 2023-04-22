@@ -4,13 +4,12 @@
     {
         public bool isSuccessful;
         public string errorMessage;
-        public object data;
+        public Object data;
 
         public Response()
         {
             isSuccessful = false;
             errorMessage = "";
-            data = 0;
         }
 
         public String ToString()

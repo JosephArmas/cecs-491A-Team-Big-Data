@@ -16,7 +16,7 @@ namespace TeamBigData.Utification.View.Views
         /// <summary>
         /// Display all startup options.
         /// </summary>
-        public Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
+        public Response DisplayMenu(ref UserProfile userProfile, ref String userhash)
         {
             Response response = new Response();
             ILogout logout = new SecurityManager();
@@ -26,13 +26,13 @@ namespace TeamBigData.Utification.View.Views
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            Console.WriteLine("\nWelcome " + userAccount._username);
+            Console.WriteLine("\nWelcome (Name) " + userProfile._firstName + " " + userProfile._lastName);
             Console.WriteLine("Regular User View");
             Console.WriteLine("---------MENU---------");
-            Console.WriteLine("[2] Delete Account");
-            Console.WriteLine("[1] LogOut");
             Console.WriteLine("[0] exit");
-            Console.Write("Enter 0-1: ");
+            Console.WriteLine("[1] LogOut");
+            Console.WriteLine("[2] Delete Account");
+            Console.Write("Enter 0-2: ");
             string input = Console.ReadLine();
             switch (input)
             {
@@ -41,10 +41,19 @@ namespace TeamBigData.Utification.View.Views
                     response.errorMessage = "";
                     return response;
                 case "1":
-                    logout.LogOutUser(ref userAccount, ref userProfile);
-                    Console.WriteLine("\nSuccessfully logged out");
-                    Console.WriteLine("Press Enter to continue...");
-                    Console.ReadLine();
+                    var logoutResult = logout.LogOutUser(userProfile, userhash).Result;
+                    if(logoutResult.isSuccessful)
+                    {
+                        userProfile = logoutResult.data;
+                        userhash = "";
+                        Console.WriteLine("\nSuccessfully logged out");
+                        Console.WriteLine("Press Enter to continue...");
+                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine(logoutResult.errorMessage);
+                    }
                     break;
                 case "2":
                     var answer = DeletionConfirmation();

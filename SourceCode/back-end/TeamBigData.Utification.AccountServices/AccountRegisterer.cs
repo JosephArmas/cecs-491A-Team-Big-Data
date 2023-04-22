@@ -11,17 +11,23 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
 {
     // Not used
     public class AccountRegisterer
     {
-        private readonly IDBInserter _dbo;
+        private readonly IUsersDBInserter _usersDBInserter;
+        private readonly IUsersDBSelecter _usersDBSelecter;
+        //private readonly ILogsDBInserter _logsDBInserter;
 
-        public AccountRegisterer(IDBInserter dbo)
+        public AccountRegisterer(IUsersDBInserter usersDBInserter, IUsersDBSelecter usersDBSelecter)//, ILogsDBInserter logsDBInserter)
         {
-            _dbo = dbo;
+            _usersDBInserter = usersDBInserter;
+            _usersDBSelecter = usersDBSelecter;
+            //_logsDBInserter = logsDBInserter;
         }
 
         public static bool IsValidPassword(String password)
@@ -42,64 +48,58 @@ namespace TeamBigData.Utification.AccountServices
                 return false;
         }
 
-        public async Task<Response> InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
+        public async Task<DataResponse<int>> InsertUserAccount(String email, String password, String userHash)
         {
-            Response result1 = new Response();
-            Response result2 = new Response();
-            result1.isSuccessful = false;
-            int userID = 0;
-            String password = encryptor.decryptString(encryptedPassword);
-            String salt = "";
-            String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
-            var userHash = SecureHasher.HashString(email,pepper);
-            UserAccount user = new UserAccount("", "", "", "");
-            IDBSelecter selectUsers = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
-            IDBCounter countSalt = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
-            if (IsValidPassword(password) && IsValidEmail(email))
-            {
-                salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
-                var digest = SecureHasher.HashString(salt, password);
-                if (true)//((int)selectUsers.SelectLastUserID().data ==0)
-                {
-                    userID = 1001;
-                    user = new UserAccount(userID, email, digest, salt, userHash);
-                    result1.data = user._userID;
-                }
-                else
-                {
-                    user = new UserAccount(email, digest, salt, userHash);
-                    result1.data = user;
-                }
-                //result1 = await _dbo.InsertUser(user).ConfigureAwait(false);
+            // TODO: Maybe log here and entry point
 
-            }
-            else if (!IsValidEmail(email))
+            DataResponse<int> dataResponse = new DataResponse<int>();
+
+            String salt = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
+            var digest = SecureHasher.HashString(salt, password);
+
+            var result = await _usersDBInserter.InsertUserAccount(email, digest, salt, userHash).ConfigureAwait(false);
+            if (!result.isSuccessful)
             {
-                result1.errorMessage = "Invalid email provided. Retry again or contact system administrator";
-            }
-            else if (!IsValidPassword(password))
-            {
-                result1.errorMessage = "Invalid passphrase provided. Retry again or contact system administrator";
+                dataResponse.errorMessage = result.errorMessage + ", {failed: _usersDBInserter.InsertUser}";
+                dataResponse.data = 0;
+                return dataResponse;
             }
 
-            if (!result1.isSuccessful)
+            var data = await _usersDBSelecter.SelectUserAccount(email).ConfigureAwait(false);
+            if (!result.isSuccessful)
             {
-                if (result1.errorMessage.Contains("Violation of PRIMARY KEY"))
-                {
-                    result1.errorMessage = "Email already linked to an account, please pick a new email";
-                }
-                else if (result1.errorMessage.Contains("Violation of UNIQUE KEY"))
-                {
-                    result1.errorMessage = "Unable to assign username. Retry again or contact system administrator";
-                }
+
+                dataResponse.errorMessage = result.errorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}";
+                dataResponse.data = 0;
+                dataResponse.isSuccessful = false;
+            }
+            else 
+            {
+                dataResponse.isSuccessful = true;
+                dataResponse.errorMessage = result.errorMessage; 
+                dataResponse.data = data.data._userID;
+            }
+
+            return dataResponse;
+        }
+
+        public async Task<Response> InsertUserProfile(int userId)
+        {
+            // TODO: Maybe log here and entry point
+            //Log log;
+            var result = await _usersDBInserter.InsertUserProfile(userId).ConfigureAwait(false);
+            if (!result.isSuccessful)
+            {
+                result.isSuccessful = false;
+                result.errorMessage += ", {false: _usersDBInserter.InsertUserProfile}";
             }
             else
             {
-                result1.errorMessage = "Account created successfully, your username is " + email;
+                result.isSuccessful = true;
             }
-            //If the Error message isn't one of these it return the entire error message from the dbo
-            return result1;
+            return result;
         }
+
         //TODO: fix admin creation
         /*
         public async Task<Response> InsertUserAdmin(String email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfile)

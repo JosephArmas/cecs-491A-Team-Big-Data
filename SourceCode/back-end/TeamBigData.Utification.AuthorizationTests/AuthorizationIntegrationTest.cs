@@ -19,18 +19,18 @@ namespace TeamBigData.Utification.AuthorizationTests
         {
             //Anonymous user is restriced to AnonymousView, RegistrationView, and LoginView
             //Arrange
-            var userAccount = new UserAccount("", "", "", "");
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
+            var userhash = "";
             IView view = new AnonymousView();
             //Act
             Console.SetIn(new StringReader("0"));
-            var logResultAnonymous = view.DisplayMenu(ref userAccount, ref sysUnderTestAnonymous);
+            var logResultAnonymous = view.DisplayMenu(ref sysUnderTestAnonymous, ref userhash);
             Console.SetIn(new StringReader("0"));
-            var logResultAdmin = view.DisplayMenu(ref userAccount, ref sysUnderTestAdmin);
+            var logResultAdmin = view.DisplayMenu(ref sysUnderTestAdmin, ref userhash);
             Console.SetIn(new StringReader("0"));
-            var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
+            var logResultRegular = view.DisplayMenu(ref sysUnderTestRegular, ref userhash);
             //Assert
             bool pass = false;
             Console.WriteLine(logResultAnonymous.errorMessage);
@@ -59,18 +59,18 @@ namespace TeamBigData.Utification.AuthorizationTests
         {
             //Anonymous user is restriced to AnonymousView, RegistrationView, and LoginView
             //Arrange
-            var userAccount = new UserAccount("", "", "", "");
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
+            var userhash = "";
             IView view = new AdminView();
             //Act
             Console.SetIn(new StringReader("0"));
-            var logResultAnonymous = view.DisplayMenu(ref userAccount, ref sysUnderTestAnonymous);
+            var logResultAnonymous = view.DisplayMenu(ref sysUnderTestAnonymous, ref userhash);
             Console.SetIn(new StringReader("0"));
-            var logResultAdmin = view.DisplayMenu(ref userAccount, ref sysUnderTestAdmin);
+            var logResultAdmin = view.DisplayMenu(ref sysUnderTestAdmin, ref userhash);
             Console.SetIn(new StringReader("0"));
-            var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
+            var logResultRegular = view.DisplayMenu(ref sysUnderTestRegular, ref userhash);
             //Assert
             bool pass = false;
             if (!logResultAnonymous.isSuccessful && logResultAnonymous.errorMessage == "")
@@ -97,18 +97,18 @@ namespace TeamBigData.Utification.AuthorizationTests
         {
             //Anonymous user is restriced to AnonymousView, RegistrationView, and LoginView
             //Arrange
-            var userAccount = new UserAccount("", "", "", "");
             var sysUnderTestAnonymous = new UserProfile(new GenericIdentity("username", "Anonymous User"));
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
             var sysUnderTestRegular = new UserProfile(new GenericIdentity("username", "Regular User"));
+            var userhash = "";
             IView view = new RegularView();
             //Act
             Console.SetIn(new StringReader("1"));
-            var logResultAnonymous = view.DisplayMenu(ref userAccount, ref sysUnderTestAnonymous);
+            var logResultAnonymous = view.DisplayMenu(ref sysUnderTestAnonymous, ref userhash);
             Console.SetIn(new StringReader("1"));
-            var logResultAdmin = view.DisplayMenu(ref userAccount, ref sysUnderTestAdmin);
+            var logResultAdmin = view.DisplayMenu(ref sysUnderTestAdmin, ref userhash);
             Console.SetIn(new StringReader("1"));
-            var logResultRegular = view.DisplayMenu(ref userAccount, ref sysUnderTestRegular);
+            var logResultRegular = view.DisplayMenu(ref sysUnderTestRegular, ref userhash);
             //Assert
             Console.WriteLine("Anonymous User wants to see Anonymous View: " + logResultAnonymous);
             Console.WriteLine("Admin User wants to see Anonymous View: " + logResultAdmin);
