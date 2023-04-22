@@ -176,9 +176,6 @@
         pin.lng = pinsInfo[pos]._lng;
         pin.pinType = pinsInfo[pos]._pinType;
         pin.description = pinsInfo[pos]._description;
-        pin.disabled = pinsInfo[pos]._disabled;
-        pin.completed = 1;
-        pin.dateCreated = pinsInfo[pos]._dateCreated;
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -233,14 +230,11 @@
 
         const pin = {}
         pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = 0;
-        pin.lat = ``
-        pin.lng = ``
+        pin.userID = pinsInfo[pos]._userID;
+        pin.lat = pinsInfo[pos]._lat;
+        pin.lng = pinsInfo[pos]._lng;
         pin.pinType = pinType-1;
-        pin.description = '';
-        pin.disabled = 0;
-        pin.completed = 0;
-        pin.dateTime = '';
+        pin.description = pinsInfo[pos]._description;
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -275,14 +269,11 @@
 
         const pin = {}
         pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = 0;
-        pin.lat = ``
-        pin.lng = ``
-        pin.pinType = 0;
+        pin.userID = pinsInfo[pos]._userID;
+        pin.lat = pinsInfo[pos]._lat;
+        pin.lng = pinsInfo[pos]._lng;
+        pin.pinType = pinsInfo[pos]._pinType;
         pin.description = content;
-        pin.disabled = 0;
-        pin.completed = 0;
-        pin.dateTime = '';
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -316,15 +307,12 @@
         pinsMarker[pos].setMap(null);
         
         const pin = {}
-        pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = 0;
-        pin.lat = ``
-        pin.lng = ``
-        pin.pinType = 0;
-        pin.description = '';
-        pin.disabled = 1;
-        pin.completed = 0;
-        pin.dateTime = '';
+        pin._pinID = pinsInfo[pos]._pinID;
+        pin._userID = pinsInfo[pos]._userID;
+        pin._lat = pinsInfo[pos]._lat;
+        pin._lng = pinsInfo[pos]._lng;
+        pin._pinType = pinsInfo[pos]._pinType;
+        pin._description = pinsInfo[pos]._description;
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -390,15 +378,12 @@
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
         const pin = {}
-        pin.pinID = 0;
-        pin.userID = localStorage.getItem('id');
-        pin.lat = `${latLng.lat()}`
-        pin.lng = `${latLng.lng()}`
-        pin.pinType = pinType-1;
-        pin.description = content;
-        pin.disabled = 0;
-        pin.completed = 0;
-        pin.dateTime = date+' '+time;
+        pin._pinID = 0;
+        pin._userID = localStorage.getItem('id');
+        pin._lat = `${latLng.lat()}`
+        pin._lng = `${latLng.lng()}`
+        pin._pinType = pinType-1;
+        pin._description = content;
 
         axios.post(webServiceUrl, pin, {
             headers: {
