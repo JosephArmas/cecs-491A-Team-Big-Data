@@ -43,6 +43,28 @@ function showOtp(otpVal, role)
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
     anonContainer.style.display = "none";
+    let submitBtn = document.querySelector('#otp-submit');
+    submitBtn.addEventListener('click', function(event)
+    {
+        if (otpInput.value == otpVal && roles.reg.includes(role))
+        {
+            console.log(otpInput.value)
+            regView();
+        } else if (otpInput.value == otpVal && roles.admin.includes(role))
+        {
+            console.log(role)
+            adminView();
+        } else if (otpInput.value !== otpVal)
+        {
+            timeOut('Invalid OTP','red',responseDiv);
+        }
+        else
+        {
+            timeOut('You are not authorized to register','red',responseDiv);
+        }
+        
+        otpForm.reset();
+    });
 }
 
 function buildOTP(otpVal,userType)
@@ -76,6 +98,7 @@ function buildOTP(otpVal,userType)
         {
             if (otpInput.value == otpVal && roles.reg.includes(userType))
             {
+                console.log(otpInput.value)
                 regView();
             } else if (otpInput.value == otpVal && roles.admin.includes(userType))
             {

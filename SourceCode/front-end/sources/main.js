@@ -27,9 +27,9 @@ function homeClicked()
 {
 
     let regContainer = document.querySelector(".registration-container");
-    let = document.querySelector(".otp-container");
+    let otpContainer = document.querySelector(".otp-container");
     let anonContainer = document.querySelector(".anon-container");
-    let = document.querySelector(".login-container");
+    let loginContainer= document.querySelector(".login-container");
     let homeContainer = document.querySelector(".home-container")
     let analyticsView = document.querySelector(".analytics-container");
     let adminView = document.querySelector(".home-admin-container");
