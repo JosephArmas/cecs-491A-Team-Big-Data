@@ -24,6 +24,9 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> SelectEventDate(int userID);
         public Task<List<EventDTO>> SelectAllEvents();
         public Task<List<EventDTO>> SelectUserEvents(int userID);
+        public Task<List<EventDTO>> SelectJoinedEvents(int userID);
+        public Task<Response> SelectEventPin(int eventID);
+        
         public Task<Response> SelectEventID(int userID);
 
     }

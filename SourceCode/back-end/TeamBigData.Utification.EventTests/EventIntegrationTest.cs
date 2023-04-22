@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Azure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
@@ -307,10 +306,15 @@ public class EventIntegrationTest
          // Arrange
          var stopwatch = new Stopwatch();
          var expected = 7000;
+         
+         // Reputable user
          var user = await GenerateReputableUser().ConfigureAwait(false);
          int userID = Convert.ToInt32(user.data);
+         
+         // Regular User
          var regUser = await GenerateRegUser().ConfigureAwait(false);
          int regUserID = Convert.ToInt32(regUser.data);
+         
          EventManager.EventManager eventManager = new EventManager.EventManager();
          string title = "Beach Club";
          string description = "Beach clean up at Huntington Beach";
@@ -499,8 +503,15 @@ public class EventIntegrationTest
      public async Task AdminValidModifyEventTitle()
      {
          // Arrange
-         var user = await GenerateAdminUser().ConfigureAwait(false);
+         
+         // Reputable Creation
+         var user = await GenerateReputableUser().ConfigureAwait(false);
          int userID= Convert.ToInt32(user.data);
+         
+         // Admin Creation
+         var user2 = await GenerateAdminUser().ConfigureAwait(false);
+         int userID2 = Convert.ToInt32(user2.data);
+         
          EventManager.EventManager eventManager = new EventManager.EventManager(); 
          string title = "Beach Club";
          string description = "Beach clean up at Huntington Beach";
@@ -514,12 +525,13 @@ public class EventIntegrationTest
          int eventID = Convert.ToInt32(eventIDObj.data);
          
          // Act
-         var result = await eventManager.UpdateNewTitleEvent("New Title",eventID, userID).ConfigureAwait(false);
+         var result = await eventManager.UpdateNewTitleEvent("New Title",eventID, userID2).ConfigureAwait(false);
 
          // Assert
          Assert.IsTrue(result.isSuccessful);
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
+         await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
          IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      } 
@@ -528,8 +540,14 @@ public class EventIntegrationTest
      public async Task AdminValidModifyEventDescription()
      {
          // Arrange
-         var user = await GenerateAdminUser().ConfigureAwait(false);
+         
+         // Reputable User
+         var user = await GenerateReputableUser().ConfigureAwait(false);
          int userID= Convert.ToInt32(user.data);
+         
+         // Admin User
+         var user2 = await GenerateAdminUser().ConfigureAwait(false);
+         int userID2 = Convert.ToInt32(user2.data);
          EventManager.EventManager eventManager = new EventManager.EventManager(); 
          string title = "Beach Club";
          string description = "Beach clean up at Huntington Beach";
@@ -543,7 +561,39 @@ public class EventIntegrationTest
          int eventID = Convert.ToInt32(eventIDObj.data);
          
          // Act
-         var result = await eventManager.UpdateNewDescriptionEvent("New Description",eventID, userID).ConfigureAwait(false);
+         var result = await eventManager.UpdateNewDescriptionEvent("New Description",eventID, userID2).ConfigureAwait(false);
+
+         // Assert
+         Assert.IsTrue(result.isSuccessful);
+         Assert.AreEqual(expected,result.errorMessage);
+         await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
+         await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
+         
+     }  
+     
+     [TestMethod]
+     public async Task ValidDeleteEvent()
+     {
+         // Arrange
+         // Reputable Creation
+         var user = await GenerateReputableUser().ConfigureAwait(false);
+         int userID= Convert.ToInt32(user.data);
+         EventManager.EventManager eventManager = new EventManager.EventManager(); 
+         string title = "Beach Club";
+         string description = "Beach clean up at Huntington Beach";
+         var lat = 33.6603000;
+         var lng = -117.9992300;
+         var expected = "Event Successfully Deleted";
+         await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
+         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
+         int eventID = Convert.ToInt32(eventIDObj.data);
+         
+         // Act
+         var result = await eventManager.DeleteNewEvent(eventID, userID);
 
          // Assert
          Assert.IsTrue(result.isSuccessful);
@@ -551,15 +601,45 @@ public class EventIntegrationTest
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
-         
      }  
      
      
-     
-     
-     
-     
-     
+     [TestMethod]
+     public async Task AdminValidDeleteEvent()
+     {
+         // Arrange
+         
+         // Reputable User
+         var user = await GenerateReputableUser().ConfigureAwait(false);
+         int userID= Convert.ToInt32(user.data);
+         
+         // Admin User
+         var user2 = await GenerateAdminUser().ConfigureAwait(false);
+         int userID2 = Convert.ToInt32(user2.data);
+         
+         EventManager.EventManager eventManager = new EventManager.EventManager(); 
+         string title = "Beach Club";
+         string description = "Beach clean up at Huntington Beach";
+         var lat = 33.6603000;
+         var lng = -117.9992300;
+         var expected = "Event Successfully Deleted";
+         await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
+         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
+         int eventID = Convert.ToInt32(eventIDObj.data);
+         
+         // Act
+         var result = await eventManager.DeleteNewEvent(eventID, userID2);
+
+         // Assert
+         Assert.IsTrue(result.isSuccessful);
+         Assert.AreEqual(expected,result.errorMessage);
+         await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
+         await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
+     }  
      
      
      

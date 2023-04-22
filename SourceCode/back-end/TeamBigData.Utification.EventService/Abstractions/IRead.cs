@@ -9,7 +9,9 @@ namespace TeamBigData.Utification.EventService.Abstractions
         public Task<Response> ReadEventCount(int eventID);
         public Task<Response> ReadEventOwner(int eventID);
         public Task<Response> ReadEventDateCreated(int userID);
+        public Task<List<EventDTO>> ReadJoinedEvents(int userID);
         public Task<List<EventDTO>> ReadAllEvents();
+        public Task<Response> ReadEvent(int eventID);
 
     }
     

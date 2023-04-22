@@ -26,8 +26,8 @@ namespace TeamBigData.Utification.Manager
             Response response = new Response();
             UserProfile userProfile = new UserProfile();
             // var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlUserIDAO = new SqlDAO(connectionString._connectionStringUsers);
-            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString._connectionStringUsers);
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString.devSqlUsers);
+            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString.devSqlUsers);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             int userID = 0;
@@ -59,10 +59,10 @@ namespace TeamBigData.Utification.Manager
                 response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
                 stopwatch.Stop();
                 Log log;
-                var logger = new Logger(new SqlDAO(connectionString._connectionStringLogs));
+                var logger = new Logger(new SqlDAO(connectionString.devSqlLogs));
                 if (response.isSuccessful)
                 {
-                    IDBInserter insertUserHash = new SqlDAO(connectionString._connectionStringUserHash);
+                    IDBInserter insertUserHash = new SqlDAO(connectionString.devSqlUserHash);
                     await insertUserHash.InsertUserHash(userHash, userID).ConfigureAwait(false);
                     if (stopwatch.ElapsedMilliseconds > 5000)
                     {
@@ -89,9 +89,8 @@ namespace TeamBigData.Utification.Manager
             Response response = new Response();
             UserAccount userAccount = new UserAccount();
             UserProfile userProfile = new UserProfile();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
-            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString.devSqlUsers);
+            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString.devSqlUsers);
             if (!((IPrincipal)userProfileA).IsInRole("Admin User"))
             {
                 response.isSuccessful = false;
@@ -139,10 +138,10 @@ namespace TeamBigData.Utification.Manager
                 response = await sqlUserIDAO.InsertUserProfile(userProfile).ConfigureAwait(false);
                 stopwatch.Stop();
                 Log log;
-                var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+                var logger = new Logger(new SqlDAO(connectionString.devSqlLogs));
                 if (response.isSuccessful)
                 {
-                    IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                    IDBInserter insertUserHash = new SqlDAO(connectionString.devSqlUserHash);
                     await insertUserHash.InsertUserHash(userHash, userID).ConfigureAwait(false);
                     if (stopwatch.ElapsedMilliseconds > 5000)
                     {
@@ -166,11 +165,10 @@ namespace TeamBigData.Utification.Manager
         public async Task<DataResponse<UserProfile>> LoginUser(String email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfile)
         {
             var response = new DataResponse<UserProfile>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString);
-            IDBInserter sqlUserIDAO = new SqlDAO(connectionString);
+            IDBSelecter sqlUserSDAO = new SqlDAO(connectionString.devSqlUsers);
+            IDBInserter sqlUserIDAO = new SqlDAO(connectionString.devSqlUsers);
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString.devSqlLogs));
             if (userProfile.Identity.AuthenticationType != "Anonymous User")
             {
                 response.isSuccessful = false;
@@ -192,7 +190,7 @@ namespace TeamBigData.Utification.Manager
             }
             if (userAccount._userID == 0)
             {
-                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                IDBInserter insertUserHash = new SqlDAO(connectionString.devSqlUserHash);
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 var userHash = SecureHasher.HashString(pepper, email);
                 insertUserHash.InsertUserHash(userHash, 0);
@@ -214,7 +212,7 @@ namespace TeamBigData.Utification.Manager
             var newProfile = profileResponse.data;
             if (newProfile._userID == 0)
             {
-                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                IDBInserter insertUserHash = new SqlDAO(connectionString.devSqlUserHash);
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 var userHash = SecureHasher.HashString(pepper, email);
                 insertUserHash.InsertUserHash(userHash, 0);
@@ -233,7 +231,7 @@ namespace TeamBigData.Utification.Manager
         public async Task<DataResponse<UserProfile>> LogOutUser(UserProfile userProfile, String userhash)
         {
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString.devSqlLogs));
             var response = new DataResponse<UserProfile>();
             var newProfile = new UserProfile();
             if (!((IPrincipal)userProfile).IsInRole("Anonymous User"))
@@ -260,8 +258,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
+            var userDao = new SqlDAO(connectionString.devSqlUsers);
             var enabler = new AccountDisabler(userDao);
             var enableTask = await enabler.EnableAccount(disabledUser);
             response = enableTask;
@@ -284,21 +281,20 @@ namespace TeamBigData.Utification.Manager
             Stopwatch stopwatch = new Stopwatch();
             String userHash = "";
             response.isSuccessful = false;
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlIDAO = new SqlDAO(connectionString);
-            IDBSelecter sqlSDAO = new SqlDAO(connectionString);
+            IDBInserter sqlIDAO = new SqlDAO(connectionString.devSqlUsers);
+            IDBSelecter sqlSDAO = new SqlDAO(connectionString.devSqlUsers);
             var accountManager = new AccountRegisterer(sqlIDAO);
             stopwatch.Start();
             response = await accountManager.InsertUser(email, encryptedPassword, encryptor);
             stopwatch.Stop();
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString.devSqlLogs));
             if (response.isSuccessful)
             {
                 String username = response.errorMessage.Substring(47);
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 userHash = SecureHasher.HashString(pepper, email);
-                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                IDBInserter insertUserHash = new SqlDAO(connectionString.devSqlUserHash);
                 var userIdResponse = await sqlSDAO.SelectLastUserID();
                 insertUserHash.InsertUserHash(userHash, (int)userIdResponse.data);
                 sqlIDAO.InsertUserProfile(new UserProfile((int)userIdResponse.data, "Regular User"));
@@ -330,21 +326,20 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to view";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlIDAO = new SqlDAO(connectionString);
-            IDBSelecter sqlSDAO = new SqlDAO(connectionString);
+            IDBInserter sqlIDAO = new SqlDAO(connectionString.devSqlUsers);
+            IDBSelecter sqlSDAO = new SqlDAO(connectionString.devSqlUsers);
             var accountManager = new AccountRegisterer(sqlIDAO);
             stopwatch.Start();
             response = await accountManager.InsertUser(email, encryptedPassword, encryptor);
             stopwatch.Stop();
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new SqlDAO(connectionString.devSqlLogs));
             if (response.isSuccessful)
             {
                 String username = response.errorMessage.Substring(47);
                 String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
                 userHash = SecureHasher.HashString(pepper, email);
-                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
+                IDBInserter insertUserHash = new SqlDAO(connectionString.devSqlUserHash);
                 var idResponse = await sqlSDAO.SelectLastUserID();
                 insertUserHash.InsertUserHash(userHash, (int)idResponse.data);
                 sqlIDAO.InsertUserProfile(new UserProfile((int)idResponse.data, "Admin User"));
@@ -374,8 +369,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
-            IDBSelecter selectDAO = new SqlDAO(connection);
+            IDBSelecter selectDAO = new SqlDAO(connectionString.devSqlUserProfile);
             response = await selectDAO.SelectUserProfileTable("Admin User");
             return response;
         }
@@ -389,8 +383,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connection = @"Server=.\;Database=TeamBigData.Utification.UserProfile;Integrated Security=True;Encryption=False";
-            IDBSelecter selectDAO = new SqlDAO(connection);
+            IDBSelecter selectDAO = new SqlDAO(connectionString.devSqlUserProfile);
             response = await selectDAO.SelectUserAccountTable(userProfile.Identity.AuthenticationType);
             response.isSuccessful = true;
             return response;
@@ -402,8 +395,7 @@ namespace TeamBigData.Utification.Manager
             var result = new Response();
             if (true)//(_user == null)
             {
-                var logConnectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
-                var logDAO = new SqlDAO(logConnectionString);
+                var logDAO = new SqlDAO(this.connectionString.devSqlLogs);
                 ILogger logger = new Logger(logDAO);
                 Log log;
                 var password = encryptor.decryptString(encryptedPassword);
@@ -413,8 +405,7 @@ namespace TeamBigData.Utification.Manager
                     result.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
                     return result;
                 }
-                var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-                IDBSelecter selectDao = new SqlDAO(connectionString);
+                IDBSelecter selectDao = new SqlDAO(connectionString.devSqlUsers);
                 var accountResponse = await selectDao.SelectUserAccount(username);
                 var userAccount = accountResponse.data;
                 if (SecureHasher.HashString(userAccount._salt, password) == userAccount._password)
@@ -612,8 +603,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
+            var userDao = new SqlDAO(connectionString.devSqlUsers);
             //Find What they want to reset password to
             var findTask = await userDao.GetNewPassword(disabledUserId);
             //Change Password
@@ -623,8 +613,7 @@ namespace TeamBigData.Utification.Manager
                 if (changeTask.isSuccessful)
                 {
                     //Mark Request as Fullfilled
-                    var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-                    var requestDB = new SqlDAO(requestConnectionString);
+                    var requestDB = new SqlDAO(connectionString.devSqlUsers);
                     var RequestFulfilled = await requestDB.RequestFulfilled(disabledUserId);
                     if(RequestFulfilled.isSuccessful)
                     {
@@ -655,8 +644,7 @@ namespace TeamBigData.Utification.Manager
                 result.errorMessage = "Invalid new password. Please make it at least 8 characters and no weird symbols";
                 return result;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            SqlDAO userDao = new SqlDAO(connectionString);
+            SqlDAO userDao = new SqlDAO(connectionString.devSqlUsers);
             var selectResponse = await userDao.SelectUserAccount(username);
             var userAccount = selectResponse.data;
             if(!selectResponse.isSuccessful)
@@ -685,8 +673,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
-            var recoveryDao = new SqlDAO(connectionString);
+            var recoveryDao = new SqlDAO(connectionString.devSqlUsers);
             response = await recoveryDao.GetRecoveryRequests();
             return response;
         }
@@ -700,8 +687,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
+            var userDao = new SqlDAO(connectionString.devSqlUsers);
             var disabler = new AccountDisabler(userDao);
             var disableTask = await disabler.DisableAccount(enabledUser);
             response = disableTask;
@@ -718,8 +704,7 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
+            var userDao = new SqlDAO(connectionString.devSqlUsers);
             //var updater = new AccountDisabler(userDao);
             var decrypted = encryptor.decryptString(encryptedPass);
             var hashPassword = SecureHasher.HashString(updateUser, decrypted);
@@ -738,10 +723,9 @@ namespace TeamBigData.Utification.Manager
                 response.errorMessage = "Unauthorized access to data";
                 return response;
             }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            var userDao = new SqlDAO(connectionString);
-            var userDelDao = new SQLDeletionDAO(connectionString);
-            IDBSelecter testDBO = new SqlDAO(connectionString);
+            var userDao = new SqlDAO(connectionString.devSqlUsers);
+            var userDelDao = new SQLDeletionDAO(connectionString.devSqlUsers);
+            IDBSelecter testDBO = new SqlDAO(connectionString.devSqlUsers);
             var accountResponse = await userDao.SelectUserAccount(delUser);
             var userAccount = accountResponse.data;
             var deleter = await userDao.DeleteUserProfile(userAccount._userID);

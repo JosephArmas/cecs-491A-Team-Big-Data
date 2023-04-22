@@ -12,6 +12,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
@@ -82,18 +84,18 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             {
                 //Create JWT token with our claims
                 var tokenHandler = new JwtSecurityTokenHandler();
-
                 var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+                var role = response.data.Identity.AuthenticationType.ToString();
+                var userID = response.data._userID.ToString();
 
                 //Token specifications
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, _userAccount._userID.ToString()),
-                    new Claim(ClaimTypes.Name, _userAccount._username),
-                    new Claim(ClaimTypes.Role, _userProfile.Identity.AuthenticationType),
+                    new Claim(ClaimTypes.NameIdentifier,userID), 
+                    new Claim(ClaimTypes.Name, login.username),
+                    new Claim(ClaimTypes.Role, role),
                     new Claim("authenticated", "true", ClaimValueTypes.String),
-                    new Claim("otp", _userAccount._otp, ClaimValueTypes.String),
-                    new Claim("otpCreated", _userAccount._otpCreated, ClaimValueTypes.String),
+                    new Claim("otp", _userAccount.GenerateOTP(), ClaimValueTypes.String),
                     new Claim("userHash", _userAccount._userHash, ClaimValueTypes.String)
                 };
 

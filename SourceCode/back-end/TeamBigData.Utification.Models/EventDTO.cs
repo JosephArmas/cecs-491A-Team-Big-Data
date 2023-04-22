@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace TeamBigData.Utification.Models
 {
     public class EventDTO
@@ -23,12 +25,32 @@ namespace TeamBigData.Utification.Models
             _lng = lng;
         }
 
+        public EventDTO (string title, string description, double lat, double lng, int eventID)
+        {
+            _title = title;
+            _description = description;
+            _eventID = eventID;
+            _lat = lat;
+            _lng = lng;
+
+        }
+            
+
         public EventDTO(string title, string description)
         {
             _title = title;
             _description = description;
         }
+        public EventDTO(string title, string description, int eventId)
+        {
+            _title = title;
+            _description = description;
+        }
         
+        public EventDTO(int eventId)
+        {
+            _eventID = eventId;
+        }
         public string ToString()
         {
             return "EventID: " + _eventID + ", UserID: " + _userID + ", Title: " + _title + ", Description: " +

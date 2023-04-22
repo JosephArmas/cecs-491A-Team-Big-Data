@@ -32,7 +32,7 @@ namespace TeamBigData.Utification.EventManager
 
         private readonly string[] userRoles =
         {
-            "Reputable User", "Admin User", "Regular User"
+            "Reputable User", "Service User", "Regular User"
         };
 
 
@@ -51,12 +51,13 @@ namespace TeamBigData.Utification.EventManager
         }
 
 
-        // As a Reputable or Admin I can create an event
+        // As a Reputable User I can create an event
         public async Task<Response> CreateNewEvent(string title, string description, int ownerID, double lat, double lng)
         {
             Response response = new Response();
             IRead esRead = new EventService.EventService();
             ICreate esCreate = new EventService.EventService();
+            var role = await esRead.ReadRole(ownerID).ConfigureAwait(false);
 
             // Check if User is authorized
             if (!await IsAuthorized(ownerID, userRolesAuth))
@@ -64,12 +65,19 @@ namespace TeamBigData.Utification.EventManager
                 response.errorMessage = "User is not authorized. Event Creation is Inaccessible to Non-Reputable Users";
                 return response;
             }
+
+            if (role.data.ToString() == "Admin User")
+            {
+                response.errorMessage = "Error Admin cannot create events";
+                return response;
+            }
             else
             {
                 var dateObj = await esRead.ReadEventDateCreated(ownerID).ConfigureAwait(false);
 
-                // Convert obj into DateTime
+                // Convert date recieved from obj into DateTime
                 DateTime dateCreated = Convert.ToDateTime(dateObj.data);
+                
 
                 // If there is nothing inserted inserted
                 if (dateObj.data == null)
@@ -159,13 +167,13 @@ namespace TeamBigData.Utification.EventManager
             var countObj = await eventReader.ReadEventCount(eventID).ConfigureAwait(false);
             var ownerObj = await eventReader.ReadEventOwner(eventID).ConfigureAwait(false);
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
             // Convert obj to int to get User's ID
             int owner = Convert.ToInt32(ownerObj.data);
 
             // Convert from obj to int (current count)
             int count = Convert.ToInt32(countObj.data);
 
+            stopwatch.Start();
             // Check for user's role before joining
             if (!await IsAuthorized(userID, userRoles))
             {
@@ -174,7 +182,8 @@ namespace TeamBigData.Utification.EventManager
             }
 
             // Check if eventID is valid
-            if (!IsValidEventID(eventID))
+            var validEvent = await eventReader.ReadEvent(eventID).ConfigureAwait(false); 
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
@@ -192,12 +201,13 @@ namespace TeamBigData.Utification.EventManager
             if (count >= 0 && count < 100)
             {
                 response = await joinEvent.JoinEvent(eventID, userID).ConfigureAwait(false);
+                stopwatch.Stop();
                 if (response.isSuccessful)
                 {
-                    stopwatch.Stop();
-                    if (stopwatch.ElapsedMilliseconds > 7000)
+                    if (stopwatch.ElapsedMilliseconds <= 7000)
                     {
                         response.errorMessage = "You have joined the event";
+                        return response;
                     }
                     else
                     {
@@ -234,8 +244,10 @@ namespace TeamBigData.Utification.EventManager
             IUpdate eServiceUpdater = new EventService.EventService();
             var countObj = await esReader.ReadEventCount(eventID).ConfigureAwait(false);
             var ownerObj = await esReader.ReadEventOwner(eventID).ConfigureAwait(false);
+            var roleObj = await esReader.ReadRole(userID);
+            // Convert from obj to string
+            var role = roleObj.data.ToString();
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
 
             // Convert obj to int to get User's ID
             int owner = Convert.ToInt32(ownerObj.data);
@@ -243,6 +255,7 @@ namespace TeamBigData.Utification.EventManager
             // Convert from obj to int (current count)
             int count = Convert.ToInt32(countObj.data);
 
+            stopwatch.Start();
             // Check if user is authorized
             if (!await IsAuthorized(userID, userRoles))
             {
@@ -250,15 +263,32 @@ namespace TeamBigData.Utification.EventManager
                 return response;
             }
 
+            // Check if user is an admin
+            if (role == "Admin User")
+            {
+                response.errorMessage = "Unable to unjoin as an Admin";
+                return response;
+            }
+            
             // Check if user is owner
             if (owner == userID)
             {
                 response.errorMessage = "Error. Cannot Unjoin. You are the host.";
                 return response;
             }
+            
+            var joined = await esReader.ReadJoinedEvents(userID).ConfigureAwait(false);
+            
+            // Check if has joined any
+            if (joined.Count == 0)
+            {
+                response.errorMessage = "Error. You have not joined an event";
+                return response;
+            }
 
             // Check if eventID is valid
-            if (!IsValidEventID(eventID))
+            var validEvent = await esReader.ReadEvent(eventID).ConfigureAwait(false);
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
@@ -275,7 +305,7 @@ namespace TeamBigData.Utification.EventManager
                 if (response.isSuccessful)
                 {
                     stopwatch.Stop();
-                    if (stopwatch.ElapsedMilliseconds > 7)
+                    if (stopwatch.ElapsedMilliseconds <= 7000)
                     {
                         response.errorMessage = "You have left the event";
                         response.isSuccessful = true;
@@ -306,7 +336,8 @@ namespace TeamBigData.Utification.EventManager
             }
 
             // Check if eventID is valid
-            if (!IsValidEventID(eventID))
+            var validEvent = await esReader.ReadEvent(eventID);
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
@@ -354,8 +385,9 @@ namespace TeamBigData.Utification.EventManager
                 return response;
             }
 
-            // Cehck if event ID is valid
-            if (!IsValidEventID(eventID))
+            // Check if event ID is valid
+            var validEvent = await esReader.ReadEvent(eventID).ConfigureAwait(false);
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
@@ -372,12 +404,13 @@ namespace TeamBigData.Utification.EventManager
             {
                 response.errorMessage = "Error. Cannot Modify another user's event pin";
             }
-
+            
             if (owner == userID || role.data.ToString() == "Admin User")
             {
                 if (!IsValidTitle(title))
                 {
                     response.errorMessage = "Error in Title. Please try again.";
+                    return response;
                 }
 
                 IUpdate esUpdate = new EventService.EventService();
@@ -412,7 +445,8 @@ namespace TeamBigData.Utification.EventManager
             }
 
             // Check if event ID is valid
-            if (!IsValidEventID(eventID))
+            var validEvent = await esReader.ReadEvent(eventID);
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
@@ -470,11 +504,13 @@ namespace TeamBigData.Utification.EventManager
             }
 
             // Check if event ID is valid
-            if (!IsValidEventID(eventID))
+            var validEvent = await esReader.ReadEvent(eventID);
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
             }
+            
 
             // Check if user is the owner of the pin
             var ownerObj = await esReader.ReadEventOwner(eventID);
@@ -531,7 +567,8 @@ namespace TeamBigData.Utification.EventManager
             }
 
             // Check if event ID is valid
-            if (!IsValidEventID(eventID))
+            var validEvent = await esReader.ReadEvent(eventID).ConfigureAwait(false);
+            if (!IsValidEventID(validEvent))
             {
                 response.errorMessage = "Error with event or Event does not exist.";
                 return response;
@@ -560,9 +597,10 @@ namespace TeamBigData.Utification.EventManager
 
 
         // Check event id
-        public bool IsValidEventID(int eventID)
+        public bool IsValidEventID(Response response)
         {
-            if (eventID >= 200)
+            var result = Convert.ToInt32(response.data);
+            if (result>= 200 && response.isSuccessful)
                 return true;
             else
                 return false;

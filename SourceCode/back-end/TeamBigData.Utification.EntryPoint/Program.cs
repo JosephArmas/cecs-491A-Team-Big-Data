@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
+using TeamBigData.Utification.EventManager;
+using TeamBigData.Utification.EventService;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
@@ -51,6 +53,8 @@ builder.Services.AddAuthentication(f =>
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddSingleton<SecurityManager>();
+builder.Services.AddTransient<EventManager>();
+builder.Services.AddTransient<EventService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

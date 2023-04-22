@@ -90,7 +90,7 @@ namespace TeamBigData.Utification.Models
             }
             return result;
         }
-        public void GenerateOTP() 
+        public string GenerateOTP() 
         {
             int count = 0;
             while (count < 10)
@@ -116,6 +116,7 @@ namespace TeamBigData.Utification.Models
                 }
             }
             _otpCreated = DateTime.Now.Ticks.ToString();
+            return _otp;
         }
         public string ToString()
         {

@@ -1418,7 +1418,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         }
         public async Task<List<EventDTO>> SelectAllEvents()
         {
-            var sqlstatement = "SELECT title, description FROM Events WHERE disabled != 1";
+            var sqlstatement = "SELECT title, description, eventID , lat, lng FROM Events WHERE disabled != 1";
             List<EventDTO> events = new List<EventDTO>();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -1430,16 +1430,52 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         string title = reader.GetString(reader.GetOrdinal("title"));
                         string description = reader.GetString(reader.GetOrdinal("description"));
-                        int userID = reader.GetInt32(reader.GetOrdinal("userID"));
-                        float lat= reader.GetInt32(reader.GetOrdinal("lat"));
-                        float lng = reader.GetInt32(reader.GetOrdinal("lng"));
-                        events.Add(new EventDTO(title, description, userID, lat, lng));
+                        int eventID = reader.GetInt32(reader.GetOrdinal("eventID"));
+                        double lat= reader.GetDouble(reader.GetOrdinal("lat"));
+                        double lng = reader.GetDouble(reader.GetOrdinal("lng"));
+                        events.Add(new EventDTO(title, description, lat, lng, eventID));
                     }
 
                 }
             }
             
             return events;
+        }
+
+        public async Task<Response> SelectEventPin(int eventID)
+        {
+            var sqlstatement = "SELECT eventID FROM dbo.Events WHERE eventID = @eventID";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                
+                cmd.Parameters.AddWithValue("@eventID", eventID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            int eVent = reader.GetInt32(reader.GetOrdinal("eventID"));
+                            
+                            response.data = eVent;
+                            response.isSuccessful = true;
+
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error getting event ID";
+
+                    }
+                }
+            }
+            
+            return response; 
         }
 
 
@@ -1468,6 +1504,30 @@ namespace TeamBigData.Utification.SQLDataAccess
             return events;
         }
 
+        public async Task<List<EventDTO>> SelectJoinedEvents(int userID)
+        {
+            var sqlstatement = "SELECT eventID FROM dbo.EventsJoined WHERE userID = @userID";
+            List<EventDTO> events = new List<EventDTO>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        int eventID = reader.GetInt32(reader.GetOrdinal("eventID"));
+                        events.Add(new EventDTO(eventID));
+                    }
+                    
+                }
+
+            }
+
+            return events; 
+        }
+
         public async Task<Response> SelectEventID(int userID)
         {
             var sqlstatement = "SELECT eventID FROM dbo.Events WHERE userID = @userID";
@@ -1478,7 +1538,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                 await connection.OpenAsync();
                 var cmd = new SqlCommand(sqlstatement, connection);
                 
-                // Sql to return the userHash associated with the passed in userID 
                 cmd.Parameters.AddWithValue("@userID", userID);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {

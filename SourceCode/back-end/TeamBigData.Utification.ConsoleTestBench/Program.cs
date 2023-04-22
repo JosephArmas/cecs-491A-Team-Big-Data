@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using Microsoft.AspNetCore.Components.Web;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.EventManager;
 using TeamBigData.Utification.EventService;
 using TeamBigData.Utification.EventService.Abstractions;
@@ -8,7 +10,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 
 var connectionString = new DBConnectionString();
-var dao = new SqlDAO(connectionString._connectionStringFeatures);
+// var dao = new SqlDAO(connectionString._connectionStringFeatures);
 /* User Hash conversion
  * Gets a userID when inputing an email
 var userID = await dao.SelectUserID("testUser@yahoo.com").ConfigureAwait(false);
@@ -37,8 +39,8 @@ foreach (var d in data)
 // Console.WriteLine(data);
 
 // Event Joining
-var data = await eventManager.JoinNewEvent(257, 3260).ConfigureAwait(false);
-Console.WriteLine(data.errorMessage);
+// var data = await eventManager.JoinNewEvent(257, 3260).ConfigureAwait(false);
+// Console.WriteLine(data.errorMessage);
 
 // var data2 = await eventManager.JoinNewEvent(210, 3178);
 
@@ -77,6 +79,48 @@ Console.WriteLine(data.data);
 var data = await eventManager.MarkEventComplete(222, 3179);
 Console.WriteLine(data.errorMessage);
 */
+EventService eventService = new EventService();
+
+// var data = await eventService.ReadEventCount(314).ConfigureAwait(false);
+// Console.WriteLine(data.data);
+/*
+var data = await eventService.ReadJoinedEvents(3352).ConfigureAwait(false);
+if (data.Count == 0)
+{
+    Console.WriteLine("Empty List");
+}
+else
+{
+    foreach (var d in data)
+    {
+        Console.WriteLine(d._eventID);
+    }
+}
+*/
+bool IsValidEventID(Response response)
+{
+    var result = Convert.ToInt32(response.data);
+    if (result >= 200 && response.isSuccessful)
+        return true;
+    else
+        return false;
+}
+
+var data = await eventService.ReadRole(3369).ConfigureAwait(false);
+Console.WriteLine(data.data);
+// Console.WriteLine(IsValidEventID(data));
+/*
+if (data.data == null && !data.isSuccessful)
+{
+    Console.WriteLine("Event does not exist");
+}
+else
+{
+    Console.WriteLine("EVent exists: " + data.data);
+}
+*/
+
+
 
 Console.WriteLine("Hello, World!");
 Console.WriteLine("title: ");
