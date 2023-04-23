@@ -140,7 +140,7 @@ namespace TeamBigData.Utification.FileManagers
             }
             else
             {
-                result.errorMessage = "Could not find uploaded file " + pinID;
+                result.errorMessage = "Could not find uploaded file";
                 return result;
             }
         }
@@ -155,7 +155,7 @@ namespace TeamBigData.Utification.FileManagers
             }
             else
             {
-                result.errorMessage = "Could not find uploaded file";
+                result.errorMessage = "Could not find uploaded file. Try Uploading a Profile Picture if you haven't yet";
                 return result;
             }
         }
@@ -163,7 +163,7 @@ namespace TeamBigData.Utification.FileManagers
         public async Task<Response> UpdatePinPic(String filename, int pinID, UserProfile cred)
         {
             var result = new Response();
-            var ext = filename.Substring(filename.Length - 3, filename.Length).ToLower();
+            var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
                 result.errorMessage = "Unsupported File Extension";
@@ -196,7 +196,7 @@ namespace TeamBigData.Utification.FileManagers
         public async Task<Response> UpdateProfilePic(String filename, int userID, UserProfile cred)
         {
             var result = new Response();
-            var ext = filename.Substring(filename.Length - 3, filename.Length);
+            var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
                 result.errorMessage = "Unsupported File Extension";

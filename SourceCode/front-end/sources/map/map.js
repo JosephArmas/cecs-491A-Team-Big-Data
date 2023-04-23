@@ -126,7 +126,7 @@
                 {
                     pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
-                    pinContent = pinContent + `<button id='deletePin' onclick='deletePicture(${i})'>Delete Picture</button>`;
+                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
                 }
     
                 const infowindow = new google.maps.InfoWindow({
@@ -182,13 +182,13 @@
             {
                 let url = URL.createObjectURL(file);
                 //rebuild content
-                content += "<img style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
+                content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
                 content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                    content += `<button id='deletePin' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+                    content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
                 }
                 infoWindows[pos].setContent(content);
                 let params = {
@@ -204,7 +204,14 @@
                     errorsDiv.innerHTML = cleanError; 
                 }).then(function(key)
                 {
-                    uploadToS3(key.data);
+                    if(key === undefined)
+                    {
+        
+                    }
+                    else if(key.data.length > 0)
+                    {
+                        uploadToS3(key.data);
+                    }
                 })
             }
         }
@@ -226,7 +233,11 @@
             errorsDiv.innerHTML = errorAfter; 
         }).then(function(key)
         {
-            if(key.data.length > 0)
+            if(key === undefined)
+            {
+
+            }
+            else if(key.data.length > 0)
             {
                 // Download file from S3
                 axios.get(s3 + key.data).catch(function (error)
@@ -237,13 +248,13 @@
                 }).then(function(file)
                 {
                     // Picture stored as a DataURL for easy access
-                    content += "<img style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
+                    content += "<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
                     content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                    if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                    if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
                     {
                         content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                        content += `<button id='deletePin' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+                        content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
                     }
                     infoWindows[pos].setContent(content);
                 })
@@ -274,9 +285,9 @@
             {
                 let url = URL.createObjectURL(file);
                 //rebuild content
-                content += "<img style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
+                content += "<img id=\"PinPic\"style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
                 content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -295,7 +306,14 @@
                     errorsDiv.innerHTML = cleanError; 
                 }).then(function(key)
                 {
-                    uploadToS3(key.data);
+                    if(key === undefined)
+                    {
+        
+                    }
+                    else if(key.data.length > 0)
+                    {
+                        uploadToS3(key.data);
+                    }
                 })
             }
         }
@@ -307,11 +325,11 @@
         //rebuild content
         let content = pinsInfo[pos]._description;
         content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
         {
             content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
             content += `<button id='uploadPic' onclick='uploadPicture(${pos})'>Upload Picture</button>`;
-            content += `<button id='deletePin' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+            content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
         }
         infoWindows[pos].setContent(content);
         let params = {
@@ -327,7 +345,14 @@
             errorsDiv.innerHTML = cleanError; 
         }).then(function(key)
         {
-            deleteFromS3(key.data);
+            if(key.dat === undefined)
+            {
+
+            }
+            else if(key.data.length > 0)
+            {            
+                deleteFromS3(key.data);
+            }
         })
     }
 

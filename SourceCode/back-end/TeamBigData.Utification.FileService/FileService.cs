@@ -14,6 +14,10 @@ namespace TeamBigData.Utification.FileServices
             {
                 result.data = key;
             }
+            if(result.errorMessage.Contains("PRIMARY KEY"))
+            {
+                result.errorMessage = "Can't Upload Picture Because Pin already has Picture, Use Update Instead";
+            }
             return result;
         }
         public async Task<Response> UploadProfilePic(String filename, int userId, String connectionString)
@@ -24,6 +28,10 @@ namespace TeamBigData.Utification.FileServices
             if (result.isSuccessful)
             {
                 result.data = key;
+            }
+            if (result.errorMessage.Contains("PRIMARY KEY"))
+            {
+                result.errorMessage = "Can't Upload Picture Because Profile already has Picture, Use Update Instead";
             }
             return result;
         }

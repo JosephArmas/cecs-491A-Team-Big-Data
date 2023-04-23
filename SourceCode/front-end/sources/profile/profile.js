@@ -20,7 +20,7 @@ function addProfilePic()
         {
             let url = URL.createObjectURL(file);
             let picture = document.getElementById("profilePicture")
-            picture.innerHTML = "<img style=\"height:400px; width:100%; object-fit:contain\" src=" + url + ">";
+            picture.innerHTML = "<img id=\"profilePic\" style=\"height:400px; width:100%; object-fit:contain\" src=" + url + ">";
             let params = {
                 fileName: filename,
                 ID: userID,
@@ -34,7 +34,14 @@ function addProfilePic()
                 errorsDiv.innerHTML = cleanError; 
             }).then(function(key)
             {
-                uploadProfileToS3(key.data);
+                if(key === undefined)
+                {
+
+                }
+                else if(key.data.length > 0)
+                {
+                    uploadProfileToS3(key.data);
+                }
             })
         }
     }
@@ -62,7 +69,7 @@ function updateProfilePic()
         {
             let url = URL.createObjectURL(file);
             let picture = document.getElementById("profilePicture")
-            picture.innerHTML = "<img style=\"height:400px; width:100%; object-fit:contain\" src=" + url + ">";
+            picture.innerHTML = "<img id=\"profilePic\" style=\"height:400px; width:100%; object-fit:contain\" src=" + url + ">";
             let params = {
                 fileName: filename,
                 ID: userID,
@@ -76,7 +83,14 @@ function updateProfilePic()
                 errorsDiv.innerHTML = cleanError; 
             }).then(function(key)
             {
-                uploadProfileToS3(key.data);
+                if(key === undefined)
+                {
+
+                }
+                else if(key.data.length > 0)
+                {
+                    uploadProfileToS3(key.data);
+                }
             })
         }
     }
@@ -96,7 +110,11 @@ function downloadProfilePic()
         errorsDiv.innerHTML = errorAfter; 
     }).then(function(key)
     {
-        if(key.data.length > 0)
+        if(key === undefined)
+        {
+
+        }
+        else if(key.data.length > 0)
         {
             // Download file from S3
             axios.get(s3 + key.data).catch(function (error)
@@ -107,7 +125,7 @@ function downloadProfilePic()
             }).then(function(file)
             {
                 let picture = document.getElementById("profilePicture");
-                picture.innerHTML = "<img style=\"height:400px; width:100%; object-fit:contain\" src=" + file.data + ">";
+                picture.innerHTML = "<img id=\"profilePic\" style=\"height:400px; width:100%; object-fit:contain\" src=" + file.data + ">";
             })
         }
     })
@@ -117,7 +135,7 @@ function deleteProfilePic()
 {
     let userID = localStorage.getItem("id");
     let picture = document.getElementById("profilePicture")
-    picture.innerHTML = "<img style=\"height:400px; width:100%; object-fit:contain\" src=\"blank image.jpg\">";
+    picture.innerHTML = "<img id=\"profilePic\" style=\"height:400px; width:100%; object-fit:contain\" src=\"blank image.jpg\">";
     let params = {
         fileName: "",
         ID: userID,
