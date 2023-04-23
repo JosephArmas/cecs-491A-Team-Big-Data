@@ -115,7 +115,7 @@ public class EventController : Controller
     
     [Route("event/getEventPins")]
     [HttpGet]
-    public async Task<IActionResult> GetEventPins([FromBody] EventPin eventPin)
+    public async Task<IActionResult> GetEventPins()
     {
         var esMan = new EventManager();
         try

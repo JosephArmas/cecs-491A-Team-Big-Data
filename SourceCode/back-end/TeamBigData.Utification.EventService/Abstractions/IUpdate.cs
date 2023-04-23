@@ -8,5 +8,7 @@ public interface IUpdate
     public Task<Response> ModifyEventTitle(string title, int eventID);
     public Task<Response> ModifyEventDescription(string description, int eventID);
     public Task<Response> ModifyEventDisabled(int eventID);
+    public Task<Response> ModifyEventAttendance(int eventID);
+    public Task<Response> ModifyEventAttendanceDisable(int eventID);
 
 }

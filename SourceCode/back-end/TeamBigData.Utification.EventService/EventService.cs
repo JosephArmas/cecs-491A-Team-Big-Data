@@ -13,7 +13,7 @@ namespace TeamBigData.Utification.EventService
     public class EventService: ICreate, IRead, IUpdate, IDelete 
     {
         // Private
-        private readonly DBConnectionString connString;
+        private readonly DBConnectionString connString = new DBConnectionString();
         
         
         
@@ -34,13 +34,14 @@ namespace TeamBigData.Utification.EventService
         public async Task<Response> ReadRole(int userID)
         {
             IDBSelecter dao = new SqlDAO(connString.devSqlUsers);
-            return await dao.SelectUserProfileRole(userID);
+            
+            return await dao.SelectUserProfileRole(userID).ConfigureAwait(false);
         }
 
         public async Task<Response> ReadEventCount(int eventID)
         {
-            Response response= new Response();
             IDBSelecter dao = new SqlDAO(connString.devSqlFeatures);
+            
             return await dao.SelectEventCount(eventID).ConfigureAwait(false);
         }
 
@@ -150,6 +151,19 @@ namespace TeamBigData.Utification.EventService
             return await daoUpdate.UpdateEventToDisabled(eventID).ConfigureAwait(false);
         }
 
+        public async Task<Response> ModifyEventAttendance(int eventID)
+        {
+            IDBUpdater daoUpdate = new SqlDAO(connString.devSqlFeatures);
+
+            return await daoUpdate.UpdateEventAttendanceShow(eventID);
+        }
+        public async Task<Response> ModifyEventAttendanceDisable(int eventID)
+        {
+            IDBUpdater daoUpdate = new SqlDAO(connString.devSqlFeatures);
+
+            return await daoUpdate.UpdateEventAttendanceDisable(eventID);
+        }
+
         public async Task<List<EventDTO>> ReadAllEvents()
         {
             IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
@@ -161,6 +175,12 @@ namespace TeamBigData.Utification.EventService
         {
             IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
             return await daoSelect.SelectEventPin(eventID).ConfigureAwait(false);
+        }
+
+        public async Task<Response> ReadAttendance(int eventID)
+        {
+            IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+            return await daoSelect.SelectAttendance(eventID).ConfigureAwait(false);
         }
 
     }

@@ -10,7 +10,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 
 var connectionString = new DBConnectionString();
-// var dao = new SqlDAO(connectionString._connectionStringFeatures);
+var dao = new SqlDAO(connectionString.devSqlUsers);
 /* User Hash conversion
  * Gets a userID when inputing an email
 var userID = await dao.SelectUserID("testUser@yahoo.com").ConfigureAwait(false);
@@ -81,8 +81,12 @@ Console.WriteLine(data.errorMessage);
 */
 EventService eventService = new EventService();
 
-// var data = await eventService.ReadEventCount(314).ConfigureAwait(false);
+// var result = await dao.SelectUserProfileRole(3398).ConfigureAwait(false);
+// Console.WriteLine(result.data);
+
+// var data = await eventService.ReadRole(3398).ConfigureAwait(false);
 // Console.WriteLine(data.data);
+
 /*
 var data = await eventService.ReadJoinedEvents(3352).ConfigureAwait(false);
 if (data.Count == 0)
@@ -106,8 +110,8 @@ bool IsValidEventID(Response response)
         return false;
 }
 
-var data = await eventService.ReadRole(3369).ConfigureAwait(false);
-Console.WriteLine(data.data);
+// var data = await eventService.ReadRole(3369).ConfigureAwait(false);
+// Console.WriteLine(data.data);
 // Console.WriteLine(IsValidEventID(data));
 /*
 if (data.data == null && !data.isSuccessful)
@@ -120,13 +124,20 @@ else
 }
 */
 
+// var result = await eventManager.DisplayAttendance(343, 3410).ConfigureAwait(false);
+// Console.WriteLine(result.isSuccessful);
+// Console.WriteLine(result.data);
+var result = await eventManager.DisplayAllEvents().ConfigureAwait(false);
 
+
+// var result = await eventService.ReadAttendance(342).ConfigureAwait(false);
+// Console.WriteLine(result.data);
 
 Console.WriteLine("Hello, World!");
 Console.WriteLine("title: ");
 var title = Console.ReadLine();
 Console.WriteLine("description: ");
 var description = Console.ReadLine();
-var result = await eventManager.CreateNewEvent(title, description,3154, 90, -170).ConfigureAwait(false);
-Console.WriteLine(result.errorMessage);
+// var result = await eventManager.CreateNewEvent(title, description,3154, 90, -170).ConfigureAwait(false);
+// Console.WriteLine(result.errorMessage);
 // Console.WriteLine(result.ToString());

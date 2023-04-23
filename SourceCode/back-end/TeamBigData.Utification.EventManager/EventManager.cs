@@ -332,7 +332,6 @@ namespace TeamBigData.Utification.EventManager
             if (!await IsAuthorized(userID, userRolesAuth))
             {
                 response.errorMessage = "User is not authorized";
-                return response;
             }
 
             // Check if eventID is valid
@@ -530,8 +529,10 @@ namespace TeamBigData.Utification.EventManager
                 var result = await esUpdate.ModifyEventDisabled(eventID).ConfigureAwait(false);
                 if (result.isSuccessful)
                 {
-                    response.errorMessage = "Event Pin Marked as Completed";
                     response.isSuccessful = true;
+                    response.errorMessage = "Event Pin Marked as Completed";
+                    response.data = result.data;
+                    return response;
                 }
                 else
                 {
@@ -554,6 +555,8 @@ namespace TeamBigData.Utification.EventManager
         {
             Response response = new Response();
             IRead esReader = new EventService.EventService();
+            IUpdate esUpdate = new EventService.EventService();
+            
             // User Role stored in type obj
             var role = await esReader.ReadRole(userID).ConfigureAwait(false);
 
@@ -587,13 +590,112 @@ namespace TeamBigData.Utification.EventManager
             }
             else
             {
-                response = await esReader.ReadEventCount(eventID).ConfigureAwait(false);
+                var validDisplay = await esReader.ReadAttendance(eventID).ConfigureAwait(false);
+                
+                // Convert from obj to int
+                var attendanceFlag = Convert.ToInt32(validDisplay.data);
+
+                if (validDisplay.isSuccessful && attendanceFlag == 1)
+                {
+                    return await esReader.ReadEventCount(eventID).ConfigureAwait(false);
+                }
+
+                // Check if the flag is already set
+                if (validDisplay.isSuccessful && attendanceFlag == 0)
+                {
+                    var result = await esUpdate.ModifyEventAttendance(eventID).ConfigureAwait(false);
+                    if (result.isSuccessful)
+                    {
+                         return await esReader.ReadEventCount(eventID).ConfigureAwait(false);
+                        // response.isSuccessful = true;
+                        // return response;
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error updating";
+                    }
+                    
+                }
+                
             }
 
             return response;
 
         }
+        
+        public async Task<Response> DisableAttendance(int eventID, int userID)
+        {
+            Response response = new Response();
+            IRead esReader = new EventService.EventService();
+            IUpdate esUpdate = new EventService.EventService();
+            // User Role stored in type obj
+            var role = await esReader.ReadRole(userID).ConfigureAwait(false);
 
+
+            // Is the user Authorized?
+            if (!await IsAuthorized(userID, userRolesAuth))
+            {
+                response.errorMessage = "User is not authorized";
+
+                return response;
+            }
+
+            // Check if event ID is valid
+            var validEvent = await esReader.ReadEvent(eventID).ConfigureAwait(false);
+            if (!IsValidEventID(validEvent))
+            {
+                response.errorMessage = "Error with event or Event does not exist.";
+                return response;
+            }
+
+            // Check if user is the owner of the pin
+            var ownerObj = await esReader.ReadEventOwner(eventID);
+
+            // Convert obj into an int to compare user's ID
+            int owner = Convert.ToInt32(ownerObj.data);
+
+            if (owner != userID)
+            {
+                response.errorMessage = "Error. Cannot Modify another user's event pin.";
+                return response;
+            }
+            else
+            {
+                var validDisplay = await esReader.ReadAttendance(eventID).ConfigureAwait(false);
+                
+                
+                // Convert from obj to int
+                var attendanceFlag = Convert.ToInt32(validDisplay.data);
+
+                // Check if its already set
+                if (validDisplay.isSuccessful && attendanceFlag == 1)
+                {
+                    var result = await esUpdate.ModifyEventAttendanceDisable(eventID).ConfigureAwait(false);
+                    if (result.isSuccessful)
+                    {
+                        response.isSuccessful = true;
+                        response.errorMessage = "Disabled Attendance";
+
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error updating";
+                    }
+                        
+                }
+                
+                if (attendanceFlag == 0)
+                {
+                    response.errorMessage = "Attendance already disabled";
+                    return response;
+                }
+                
+            }
+
+            return response;
+
+        }
+        
 
 
         // Check event id

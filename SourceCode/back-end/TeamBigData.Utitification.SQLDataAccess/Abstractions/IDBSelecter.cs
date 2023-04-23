@@ -28,6 +28,7 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> SelectEventPin(int eventID);
         
         public Task<Response> SelectEventID(int userID);
+        public Task<Response> SelectAttendance(int eventID);
 
     }
 }

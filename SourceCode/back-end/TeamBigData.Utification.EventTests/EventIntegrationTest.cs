@@ -22,7 +22,7 @@ public class EventIntegrationTest
 
     private async Task<Response> GenerateRegUser()
     {
-        IDBSelecter testDBO = new SqlDAO(connString._connectionStringUsers);
+        IDBSelecter testDBO = new SqlDAO(connString.devSqlUsers);
         IRegister register = new SecurityManager();
         var username = "TestUser" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
         var encryptor = new Encryptor();
@@ -35,8 +35,8 @@ public class EventIntegrationTest
     private async Task<Response> GenerateReputableUser()
     {
         
-        IDBSelecter testDBO = new SqlDAO(connString._connectionStringUsers);
-        IDBUpdater daoUpdate = new SqlDAO(connString._connectionStringUsers);
+        IDBSelecter testDBO = new SqlDAO(connString.devSqlUsers);
+        IDBUpdater daoUpdate = new SqlDAO(connString.devSqlUsers);
         IRegister register = new SecurityManager();
         var username = "TestUser" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
         var encryptor = new Encryptor();
@@ -54,8 +54,8 @@ public class EventIntegrationTest
 
     private async Task<Response> GenerateAdminUser()
     {
-        IDBSelecter testDBO = new SqlDAO(connString._connectionStringUsers);
-        IDBUpdater daoUpdate = new SqlDAO(connString._connectionStringUsers);
+        IDBSelecter testDBO = new SqlDAO(connString.devSqlUsers);
+        IDBUpdater daoUpdate = new SqlDAO(connString.devSqlUsers);
         IRegister register = new SecurityManager();
         var username = "AdminUser" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
         var encryptor = new Encryptor();
@@ -94,7 +94,7 @@ public class EventIntegrationTest
         // Assert
         Assert.IsFalse(result.isSuccessful);
         Assert.AreEqual(expected, result.errorMessage);
-        SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+        SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
         await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
     }
     
@@ -104,7 +104,7 @@ public class EventIntegrationTest
      {
          // Arrange
          var user = await GenerateReputableUser().ConfigureAwait(false);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          
         // Convert user id from type obj to int
          int userID= Convert.ToInt32(user.data);
@@ -145,9 +145,9 @@ public class EventIntegrationTest
          var lat = 33.6603000;
          var lng = -117.9992300; 
          var create = await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBUpdater daoUpdate = new SqlDAO(connString._connectionStringFeatures);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBUpdater daoUpdate = new SqlDAO(connString.devSqlFeatures);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          Console.WriteLine(eventID);
@@ -164,7 +164,7 @@ public class EventIntegrationTest
          // Clean database to prevent Over population
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(regUserID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
 
@@ -183,8 +183,8 @@ public class EventIntegrationTest
          var lng = -117.9992300; 
          var expected = "You have joined the event";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -196,7 +196,7 @@ public class EventIntegrationTest
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(regUserID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
 
@@ -214,8 +214,8 @@ public class EventIntegrationTest
          float lng = 99;
          var expected = "Cannot join your own event. You are the host";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
 
@@ -226,7 +226,7 @@ public class EventIntegrationTest
          Assert.IsFalse(result.isSuccessful);
          Assert.AreEqual(expected, result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
          
      }
@@ -247,8 +247,8 @@ public class EventIntegrationTest
          var lat = 33.6603000;
          var lng = -117.9992300; 
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
 
@@ -263,7 +263,7 @@ public class EventIntegrationTest
          Assert.IsTrue(actual <= expected);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(regUserID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
 
@@ -282,8 +282,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "You have left the event";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          await eventManager.JoinNewEvent(eventID, regUserID).ConfigureAwait(false);
@@ -295,7 +295,7 @@ public class EventIntegrationTest
          Assert.IsTrue(result.isSuccessful);
          Assert.AreEqual(expected, result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false); 
          
      }
@@ -321,8 +321,8 @@ public class EventIntegrationTest
          var lat = 33.6603000;
          var lng = -117.9992300;
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          await eventManager.JoinNewEvent(eventID, regUserID).ConfigureAwait(false);
@@ -338,7 +338,7 @@ public class EventIntegrationTest
          Assert.IsTrue(actual <= expected);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(regUserID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
 
@@ -357,8 +357,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Error. Cannot Modify another user's event pin";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -370,7 +370,7 @@ public class EventIntegrationTest
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
      
@@ -387,8 +387,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Event Description Successfully Updated";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -399,7 +399,7 @@ public class EventIntegrationTest
          Assert.IsTrue(result.isSuccessful);
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      } 
      
@@ -416,8 +416,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Event Title Successfully Updated";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -428,7 +428,7 @@ public class EventIntegrationTest
          Assert.IsTrue(result.isSuccessful);
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
 
@@ -448,7 +448,7 @@ public class EventIntegrationTest
          var lat2 = 35.6603000;
          var lng2 = -118.9992300;
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          var expected = "Error Creating Event. Last Event Created is Within 7 days";
@@ -459,9 +459,9 @@ public class EventIntegrationTest
          // Assert
          Assert.IsFalse(result.isSuccessful);
          Assert.AreEqual(expected,result.errorMessage);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }
 
@@ -477,7 +477,7 @@ public class EventIntegrationTest
          var lat = 33.6603000;
          var lng = -117.9992300;
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -493,12 +493,48 @@ public class EventIntegrationTest
          // Assert
          Assert.IsTrue(result.isSuccessful);
          Assert.AreEqual(expected, count);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false); 
      }
      
+     [TestMethod]
+     public async Task ValidDisableAttendance()
+     {
+         // Arrange
+         var user = await GenerateReputableUser().ConfigureAwait(false);
+         int userID= Convert.ToInt32(user.data);
+         EventManager.EventManager eventManager = new EventManager.EventManager(); 
+         string title = "Beach Club";
+         string description = "Beach clean up at Huntington Beach";
+         var lat = 33.6603000;
+         var lng = -117.9992300;
+         await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
+         int eventID = Convert.ToInt32(eventIDObj.data);
+         var expected = "Disabled Attendance";
+         var expected2 = 0;
+         
+         // Setting it to 1 
+         await eventManager.DisplayAttendance(eventID, userID).ConfigureAwait(false);
+         
+         // Act
+         var result = await eventManager.DisableAttendance(eventID, userID).ConfigureAwait(false);
+
+         // Convert obj into int
+         var flag = Convert.ToInt32(result.data);
+         
+         // Assert
+         Assert.IsTrue(result.isSuccessful);
+         Assert.AreEqual(expected, result.errorMessage);
+         Assert.AreEqual(expected2,flag);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
+         await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
+         await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false); 
+     } 
      [TestMethod]
      public async Task AdminValidModifyEventTitle()
      {
@@ -519,8 +555,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Event Title Successfully Updated";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -532,7 +568,7 @@ public class EventIntegrationTest
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      } 
      
@@ -555,8 +591,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Event Description Successfully Updated";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -568,7 +604,7 @@ public class EventIntegrationTest
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
          
      }  
@@ -587,8 +623,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Event Successfully Deleted";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -599,7 +635,7 @@ public class EventIntegrationTest
          Assert.IsTrue(result.isSuccessful);
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }  
      
@@ -624,8 +660,8 @@ public class EventIntegrationTest
          var lng = -117.9992300;
          var expected = "Event Successfully Deleted";
          await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
-         IDBSelecter daoSelect = new SqlDAO(connString._connectionStringFeatures);
-         SqlDAO daoDelete = new SqlDAO(connString._connectionStringUsers);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
          var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
          int eventID = Convert.ToInt32(eventIDObj.data);
          
@@ -637,13 +673,79 @@ public class EventIntegrationTest
          Assert.AreEqual(expected,result.errorMessage);
          await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
          await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
-         IDBDeleter daoDeleter = new SQLDeletionDAO(connString._connectionStringFeatures);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
          await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
      }  
      
+     [TestMethod]
+     public async Task AdminMarkEventComplete()
+     {
+         // Arrange
+         
+         // Reputable User
+         var user = await GenerateReputableUser().ConfigureAwait(false);
+         int userID= Convert.ToInt32(user.data);
+         
+         // Admin User
+         var user2 = await GenerateAdminUser().ConfigureAwait(false);
+         int userID2 = Convert.ToInt32(user2.data);
+         
+         EventManager.EventManager eventManager = new EventManager.EventManager(); 
+         string title = "Beach Club";
+         string description = "Beach clean up at Huntington Beach";
+         var lat = 33.6603000;
+         var lng = -117.9992300;
+         var expected = "Event Pin Marked as Completed";
+         await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
+         var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
+         int eventID = Convert.ToInt32(eventIDObj.data);
+         
+         // Act
+         var result = await eventManager.MarkEventComplete(eventID, userID2);
+         
+
+         // Assert
+         Assert.IsTrue(result.isSuccessful);
+         Assert.AreEqual(expected,result.errorMessage);
+         await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
+         await daoDelete.DeleteUserProfile(userID2).ConfigureAwait(false);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
+         await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
+     }   
      
-     
-     
+     [TestMethod]
+     public async Task MarkEventComplete()
+     {
+         // Arrange
+         
+         // Reputable User
+         var user = await GenerateReputableUser().ConfigureAwait(false);
+         int userID= Convert.ToInt32(user.data);
+         EventManager.EventManager eventManager = new EventManager.EventManager(); 
+         string title = "Beach Club";
+         string description = "Beach clean up at Huntington Beach";
+         var lat = 33.6603000;
+         var lng = -117.9992300;
+         var expected = "Event Pin Marked as Completed";
+         await eventManager.CreateNewEvent(title, description, userID, lat, lng).ConfigureAwait(false);
+         IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+         SqlDAO daoDelete = new SqlDAO(connString.devSqlUsers);
+         var eventIDObj = await daoSelect.SelectEventID(userID).ConfigureAwait(false);
+         int eventID = Convert.ToInt32(eventIDObj.data);
+         
+         // Act
+         var result = await eventManager.MarkEventComplete(eventID, userID);
+         
+
+         // Assert
+         Assert.IsTrue(result.isSuccessful);
+         Assert.AreEqual(expected,result.errorMessage);
+         await daoDelete.DeleteUserProfile(userID).ConfigureAwait(false);
+         IDBDeleter daoDeleter = new SQLDeletionDAO(connString.devSqlFeatures);
+         await daoDeleter.DeleteEvent(eventID).ConfigureAwait(false);
+     }    
      
      
      

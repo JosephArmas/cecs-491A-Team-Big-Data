@@ -18,6 +18,8 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> UpdateEventToDisabled(int eventID);
         public Task<Response> UpdateUserRole(int userID, string role);
         public Task<Response> UpdateEventCount(int eventID, int count);
+        public Task<Response> UpdateEventAttendanceShow(int eventID);
+        public Task<Response> UpdateEventAttendanceDisable(int eventID);
 
     }
 }

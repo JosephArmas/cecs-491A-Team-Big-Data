@@ -1304,10 +1304,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         public async Task<Response> SelectUserProfileRole(int userID)
         {
             string sqlStatement = "SELECT role FROM dbo.UserProfiles WHERE userID = @userID";
-            /*
-            var connection = new SqlConnection(_connectionString);
-            cmd.Parameters.AddWithValue("@ID", userID);
-            */
+            // var connection = new SqlConnection(_connectionString);
             var response = new Response();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -1600,6 +1597,8 @@ namespace TeamBigData.Utification.SQLDataAccess
 
             return response; 
         }
+        
+        
 
         public Task<Response> IncrementEvent(int eventID)
         {
@@ -1642,6 +1641,25 @@ namespace TeamBigData.Utification.SQLDataAccess
             return ExecuteSqlCommand(connection, cmd);
         }
 
+        public Task<Response> UpdateEventAttendanceShow(int eventID)
+        {
+            // Sql statement to increment the value
+            var sqlstatement = "UPDATE dbo.Events SET showAttendance = 1 WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            return ExecuteSqlCommand(connection, cmd);
+        }
+        public Task<Response> UpdateEventAttendanceDisable(int eventID)
+        {
+            // Sql statement to increment the value
+            var sqlstatement = "UPDATE dbo.Events SET showAttendance = 0 WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            
+            return ExecuteSqlCommand(connection, cmd);
+        }
 
         public async Task<Response> SelectEventOwner(int eventID)
         {
@@ -1743,7 +1761,43 @@ namespace TeamBigData.Utification.SQLDataAccess
              cmd.Parameters.AddWithValue("@eventID", eventID);
              
              return ExecuteSqlCommand(connection, cmd); 
+             
          }
+
+
+        public async Task<Response> SelectAttendance(int eventID)
+        {
+            var sqlstatement = "SELECT showAttendance FROM dbo.Events WHERE eventID = @eventID";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@eventID", eventID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            // Date stored in type obj
+                            response.data = reader.GetInt32(reader.GetOrdinal("showAttendance"));
+                            response.isSuccessful = true;
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error Getting Event Date Created";
+
+                    }
+                }
+            }
+            
+            return response;  
+        }
 
     }
 }
