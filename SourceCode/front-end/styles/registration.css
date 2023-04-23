@@ -1,7 +1,6 @@
-#register-title
+.login-title
 {
     padding-top: 10px;
-    text-align: center;
 }
 
 .reg-box
@@ -21,41 +20,4 @@
     justify-content: center;
     /* padding: 20px 10px; */
     padding-left: 320px;
-}
-
-.input-field
-{
-    display: flex;
-    padding: 30px;
-    flex-direction: column; 
-    align-items: center;
-    gap: 30px;
-}
-
-.input-field input
-{
-    min-width: 50px;
-}
-
-.input-field button
-{
-    min-width: 100px;
-    background-color: #ca74ff;
-    color: white
-}
-
-.input-field button:hover
-{
-    background-color: #eb61ff;
-    color: white;
-}
-
-#reg-title
-{
-    text-align: center;
-}
-
-
-.registration-container {
-    display: none;
 }

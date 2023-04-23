@@ -3,10 +3,7 @@
 // The wrapper is from Vatanak Vong's AJAX Demo in his GitHub. https://github.com/v-vong3/csulb/tree/master/cecs_491/demo/ajax-demo
 // Google maps api code follows Google's map api doc tutorials. https://developers.google.com/maps/documentation/javascript/overview#maps_map_simple-javascript
 (function (root) {
-    var script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
-    script.async = true;
-    console.log(localStorage.getItem("role"));
+    
     // Dependency check
     const isValid = root;
     if(!isValid){
@@ -29,7 +26,7 @@
         "http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
     ]
 
-    // const CSULB = { lat: 33.7838, lng: -118.1141 };
+    const CSULB = { lat: 33.7838, lng: -118.1141 };
 
     let map;
 
@@ -37,6 +34,7 @@
     var pinsMarker = []
     var infoWindows = []
 
+    var errorsDiv = document.getElementById('errors');
 
     // Checks if within California State Borders
     function pinBounds(latLng) {
@@ -97,13 +95,12 @@
     }
 
     function getMarkerHandler() {
-        // const webServiceUrl = 'https://localhost:7259/Pin/GetAllPins';
-        const endPoint = getEndPoint();
+        const webServiceUrl = 'https://localhost:7259/Pin/GetAllPins';
         pinsInfo = []
         pinsMarker = []
         infoWindows = []
         // Connect to backend to get markers as an authorized user
-        var request = axios.get(endPoint.getAllPin, {
+        var request = axios.get(webServiceUrl, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -162,8 +159,7 @@
         infoWindows[pos].close();
         pinsMarker[pos].setMap(null);
 
-        // const webServiceUrl = 'https://localhost:7259/Pin/CompleteUserPin';
-        const endPoint = getEndPoint();
+        const webServiceUrl = 'https://localhost:7259/Pin/CompleteUserPin';
         
         const pin = {}
         pin.pinID = pinsInfo[pos]._pinID;
@@ -176,7 +172,7 @@
         pin.completed = 1;
         pin.dateTime = pinsInfo[pos]._dateTime;
 
-        axios.post(endPoint.completeUserPin, pin, {
+        axios.post(webServiceUrl, pin, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -193,13 +189,12 @@
     window.modifyPinHandler = function(pos)
     {
         infoWindows[pos].close();
-        // errorsDiv.innerHTML = "";
+        errorsDiv.innerHTML = "";
 
         let userAction = prompt("1. Modify Pin Type\n2. Modify Pin Content\n3. Delete Pin\nPick Options 1-3: ");
         if (!(userAction == "1" || userAction == "2" || userAction == "3")||userAction == null)
         {
-            // errorsDiv.innerHTML = "Invalid Pin Input...";
-            timeOut('Invalid Pin Input...',red,'response')
+            errorsDiv.innerHTML = "Invalid Pin Input...";
             return;
         };
         switch (userAction) { 
@@ -218,12 +213,10 @@
 
     function modifyPinTypeHandler(pos)
     {
-        // const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinType';
-        // errorsDiv.innerHTML = "";
-        const endPoint = getEndPoint();
+        const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinType';
+        errorsDiv.innerHTML = "";
 
         let pinType = prompt("Modifying Pin Type\n1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
-
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
             errorsDiv.innerHTML = "Invalid Pin Input...";
@@ -241,7 +234,7 @@
         pin.completed = 0;
         pin.dateTime = '';
 
-        axios.post(endPoint.modifyPinType, pin, {
+        axios.post(webServiceUrl, pin, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -254,22 +247,19 @@
 
     function modifyPinContentHandler(pos)
     {
-        // const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinContent';
-        const endPoint = getEndPoint();
+        const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinContent';
 
         let title = prompt("Modifying Pin Content\nEnter pin title.");
         if (title == null || !titleLimit(title))
         {
-            // errorsDiv.innerHTML = "Invalid Title Input...";
-            timeOut('Invalid Title Input...',red,'response')
+            errorsDiv.innerHTML = "Invalid Title Input...";
             return;
         };
 
         let description = prompt("Modifying Pin Content\nEnter pin description");
         if (description == null || !descriptionLimit(description))
         {
-            // errorsDiv.innerHTML = "Invalid Description Input...";
-            timeOut('Invalid Description Input...',red,'response')
+            errorsDiv.innerHTML = "Invalid Description Input...";
             return;
         };
 
@@ -312,8 +302,7 @@
 
     function deletePinHandler(pos)
     {
-        // const webServiceUrl = 'https://localhost:7259/Pin/DisablePin';
-        const endPoint = getEndPoint();
+        const webServiceUrl = 'https://localhost:7259/Pin/DisablePin';
 
         infoWindows[pos].close();
         pinsMarker[pos].setMap(null);
@@ -329,7 +318,7 @@
         pin.completed = 0;
         pin.dateTime = '';
 
-        axios.post(endPoint.disablePin, pin, {
+        axios.post(webServiceUrl, pin, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -341,34 +330,26 @@
     }
 
     function placeNewPin(latLng, map) {
-        // const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
-        const endPoint = getEndPoint();
-        /*U
+        const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
+        errorsDiv.innerHTML = "";
+
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
-
-        if (pinType == "2")
+        if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
-            showEventMenu(lat,lng);
-
-        }
-        if (!(pinType == "1" || pinType == pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
-        {
-            timeOut("Invalid Pin Input...", 'red', responseDiv)
+            errorsDiv.innerHTML = "Invalid Pin Input...";
             return;
         };
-        */
-
 
         let title = prompt("Enter pin title.");
         if (title == null || !titleLimit(title))
         {
-            timeOut("Invalid Title Input...", 'red', responseDiv)
+            errorsDiv.innerHTML = "Invalid Title Input...";
             return;
         };
         let description = prompt("Enter pin description");
         if (description == null || !descriptionLimit(description))
         {
-            timeOut("Invalid Description Input...", 'red', responseDiv)
+            errorsDiv.innerHTML = "Invalid Description Input...";
             return;
         };
 
@@ -411,7 +392,7 @@
         pin.completed = 0;
         pin.dateTime = date+' '+time;
 
-        axios.post(endPoint.postPin, pin, {
+        axios.post(webServiceUrl, pin, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -422,79 +403,35 @@
         .catch(function (error){
         });
     }
-    
    
-    
-    const CSULB = { lat: 33.7838, lng: -118.1141 };
-   
-    window.initMap = function() 
-    {
-        // Selects all the map elements on html (admin & reg user)
-        const mapElements = document.querySelectorAll(".map");
-
-
-        // Loop through each of the maps elements on html (admin & reg user)
-        // Start Point
-        mapElements.forEach(mapElement => {
-            map = new google.maps.Map(mapElement, {
-                center: CSULB,
-                minZoom: 8,
-                maxZoom: 18,
-                zoom: 15,
-                mapId: 'bb1d4678c71528ff',
-                restriction: {
-                    latLngBounds: CALIFORNIA_BOUNDS,
-                    strictBounds: false
-                },
-                mapTypeControl: false,
-                // clickableIcons: false,
-            });
-            
-            placeMarker(map);
-            // getEvents()
-            // let data = getEvents()
-            // console.log(data)
-            
-            });
-            // getMarkerHandler()
-            
-        
+    window.initMap = function() {
+        errorsDiv.innerHTML = "";
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: CSULB,
+            minZoom: 8,
+            maxZoom: 18,
+            zoom: 15,
+            mapId: 'bb1d4678c71528ff',
+            restriction: {
+                latLngBounds: CALIFORNIA_BOUNDS,
+                strictBounds: false
+            },
+            mapTypeControl: false,
+            clickableIcons: false
+        });
+        getMarkerHandler();
         //checks jwt signature for role
-        if (localStorage.getItem("role")==="Admin User"||localStorage.getItem("role")==="Reputable User")
-        {
+        if (localStorage.getItem("role")==="Admin User"||localStorage.getItem("role")==="Reputable User"){
             //user can add pins to map
             map.addListener("click", (e) => 
             {
                 if (!pinBounds(e.latLng)){
-                    timeOut("Pin is placed out of bounds...", 'red', responseDiv)
-
+                    errorsDiv.innerHTML = "Pin is placed out of bounds... "; 
                     return;
                 }
-
-                let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
-
-                if (pinType == "2")
-                {
-                    showEventMenu(e.latLng);
-                } 
-                else if (!(pinType == "1" || pinType == "2" || pinType == "3" ||pinType == "4" ||pinType == "5") ||pinType == null)
-                {
-                    timeOut("Invalid Pin Input...", 'red', responseDiv)
-
-                    return;
-                }
-                else
-                {
-                    placeNewPin(e.latLng, map);
-
-                }
+                placeNewPin(e.latLng, map);
             });
         }
-            
-
-
-                
     }
-    document.head.appendChild(script);
 })(window, window.ajaxClient);
 
