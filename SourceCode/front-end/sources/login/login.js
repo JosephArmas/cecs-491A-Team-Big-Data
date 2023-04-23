@@ -14,6 +14,8 @@ function loginUser(email, password)
     console.log(user.password);
     // console.log(server.authenticationServer);
     console.log(user);
+    try{
+
     axios.post(endPoint.authenticationServer, user).then(function (responseAfter)
     {
         var base64Url = responseAfter.data.split('.')[1];
@@ -23,7 +25,6 @@ function loginUser(email, password)
         }).join(''));
         const jsonObj = JSON.parse(jsonPayload)
         console.log(jsonObj);
-        // console.log(roles.reg.includes(jsonObj.role));
 
         if (jsonObj.authenticated === "true" && role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role) || role.admin.includes(jsonObj.role))
         {
@@ -31,8 +32,13 @@ function loginUser(email, password)
             localStorage.setItem("jwtToken", responseAfter.data)
             localStorage.setItem("role", jsonObj.role)
             localStorage.setItem("id",jsonObj.nameid)
+            localStorage.setItem("otp",jsonObj.otp)
+            let otp = localStorage.getItem("otp");
+            console.log(localStorage.getItem("id"));
+            console.log(otp);
             console.log('user is authenticated and has a role lets go to otp view');
-            showOtp(jsonObj.otp,jsonObj.role);
+            console.log(jsonObj.otp);
+            showOtp(otp,jsonObj.role);
 
         }
 
@@ -42,6 +48,10 @@ function loginUser(email, password)
         let cleanError = errorAfter.replace(/"/g,"");
         timeOut(cleanError, 'red', responseDiv);
     });
+    } catch (error)
+    {
+        timeOut('Error with email or password. Please try again', 'red', responseDiv)
+    }
     loginForm.reset();
 }
 
@@ -75,7 +85,6 @@ function buildLogin()
         {
             if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
             {
-                // console.log(IsValidPassword(password.value));
                 loginUser(email.value,password.value);
             } 
             else

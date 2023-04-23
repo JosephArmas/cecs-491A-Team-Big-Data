@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="styles/nav-profile.css">
         <link rel="stylesheet" href="styles/nav-profile-events.css">
         <link rel="stylesheet" href="styles/home-admin.css">
+        <link rel="stylesheet" href="styles/events.css">
     </head>
     <body>
 
@@ -27,7 +28,7 @@
         <div id="response"></div>
         
         <!-- * Test Div -->
-        <!-- <div class="test" ></div> -->
+        <div class="test" ></div>
 
        <!-- * Confirmation pop up--> 
         <div class="confirm"></div>
@@ -117,6 +118,16 @@
             </div>
         </div>
 
+        <!-- * Events Dropdown view -->
+        <div class="event-dropdown-container">
+            <div class="event-form">
+                <div class="event-dropdown-box"></div>
+                    <div class="title"></div>
+                    <div class="event-inputs"></div>
+                    <div class="confirm-btn"></div>
+            </div>
+        </div>
+
         <!-- * Home view -->
         <div class="home-container" >
             <div class="home-header-container">
@@ -202,21 +213,20 @@
         <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 
         <!-- App Dependency -->
-        <!-- <script src="sources/end-point/endpoint.js"></script> -->
+        <script src="sources/end-point/endpoint.js"></script>
         <script src="sources/login/login.js"></script>
         <script src="sources/registration/register.js"></script>
         <script src="sources/analytics/analytics.js"></script>
+        <script src="sources/event/event.js"></script>
         <script src="sources/map/map.js"></script>
-        <script src="sources/otp/otp.js"></script>
 
         <!-- Page specific (js file) -->
         <script src="sources/main.js"></script>
         <script src="sources/profile/nav-profile.js"></script>
-        <script src="sources/end-point/endpoint.js"></script>
+        <!-- <script src="sources/end-point/endpoint.js"></script> -->
         <script src="sources/response/response.js"></script>
-        <!-- <script src="sources/otp/otp.js"></script> -->
+        <script src="sources/otp/otp.js"></script>
         <script src="sources/roles/roles.js"></script>
-        <script src="sources/server/server.js"></script>
 
         
     </body>

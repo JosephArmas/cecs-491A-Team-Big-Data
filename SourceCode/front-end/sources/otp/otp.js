@@ -1,34 +1,4 @@
 let otpBuild = false;
-function generateOTP()
-{
-    let otp = '';
-    var random = Math.floor(Math.random() * 3);
-    var count = 0 
-    while (count < 10)
-    {
-        var character = random;
-        // 0-9
-        if (character == 0)
-        {
-            otp += Math.floor(Math.random() * 10);
-            count++;
-        }
-        // a-z
-        if (character == 1)
-        {
-            otp = otp + String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-            count++;
-        }
-        // A-Z
-        if (character == 2)
-        {
-            otp = otp + String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-            count++;
-        }
-        random = Math.floor(Math.random() * 3);
-    }
-    return otp.toString();
-}
 
 function showOtp(otpVal, role)
 {
@@ -36,35 +6,11 @@ function showOtp(otpVal, role)
     let loginContainer = document.querySelector(".login-container");
     let anonContainer = document.querySelector(".anon-container");
     let otpDisplay = document.querySelector('.otp-display');
-    console.log('inside showOtp')
-    console.log('otpVal: ' + otpVal)
     buildOTP(otpVal,role);
     otpDisplay.innerHTML = otpVal;
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
     anonContainer.style.display = "none";
-    let submitBtn = document.querySelector('#otp-submit');
-    submitBtn.addEventListener('click', function(event)
-    {
-        if (otpInput.value == otpVal && roles.reg.includes(role))
-        {
-            console.log(otpInput.value)
-            regView();
-        } else if (otpInput.value == otpVal && roles.admin.includes(role))
-        {
-            console.log(role)
-            adminView();
-        } else if (otpInput.value !== otpVal)
-        {
-            timeOut('Invalid OTP','red',responseDiv);
-        }
-        else
-        {
-            timeOut('You are not authorized to register','red',responseDiv);
-        }
-        
-        otpForm.reset();
-    });
 }
 
 function buildOTP(otpVal,userType)
@@ -83,26 +29,28 @@ function buildOTP(otpVal,userType)
         homeBtn.textContent = 'Home';
         homeBtn.addEventListener('click',homeClicked);
         backBtnDiv.appendChild(homeBtn);
-        // let otpVal = generateOTP();
-        // otpDisplay.innerHTML = otpVal;
         let otpInput = document.createElement('input');
         otpInput.setAttribute('type','text');
         otpInput.id = 'otp-input';
+        otpInput.name = 'otp-name';
         otpInput.required = true;
         otp.appendChild(otpInput);
+        otpForm.appendChild(otp);
         let submitBtn = document.createElement('button');
         submitBtn.setAttribute('type','submit');
         submitBtn.textContent = 'Submit';
         submitBtn.id = 'otp-submit'
+        submitDiv.appendChild(submitBtn);
+        otpForm.appendChild(submitDiv);
+
+        let role = getRole()
         submitBtn.addEventListener('click', function(event)
         {
-            if (otpInput.value == otpVal && roles.reg.includes(userType))
+            if (otpInput.value == otpVal && role.reg.includes(userType))
             {
-                console.log(otpInput.value)
                 regView();
-            } else if (otpInput.value == otpVal && roles.admin.includes(userType))
+            } else if (otpInput.value == otpVal && role.admin.includes(userType))
             {
-                console.log(userType)
                 adminView();
             } else if (otpInput.value !== otpVal)
             {
@@ -115,7 +63,6 @@ function buildOTP(otpVal,userType)
             
             otpForm.reset();
         });
-        submitDiv.appendChild(submitBtn);
         otpBuild = true;
     }
 

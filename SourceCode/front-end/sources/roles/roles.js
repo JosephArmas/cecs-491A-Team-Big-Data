@@ -2,7 +2,7 @@ function getRole()
 {
     const roles = 
     {
-        reg:['Regular User', 'Reputation User'],
+        reg:['Regular User', 'Reputable User'],
         service: ['Service User'],
         admin: ['Admin User'],
     } 
