@@ -1289,7 +1289,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
-            var sql = "Insert into dbo.ProfilePic(\"key\", pinID) values (@k, @ID)";
+            var sql = "Insert into dbo.ProfilePic(\"key\", userID) values (@k, @ID)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@k", key));
@@ -1300,6 +1300,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             var tcs = new TaskCompletionSource<Response>();
             var result = new Response();
+            String id = "";
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -1309,11 +1310,19 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(sql, connection);
                     command.Parameters.Add(new SqlParameter("@p", pinID));
-                    String id = (String)command.ExecuteScalar();
-                    if (id.Length > 0)
+                    id = (String)command.ExecuteScalar();
+                    if(!(id is null))
                     {
+                        if (id.Length > 0)
+                        {
+                            result.data = id;
+                            result.isSuccessful = true;
+                        }
+                    }
+                    else
+                    {
+                        id = "";
                         result.data = id;
-                        result.isSuccessful = true;
                     }
                 }
                 catch (SqlException s)
@@ -1343,7 +1352,12 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var command = new SqlCommand(sql, connection);
                     command.Parameters.Add(new SqlParameter("@ID", userID));
                     String id = (String)command.ExecuteScalar();
-                    if (id.Length > 0)
+                    if(id is null)
+                    {
+                        id = "";
+                        result.data = id;
+                    }
+                    else if (id.Length > 0)
                     {
                         result.data = id;
                         result.isSuccessful = true;

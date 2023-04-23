@@ -15,6 +15,12 @@ namespace TeamBigData.Utification.FileManagers
         public async Task<Response> UploadPinPic(String filename, int pinID, UserProfile cred)
         {
             var result = new Response();
+            var ext = filename.Substring(filename.Length - 4, 4).ToLower();
+            if (!(ext.Equals(".jpg") || ext.Equals(".png")))
+            {
+                result.errorMessage = "Unsupported File Extension";
+                return result;
+            }
             var service = new FileService();
             var sqlDAO = new SqlDAO(_connectionString);
 
@@ -44,6 +50,12 @@ namespace TeamBigData.Utification.FileManagers
         public async Task<Response> UploadProfilePic(String filename, int userID, UserProfile cred)
         {
             var result = new Response();
+            var ext = filename.Substring(filename.Length - 4, 4).ToLower();
+            if (!(ext.Equals(".jpg") || ext.Equals(".png")))
+            {
+                result.errorMessage = "Unsupported File Extension";
+                return result;
+            }
             var service = new FileService();
             var sqlDAO = new SqlDAO(_connectionString);
 
@@ -128,7 +140,7 @@ namespace TeamBigData.Utification.FileManagers
             }
             else
             {
-                result.errorMessage = "Could not find uploaded file";
+                result.errorMessage = "Could not find uploaded file " + pinID;
                 return result;
             }
         }
@@ -148,9 +160,15 @@ namespace TeamBigData.Utification.FileManagers
             }
         }
 
-        public async Task<Response> UpdatePinPic(int pinID, UserProfile cred)
+        public async Task<Response> UpdatePinPic(String filename, int pinID, UserProfile cred)
         {
             var result = new Response();
+            var ext = filename.Substring(filename.Length - 3, filename.Length).ToLower();
+            if (!(ext.Equals(".jpg") || ext.Equals(".png")))
+            {
+                result.errorMessage = "Unsupported File Extension";
+                return result;
+            }
             var sqlDAO = new SqlDAO(_connectionString);
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
             {
@@ -175,9 +193,15 @@ namespace TeamBigData.Utification.FileManagers
             return result;
         }
 
-        public async Task<Response> UpdateProfilePic(int userID, UserProfile cred)
+        public async Task<Response> UpdateProfilePic(String filename, int userID, UserProfile cred)
         {
             var result = new Response();
+            var ext = filename.Substring(filename.Length - 3, filename.Length);
+            if (!(ext.Equals(".jpg") || ext.Equals(".png")))
+            {
+                result.errorMessage = "Unsupported File Extension";
+                return result;
+            }
             var sqlDAO = new SqlDAO(_connectionString);
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
             {

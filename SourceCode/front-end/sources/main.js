@@ -30,6 +30,7 @@ function homeClicked()
     var globalErrors = document.querySelector("#errors");
     var recoveryContainer = document.querySelector(".recovery-container");
     var recoveryOTPContainer = document.querySelector(".recOTP-container");
+    var profileContainer = document.querySelector(".profileContainer");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
@@ -37,6 +38,7 @@ function homeClicked()
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
+    profileContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 
@@ -46,6 +48,15 @@ function regClicked()
     var anonContainer = document.querySelector(".anon-container");
     anonContainer.style.display = "none";
     regContainer.style.display = "block";
+}
+
+function profileClicked()
+{
+    var profileContainer = document.querySelector(".profileContainer");
+    var homeContainer = document.querySelector(".home-container");
+    homeContainer.style.display = "none";
+    profileContainer.style.display = "block";
+    downloadProfilePic();
 }
 
 function recoveryClicked()
@@ -62,44 +73,6 @@ function recoveryClickedLogin()
     var recoveryContainer = document.querySelector(".recovery-container");
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "block";
-}
-
-//Gets File From AWS Bucket
-function fileClicked2()
-{
-    let host = "https://utificationbucket.s3.amazonaws.com/abcd"
-    let box = document.getElementById("file-container");
-    axios.get(host).catch(function (error)
-    {
-        let errorAfter = error.response.data;
-        let cleanError = errorAfter.replace(/"/g,"");
-        errorsDiv.innerHTML = cleanError; 
-    }).then(function(file)
-    {
-        //picture stored as a DataURL for easy access
-        box.innerHTML = file.data;
-    })
-}
-
-//Uploads File to AWS Bucket
-function fileClicked()
-{
-    let host = "https://utificationbucket.s3.amazonaws.com/base64"
-    let box = document.getElementById("file-container");
-    let fileSelector = document.getElementById("fileSelect");
-    let file = fileSelector.files[0];
-    let url = URL.createObjectURL(file);
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (function (x)
-    {
-        axios.put(host, b, config).catch(function (error)
-        {
-            let errorAfter = error.response.data;
-            let cleanError = errorAfter.replace(/"/g,"");
-            errorsDiv.innerHTML = cleanError; 
-        });
-    }) 
 }
 
 function regView()

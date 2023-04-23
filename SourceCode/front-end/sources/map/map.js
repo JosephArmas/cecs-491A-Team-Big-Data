@@ -133,7 +133,7 @@
                     content: pinContent
                 });
 
-                pinsInfo.push(response.data[i])
+                pinsInfo.push(currResponse)
                 pinsMarker.push(pin);
                 infoWindows.push(infowindow);
                 
@@ -144,22 +144,191 @@
                 }
                 else
                 {
+                    let x = i;
                     pin.addListener("click", () => {
                         infowindow.open({
                             anchor: pin,
                             map,
                             shouldFocus: false,
                         });
+                        downloadPicture(x);
                     });
                 }
             }
         });
     }
 
-    window.uploadPicture = async function(pos)
+    // David
+    window.uploadPicture = function(pos)
     {
         let pinID = pinsInfo[pos]._pinID;
-        uploadPinPic(pinID);
+        let content = pinsInfo[pos]._description;
+        let fileSelector = document.getElementById("fileSelector");
+        let file = fileSelector.files[0];
+        if(file === undefined)
+        {
+            alert("Use the File Selector on the Top Right");
+        }
+        else
+        {
+            let filename = file.name;
+            let length = filename.length;
+            let ext = filename.substring(length - 4, length)
+            if(ext != ".jpg" && ext != ".png" && ext != ".JPG" && ext != ".PNG")
+            {
+                alert("Incorrect File Extension");
+            }
+            else
+            {
+                let url = URL.createObjectURL(file);
+                //rebuild content
+                content += "<img style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
+                content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                {
+                    content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
+                    content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
+                    content += `<button id='deletePin' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+                }
+                infoWindows[pos].setContent(content);
+                let params = {
+                    fileName: filename,
+                    ID: pinID,
+                    role: localStorage.getItem("role"),
+                    userID: localStorage.getItem("id")
+                }
+                axios.post(backend + "pinUpload", params).catch(function (error)
+                {
+                    let errorAfter = error.response.data;
+                    let cleanError = errorAfter.replace(/"/g,"");
+                    errorsDiv.innerHTML = cleanError; 
+                }).then(function(key)
+                {
+                    uploadToS3(key.data);
+                })
+            }
+        }
+    }
+
+    window.downloadPicture = function(pos)
+    {
+        let pinID = pinsInfo[pos]._pinID;
+        // Rebuild content
+        let content = pinsInfo[pos]._description;
+        let config = {
+            headers : {"ID": pinID}
+        };
+        // Get the key from the backend SQL Server
+        axios.post(backend + "pinDownload", 0, config).catch(function (error)
+        {
+            let errorAfter = error.response.data;
+            let cleanError = errorAfter.replace(/"/g,"");
+            errorsDiv.innerHTML = errorAfter; 
+        }).then(function(key)
+        {
+            if(key.data.length > 0)
+            {
+                // Download file from S3
+                axios.get(s3 + key.data).catch(function (error)
+                {
+                    let errorAfter = error.response.data;
+                    let cleanError = errorAfter.replace(/"/g,"");
+                    errorsDiv.innerHTML = cleanError; 
+                }).then(function(file)
+                {
+                    // Picture stored as a DataURL for easy access
+                    content += "<img style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
+                    content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                    if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                    {
+                        content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
+                        content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
+                        content += `<button id='deletePin' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+                    }
+                    infoWindows[pos].setContent(content);
+                })
+            }
+        })
+    }
+
+    window.updatePicture = function(pos)
+    {
+        let pinID = pinsInfo[pos]._pinID;
+        let content = pinsInfo[pos]._description;
+        let fileSelector = document.getElementById("fileSelector");
+        let file = fileSelector.files[0];
+        if(file === undefined)
+        {
+            alert("Use the File Selector on the Top Right");
+        }
+        else
+        {
+            let filename = file.name;
+            let length = filename.length;
+            let ext = filename.substring(length - 4, length)
+            if(ext != ".jpg" && ext != ".png" && ext != ".JPG" && ext != ".PNG")
+            {
+                alert("Incorrect File Extension");
+            }
+            else
+            {
+                let url = URL.createObjectURL(file);
+                //rebuild content
+                content += "<img style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
+                content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                {
+                    content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
+                    content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
+                }
+                infoWindows[pos].setContent(content);
+                let params = {
+                    fileName: filename,
+                    ID: pinID,
+                    role: localStorage.getItem("role"),
+                    userID: localStorage.getItem("id")
+                }
+                axios.post(backend + "pinUpdate", params).catch(function (error)
+                {
+                    let errorAfter = error.response.data;
+                    let cleanError = errorAfter.replace(/"/g,"");
+                    errorsDiv.innerHTML = cleanError; 
+                }).then(function(key)
+                {
+                    uploadToS3(key.data);
+                })
+            }
+        }
+    }
+
+    window.deletePicture = function(pos)
+    {
+        let pinID = pinsInfo[pos]._pinID;
+        //rebuild content
+        let content = pinsInfo[pos]._description;
+        content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+        {
+            content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
+            content += `<button id='uploadPic' onclick='uploadPicture(${pos})'>Upload Picture</button>`;
+            content += `<button id='deletePin' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+        }
+        infoWindows[pos].setContent(content);
+        let params = {
+            fileName: "",
+            ID: pinID,
+            role: localStorage.getItem("role"),
+            userID: localStorage.getItem("id")
+        }
+        axios.post(backend + "pinDelete", params).catch(function (error)
+        {
+            let errorAfter = error.response.data;
+            let cleanError = errorAfter.replace(/"/g,"");
+            errorsDiv.innerHTML = cleanError; 
+        }).then(function(key)
+        {
+            deleteFromS3(key.data);
+        })
     }
 
     window.completePinHandler = function(pos)

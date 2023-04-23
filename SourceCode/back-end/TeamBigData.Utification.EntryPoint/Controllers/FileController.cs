@@ -45,8 +45,8 @@ namespace Utification.EntryPoint.Controllers
         }
 
         [Route("pinDownload")]
-        [HttpGet]
-        public async Task<IActionResult> PinDownload([FromBody] int ID)
+        [HttpPost]
+        public async Task<IActionResult> PinDownload([FromHeader] int ID)
         {
             var manager = new FileManager();
             var result = new Response();
@@ -77,7 +77,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.UpdatePinPic(input.ID, profile);
+                result = await manager.UpdatePinPic(input.fileName, input.ID, profile);
             }
             catch
             {
@@ -118,7 +118,7 @@ namespace Utification.EntryPoint.Controllers
             }
         }
 
-        [Route("ProfileUpload")]
+        [Route("profileUpload")]
         [HttpPost]
         public async Task<IActionResult> ProfileUpload([FromBody] FileInput input)
         {
@@ -135,7 +135,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.isSuccessful)
             {
-                return Ok();
+                return Ok((String)result.data);
             }
             else
             {
@@ -144,8 +144,8 @@ namespace Utification.EntryPoint.Controllers
         }
 
         [Route("profileDownload")]
-        [HttpGet]
-        public async Task<IActionResult> ProfileDownload([FromBody] int ID)
+        [HttpPost]
+        public async Task<IActionResult> ProfileDownload([FromHeader] int ID)
         {
             var manager = new FileManager();
             var result = new Response();
@@ -176,7 +176,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.UpdateProfilePic(input.ID, profile);
+                result = await manager.UpdateProfilePic(input.fileName, input.ID, profile);
             }
             catch
             {
