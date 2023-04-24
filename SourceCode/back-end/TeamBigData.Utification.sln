@@ -65,9 +65,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Ana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AnalysisTests", "TeamBigData.Utification.AnalysisTests\TeamBigData.Utification.AnalysisTests.csproj", "{70477B88-0FAE-4193-88B3-B1524A8CA84A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.FileManagers", "TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj", "{8D1D6DFB-AF61-4D43-8F27-8C93C12B28D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.FileManagers", "TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj", "{8D1D6DFB-AF61-4D43-8F27-8C93C12B28D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.FileServices", "TeamBigData.Utification.FileService\TeamBigData.Utification.FileServices.csproj", "{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.FileServices", "TeamBigData.Utification.FileService\TeamBigData.Utification.FileServices.csproj", "{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.UserServices", "TeamBigData.Utification.UserServices\TeamBigData.Utification.UserServices.csproj", "{CFAAA1D6-D21F-455E-BBB9-2AC6F40D0B33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.UserServicesManager", "TeamBigData.Utification.UserServicesManager\TeamBigData.Utification.UserServicesManager.csproj", "{2CF921E3-32E1-4B70-90F9-6948FE6CF880}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.UserServicesTests", "TeamBigData.Utification.UserServicesTests\TeamBigData.Utification.UserServicesTests.csproj", "{1E8DD889-3EDA-4617-8B60-4577CEEA7E1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -179,6 +185,18 @@ Global
 		{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFAAA1D6-D21F-455E-BBB9-2AC6F40D0B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFAAA1D6-D21F-455E-BBB9-2AC6F40D0B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFAAA1D6-D21F-455E-BBB9-2AC6F40D0B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFAAA1D6-D21F-455E-BBB9-2AC6F40D0B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CF921E3-32E1-4B70-90F9-6948FE6CF880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CF921E3-32E1-4B70-90F9-6948FE6CF880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CF921E3-32E1-4B70-90F9-6948FE6CF880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CF921E3-32E1-4B70-90F9-6948FE6CF880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E8DD889-3EDA-4617-8B60-4577CEEA7E1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E8DD889-3EDA-4617-8B60-4577CEEA7E1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E8DD889-3EDA-4617-8B60-4577CEEA7E1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E8DD889-3EDA-4617-8B60-4577CEEA7E1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -210,6 +228,9 @@ Global
 		{70477B88-0FAE-4193-88B3-B1524A8CA84A} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 		{8D1D6DFB-AF61-4D43-8F27-8C93C12B28D0} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
 		{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
+		{CFAAA1D6-D21F-455E-BBB9-2AC6F40D0B33} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
+		{2CF921E3-32E1-4B70-90F9-6948FE6CF880} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
+		{1E8DD889-3EDA-4617-8B60-4577CEEA7E1D} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3DAF13A-2974-4087-87BE-B77C46741866}

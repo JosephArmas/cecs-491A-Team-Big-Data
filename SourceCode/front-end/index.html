@@ -28,7 +28,7 @@
                         <button type="button">ham-menu</button>
                         <ul class="features" >
                             <li>feature 1</li>
-                            <li>feature 2</li>
+                            <li><button type="button" id="home-serviceBtn" onclick="serviceClicked()">Services</button></li>
                             <li>feature 3</li>
                             <li>feature 4</li>
                             <li>feature 5</li>
@@ -228,6 +228,73 @@
         </div>
 
 
+	 <!-- * services views-->
+	 <div class="services-container" id="services-container" hidden>
+	   <div class="back-button">
+	     <button type="button" id="servicesBack-home">Back</button>
+	   </div>
+	   <h1>
+	     Account Services
+	   </h1>
+	   <div>
+	     <Button type="button" id="servReq">Request Service</Button>
+	     <Button type="button" id="servCrea">Create service</Button>
+	   </div>
+	 </div>
+
+	 <div class="servicelist-container" id="servicelist-container" hidden>
+	   <div class="back-button">
+	     <button type="button" id="requestsBack-services">Back</button>
+	   </div>
+	   <h1>
+	     Account Services
+	   </h1>
+	   <div id="fullStruct">
+	     <div id="fullList">
+	       <nav>
+	         <ul id="serviceList"></ul>
+	       </nav>
+	     </div>
+	     <div id="infoTab">
+	       <h2 id="infoTitle"></h2>
+	       <div id="infoDesc"></div>
+	       <div id="infoNum"></div>
+	     </div>
+	   </div>
+	   <div id="ResponseButtons">
+	   </div>
+	 </div>
+
+	 <div class="servicecreation-container" id="servicecreation-container" hidden>
+	   <div class="back-button">
+	     <button type="button" id="servicecreationBack-services">Back</button>
+	   </div>
+	   <h1>
+	     Service Account Creation
+	   </h1>
+	   <div id="fullStruct">
+	     <label>Service Title</label><br>
+	     <input type="text" id="serviceTitle"><br><br>
+	     <label>Service Description</label><br>
+	     <textarea type="text" id="serviceDesc" required></textarea><br><br>
+	     <label>Service Phone Number</label><br>
+	     <input type="tel" id="servicePhone"><br><br>
+	     <label>Service Website</label><br>
+	     <input type="text" id="serviceWebsite"><br><br>
+	     <button id="submitBtn">Become a service provider</button>
+	     <div id="serviceCreationBtns">
+	     </div>
+	   </div>
+	   <dialog id="responseBox">
+	     <form method="dialog">
+	       <h3 id="Parentcon"></h3>
+
+	       <div><Button type="button" id="continue">Accept</Button></div>
+	     </form>
+	   </dialog>
+	 </div>
+
+
         <!-- Thirdparty dependency -->
         <script src="node_modules/axios/dist/axios.js"></script>
 
@@ -239,6 +306,7 @@
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/profile/profile.js"></script>
         <script src="sources/fileUpload/file.js"></script>
+	<script src="sources/services/servicelist.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>
