@@ -93,6 +93,21 @@
             </div>
         </div>
 
+        <!--* Reports/Reputation View-->
+        <div class="reputation-reports-container" hidden>
+            <div class="header">
+                <button type="button" id="map-return-button">Back</button>
+            </div>
+            <div class="reputation"></div>
+            <div class="reports-box"></div>
+            <div class="reputation-controls">
+                <button type="button" id="previous-reports">Previous</button>
+                <button type="button" id="create-report-btn">Create New Report</button>
+                <button type="button" id ="next-reports">Next</button>
+            </div>
+        </div>
+
+
         <!-- * OTP -->
         <div class="otp-container" hidden>
             <form action="/" method="POST" id="otp-form">
@@ -247,6 +262,7 @@
 
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
+        <script src="sources/reputation/reputation.js"></script>
 
     </body>
 </html>
