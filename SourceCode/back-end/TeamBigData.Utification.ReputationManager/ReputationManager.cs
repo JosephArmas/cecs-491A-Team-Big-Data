@@ -44,7 +44,7 @@ namespace TeamBigData.Utification.Manager
                 getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Failed to retrieve users reputation from the data store");
             }
 
-            await _logger.Logs(getReputationLog).ConfigureAwait(false);
+            await _logger.Log(getReputationLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -65,7 +65,7 @@ namespace TeamBigData.Utification.Manager
                 getReportsLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Failed to retrieve reports from the data store");
             }
 
-            await _logger.Logs(getReportsLog).ConfigureAwait(false);
+            await _logger.Log(getReportsLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -98,7 +98,7 @@ namespace TeamBigData.Utification.Manager
                                                     "Data Store", "Failed to increase reputation by 0.1");
                 }
 
-                await _logger.Logs(updateReputationLog).ConfigureAwait(false);
+                await _logger.Log(updateReputationLog).ConfigureAwait(false);
             }
             else
             {
@@ -106,7 +106,7 @@ namespace TeamBigData.Utification.Manager
                                             "Data", "Failed to retrieve current user reputation");
             }
 
-            await _logger.Logs(getReputationLog).ConfigureAwait(false);
+            await _logger.Log(getReputationLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -171,7 +171,7 @@ namespace TeamBigData.Utification.Manager
                                                         "Data Store", "Failed to store new report of the reported user");
                         }
 
-                        await _logger.Logs(storeReportLog).ConfigureAwait(false);
+                        await _logger.Log(storeReportLog).ConfigureAwait(false);
 
                     }
                     else
@@ -181,7 +181,7 @@ namespace TeamBigData.Utification.Manager
                                                         "Data Store", "Failed to update user's reputation");
                     }
 
-                    await _logger.Logs(updateReputationLog).ConfigureAwait(false);
+                    await _logger.Log(updateReputationLog).ConfigureAwait(false);
 
                 }
                 else
@@ -190,9 +190,9 @@ namespace TeamBigData.Utification.Manager
                                                 "Data", "Failed to retrieve user's new calculated reputation");
                 }
 
-                await _logger.Logs(getReputationLog).ConfigureAwait(false);
+                await _logger.Log(getReputationLog).ConfigureAwait(false);
             }
-            await _logger.Logs(feedbackValidationLog).ConfigureAwait(false);
+            await _logger.Log(feedbackValidationLog).ConfigureAwait(false);
 
             return _result;
         }

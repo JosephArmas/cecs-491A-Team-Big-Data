@@ -61,6 +61,13 @@ namespace TeamBigData.Utification.Models
             _reputation = reputation;
             Identity = new GenericIdentity(_userID.ToString(), role);
         }
+        public UserProfile(int userID, double reputation, string role)
+        {
+            _userID = userID;
+            _reputation = reputation;
+            Identity = new GenericIdentity(_userID.ToString(), role);
+        }
+
         public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, GenericIdentity identity)
         {
             _userID= userID;
