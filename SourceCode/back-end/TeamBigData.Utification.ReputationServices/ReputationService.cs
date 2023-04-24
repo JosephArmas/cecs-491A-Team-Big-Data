@@ -90,7 +90,7 @@ namespace TeamBigData.Utification.Services
                 log = new Log(1, "Error", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Failed to update users role to {role}");
             }
 
-            await _logger.Log(log).ConfigureAwait(false);
+            await _logger.Logs(log).ConfigureAwait(false);
 
             return _result;
         }
