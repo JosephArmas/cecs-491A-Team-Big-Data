@@ -6,6 +6,9 @@
     
     // Dependency check
     const isValid = root;
+
+    root.Utification = root.Utification || {};
+
     if(!isValid){
         // Handle missing dependencies
         alert("Missing dependencies");
@@ -30,11 +33,11 @@
 
     let map;
 
-    var pinsInfo = []
-    var pinsMarker = []
-    var infoWindows = []
+    let pinsInfo = []
+    let pinsMarker = []
+    let infoWindows = []
 
-    var errorsDiv = document.getElementById('errors');
+    let errorsDiv = document.getElementById('errors');
 
     // Checks if within California State Borders
     function pinBounds(latLng) {
@@ -96,11 +99,13 @@
 
     function getMarkerHandler() {
         const webServiceUrl = 'https://localhost:7259/Pin/GetAllPins';
+
         pinsInfo = []
         pinsMarker = []
         infoWindows = []
+
         // Connect to backend to get markers as an authorized user
-        var request = axios.get(webServiceUrl, {
+        var request = axios.get(webServiceUrl,{
             headers: {
               'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -133,7 +138,7 @@
                     content: pinContent
                 });
 
-                pinsInfo.push(currResponse)
+                pinsInfo.push(response.data[i])
                 pinsMarker.push(pin);
                 infoWindows.push(infowindow);
                 
@@ -364,15 +369,13 @@
         const webServiceUrl = 'https://localhost:7259/Pin/CompleteUserPin';
         
         const pin = {}
-        pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = pinsInfo[pos]._userID;
-        pin.lat = pinsInfo[pos]._lat;
-        pin.lng = pinsInfo[pos]._lng;
-        pin.pinType = pinsInfo[pos]._pinType;
-        pin.description = pinsInfo[pos]._description;
-        pin.disabled = pinsInfo[pos]._disabled;
-        pin.completed = 1;
-        pin.dateTime = pinsInfo[pos]._dateTime;
+        pin._pinID = pinsInfo[pos]._pinID;
+        pin._userID = pinsInfo[pos]._userID;
+        pin._lat = pinsInfo[pos]._lat;
+        pin._lng = pinsInfo[pos]._lng;
+        pin._pinType = pinsInfo[pos]._pinType;
+        pin._description = pinsInfo[pos]._description;
+        pin._userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -426,15 +429,13 @@
         };
 
         const pin = {}
-        pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = 0;
-        pin.lat = ``
-        pin.lng = ``
-        pin.pinType = pinType-1;
-        pin.description = '';
-        pin.disabled = 0;
-        pin.completed = 0;
-        pin.dateTime = '';
+        pin._pinID = pinsInfo[pos]._pinID;
+        pin._userID = pinsInfo[pos]._userID;
+        pin._lat = pinsInfo[pos]._lat;
+        pin._lng = pinsInfo[pos]._lng;
+        pin._pinType = pinsInfo[pos]._pinType;
+        pin._description = pinsInfo[pos]._description;
+        pin._userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -468,15 +469,13 @@
         let content = `<h1>${title}</h1><p>${description}</p>`;
 
         const pin = {}
-        pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = 0;
-        pin.lat = ``
-        pin.lng = ``
-        pin.pinType = 0;
-        pin.description = content;
-        pin.disabled = 0;
-        pin.completed = 0;
-        pin.dateTime = '';
+        pin._pinID = pinsInfo[pos]._pinID;
+        pin._userID = pinsInfo[pos]._userID;
+        pin._lat = pinsInfo[pos]._lat;
+        pin._lng = pinsInfo[pos]._lng;
+        pin._pinType = pinsInfo[pos]._pinType;
+        pin._description = pinsInfo[pos]._description;
+        pin._userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -510,15 +509,13 @@
         pinsMarker[pos].setMap(null);
         
         const pin = {}
-        pin.pinID = pinsInfo[pos]._pinID;
-        pin.userID = 0;
-        pin.lat = ``
-        pin.lng = ``
-        pin.pinType = 0;
-        pin.description = '';
-        pin.disabled = 1;
-        pin.completed = 0;
-        pin.dateTime = '';
+        pin._pinID = pinsInfo[pos]._pinID;
+        pin._userID = pinsInfo[pos]._userID;
+        pin._lat = pinsInfo[pos]._lat;
+        pin._lng = pinsInfo[pos]._lng;
+        pin._pinType = pinsInfo[pos]._pinType;
+        pin._description = pinsInfo[pos]._description;
+        pin._userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -584,15 +581,13 @@
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
         const pin = {}
-        pin.pinID = 0;
-        pin.userID = localStorage.getItem('id');
-        pin.lat = `${latLng.lat()}`
-        pin.lng = `${latLng.lng()}`
-        pin.pinType = pinType-1;
-        pin.description = content;
-        pin.disabled = 0;
-        pin.completed = 0;
-        pin.dateTime = date+' '+time;
+        pin._pinID = 0;
+        pin._userID = localStorage.getItem('id');
+        pin._lat = `${latLng.lat()}`
+        pin._lng = `${latLng.lng()}`
+        pin._pinType = pinType-1;
+        pin._description = content;
+        pin._userhash = localStorage.getItem('userhash')
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -605,6 +600,8 @@
         .catch(function (error){
         });
     }
+
+    root.Utification = root.Utification || {};
    
     window.initMap = function() {
         errorsDiv.innerHTML = "";
@@ -621,9 +618,10 @@
             mapTypeControl: false,
             clickableIcons: false
         });
+
         getMarkerHandler();
         //checks jwt signature for role
-        if (localStorage.getItem("role")==="Admin User"||localStorage.getItem("role")==="Reputable User"){
+        if (localStorage.getItem("role")==="Admin User" || localStorage.getItem("role")==="Reputable User"){
             //user can add pins to map
             map.addListener("click", (e) => 
             {

@@ -4,39 +4,39 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.PinManagers;
 
 namespace Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-    public class PinInfo
-    {
-        public int pinID { get; set; }
-        public int userID { get; set; }
-        public string lat { get; set; }
-        public string lng { get; set; }
-        public int pinType { get; set; }
-        public string description { get; set; }
-        public int disabled { get; set; }
-        public int completed { get; set; }
-        public string dateTime { get; set; }
-    }
     [ApiController]
     [Route("[controller]")]
     public class PinController : ControllerBase
     {
-        public PinController()
+        [BindProperties]
+        public class Pins
         {
+            public int _pinID {  get; set; }
+            public int _userID { get; set; }
+            public String _lat { get; set; }
+            public String _lng { get; set; }
+            public int _pinType { get; set; }
+            public String _description { get; set; }
+            public String _userhash { get; set; }
         }
 
-        [Authorize]
+        private readonly PinManager _pinManager;
+        public PinController(PinManager pinManager)
+        {
+            _pinManager = pinManager;
+        }
+        
         [Route("GetAllPins")]
         [HttpGet]
         public async Task<IActionResult> GetAllPins()
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
             // get authorization header
             const string HeaderKeyName = "HeaderKey";
             Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
@@ -47,152 +47,126 @@ namespace Utification.EntryPoint.Controllers
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(clean);
             IEnumerable<Claim> claims = token.Claims;
+
             // check role of user
             if (claims.ElementAt(2).Value == "Anonymouse User")
             {
-                return Conflict("Unauthorized User.");
+                return Unauthorized(claims.ElementAt(1).Value);
             }
-            var pinMan = new PinManager();
-            var result = await pinMan.GetListOfAllPins(claims.ElementAt(6).Value);
-            if(result.isSuccessful)
+
+                var result = await _pinManager.GetListOfAllPins(claims.ElementAt(6).Value).ConfigureAwait(false);
+            if (!result.isSuccessful)
             {
-                return Ok(result.data);
+                result.isSuccessful = false;
+                result.errorMessage += ", {failed: _pinManager.GetListOfAllPins}";
+                return Conflict(result.errorMessage);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                result.isSuccessful = true;
             }
+
+            return Ok(result.data);
         }
-        [Authorize]
+
+
         [Route("PostNewPin")]
         [HttpPost]
-        public Task<IActionResult> PostNewPin(PinInfo newPin)
+        public async Task<IActionResult> PostNewPin([FromBody]Pins newPin)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            // get authorization header
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-            // get role from JWT signature
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-            if (claims.ElementAt(2).Value == "Anonymouse User" || claims.ElementAt(2).Value == "Regular User")
+            // TODO: Validate user and pin inputs
+
+            Pin pin = new Pin(newPin._userID, newPin._lat, newPin._lng, newPin._pinType, newPin._description);
+
+            var result = await _pinManager.SaveNewPin(pin,newPin._userhash).ConfigureAwait(false);
+            if (!result.isSuccessful)
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                result.errorMessage += ", {failed: _pinManager.SaveNewPin}";
+                return Conflict(result.errorMessage);
             }
-            Pin pin = new Pin(Int32.Parse(claims.ElementAt(0).Value), newPin.lat, newPin.lng, newPin.pinType, newPin.description, newPin.dateTime);
-            var pinMan = new PinManager();
-            var response = pinMan.SaveNewPin(pin, claims.ElementAt(6).Value);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
+            else 
+            { 
+                return Ok(result.errorMessage); 
+            }
         }
-        [Authorize]
+
+        
         [Route("CompleteUserPin")]
         [HttpPost]
-        public Task<IActionResult> CompleteUserPin(PinInfo newPin)
+        public async Task<IActionResult> CompleteUserPin([FromBody]Pins pin)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            // get authorization header
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-            // get role from JWT signature
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-            if (claims.ElementAt(2).Value == "Anonymouse User")
+            // TODO: Validate user and pin inputs
+
+            var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
+            if (!result.isSuccessful)
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                result.isSuccessful = false;
+                result.errorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
+                return Conflict(result.errorMessage);
             }
-            var pinMan = new PinManager();
-            var response = pinMan.MarkAsCompletedPin(newPin.pinID,claims.ElementAt(6).Value);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
-        }
-        [Authorize]
-        [Route("ModifyPinType")]
-        [HttpPost]
-        public Task<IActionResult> ModifyPinType(PinInfo newPin)
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            // get authorization header
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-            // get role from JWT signature
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-            if (claims.ElementAt(2).Value == "Anonymouse User")
+            else
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                return Ok(result.errorMessage);
             }
-            var pinMan = new PinManager();
-            var response = pinMan.ChangePinType(newPin.pinID, newPin.pinType, claims.ElementAt(6).Value);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
         }
-        [Authorize]
+
         [Route("ModifyPinContent")]
         [HttpPost]
-        public Task<IActionResult> ModifyPinContent(PinInfo newPin)
+        public async Task<IActionResult> ModifyPinContent(Pins pin)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            // get authorization header
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-            // get role from JWT signature
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-            if (claims.ElementAt(2).Value == "Anonymouse User")
+            // TODO: Validate user and pin inputs
+
+            var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, pin._userhash).ConfigureAwait(false);
+            if (!response.isSuccessful)
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinManager.ChangePinContent}";
+                return Conflict(response.errorMessage);
             }
-            var pinMan = new PinManager();
-            var response = pinMan.ChangePinContent(newPin.pinID, newPin.description, claims.ElementAt(6).Value);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
+            else
+            {
+                return Ok(response.errorMessage);
+            }
         }
-        [Authorize]
+
+
+        [Route("ModifyPinType")]
+        [HttpPost]
+        public async Task<IActionResult> ModifyPinType(Pins pin)
+        {
+            // TODO: Validate user and pin inputs
+
+            var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, pin._userhash);
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinManager.ChangePinType}";
+                return Conflict(response.errorMessage);
+            }
+            else 
+            { 
+                return Ok(response.errorMessage); 
+            }
+        }
+
         [Route("DisablePin")]
         [HttpPost]
-        public Task<IActionResult> DisablePin(PinInfo newPin)
+        public async Task<IActionResult> DisablePin(Pins pin)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            // get authorization header
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-            // get role from JWT signature
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-            if (claims.ElementAt(2).Value == "Anonymouse User")
+            // TODO: Validate user and pin inputs
+
+            var response = await _pinManager.DisablePin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                response.isSuccessful=false;
+                response.errorMessage += ", {failed: _pinManager.DisablePin}";
+                return Conflict(response.errorMessage);
             }
-            var pinMan = new PinManager();
-            var response = pinMan.DisablePin(newPin.pinID, claims.ElementAt(6).Value);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
+            else
+            { 
+                return Ok(response.errorMessage); 
+            }
         }
     }
 }

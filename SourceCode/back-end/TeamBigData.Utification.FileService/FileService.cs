@@ -5,7 +5,7 @@ namespace TeamBigData.Utification.FileServices
 {
     public class FileService
     {
-        public async Task<Response> UploadPinPic(String filename, int pinId, String connectionString)
+       /* public async Task<Response> UploadPinPic(String filename, int pinId, String connectionString)
         {
             var key = SecureHasher.Base64Hash(pinId + filename + pinId);
             var fileDao = new SqlDAO(connectionString);
@@ -66,6 +66,6 @@ namespace TeamBigData.Utification.FileServices
                 result.errorMessage = "Error Finding Picture to Delete";
             }
             return result;
-        }
+        }*/
     }
 }

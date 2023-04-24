@@ -12,6 +12,12 @@
             errorMessage = "";
         }
 
+        public Response(bool success, String message)
+        {
+            isSuccessful = success;
+            errorMessage = message;
+        }
+
         public String ToString()
         {
             return isSuccessful.ToString() + ": " + errorMessage;

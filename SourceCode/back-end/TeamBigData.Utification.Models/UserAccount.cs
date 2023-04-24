@@ -93,6 +93,7 @@ namespace TeamBigData.Utification.Models
         public void GenerateOTP() 
         {
             int count = 0;
+            _otp = "";
             while (count < 10)
             {
                 int character = RandomNumberGenerator.GetInt32(3);

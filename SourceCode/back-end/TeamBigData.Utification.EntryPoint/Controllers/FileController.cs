@@ -28,7 +28,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.UploadPinPic(input.fileName, input.ID, profile);
+                result = new Response();//= await manager.UploadPinPic(input.fileName, input.ID, profile);
             }
             catch
             {
@@ -52,7 +52,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.DownloadPinPic(ID);
+                result = new Response();//= await manager.DownloadPinPic(ID);
             }
             catch
             {
@@ -77,7 +77,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.UpdatePinPic(input.fileName, input.ID, profile);
+                result = new Response();//= await manager.UpdatePinPic(input.ID, profile);
             }
             catch
             {
@@ -102,7 +102,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.DeletePinPic(input.ID, profile);
+                result = new Response();//= await manager.DeletePinPic(input.ID, profile);
             }
             catch
             {
@@ -127,7 +127,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.UploadProfilePic(input.fileName, input.ID, profile);
+                result = new Response();//= await manager.UploadProfilePic(input.fileName, input.ID, profile);
             }
             catch
             {
@@ -151,7 +151,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.DownloadProfilePic(ID);
+                result = new Response();//= await manager.DownloadProfilePic(ID);
             }
             catch
             {
@@ -176,7 +176,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.UpdateProfilePic(input.fileName, input.ID, profile);
+                result = new Response();//= await manager.UpdateProfilePic(input.ID, profile);
             }
             catch
             {
@@ -201,7 +201,7 @@ namespace Utification.EntryPoint.Controllers
             var result = new Response();
             try
             {
-                result = await manager.DeleteProfilePic(input.ID, profile);
+                result = new Response();//= await manager.DeleteProfilePic(input.ID, profile);
             }
             catch
             {

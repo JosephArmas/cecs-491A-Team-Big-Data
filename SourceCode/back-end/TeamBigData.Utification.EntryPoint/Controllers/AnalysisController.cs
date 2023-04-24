@@ -13,8 +13,8 @@ namespace Utification.EntryPoint.Controllers
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var manager = new AnalysisManager();
-            var rows = manager.GetLogins().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetLogins().Result;
+            //tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
 
@@ -24,8 +24,8 @@ namespace Utification.EntryPoint.Controllers
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var manager = new AnalysisManager();
-            var rows = manager.GetRegistrations().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetRegistrations().Result;
+            //tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
 
@@ -35,8 +35,8 @@ namespace Utification.EntryPoint.Controllers
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var manager = new AnalysisManager();
-            var rows = manager.GetPinsAdded().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetPinsAdded().Result;
+            //tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
 
@@ -46,8 +46,8 @@ namespace Utification.EntryPoint.Controllers
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             var manager = new AnalysisManager();
-            var rows = manager.GetPinPulls().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetPinPulls().Result;
+            // tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
     }
