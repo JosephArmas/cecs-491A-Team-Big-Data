@@ -55,7 +55,7 @@ function registerUser()
          errorsCont.innerHTML = responseAfter +  ". Please return to home screen to login.";
    }).catch(function (error)
    {
-      let errorAfter = error.data[0];
+      let errorAfter = error.data
       //let cleanError = errorAfter.replace(/"/g,"");
       errorsCont.innerHTML = errorAfter; 
 
