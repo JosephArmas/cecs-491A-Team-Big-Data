@@ -15,8 +15,10 @@ pinType int,
 "description" varchar(MAX),
 "disabled" int DEFAULT 0,
 completed int DEFAULT 0,
-"dateTime" varchar(50),
-CONSTRAINT Pins_PK PRIMARY KEY (pinID)
+dateCreated DateTime default GetDate(),
+dateLastModified DateTime default GetDate(),
+userLastModified int,
+CONSTRAINT Pin_PK PRIMARY KEY(pinID)
 );
 
 CREATE TABLE dbo.PinPic
