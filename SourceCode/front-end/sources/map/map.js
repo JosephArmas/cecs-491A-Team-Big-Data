@@ -327,16 +327,23 @@
         });
     }
 
-    function placeNewPin(latLng, map) {
+    function placeNewPin(latLng, map,pinType) {
         const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
-        errorsDiv.innerHTML = "";
 
+        /*
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
             errorsDiv.innerHTML = "Invalid Pin Input...";
             return;
         };
+        */
+        /*
+        if (pinType == "2")
+        {
+            return showEventMenu(latLng);
+        }
+        */
 
         let title = prompt("Enter pin title.");
         if (title == null || !titleLimit(title))
@@ -441,25 +448,16 @@
                 if (pinType == "2")
                 {
                     showEventMenu(e.latLng);
-                    /*
-                    const choice = window.confirm("Are you sure");
-                    if (choice)
-                    {
-                        console.log("user selected yes");
-                    } else{
-                        console.log("user selected no");
-                    }
-                    */
                 } 
-                else if (!(pinType == "1" || pinType == "2" || pinType == "3" ||pinType == "4" ||pinType == "5") ||pinType == null)
+                else if ((pinType == "1" || pinType == "3" ||pinType == "4" ||pinType == "5") ||pinType == null)
                 {
-                    timeOut("Invalid Pin Input...", 'red', errorsDiv)
+                    placeNewPin(e.latLng, map, pinType);
 
                     return;
                 }
                 else
                 {
-                    placeNewPin(e.latLng, map);
+                    timeOut("Invalid Pin Input...", 'red', errorsDiv)
 
                 }
             });
