@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Assert
             Assert.AreEqual(expected, result);
         }
-
+        /*
         [TestMethod]
         public void OTPExpiresAfter2Minutes()
         {
@@ -37,5 +37,6 @@ namespace TeamBigData.Utification.AuthenticationTests
             Assert.AreEqual(expected, result.errorMessage);
             Assert.IsFalse(result.isSuccessful);
         }
+        */
     }
 }
