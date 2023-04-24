@@ -15,9 +15,10 @@ pinType int,
 "description" varchar(MAX),
 "disabled" int DEFAULT 0,
 completed int DEFAULT 0,
-dateCreated DateTime default DateTime.Now(),
-dateLastModified DateTime default DateTime.Now(),
-userLastModified int
+dateCreated DateTime default GetDate(),
+dateLastModified DateTime default GetDate(),
+userLastModified int,
+CONSTRAINT Pin_PK PRIMARY KEY(pinID)
 );
 
 CREATE TABLE dbo.PinPic

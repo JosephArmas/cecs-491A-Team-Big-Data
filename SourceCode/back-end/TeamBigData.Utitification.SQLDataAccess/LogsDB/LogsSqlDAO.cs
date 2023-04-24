@@ -17,6 +17,12 @@ namespace TeamBigData.Utification.SQLDataAccess.LogsDB
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
+        public LogsSqlDAO(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
         {
             var tcs = new TaskCompletionSource<Response>();

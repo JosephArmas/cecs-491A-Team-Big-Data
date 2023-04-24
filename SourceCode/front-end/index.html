@@ -67,6 +67,7 @@
                 <img id="profilePic" style="height:400px; width:100%; object-fit:contain" src="blank image.jpg">
             </div>
             <div class="buttonContainer" id="profileButtons">
+                    <button type = "button" id="p-BackButton" onclick=backToMap()>Back</button>
                     <input type="file" id="p-fileSelector" name="Select File" accept="image/jpg, image/png">
                     <button class="profileButton" type="button" id="p-AddPic" onclick=addProfilePic()>Add Profile Picture</button>
                     <button class="profileButton" type="button" id="p-UpdatePic" onclick=updateProfilePic()>Update Profile Picture</button>
@@ -215,7 +216,7 @@
             </div>
             <div class="content-container">
                 <div class="box-1">
-                    <img src="blank image.jpg" style="height:100%; width:100%; object-fit:contain">
+
                 </div>
                 <div class="box-2" id="file-container">
                 </div> 
@@ -239,6 +240,7 @@
         <script src="sources/otp/recOTP.js"></script>
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/fileUpload/file.js"></script>
+        <script src="sources/profile/profile.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

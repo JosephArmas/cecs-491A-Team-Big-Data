@@ -22,8 +22,8 @@
 
 var otpContainer = document.querySelector(".otp-container");
 var errorsOtp = document.getElementById("errors");
-const otpForm = document.querySelector("#otp-form");
-const otpDisplay = document.querySelector("#otp-display");
+//const otpForm = document.querySelector("#otp-form");
+//const otpDisplay = document.querySelector("#otp-display");
 var otpInput = document.querySelector("#otp-input");
 /*otpBtn.addEventListener('click', function (event)
 {

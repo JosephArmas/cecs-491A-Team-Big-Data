@@ -13,12 +13,17 @@ using TeamBigData.Utification.SQLDataAccess.UsersDB;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
-    public class PinsSqlDAO : DbContext, IPinDBInserter, IPinDBSelecter, IPinDBUpdater
+    public class PinsSqlDAO : DbContext, IPinDBInserter, IPinDBSelecter, IPinDBUpdater, IDBSelectPinOwner
     {
         private readonly String _connectionString;
         public PinsSqlDAO(DbContextOptions<PinsSqlDAO> options) : base(options)
         {
             _connectionString = this.Database.GetDbConnection().ConnectionString;
+        }
+
+        public PinsSqlDAO(string connectionString)
+        {
+            _connectionString = connectionString;
         }
 
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
@@ -248,6 +253,39 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 result.errorMessage = "Update Pin To Disabled successfully for user";
             }
             return result;
+        }
+
+        public Task<Response> GetPinOwner(int pinID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                // Creates an Insert SQL statements using the collumn names and values given
+                var sql = "SELECT userID FROM dbo.Pins Where pinID = @p";
+                try
+                {
+                    var command = new SqlCommand(sql, connection);
+                    command.Parameters.Add(new SqlParameter("@p", pinID));
+                    int id = (int)command.ExecuteScalar();
+                    if (id > 0)
+                    {
+                        result.data = id;
+                        result.isSuccessful = true;
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
         }
     }
 }

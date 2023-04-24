@@ -1,15 +1,33 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.Cryptography;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Files;
+
 namespace TeamBigData.Utification.FileServices
 {
     public class FileService
     {
-       /* public async Task<Response> UploadPinPic(String filename, int pinId, String connectionString)
+        private readonly IDBUploadPinPic _pinpicUploader;
+        private readonly IDBUploadProfilePic _profilepicUploader;
+        private readonly IDBDeletePinPic _pinpicDeleter;
+        private readonly IDBDeleteProfilePic _profilepicDeleter;
+        private readonly IDBDownloadPinPic _pinpicDownloader;
+        private readonly IDBDownloadProfilePic _profilepicDownloader;
+
+        public FileService(FileSqlDAO sqlDAO)
+        {
+            _pinpicUploader = sqlDAO;
+            _profilepicUploader = sqlDAO;
+            _pinpicDeleter = sqlDAO;
+            _profilepicDeleter = sqlDAO;
+            _pinpicDownloader = sqlDAO;
+            _profilepicDownloader = sqlDAO;
+        }
+
+        public async Task<Response> UploadPinPic(String filename, int pinId)
         {
             var key = SecureHasher.Base64Hash(pinId + filename + pinId);
-            var fileDao = new SqlDAO(connectionString);
-            var result = await fileDao.UploadPinPic(key, pinId);
+            var result = await _pinpicUploader.UploadPinPic(key, pinId);
             if(result.isSuccessful)
             {
                 result.data = key;
@@ -20,11 +38,10 @@ namespace TeamBigData.Utification.FileServices
             }
             return result;
         }
-        public async Task<Response> UploadProfilePic(String filename, int userId, String connectionString)
+        public async Task<Response> UploadProfilePic(String filename, int userId)
         {
             var key = SecureHasher.Base64Hash(userId + filename + userId);
-            var fileDao = new SqlDAO(connectionString);
-            var result = await fileDao.UploadProfilePic(key, userId);
+            var result = await _profilepicUploader.UploadProfilePic(key, userId);
             if (result.isSuccessful)
             {
                 result.data = key;
@@ -35,14 +52,13 @@ namespace TeamBigData.Utification.FileServices
             }
             return result;
         }
-        public async Task<Response> DeletePinPic(int pinId, String connectionString)
+        public async Task<Response> DeletePinPic(int pinId)
         {
             var result = new Response();
-            var fileDao = new SqlDAO(connectionString);
-            var keyResult = await fileDao.DownloadPinPic(pinId);
+            var keyResult = await _pinpicDownloader.DownloadPinPic(pinId);
             if (keyResult.isSuccessful)
             {
-                result = await fileDao.DeletePinPic(pinId);
+                result = await _pinpicDeleter.DeletePinPic(pinId);
                 result.data = keyResult.data;
             }
             else
@@ -51,14 +67,13 @@ namespace TeamBigData.Utification.FileServices
             }
             return result;
         }
-        public async Task<Response> DeleteProfilePic(int userId, String connectionString)
+        public async Task<Response> DeleteProfilePic(int userId)
         {
             var result = new Response();
-            var fileDao = new SqlDAO(connectionString);
-            var keyResult = await fileDao.DownloadProfilePic(userId);
+            var keyResult = await _profilepicDownloader.DownloadProfilePic(userId);
             if(keyResult.isSuccessful)
             {
-                result = await fileDao.DeleteProfilePic(userId);
+                result = await _profilepicDeleter.DeleteProfilePic(userId);
                 result.data = keyResult.data;
             }
             else
@@ -66,6 +81,6 @@ namespace TeamBigData.Utification.FileServices
                 result.errorMessage = "Error Finding Picture to Delete";
             }
             return result;
-        }*/
+        }
     }
 }

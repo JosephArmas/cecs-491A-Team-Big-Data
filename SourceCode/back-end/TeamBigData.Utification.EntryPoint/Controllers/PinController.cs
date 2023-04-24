@@ -7,6 +7,7 @@ using System.Security.Claims;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using TeamBigData.Utification.PinManagers;
 
 namespace Utification.EntryPoint.Controllers
@@ -15,18 +16,6 @@ namespace Utification.EntryPoint.Controllers
     [Route("[controller]")]
     public class PinController : ControllerBase
     {
-        [BindProperties]
-        public class Pins
-        {
-            public int _pinID {  get; set; }
-            public int _userID { get; set; }
-            public String _lat { get; set; }
-            public String _lng { get; set; }
-            public int _pinType { get; set; }
-            public String _description { get; set; }
-            public String _userhash { get; set; }
-        }
-
         private readonly PinManager _pinManager;
         public PinController(PinManager pinManager)
         {
@@ -112,7 +101,7 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("ModifyPinContent")]
         [HttpPost]
-        public async Task<IActionResult> ModifyPinContent(Pins pin)
+        public async Task<IActionResult> ModifyPinContent([FromBody]Pins pin)
         {
             // TODO: Validate user and pin inputs
 
@@ -132,7 +121,7 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("ModifyPinType")]
         [HttpPost]
-        public async Task<IActionResult> ModifyPinType(Pins pin)
+        public async Task<IActionResult> ModifyPinType([FromBody]Pins pin)
         {
             // TODO: Validate user and pin inputs
 
@@ -151,7 +140,7 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("DisablePin")]
         [HttpPost]
-        public async Task<IActionResult> DisablePin(Pins pin)
+        public async Task<IActionResult> DisablePin([FromBody] Pins pin)
         {
             // TODO: Validate user and pin inputs
 

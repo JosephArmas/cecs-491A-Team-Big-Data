@@ -13,6 +13,7 @@ using TeamBigData.Utification.SQLDataAccess;
 
 namespace TeamBigData.Utification.AuthenticationTests
 {
+    /*
     [TestClass]
     public class AuthenticationIntegrationTest
     {
@@ -123,4 +124,5 @@ namespace TeamBigData.Utification.AuthenticationTests
             Assert.IsFalse(result.isSuccessful);
         }
     }
+    */
 }

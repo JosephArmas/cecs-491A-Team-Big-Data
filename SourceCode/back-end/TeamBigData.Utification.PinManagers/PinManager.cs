@@ -160,33 +160,5 @@ namespace TeamBigData.Utification.PinManagers
 
             return response;
         }
-
-        public async Task<Response> MarkAsCompletedPin(int pinID, string userHash)
-        {
-            PinService pinSer = new PinService();
-            Response response = await pinSer.MarkAsCompleted(pinID, userHash);
-            return response;
-        }
-
-        public async Task<Response> ChangePinType(int pinID, int pinType, string userHash) {
-            PinService pinSer = new PinService();
-            Response response = await pinSer.ChangePinTypeTo(pinID, pinType, userHash);
-            return response;
-        }
-
-        public async Task<Response> ChangePinContent(int pinID, string description, string userHash)
-        {
-            PinService pinSer = new PinService();
-            Response response = await pinSer.ChangePinContentTo(pinID, description, userHash);
-            return response;
-        }
-
-        public async Task<Response> DisablePin(int pinID, string userHash)
-        {
-            PinService pinSer = new PinService();
-            Response response = await pinSer.DisablingPin(pinID, userHash);
-            return response;
-        }
-
     }
 }

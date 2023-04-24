@@ -3,19 +3,12 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using System.Security.Principal;
 using TeamBigData.Utification.Manager.Abstractions;
 
 namespace Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-    public class RequestBody
-    {
-        public int _userID { get; set; }
-        public String _username { get; set; }
-        public String _newPassword { get; set; }
-        public String _userhash { get; set; }
-    }
 
     [ApiController]
     [Route("[controller]")]

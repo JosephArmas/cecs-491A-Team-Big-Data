@@ -24,7 +24,6 @@
     <ProjectReference Include="..\TeamBigData.Utification.DeletionManager\TeamBigData.Utification.DeletionManager.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.View\TeamBigData.Utification.View.csproj" />
     <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 

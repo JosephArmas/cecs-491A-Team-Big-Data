@@ -350,7 +350,7 @@
             errorsDiv.innerHTML = cleanError; 
         }).then(function(key)
         {
-            if(key.dat === undefined)
+            if(key === undefined)
             {
 
             }

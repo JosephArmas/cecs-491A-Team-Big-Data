@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Cryptography;
@@ -12,24 +12,11 @@ using System.Security.Principal;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-
-
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]")] 
 
     public class AccountController : ControllerBase
     {
-        // TODO: Need to take out of Controller and put into different file
-        // Taking it out will break current code
-
-        [BindProperties]
-        public class IncomingUser
-        {
-            public String _username { get; set; }
-            public String _password { get; set; }
-        }
-
         private readonly SecurityManager _securityManager;
         private readonly IConfiguration _configuration;
         private readonly InputValidation _inputValidation;
@@ -106,7 +93,6 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             return Ok("");
         }
 
-        [AllowAnonymous]
         [Route("registration")]
         [HttpPost]
         public async Task<IActionResult> CreateAccount([FromBody]IncomingUser newAccount)
