@@ -33,8 +33,11 @@ namespace TeamBigData.Utification.SQLDataAccess
             {
                 connection.Open();
                 //Creates an Insert SQL statements using the column names and values given
-                var deleteSql = "DELETE FROM dbo.\"Events\" WHERE userID = '" + username._userID + "';DELETE FROM dbo.Pictures WHERE userID = '" + username._userID + "'" +
-                    ";DELETE FROM dbo.\"Services\" WHERE userID = '" + username._userID + "';DELETE FROM dbo.Pins WHERE userID = '" + username._userID + "';";
+                var deleteSql = "DELETE FROM dbo.\"Events\" WHERE userID = '" + username._userID + "';DELETE FROM dbo.ProfilePic WHERE userID = '" + username._userID + "'" +
+                    ";DELETE FROM dbo.\"Services\" WHERE userID = '" + username._userID + "';" +
+                    "delete pics from dbo.pins pin inner join dbo.pinpic pics on (pin.pinID = pics.pinID) where pin.userID = \'" + username._userID + "\';" +
+                    "delete from dbo.pins where userID = \'" + username._userID + "\';";
+                //TODO: delete associated pinpics
                 try
                 {
                     var command = new SqlCommand(deleteSql, connection);

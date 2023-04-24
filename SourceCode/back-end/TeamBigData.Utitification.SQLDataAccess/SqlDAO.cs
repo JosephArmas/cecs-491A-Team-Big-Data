@@ -9,7 +9,7 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : DbContext, IDBInserter, IDBCounter, IDBSelecter, IDBUpdater, IDBAnalysis
+    public class SqlDAO : DbContext, IDBInserter, IDBCounter, IDBSelecter, IDBUpdater, IDBAnalysis, IDAO
     {
         private readonly String _connectionString;
 
@@ -43,6 +43,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                     result.isSuccessful = true;
                     result.errorMessage = "Nothing Affected";
                 }
+                result.data = rows;
                 connection.Close();
             }
             catch (SqlException s)

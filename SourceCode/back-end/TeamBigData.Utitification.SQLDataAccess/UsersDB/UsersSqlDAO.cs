@@ -20,6 +20,11 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
+        public UsersSqlDAO(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
         {
             var tcs = new TaskCompletionSource<Response>();

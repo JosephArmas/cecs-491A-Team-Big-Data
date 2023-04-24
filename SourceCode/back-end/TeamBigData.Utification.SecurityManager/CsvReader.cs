@@ -8,7 +8,13 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Diagnostics;
 using System.Security.Principal;
-//using TeamBigData.Utification.Manager.SecurityManager;
+using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
+using TeamBigData.Utification.Logging;
+using TeamBigData.Utification.Logging.Abstraction;
+using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.ErrorResponse;
@@ -23,6 +29,10 @@ namespace TeamBigData.Utification.Manager
 
     public class CsvReader
     {
+        private readonly String usersString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+        private readonly String logString = "Server=.\\;Database=TeamBigData.Utification.Logs;User=AppUser; Password=t; TrustServerCertificate=True; Encrypt=True";
+        private readonly String hashString = "Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False";
+
         public RequestType request { get; private set; }
         public string email { get; private set; }
         public string? password { get; private set; } = null;
@@ -72,6 +82,16 @@ namespace TeamBigData.Utification.Manager
                 tcs.SetResult(response);
                 return response;
             }
+            // Manual DI
+            var userDAO = new UsersSqlDAO(usersString);
+            var hashDAO = new UserhashSqlDAO(hashString);
+            var logDAO = new LogsSqlDAO(logString);
+            var reg = new AccountRegisterer(userDAO, userDAO);
+            var hash = new UserhashServices(hashDAO);
+            var auth = new AccountAuthentication(userDAO);
+            var rec = new RecoveryServices(userDAO, userDAO, userDAO);
+            ILogger logger = new Logger(new LogsSqlDAO(logString));
+            var securityManager = new SecurityManager(reg, hash, auth, rec, logger);
             //SecurityManager securityManager = new SecurityManager();
 
             //Switch cases will handle bulk cases better than ifelse
@@ -82,30 +102,25 @@ namespace TeamBigData.Utification.Manager
                 switch (line.request)
                 {
                     case RequestType.CREATE:
-                        var encryptor = new Encryptor();
-                        var encryptedPassword = encryptor.encryptString(line.password);
-                        //var hasher = new SecureHasher();
-                        response = new Response();//= securityManager.RegisterUser(line.email, line.password).Result;
-
+                        var userhash = SecureHasher.HashString(line.email, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+                        response = securityManager.RegisterUser(line.email, line.password, userhash).Result;
                         break;
                     case RequestType.DELETE:
                         line.password = null;
-                        response = new Response();//= securityManager.DeleteProfile(line.email, userProfile).Result;
+                        response = securityManager.DeleteProfile(line.email, userProfile).Result;
                         break;
                     case RequestType.UPDATE:
-                        //var hasher = new SecureHasher();
+                        var hasher = new SecureHasher();
                         var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
-                        //var userDao = new SqlDAO(connectionString);
-                        
+                        var userDao = new SqlDAO(connectionString);
                         var digest = SecureHasher.HashString(line.email, line.password);
-                        response = new Response();//= userDao.ChangePassword(line.email, digest).Result;
-                        //response = securityManager.ChangePassword(line.email, userProfile);
+                        response = userDao.ChangePassword(line.email, digest).Result;
                         break;
                     case RequestType.ENABLE:
-                        response = new Response();//= securityManager.EnableAccount(line.email, userProfile).Result;
+                        response = securityManager.EnableAccount(line.email, userProfile).Result;
                         break;
                     case RequestType.DISABLE:
-                        response = new Response();//= securityManager.DisableAccount(line.email, userProfile).Result;
+                        response = securityManager.DisableAccount(line.email, userProfile).Result;
                         break;
                     
                 }

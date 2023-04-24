@@ -19,15 +19,13 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
     {
         private readonly SecurityManager _securityManager;
         private readonly IConfiguration _configuration;
-        private readonly InputValidation _inputValidation;
 
         // TODO: variables to pull from jwt
 
-        public AccountController(IConfiguration configuration,SecurityManager securityManager, InputValidation inputValidation)
+        public AccountController(IConfiguration configuration,SecurityManager securityManager)
         {
             _securityManager = securityManager;
             _configuration = configuration;
-            _inputValidation = inputValidation;
         }
 
         [Route("authentication")]
@@ -38,7 +36,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
             // Validate user role
             // Validate inputs
-            if (!await _inputValidation.IsValidEmail(login._username).ConfigureAwait(false) || !await _inputValidation.IsValidPassword(login._password).ConfigureAwait(false))
+            if (!InputValidation.IsValidEmail(login._username) || !InputValidation.IsValidPassword(login._password))
             {
                 return Conflict("Invalid credentials provided. Retry again or contact system administrator");
             }

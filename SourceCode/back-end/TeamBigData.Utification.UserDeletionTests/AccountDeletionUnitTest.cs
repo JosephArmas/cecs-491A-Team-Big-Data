@@ -2,8 +2,6 @@
 using System.Globalization;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utification.View.Abstraction;
-using TeamBigData.Utification.View.Views;
 
 namespace TeamBigData.Utification.AccountDeletionTests
 {
@@ -38,6 +36,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             Assert.IsNotNull(result);
             Assert.IsFalse(result.isSuccessful);
         }
+        /*
         [TestMethod]
         public void DefaultCultureDisplayed()
         {
@@ -49,6 +48,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             //Assert
             Assert.IsFalse(view.culCurrent != anonView.culCurrent);
         }
+        */
         [TestMethod]
         public void CorrectMessageDisplayed()
         {

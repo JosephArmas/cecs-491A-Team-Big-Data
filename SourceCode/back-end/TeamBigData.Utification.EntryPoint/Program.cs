@@ -91,8 +91,6 @@ builder.Services.AddDbContext<IUserhashDBInserter, UserhashSqlDAO>(options => op
 builder.Services.AddTransient<UserhashServices>(); 
 builder.Services.AddTransient<SecurityManager>();
 
-// Account Controller dependencies
-builder.Services.AddTransient<InputValidation>();
 
 // Pin dependencies
 builder.Services.AddDbContext<IPinDBInserter, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));

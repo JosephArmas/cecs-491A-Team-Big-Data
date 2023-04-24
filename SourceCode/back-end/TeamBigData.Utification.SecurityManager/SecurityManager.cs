@@ -7,9 +7,14 @@ using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager.Abstractions;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.DTO;
+using System.Diagnostics;
+using System.Collections;
 using TeamBigData.Utification.Logging.Abstraction;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+using System.Security.Cryptography;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -228,7 +233,7 @@ namespace TeamBigData.Utification.Manager
             }
 
             //Change Password
-            var response = await _recoveryServices.SaveNewPassword(disabledUserId,validRecovery.data._password,validRecovery.data._salt).ConfigureAwait(false); 
+            var response = await _recoveryServices.SaveNewPassword(disabledUserId, validRecovery.data._password, validRecovery.data._salt).ConfigureAwait(false);
             if (!response.isSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.SaveNewPassword", "Data", "Admin failed to save new password."));
@@ -287,10 +292,7 @@ namespace TeamBigData.Utification.Manager
         }
 
 
-        /*
-         * 
-         * 
-         *public async Task<Response> RegisterUserAdmin(string email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfileA)
+        public async Task<Response> RegisterUserAdmin(string email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfileA)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
@@ -335,7 +337,7 @@ namespace TeamBigData.Utification.Manager
                     response.isSuccessful = false;
                     return response;
                 }
-                /*else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
+                else if (response.errorMessage.Contains("Violation of UNIQUE KEY"))
                 {
                     response.errorMessage = "Unable to assign username. Retry again or contact system administrator";
                 }
@@ -346,7 +348,7 @@ namespace TeamBigData.Utification.Manager
                 response = await sqlUserIDAO.InsertUserProfile(0).ConfigureAwait(false);
                 stopwatch.Stop();
                 Log log;
-                var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+                var logger = new Logger(new LogsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
                 if (response.isSuccessful)
                 {
                     IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
@@ -364,17 +366,16 @@ namespace TeamBigData.Utification.Manager
                 {
                     log = new Log(1, "Error", userHash, "SecurityManager.RegisterUser()", "Data", "Error in Creating Account");
                 }
-                var responselog = await logger.Log(log);
+                var responselog = await logger.Logs(log);
                 response.errorMessage = "Account created successfully, your username is " + email;
                 response.isSuccessful = true;
             }
             return response;
         }
-         * Not sure if needed
         public async Task<DataResponse<UserProfile>> LogOutUser(UserProfile userProfile, String userhash)
         {
             Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var logger = new Logger(new LogsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var response = new DataResponse<UserProfile>();
             var newProfile = new UserProfile();
             if (!((IPrincipal)userProfile).IsInRole("Anonymous User"))
@@ -416,95 +417,8 @@ namespace TeamBigData.Utification.Manager
 
         public SecurityManager()
         {
-            _user = null;
         }
 
-        /*public async Task<Response> InsertUser(String email, byte[] encryptedPassword, Encryptor encryptor)
-        {
-            var response = new Response();
-            Stopwatch stopwatch = new Stopwatch();
-            String userHash = "";
-            response.isSuccessful = false;
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlIDAO = new SqlDAO(connectionString);
-            IDBSelecter sqlSDAO = new SqlDAO(connectionString);
-            var accountManager = new AccountRegisterer(sqlIDAO);
-            stopwatch.Start();
-            response = await accountManager.InsertUser(email, encryptedPassword, encryptor);
-            stopwatch.Stop();
-            Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            if (response.isSuccessful)
-            {
-                String username = response.errorMessage.Substring(47);
-                String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
-                userHash = SecureHasher.HashString(pepper, email);
-                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
-                var userIdResponse = await sqlSDAO.SelectLastUserID();
-                insertUserHash.InsertUserHash(userHash, (int)userIdResponse.data);
-                sqlIDAO.InsertUserProfile(new UserProfile((int)userIdResponse.data, "Regular User"));
-                if (stopwatch.ElapsedMilliseconds > 5000)
-                {
-                    log = new Log(1, "Warning", userHash, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
-                }
-                else
-                {
-                    log = new Log(1, "Info", userHash, "Manager.InsertUser()", "Data", "Account Registration Succesful");
-                }
-            }
-            else
-            {
-                log = new Log(1, "Error", userHash, "Manager.InsertUser()", "Data", "Error in Creating Account");
-            }
-            logger.Log(log);
-            return response;
-        }
-        public async Task<Response> InsertUserAdmin(String email, byte[] encryptedPassword, Encryptor encryptor,UserProfile userProfile)
-        {
-            var response = new Response();
-            Stopwatch stopwatch = new Stopwatch();
-            String userHash = "";
-            response.isSuccessful = false;
-            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
-            {
-                response.isSuccessful = false;
-                response.errorMessage = "Unauthorized access to view";
-                return response;
-            }
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlIDAO = new SqlDAO(connectionString);
-            IDBSelecter sqlSDAO = new SqlDAO(connectionString);
-            var accountManager = new AccountRegisterer(sqlIDAO);
-            stopwatch.Start();
-            response = await accountManager.InsertUser(email, encryptedPassword, encryptor);
-            stopwatch.Stop();
-            Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            if (response.isSuccessful)
-            {
-                String username = response.errorMessage.Substring(47);
-                String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
-                userHash = SecureHasher.HashString(pepper, email);
-                IDBInserter insertUserHash = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False");
-                var idResponse = await sqlSDAO.SelectLastUserID();
-                insertUserHash.InsertUserHash(userHash, (int)idResponse.data);
-                sqlIDAO.InsertUserProfile(new UserProfile((int)idResponse.data, "Admin User"));
-                if (stopwatch.ElapsedMilliseconds > 5000)
-                {
-                    log = new Log(1, "Warning", userHash, "Manager.InsertUser()", "Data", "Account Registration Took Longer Than 5 Seconds");
-                }
-                else
-                {
-                    log = new Log(1, "Info", userHash, "Manager.InsertUser()", "Data", "Account Registration Succesful");
-                }
-            }
-            else
-            {
-                log = new Log(1, "Error", userHash, "Manager.InsertUser()", "Data", "Error in Creating Account");
-            }
-            logger.Log(log);
-            return response;
-        }
 
         public async Task<DataResponse<List<UserProfile>>> GetUserProfileTable(UserProfile userProfile)
         {
@@ -544,11 +458,12 @@ namespace TeamBigData.Utification.Manager
             if (true)//(_user == null)
             {
                 var logConnectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
-                var logDAO = new SqlDAO(logConnectionString);
+                var logDAO = new LogsSqlDAO(logConnectionString);
+                var dao = new SqlDAO(logConnectionString);
                 ILogger logger = new Logger(logDAO);
                 Log log;
                 var password = encryptor.decryptString(encryptedPassword);
-                if (!AccountRegisterer.IsValidPassword(password) || !AccountRegisterer.IsValidEmail(username))
+                if (!InputValidation.IsValidPassword(password) || !InputValidation.IsValidEmail(username))
                 {
                     result.isSuccessful = false;
                     result.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
@@ -566,7 +481,7 @@ namespace TeamBigData.Utification.Manager
                 {
                     //_user = result.data as UserProfile;
                     log = new Log(2, "Info", SecureHasher.HashString("5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI", username), "Authentication", "Data", "Successfull Logged In");
-                    logger.Log(log);
+                    logger.Logs(log);
                     result.isSuccessful = true;
                 }
                 else
@@ -574,10 +489,10 @@ namespace TeamBigData.Utification.Manager
                     if (result.errorMessage.Equals("Error: Invalid Username or Password"))
                     {
                         log = new Log(2, "Warning", SecureHasher.HashString(username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI"), "Authentication", "Data", "Insuccessful Log In Attempt");
-                        logger.Log(log);
+                        logger.Logs(log);
                         result.isSuccessful = false;
                         result.errorMessage = "Invalid username or password provided. Retry again or contact system administrator";
-                        var attemptsResult = await logDAO.GetLoginAttempts(username);
+                        var attemptsResult = await dao.GetLoginAttempts(username);
                         var attempts = attemptsResult.data as ArrayList;
                         if (attemptsResult.isSuccessful)
                         {
@@ -791,7 +706,7 @@ namespace TeamBigData.Utification.Manager
             //decrypt password
             String newPassword = encryptor.decryptString(encryptedPassword);
             //check if its valid
-            if(!AccountRegisterer.IsValidPassword(newPassword))
+            if(!InputValidation.IsValidPassword(newPassword))
             {
                 result.errorMessage = "Invalid new password. Please make it at least 8 characters and no weird symbols";
                 return result;
@@ -888,7 +803,7 @@ namespace TeamBigData.Utification.Manager
             var deleter = await userDao.DeleteUserProfile(userAccount._userID);
             response = deleter;
             return response;
-        }*/
+        }
         // public async Task<bool> BulkFileUpload(IFormFile file)
         //{
         // var response = new Response();
