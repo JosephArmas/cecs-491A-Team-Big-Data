@@ -13,7 +13,7 @@ namespace TeamBigData.Utification.ReputationTests
         [TestMethod]
         public void SubmitReportAndAffectReputation()
         {
-            //Arrange
+            // Arrange
             Response result = new Response();
             SqlDAO reportsDao = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True;Integrated Security=False;
                     Encrypt=True");
@@ -27,16 +27,17 @@ namespace TeamBigData.Utification.ReputationTests
             ReputationService repSer = new ReputationService(result, reportsDao, reportsDao, profileDAO, profileDAO, report, userAccount, userProfile, logger);
             ReputationManager repMan = new ReputationManager(repSer, result, report, logger, userAccount, userProfile);
 
-            //Act
-            var act = repMan.RecordNewUserReport(4.2);
+            // Act
+            var act = repMan.RecordNewUserReportAsync(4.2);
 
-            //Assert
+            // Assert
             Assert.IsTrue(act.Result.isSuccessful);
         }
 
         [TestMethod]
         public void GetReports()
         {
+            // Arrange
             Response result = new Response();
             SqlDAO profileDAO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Integrated Security=False");
             Report report = new Report(5.0, 1001, 1002, "This is to test the role changing works");
@@ -47,8 +48,11 @@ namespace TeamBigData.Utification.ReputationTests
                                             Encrypt=True");
             Logger logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             ReputationService repSer = new ReputationService(result, reportsDao, reportsDao, profileDAO, profileDAO, report, userAccount, userProfile, logger);
+            
+            // Act
             var getReports = repSer.GetUserReportsAsync(10);
 
+            // Assert
             Assert.IsTrue(getReports.Result.isSuccessful);
         }
     }
