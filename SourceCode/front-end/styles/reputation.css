@@ -1,0 +1,22 @@
+#map-return-button
+{
+    background-color: #CA75FF;
+    color: white;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.reputation-controls #previous-reports
+{
+    background-color: #00ACB7;
+}
+
+.reputation-controls #create-report-btn
+{
+    background-color: #CA75FF;
+}
+
+.reputation-controls #next-reports
+{
+    background-color: #00ACB7;
+}
