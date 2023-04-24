@@ -7,7 +7,8 @@ const password = document.getElementById('password');
 const loginBtn = document.getElementById('sub-login');
 const loginHome = document.getElementById('login-home');
 var errorsDiv = document.getElementById('errors');
-const roles =  ['Regular User']
+// const roles =  ['Regular User']
+// const userID = 0;
 const user = {}
 loginBtn.addEventListener('click', function (event)
 {
@@ -101,20 +102,22 @@ function loginUser()
             localStorage.setItem("jwtToken", responseAfter.data)
             localStorage.setItem("role", jsonObj.role)
             localStorage.setItem("id",jsonObj.nameid)
+            // userID = localStorage.getItem("id");
         
-            errorsDiv.innerHTML = "";
 
             // display otp
             otpDisplay.style.color = "blue";
             otpDisplay.innerHTML = jsonObj.otp;
-            otpDisplay.style.fontSize = "20px";
-            otpContainer.style.display = "block";
-            loginContainer.style.display = "none";
+            // otpDisplay.style.fontSize = "20px";
+            // otpContainer.style.display = "block";
+            // loginContainer.style.display = "none";
+            showOtp();
 
             // take in otp value to post in the back end
             const otpBtn = document.querySelector("#otp-submit");
             otpBtn.addEventListener('click', function (event)
             {
+                const role = getRole();
                 event.preventDefault();
                 if (otpInput.value == '')
                 {
@@ -122,8 +125,22 @@ function loginUser()
 
                 } else if (otpInput.value == jsonObj.otp) 
                 {
-                    errorsOtp.innerHTML = "";
-                    regView();
+                    if(role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role))
+                    {
+                        regView();
+                    } else if (role.admin.includes(jsonObj.role))
+                    {
+                        adminView();
+                    }
+                    else 
+                    {
+                        timeOut('Unauthorized User', 'red', errorsDiv)
+                    } 
+
+                    
+
+                    
+
                     
                 } else 
                 {

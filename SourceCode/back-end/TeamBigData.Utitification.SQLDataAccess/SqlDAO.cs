@@ -1457,9 +1457,9 @@ namespace TeamBigData.Utification.SQLDataAccess
                         while (reader.Read())
                         {
                             
-                            int eVent = reader.GetInt32(reader.GetOrdinal("eventID"));
+                            int eventPin = reader.GetInt32(reader.GetOrdinal("eventID"));
                             
-                            response.data = eVent;
+                            response.data = eventPin;
                             response.isSuccessful = true;
 
                         }
@@ -1478,7 +1478,7 @@ namespace TeamBigData.Utification.SQLDataAccess
 
         public async Task<List<EventDTO>> SelectUserEvents(int userID)
         {
-            var sqlstatement = "SELECT title, description FROM Events JOIN EventsJoined EJ on Events.eventID = EJ.eventID WHERE EJ.userID = @userID";
+            var sqlstatement = "SELECT title, description , eventID FROM Events WHERE userID = @userID";
             List<EventDTO> events = new List<EventDTO>();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -1491,7 +1491,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         string title = reader.GetString(reader.GetOrdinal("title"));
                         string description = reader.GetString(reader.GetOrdinal("description"));
-                        events.Add(new EventDTO(title,description));
+                        int eventID = reader.GetInt32(reader.GetOrdinal("eventID"));
+                        events.Add(new EventDTO(title,description, eventID));
                     }
                     
                 }
@@ -1503,7 +1504,7 @@ namespace TeamBigData.Utification.SQLDataAccess
 
         public async Task<List<EventDTO>> SelectJoinedEvents(int userID)
         {
-            var sqlstatement = "SELECT eventID FROM dbo.EventsJoined WHERE userID = @userID";
+            var sqlstatement = "SELECT title, description , Events.eventID FROM Events JOIN EventsJoined EJ on Events.eventID = EJ.eventID WHERE EJ.userID = @userID";
             List<EventDTO> events = new List<EventDTO>();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -1514,15 +1515,16 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     while (await reader.ReadAsync())
                     {
+                        string title = reader.GetString(reader.GetOrdinal("title"));
+                        string description = reader.GetString(reader.GetOrdinal("description"));
                         int eventID = reader.GetInt32(reader.GetOrdinal("eventID"));
-                        events.Add(new EventDTO(eventID));
+                        events.Add(new EventDTO(title,description, eventID));
                     }
                     
                 }
 
             }
-
-            return events; 
+            return events;
         }
 
         public async Task<Response> SelectEventID(int userID)

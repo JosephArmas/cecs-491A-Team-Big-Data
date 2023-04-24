@@ -119,6 +119,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             }
         }
 
+        
         //Authorize requires JWT signature in authorization header
         [Authorize]
         [Route("authentication")]

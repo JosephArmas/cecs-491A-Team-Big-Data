@@ -15,9 +15,16 @@ function getEndPoint()
         completeUserPin: 'https://localhost:7259/Pin/CompleteUserPin',
         modifyPinType: 'https://localhost:7259/Pin/ModifyPinType',
         modifyPinContent: 'https://localhost:7259/Pin/ModifyPinContent',
+        // * Events
         getEventHealth: 'https://localhost:7259/event/health',
         getEventPins: 'https://localhost:7259/event/getEventPins',
         createEventPin: 'https://localhost:7259/event/createEventPin',
+        userJoinedEvents: 'https://localhost:7259/event/userEvents',
+        unJoinEvent: 'https://localhost:7259/event/unjoin',
+        joinEvent: 'https://localhost:7259/event/join',
+        createdEvents: 'https://localhost:7259/event/createdEvents',
+        cancelEvent: 'https://localhost:7259/event/deleteEvent',
+        modfiyEventTitle: 'https://localhost:7259/event/modifyTitle'
 
     }
 

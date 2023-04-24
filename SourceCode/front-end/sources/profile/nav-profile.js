@@ -98,6 +98,7 @@ function buildProfileView()
         optionDiv.appendChild(security)
         optionDiv.appendChild(events)
         optionDiv.appendChild(updateProfile)
+        profileBuild = true;
         
         
     }
@@ -105,6 +106,7 @@ function buildProfileView()
 
 function buildEvents()
 {
+
     if(!eventsBuild)
     {
         let titleContainer = document.querySelector('.events-container .title')
@@ -140,51 +142,130 @@ function buildEvents()
     }
 }
 
-function buildEventsCreated()
+async function buildEventsCreated(userID)
 {
     if(!eventsCreatedBuild)
     {
         let titleContainer = document.querySelector('.events-created-container .title')
         let headerDiv = document.querySelector('.events-created-container .top-button-container')
         let backBtn = document.createElement('button');
+        let homeDiv = document.querySelector('.home-container')
+        let eventDiv = document.querySelector('.events-created-container')
         backBtn.textContent = "Back"
         backBtn.id = "b-h"
 
         // * Add Event Listener
         headerDiv.appendChild(backBtn);
+        backBtn.addEventListener('click', () => {
+            // window.location.reload();
+            eventDiv.style.display = "none";
+            homeDiv.style.display = "block";
+
+        })
         let title = document.createElement('h1')
         title.textContent = "Events Created"
         title.style.textAlign = "center";
         titleContainer.appendChild(title);
-        eventsCreatedBuild = true;
+        let eventContainer = document.querySelector('.events-created-container .events-created')
+        let userID = localStorage.getItem('id');
 
         // * Do injection 
-        
+        let events = await getUserCreatedEvents(userID);
+        events.forEach(event => {
+            let eventList = document.createElement('ul')
+            let eventID = document.createElement('li')
+            let cancelBtn = document.createElement('button')
+            cancelBtn.textContent = "Cancel"
+            eventList.textContent = event._title;
+            eventList.appendChild(cancelBtn);
+            eventContainer.appendChild(eventList);
+            cancelBtn.addEventListener('click', () => {
+                cancelEvent(event._eventID, userID);
+                return initMap();
+
+            })
+
+        });
+
+        eventsCreatedBuild = true;
+
     }
 }
 
-function buildEventsJoined()
+async function buildEventsJoined(userID)
 {
     if(!eventsJoinedBuild)
     {
-        let titleContainer = document.querySelector('.events-joined-container .title')
-        let headerDiv = document.querySelector('.events-joined-container .top-button-container')
+        // timeOut(userID,'red',errorsDiv);
+        let titleContainer = document.querySelector('.events-joined-container .title');
+        let headerDiv = document.querySelector('.events-joined-container .top-button-container');
         let backBtn = document.createElement('button');
-        backBtn.textContent = "Back"
-        backBtn.id = "b-h"
+        let homeDiv = document.querySelector('.home-container');
+        let eventJoinDiv = document.querySelector('.events-joined-container');
+        backBtn.textContent = "Back";
+        backBtn.id = "b-h";
 
         // * Add Event Listener
         headerDiv.appendChild(backBtn);
+        backBtn.addEventListener('click', () => {
+            // window.location.reload();
+            eventJoinDiv.style.display = "none";
+            homeDiv.style.display = "block";
+        });
         let title = document.createElement('h1')
         title.textContent = "Events Joined"
         title.style.textAlign = "center";
         titleContainer.appendChild(title);
-        eventsJoinedBuild = true;
+
+
+        let eventContainer = document.querySelector('.events-joined')
+        let userID = localStorage.getItem('id');
 
         // * Do injection 
         
+        let events = await getUserEvents(userID);
+        events.forEach(event => {
+            // console.log(event);
+            let eventList = document.createElement('ul')
+            let eventID = document.createElement('li')
+            let unjoinBtn = document.createElement('button')
+            unjoinBtn.textContent = "Unjoin"
+            unjoinBtn.id = "unjoin"
+            eventList.textContent = event._title;
+            eventID = event._evntID;
+            eventList.appendChild(unjoinBtn);
+            eventContainer.appendChild(eventList);
+            unjoinBtn.addEventListener('click', () => {
+
+                unjoinEvent(eventID, userID);
+                return initMap();
+
+            })
+
+        });
+        
+
+        eventsJoinedBuild = true;
+
     }
+
 }
+
+/*
+function unjoinEvent(eventID, userID)
+{
+    const endPoint = getEndPoint();
+    axios.post(endPoint.unJoinEvent, {"eventID": eventID, "userID": userID}).then((response) => {
+        timeOut(response.data + ". Refresh to take affect.", 'green', errorsDiv);
+        
+    }).catch((error) => {
+        timeOut(error.response.data, 'red', errorsDiv);
+    })
+
+    return initMap();
+}
+*/
+
 
 
 function changePasswordClicked()
@@ -204,8 +285,9 @@ function changeUsernameClicked()
     userNameContainer.style.display = "block";
 }
 
+
 // buildProfileView();
 // buildEvents();
-// buildEventsCreated();
-// buildEventsJoined();
+// buildEventsCreated(3489);
+// buildEventsJoined(2108);
 

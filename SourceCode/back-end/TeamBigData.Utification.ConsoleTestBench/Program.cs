@@ -127,7 +127,19 @@ else
 // var result = await eventManager.DisplayAttendance(343, 3410).ConfigureAwait(false);
 // Console.WriteLine(result.isSuccessful);
 // Console.WriteLine(result.data);
+// var result = await eventManager.DisplayAllEvents().ConfigureAwait(false);
+/*
+var result2 = await eventManager.JoinNewEvent(376, 2108);
+Console.WriteLine(result2.isSuccessful);
+*/
+
 var result = await eventManager.DisplayAllEvents().ConfigureAwait(false);
+foreach (var d in result)
+{
+    Console.WriteLine(d._title);
+    Console.WriteLine(d._description);
+    Console.WriteLine(d._eventID);
+}
 
 
 // var result = await eventService.ReadAttendance(342).ConfigureAwait(false);

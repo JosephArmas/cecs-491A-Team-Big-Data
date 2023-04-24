@@ -5,11 +5,8 @@ let buildEventDropdown = false
 function showEventMenu(latlng)
 {
     let eventDiv = document.querySelector(".event-dropdown-container");
-    console.log(latlng.lat())
-    console.log(latlng.lng())
     buildDropDown(latlng.lat(), latlng.lng());
     eventDiv.style.display = "block";
-
 
 }
 
@@ -17,7 +14,7 @@ function buildDropDown(lat, lng)
 {
     if(!buildEventDropdown)
     {
-        let eventDropdown = document.querySelector(".event-dropdown");
+        let eventDropdown = document.querySelector(".event-dropdown-container");
         let titleDiv = document.querySelector(".event-dropdown-container .title");
         let inputDiv = document.querySelector(".event-form .event-inputs");
         let boxDiv = document.querySelector(".event-dropdown-box");
@@ -55,8 +52,11 @@ function buildDropDown(lat, lng)
         titleEvent.id = "titleEvent";
         descriptionEvent.id = "descriptionEvent";
         titleLabel.textContent = "Title";
+        titleLabel.style.color = "white";
         descriptionLabel.textContent = "Description";
+        descriptionLabel.style.color = "white";
         markLabel.textContent= "Check to display attendance"
+        markLabel.style.color= "white"
         inputDiv.appendChild(titleLabel);
         inputDiv.appendChild(titleEvent);
         inputDiv.appendChild(descriptionLabel);
@@ -65,31 +65,44 @@ function buildDropDown(lat, lng)
         inputDiv.appendChild(checkMark);
         boxDiv.appendChild(inputDiv);
         boxDiv.appendChild(btnDiv);
+        let userID = localStorage.getItem('id');
+        console.log(userID)
+
         submitBtn.addEventListener('click', function (event)
         {
-            createEvent(titleEvent.value, descriptionEvent.value, 3175, lat, lng); 
+            createEvent(titleEvent.value, descriptionEvent.value, userID, lat, lng); 
+            eventDropdown.style.display = "none";
 
         });
+        cancelBtn.addEventListener('click', function (event)
+        {
+            let homeDiv = document.querySelector(".home-container");
+
+            eventDropdown.style.display = "none";
+            homeDiv.style.display = "block";
+        })
         
         
         buildEventDropdown = true;
     }
 }
 
-// showEventMenu()
 async function getEvents()
 {
     const endPoint = getEndPoint();
     try 
     {
+        // List of event pin obj stored
         let result = await axios.get(endPoint.getEventPins);
+
         let eventPins = result.data;
 
+        // returning the list of event pins
         return eventPins
 
    } catch {
 
-        return timeOut('Error retrieving event pins', 'red', responseDiv)
+        return timeOut('Error retrieving event pins', 'red', errorsDiv)
    }
 }
 
@@ -107,50 +120,109 @@ function createEvent(title, description, userID, lat, lng)
 
     axios.post(endPoint.createEventPin, event).then(function (response)
     {
-        console.log(response.data);
+        timeOut(response.data, 'green', errorsDiv);
+        alert(response.data)
         let marker = new google.maps.Marker({
             position: {lat: lat, lng: lng}, 
             title: title,
             description: description,
             icon: pinColor
     });
-
     }).catch (function (error)
     {
-        timeOut('Error creating event pin', 'red', responseDiv);
+        timeOut(error.data, 'red', errorsDiv);
     })
-
+    return initMap();
 
 }
 
-function markerHelper(lat,lng,title,description)
+// Custom Helper to genereate markers 
+function markerHelper(lat,lng,title,description, eventID)
 {
     let pinColor = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
     let marker = new google.maps.Marker({
         position: {lat: lat, lng: lng}, 
         title: title,
         description: description,
+        eventID: eventID,
         icon: pinColor
     });
 
     return marker;
 }
 
-async function placeMarker(map)
+
+function unjoinEvent(eventID, userID)
+{
+    // let unjoinBtn = document.querySelector("#unjoin-event");
+    const endPoint = getEndPoint();
+    let choice = confirm("Are you sure you want to unjoin this event?");
+    if (choice)
+    {
+        axios.post(endPoint.unJoinEvent, {"eventID": eventID, "userID": userID}).then((response) => {
+            timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
+            return initMap();
+        }).catch((error) => {
+            timeOut(error.response.data, 'red', errorsDiv);
+        });
+    }
+
+}
+
+
+function joinEvent(eventID,userID)
+{
+    // let joinBtn = document.querySelector("#info-join-event");
+    const endPoint = getEndPoint();
+    let result = confirm("Are you sure you want to join this event?");
+    if (result)
+    {
+        axios.post(endPoint.joinEvent, {"eventID": eventID, "userID": userID}).then(function (response)
+        {
+            
+            timeOut(response.data, 'green', errorsDiv);
+            return initMap();
+            // alert(response.data)
+        });
+    } else
+    {
+        return;
+    }
+}
+
+function cancelEvent(eventID,userID)
+{
+    const endPoint = getEndPoint();
+    let result = confirm("Are you sure you want to cancel this event?");
+    if (result)
+    {
+        axios.post(endPoint.cancelEvent, {"eventID": eventID, "userID": userID}).then(function (response)
+        {
+            timeOut(response.data, 'green', errorsDiv);
+            return initMap();
+        }).catch(function (error)
+        {
+            timeOut(error.response.data, 'red', errorsDiv);
+        });
+    } else{
+        return;
+    }
+}
+
+
+async function placeMarker(map, userID)
 {
     let markers = [];
 
     // Store the eventPins obj to loop through and use custom helper
     let eventPins = await getEvents();
     eventPins.forEach(pin => {
-        markers.push(markerHelper(pin._lat,pin._lng,pin._title,pin._description));
+        markers.push(markerHelper(pin._lat,pin._lng,pin._title,pin._description, pin._eventID));
     });
 
     // Loop through appended pins and add to map
     markers.forEach(marker =>{
-        marker.setMap(map)
-        
-        // attaching an info window to these markers
+        marker.setMap(map);
         const infowindow = new google.maps.InfoWindow({
             content: "<div class='event-info-btn'>" +
                     "<h1>" + marker.title + "</h1>" 
@@ -162,30 +234,103 @@ async function placeMarker(map)
                     + "<button id='unjoin-event'>Unjoin</button>"
                     + "</div>"
         });
-        
-        marker.addListener("click", () => {
-            infowindow.open(map, marker)
-        })
-        let cancelBtn = document.querySelector("#cancel-event");
-        let modifyBtn = document.querySelector("#cancel-event");
-        let joinBtn = document.querySelector("#info-join-event");
-        let unjoinBtn = document.querySelector("#unjoin-event");
 
-    });
+        marker.addListener("click", () => {
+            infowindow.open(map, marker);
+        });
+        
+        infowindow.addListener('domready', function (event)
+        {
+            let joinBtn = document.querySelector("#info-join-event");
+            let cancelBtn = document.querySelector("#cancel-event");
+            let unjoinBtn = document.querySelector("#unjoin-event");
+            let modifyBtn = document.querySelector("#modify-event");
+
+            if (joinBtn)
+            {
+                joinBtn.addEventListener('click', function (event)
+                {
+                    joinEvent(marker.eventID, userID);
+                    return; 
+                });
+                // return;
+            } 
+
+            if(unjoinBtn)
+            {
+                unjoinBtn.addEventListener('click', function (event)
+                {
+                    unjoinEvent(marker.eventID, userID);
+                    return;
+                });
+            }
+
+            if (cancelBtn)
+            {
+                cancelBtn.addEventListener('click', function (event)
+                {
+                    cancelEvent(marker.eventID, userID);
+                    return;
+                });
+            }
+
+            if (modifyBtn)
+            {
+                modifyBtn.addEventListener('click', function (event)
+                {
+                    const endPoint = getEndPoint();
+                    let choice = prompt("1. Change Title\n2. Change Description\n");
+                    if (choice == "1")
+                    {
+                        let newTitle = prompt("Enter new title");
+                        if (newTitle)
+                        {
+                            /*
+                            let sendTitle = {
+                                "title": newTitle,
+                                "eventID": marker.eventID,
+                                "userID": userID
+                            };
+                            */
+                            /*
+                            axios.post(endPoint.modifyEventTitle, sendTitle).then((response) => {
+                                timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
+                                return initMap();
+                            }).catch((error) => {
+                                // timeOut(error.response.data, 'red', errorsDiv);
+                            });
+                            */
+                            modifyEvent(newTitle, marker.eventID, userID);
+                            return;
+
+                        }
+                    }
+
+                });
+            }
+
+        });
+
+        });
+    
+
 
     return markers;
 }
 
-function cancelEvent(eventID,userID)
+function modifyEvent(title, eventID, userID)
 {
+    let data = {
+        "title": title,
+        "eventID": eventID,
+        "userID": userID
+    }
     const endPoint = getEndPoint();
-    axios.post(endPoint.cancelEvent, data).then(function (response)
-    {
-        timeOut(response.data, 'green', responseDiv);
-    }).catch(function (error)
-    {
-        timeOut(error.response.data, 'red', responseDiv);
+    axios.post(endPoint.modifyEventTitle, data).then((response) => {
+        timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
     })
+    return initMap();
+
 }
 
 function test()
@@ -208,6 +353,7 @@ function test()
             console.log(pin._count);
             console.log(pin._lat);
             console.log(pin._lng);
+            console.log(pin._eventID)
         })
     ));
 
@@ -223,5 +369,45 @@ function test()
 
 
 }
+
+// test()
+
+async function getUserEvents(userID)
+{
+    const endPoint = getEndPoint();
+
+    try
+    {
+        let result = await axios.post(endPoint.userJoinedEvents,{"userID": userID});
+        let events = result.data;
+
+        return events
+
+    } catch
+    {
+        return timeOut('Error retrieving event pins', 'red', responseDiv)
+    }
+    
+}
+
+async function getUserCreatedEvents(userID)
+{
+    const endPoint = getEndPoint();
+
+    try
+    {
+        let result = await axios.post(endPoint.createdEvents,{"userID": userID});
+        let events = result.data;
+
+        return events
+
+    } catch
+    {
+        return timeOut('Error retrieving event pins', 'red', responseDiv)
+    }
+    
+}
+
+
 
 // test();

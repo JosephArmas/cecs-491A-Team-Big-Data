@@ -45,6 +45,7 @@ namespace TeamBigData.Utification.Models
         {
             _title = title;
             _description = description;
+            _eventID = eventId;
         }
         
         public EventDTO(int eventId)

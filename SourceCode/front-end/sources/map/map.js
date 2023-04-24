@@ -34,7 +34,6 @@
     var pinsMarker = []
     var infoWindows = []
 
-    var errorsDiv = document.getElementById('errors');
 
     // Checks if within California State Borders
     function pinBounds(latLng) {
@@ -189,12 +188,11 @@
     window.modifyPinHandler = function(pos)
     {
         infoWindows[pos].close();
-        errorsDiv.innerHTML = "";
 
         let userAction = prompt("1. Modify Pin Type\n2. Modify Pin Content\n3. Delete Pin\nPick Options 1-3: ");
         if (!(userAction == "1" || userAction == "2" || userAction == "3")||userAction == null)
         {
-            errorsDiv.innerHTML = "Invalid Pin Input...";
+            timeOut('Invalid Pin Input...','red',errorsDiv);
             return;
         };
         switch (userAction) { 
@@ -403,10 +401,15 @@
         .catch(function (error){
         });
     }
-   
+    
+
     window.initMap = function() {
-        errorsDiv.innerHTML = "";
-        map = new google.maps.Map(document.getElementById('map'), {
+
+        // Getting all maps loaded on the dom
+        const mapElements = document.querySelectorAll(".map")
+
+        mapElements.forEach(mapElement => {
+        map = new google.maps.Map(mapElement, {
             center: CSULB,
             minZoom: 8,
             maxZoom: 18,
@@ -419,17 +422,46 @@
             mapTypeControl: false,
             clickableIcons: false
         });
-        getMarkerHandler();
+            let userID = localStorage.getItem("id");
+            // Call the functions to retrieve event pins
+            placeMarker(map,userID);
+        });
+        // getMarkerHandler();
         //checks jwt signature for role
         if (localStorage.getItem("role")==="Admin User"||localStorage.getItem("role")==="Reputable User"){
             //user can add pins to map
             map.addListener("click", (e) => 
             {
                 if (!pinBounds(e.latLng)){
-                    errorsDiv.innerHTML = "Pin is placed out of bounds... "; 
+                    timeOut("Pin is placed out of bounds... ", 'red', errorsDiv)
                     return;
                 }
-                placeNewPin(e.latLng, map);
+                let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
+
+                if (pinType == "2")
+                {
+                    showEventMenu(e.latLng);
+                    /*
+                    const choice = window.confirm("Are you sure");
+                    if (choice)
+                    {
+                        console.log("user selected yes");
+                    } else{
+                        console.log("user selected no");
+                    }
+                    */
+                } 
+                else if (!(pinType == "1" || pinType == "2" || pinType == "3" ||pinType == "4" ||pinType == "5") ||pinType == null)
+                {
+                    timeOut("Invalid Pin Input...", 'red', errorsDiv)
+
+                    return;
+                }
+                else
+                {
+                    placeNewPin(e.latLng, map);
+
+                }
             });
         }
     }

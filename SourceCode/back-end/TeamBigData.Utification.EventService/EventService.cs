@@ -112,8 +112,9 @@ namespace TeamBigData.Utification.EventService
         public async Task<List<EventDTO>> ReadJoinedEvents(int userID)
         {
             IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
-
-            return await daoSelect.SelectJoinedEvents(userID).ConfigureAwait(false);
+            List<EventDTO> events = await daoSelect.SelectJoinedEvents(userID).ConfigureAwait(false);
+            
+            return events;
         }
 
         public async Task<Response> DeleteCreatedEvent(int eventID,int userID)
@@ -171,16 +172,24 @@ namespace TeamBigData.Utification.EventService
             return events;
         }
 
-        public async Task<Response> ReadEvent(int eventID)
+        public async Task<Response> ReadEvent(int userID)
         {
             IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
-            return await daoSelect.SelectEventPin(eventID).ConfigureAwait(false);
+            return await daoSelect.SelectEventPin(userID).ConfigureAwait(false);
         }
 
         public async Task<Response> ReadAttendance(int eventID)
         {
             IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
             return await daoSelect.SelectAttendance(eventID).ConfigureAwait(false);
+        }
+
+        public async Task<List<EventDTO>> ReadCreatedEvents(int userID)
+        {
+            IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
+            List<EventDTO> events = await daoSelect.SelectUserEvents(userID).ConfigureAwait(false);
+            return events;
+
         }
 
     }

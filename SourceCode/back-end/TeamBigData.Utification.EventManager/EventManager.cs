@@ -3,14 +3,15 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Azure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.EventService.Abstractions;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using Response = TeamBigData.Utification.ErrorResponse.Response;
 
 namespace TeamBigData.Utification.EventManager
 {
@@ -696,7 +697,17 @@ namespace TeamBigData.Utification.EventManager
 
         }
         
-
+        public async Task<List<EventDTO>> UserJoinedEvents(int userID)
+        {
+            IRead esReader = new EventService.EventService();
+            return await esReader.ReadJoinedEvents(userID);
+        }
+        
+        public async Task<List<EventDTO>> UserCreatedEvents(int userID)
+        {
+            IRead esReader = new EventService.EventService();
+            return await esReader.ReadCreatedEvents(userID);
+        }
 
         // Check event id
         public bool IsValidEventID(Response response)

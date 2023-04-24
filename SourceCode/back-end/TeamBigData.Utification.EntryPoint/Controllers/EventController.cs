@@ -98,6 +98,7 @@ public class EventController : Controller
     }
     
     [Route("event/unjoin")]
+    [HttpPost]
     public async Task<IActionResult> UnJoinEvent([FromBody] EventPin eventPin)
     {
         var esMan = new EventManager();
@@ -130,7 +131,7 @@ public class EventController : Controller
         
     }
 
-    [Route("event/modifyEventTitle")]
+    [Route("event/modifyTitle")]
     [HttpPost]
     public async Task<IActionResult> ModifyEventTitle([FromBody] EventPin eventpin)
     {
@@ -147,6 +148,7 @@ public class EventController : Controller
         
     }
 
+    
     [Route("event/modifyEventDescription")]
     [HttpPost]
     public async Task<IActionResult> ModifyEventDescription([FromBody] EventPin eventPin)
@@ -164,6 +166,7 @@ public class EventController : Controller
         
     }
 
+    
     [Route("event/deleteEvent")]
     [HttpPost]
     public async Task<IActionResult> DeleteEvent([FromBody] EventPin eventPin)
@@ -180,6 +183,7 @@ public class EventController : Controller
         }
     }
 
+    
     [Route("event/markEventComplete")]
     [HttpPost]
     public async Task<IActionResult> MarkEventComplete([FromBody] EventPin eventPin)
@@ -195,7 +199,39 @@ public class EventController : Controller
             return BadRequest("Error in request.");
         }
     }
+    
+    
+    [Route("event/userEvents")]
+    [HttpPost]
+    public async Task<IActionResult> UserEventPins([FromBody] EventPin eventPin)
+    {
+        var esMan = new EventManager();
+        try
+        {
+            var result = await esMan.UserJoinedEvents(eventPin.userID);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error in request.");
+        }
+    }
 
+    [Route("event/createdEvents")]
+    [HttpPost]
+    public async Task<IActionResult> CreatedEvents([FromBody] EventPin eventPin)
+    {
+        var esMan = new EventManager();
+        try
+        {
+            var result = await esMan.UserCreatedEvents(eventPin.userID);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error in request.");
+        }
+    }
 
 
 
