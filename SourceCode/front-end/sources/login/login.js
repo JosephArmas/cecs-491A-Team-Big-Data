@@ -1,7 +1,6 @@
 // * TODO: fix error validation 
 'use strict';
 
-        loginUser();
 (function (root) {
     // Dependency check
     const isValid = root;
