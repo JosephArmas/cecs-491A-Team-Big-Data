@@ -28,10 +28,10 @@ namespace TeamBigData.Utification.ReputationTests
             ReputationManager repMan = new ReputationManager(repSer, result, report, logger, userAccount, userProfile);
 
             //Act
-            //var act = repMan.RecordNewUserReport(4.2);
+            var act = repMan.RecordNewUserReport(4.2);
 
             //Assert
-            //Assert.IsTrue(act.Result.isSuccessful);
+            Assert.IsTrue(act.Result.isSuccessful);
         }
 
         [TestMethod]
