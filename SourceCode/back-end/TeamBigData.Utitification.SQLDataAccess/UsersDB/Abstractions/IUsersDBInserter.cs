@@ -1,6 +1,4 @@
-﻿
-
-using TeamBigData.Utification.ErrorResponse;
+﻿using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
 {
@@ -9,5 +7,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
         public Task<Response> InsertUserAccount(String email, String digest, String salt, String userhash);
 
         public Task<Response> InsertUserProfile(int userId);
+
+        public Task<Response> InsertRecoveryRequest(int userID, String password, String salt);
     }
 }

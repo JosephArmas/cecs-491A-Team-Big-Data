@@ -11,7 +11,7 @@ namespace TeamBigData.Utification.SQLDataAccess.LogsDB
     {
         private readonly String _connectionString;
 
-        public LogsSqlDAO(DbContextOptions<UserhashSqlDAO> options) : base(options)
+        public LogsSqlDAO(DbContextOptions<LogsSqlDAO> options) : base(options)
         {
 
             _connectionString = this.Database.GetDbConnection().ConnectionString;

@@ -5,17 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
 
     public class SqlDAOFactory
     {
-        /*private readonly SqlDAO _sqlDAO;
-        public SqlDAOFactory(SqlDAO sqlDAO) 
-        { 
-            _sqlDAO = sqlDAO;
-        }*/
+        private readonly UsersSqlDAO _usersSqlDAO;
+        private readonly UserhashSqlDAO _userhashSqlDAO;
 
         public DbContextOptions<SqlDAO> CreateDBInserter(String connection)
         {

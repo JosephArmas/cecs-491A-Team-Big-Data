@@ -19,19 +19,18 @@ namespace TeamBigData.Utification.AccountServices
         }
         public async Task<Response> InsertUserhash(String userhash, int userId)
         {
-            // TODO: Maybe log here and entry point
+            var response = await _userhashDBInserter.InsertUserHash(userhash,userId).ConfigureAwait(false);
 
-            var result = await _userhashDBInserter.InsertUserHash(userhash,userId).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!response.isSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {failed: _userhashDBInserter.InsertUserHash}";
-                return result;
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _userhashDBInserter.InsertUserHash}";
+                return response;
             }
             else
             {
-                result.isSuccessful = true;
-                return result;
+                response.isSuccessful = true;
+                return response;
             }
         }
     }

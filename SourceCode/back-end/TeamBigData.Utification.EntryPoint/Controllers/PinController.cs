@@ -24,6 +24,7 @@ namespace Utification.EntryPoint.Controllers
             public String _lng { get; set; }
             public int _pinType { get; set; }
             public String _description { get; set; }
+            public String _userhash { get; set; }
         }
 
         private readonly PinManager _pinManager;
@@ -36,9 +37,25 @@ namespace Utification.EntryPoint.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPins()
         {
-            // TODO: Validate user role
+            // get authorization header
+            const string HeaderKeyName = "HeaderKey";
+            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
+            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
+            string clean = authorizationToken;
+            clean = clean.Remove(0, 7);
 
-            var result = await _pinManager.GetListOfAllPins("userhash").ConfigureAwait(false);
+            // get role from JWT signature
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(clean);
+            IEnumerable<Claim> claims = token.Claims;
+
+            // check role of user
+            if (claims.ElementAt(2).Value == "Anonymouse User")
+            {
+                return Unauthorized(claims.ElementAt(1).Value);
+            }
+
+                var result = await _pinManager.GetListOfAllPins(claims.ElementAt(6).Value).ConfigureAwait(false);
             if (!result.isSuccessful)
             {
                 result.isSuccessful = false;
@@ -51,20 +68,6 @@ namespace Utification.EntryPoint.Controllers
             }
 
             return Ok(result.data);
-            /*var tcs = new TaskCompletionSource<IActionResult>();
-            // get authorization header
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-            // get role from JWT signature
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-            // check role of user
-            if (claims.ElementAt(2).Value == "Anonymouse User")
-            */
         }
 
 
@@ -76,7 +79,7 @@ namespace Utification.EntryPoint.Controllers
 
             Pin pin = new Pin(newPin._userID, newPin._lat, newPin._lng, newPin._pinType, newPin._description);
 
-            var result = await _pinManager.SaveNewPin(pin).ConfigureAwait(false);
+            var result = await _pinManager.SaveNewPin(pin,newPin._userhash).ConfigureAwait(false);
             if (!result.isSuccessful)
             {
                 result.errorMessage += ", {failed: _pinManager.SaveNewPin}";
@@ -95,7 +98,7 @@ namespace Utification.EntryPoint.Controllers
         {
             // TODO: Validate user and pin inputs
 
-            var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, "temp hash").ConfigureAwait(false);
+            var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
             if (!result.isSuccessful)
             {
                 result.isSuccessful = false;
@@ -114,7 +117,7 @@ namespace Utification.EntryPoint.Controllers
         {
             // TODO: Validate user and pin inputs
 
-            var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, "userhash").ConfigureAwait(false);
+            var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, pin._userhash).ConfigureAwait(false);
             if (!response.isSuccessful)
             {
                 response.isSuccessful = false;
@@ -134,7 +137,7 @@ namespace Utification.EntryPoint.Controllers
         {
             // TODO: Validate user and pin inputs
 
-            var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, "userHash");
+            var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, pin._userhash);
             if (!response.isSuccessful)
             {
                 response.isSuccessful = false;
@@ -153,7 +156,8 @@ namespace Utification.EntryPoint.Controllers
         {
             // TODO: Validate user and pin inputs
 
-            var response = await _pinManager.DisablePin(pin._pinID, pin._userID, "userhash").ConfigureAwait(false);
+            var response = await _pinManager.DisablePin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
+
             if (!response.isSuccessful)
             {
                 response.isSuccessful=false;

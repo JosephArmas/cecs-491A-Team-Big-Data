@@ -10,5 +10,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
 {
     public interface IUsersDBUpdater
     {
+        public Task<Response> UpdateRecoveryFulfilled(int userID);
+        public Task<Response> UpdateUserPassword(int userID, String password, String salt);
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.PinManagers;
@@ -21,6 +22,7 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB;
 using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +72,8 @@ builder.Services.AddControllers();
 var sqlDAOFactory = new SqlDAOFactory();
 
 // Logging dependencies
-//builder.Services.AddDbContext<ILogsDBInserter, LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddDbContext<ILogsDBInserter, LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddTransient<ILogger, Logger>();
 
 // Security manager dependencies
 builder.Services.AddDbContext<IUsersDBInserter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
@@ -78,9 +81,13 @@ builder.Services.AddDbContext<IUsersDBSelecter, UsersSqlDAO>(options => options.
 builder.Services.AddTransient<AccountRegisterer>();
 builder.Services.AddTransient<AccountAuthentication>();
 
+builder.Services.AddDbContext<IUsersDBUpdater, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddTransient<RecoveryServices>();
+
 builder.Services.AddDbContext<IUserhashDBInserter, UserhashSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserHashSQLDBConnection")));
 builder.Services.AddTransient<UserhashServices>(); 
 builder.Services.AddTransient<SecurityManager>();
+
 
 // Pin dependencies
 builder.Services.AddDbContext<IPinDBInserter, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
@@ -88,6 +95,7 @@ builder.Services.AddDbContext<IPinDBSelecter, PinsSqlDAO>(options => options.Use
 builder.Services.AddDbContext<IPinDBUpdater, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<PinService>();
 builder.Services.AddTransient<PinManager>();
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

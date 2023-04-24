@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.Manager;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TeamBigData.Utification.Models;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Cryptography;
+using System.Security.Principal;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
@@ -28,23 +32,35 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
         private readonly SecurityManager _securityManager;
         private readonly IConfiguration _configuration;
+        private readonly InputValidation _inputValidation;
 
         // TODO: variables to pull from jwt
 
-        public AccountController(IConfiguration configuration,SecurityManager securityManager)
+        public AccountController(IConfiguration configuration,SecurityManager securityManager, InputValidation inputValidation)
         {
             _securityManager = securityManager;
             _configuration = configuration;
+            _inputValidation = inputValidation;
         }
 
         [Route("authentication")]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody]IncomingUser login)
         {
+
+
             // Validate user role
             // Validate inputs
+            if (!await _inputValidation.IsValidEmail(login._username).ConfigureAwait(false) || !await _inputValidation.IsValidPassword(login._password).ConfigureAwait(false))
+            {
+                return Conflict("Invalid credentials provided. Retry again or contact system administrator");
+            }
+
             // Check if user is a user
-            var dataResponse = await _securityManager.LoginUser(login._username, login._password).ConfigureAwait(false);
+
+            var userhash = SecureHasher.HashString(login._username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+
+            var dataResponse = await _securityManager.LoginUser(login._username, login._password, userhash).ConfigureAwait(false);
             if (!dataResponse.isSuccessful)
             {
                 return Conflict(dataResponse.errorMessage + ", {failed: _securityManager.LoginUser}");
@@ -64,7 +80,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
                 new Claim("authenticated", "true", ClaimValueTypes.String),
                 new Claim("otp", dataResponse.data._otp, ClaimValueTypes.String),
                 new Claim("otpCreated", dataResponse.data._otpCreated, ClaimValueTypes.String),
-                new Claim("userHash", dataResponse.data._userhash, ClaimValueTypes.String)
+                new Claim("userhash", dataResponse.data._userhash, ClaimValueTypes.String)
             };
 
 
@@ -94,13 +110,14 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount([FromBody]IncomingUser newAccount)
         {
-            
+
             // TODO: Decrypt incoming encryptedpassword with incoming key
             // TODO: Validate they are an anonymous user from jwt key
             //          If no JWT in Authentication header the  user is anonymous 
 
+            var userhash = SecureHasher.HashString(newAccount._username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
 
-            var response = await _securityManager.RegisterUser(newAccount._username,  newAccount._password).ConfigureAwait(false);
+            var response = await _securityManager.RegisterUser(newAccount._username,  newAccount._password, userhash).ConfigureAwait(false);
             if(response.isSuccessful)
             {
                 return Ok(response.errorMessage);

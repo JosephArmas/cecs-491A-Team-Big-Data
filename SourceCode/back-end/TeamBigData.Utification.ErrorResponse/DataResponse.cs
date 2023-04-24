@@ -17,6 +17,17 @@ namespace TeamBigData.Utification.ErrorResponse
             isSuccessful = false;
             errorMessage = "";
         }
+        public DataResponse(bool isSuccessful, String errorMessage)
+        {
+            this.isSuccessful = isSuccessful;
+            this.errorMessage = errorMessage;
+        }
+        public DataResponse(bool isSuccessful, string errorMessage, T data)
+        {
+            this.isSuccessful = isSuccessful;
+            this.errorMessage = errorMessage;
+            this.data = data;
+        }
 
         public String ToString()
         {

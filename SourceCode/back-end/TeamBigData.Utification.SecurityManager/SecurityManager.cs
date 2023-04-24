@@ -1,9 +1,15 @@
+using Microsoft.Extensions.Logging;
+using System.Security.Principal;
 using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager.Abstractions;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.DTO;
+using TeamBigData.Utification.Logging.Abstraction;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -12,65 +18,85 @@ namespace TeamBigData.Utification.Manager
         private readonly AccountRegisterer _accountRegisterer;
         private readonly UserhashServices _userhashServices;
         private readonly AccountAuthentication _accountAuthentication;
+        private readonly RecoveryServices _recoveryServices;
+        private readonly ILogger _logger;
 
-        public SecurityManager(AccountRegisterer accountRegisterer, UserhashServices userhashServices, AccountAuthentication accountAuthentication)
+        public SecurityManager(AccountRegisterer accountRegisterer, UserhashServices userhashServices, AccountAuthentication accountAuthentication, RecoveryServices recoveryServices, ILogger logger)
         {
             _accountRegisterer = accountRegisterer;
             _userhashServices = userhashServices;
             _accountAuthentication = accountAuthentication;
+            _recoveryServices = recoveryServices;
+            _logger = logger;
         }
 
+
+        //------------------------------------------------------------------------
+        // AccountController
+        //------------------------------------------------------------------------
+
         // Does Insert user and doesnt need AccountRegisterer.
-        public async Task<Response> RegisterUser(String email, String password)
+        public async Task<Response> RegisterUser(String email, String password, String userhash)
         {
             // TODO: Check if process time follows business rules
 
-            Response result = new Response();
+            Response response = new Response();
 
-            String pepper = "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI";
-            var userHash = SecureHasher.HashString(email, pepper);
+            await _logger.Logs(new Log(0, "Info", userhash, "Register User Attempt", "Data", "User is attempting to register."));
 
-            var data = await _accountRegisterer.InsertUserAccount(email, password, userHash).ConfigureAwait(false);
-            if (!data.isSuccessful)
+            var userID = await _accountRegisterer.InsertUserAccount(email, password, userhash).ConfigureAwait(false);
+            if (!userID.isSuccessful)
             {
-                result.errorMessage = data.errorMessage + ", {failed: _accountRegisterer.InsertUser}";
-                result.isSuccessful = false;
-                return result;
+                await _logger.Logs(new Log(0, "Error", userhash, "_accountRegisterer.InsertUserAccount", "Data", "Failed to insert user account."));
+
+                response.errorMessage = userID.errorMessage + ", {failed: _accountRegisterer.InsertUser}";
+                response.isSuccessful = false;
+                return response;
             }
 
-            result = await _accountRegisterer.InsertUserProfile(data.data).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            response = await _accountRegisterer.InsertUserProfile(userID.data).ConfigureAwait(false);
+            if (!response.isSuccessful)
             {
-                result.errorMessage += ", {failed: _accountRegisterer.InsertUserProfile}";
-                result.isSuccessful = false;
-                return result;
+                await _logger.Logs(new Log(0, "Error", userhash, "_accountRegisterer.InsertUserProfile", "Data", "Failed to insert user profile."));
+
+                response.errorMessage += ", {failed: _accountRegisterer.InsertUserProfile}";
+                response.isSuccessful = false;
+                return response;
             }
 
-            result = await _userhashServices.InsertUserhash(userHash, data.data).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            response = await _userhashServices.InsertUserhash(userhash, userID.data).ConfigureAwait(false);
+            if (!response.isSuccessful)
             {
-                result.errorMessage += ", {failed: _accountRegisterer.InsertUserhash}";
-                result.isSuccessful = false;
-                return result;
+                await _logger.Logs(new Log(0, "Error", userhash, "_userhashServices.InsertUserhash", "Data", "Failed to insert userhash."));
+
+                response.errorMessage += ", {failed: _accountRegisterer.InsertUserhash}";
+                response.isSuccessful = false;
+                return response;
             }
             else
             {
-                result.isSuccessful = true;
-                return result;
+                await _logger.Logs(new Log(0, "Info", userhash, "Passed Register User Attempt", "Data", "User successfully created an account."));
+
+                response.isSuccessful = true;
+                return response;
             }
         }
         
 
 
-        public async Task<DataResponse<AuthenticateUserResponse>> LoginUser(String email, String password)
+        public async Task<DataResponse<AuthenticateUserResponse>> LoginUser(String email, String password, String userhash)
         {
             // TODO: Check if process time follows business rules
 
             var authenticateUserResponse = new DataResponse<AuthenticateUserResponse>();
 
+            await _logger.Logs(new Log(0, "Info", userhash, "Login User Attempt", "Data", "User is attempting to login."));
+
             var userAccount = await _accountAuthentication.AuthenticateUserAccount(email, password).ConfigureAwait(false);
             if (!userAccount.isSuccessful)
             {
+                await _logger.Logs(new Log(0, "Error", userhash, "_accountAuthentication.AuthenticateUserAccount", "Data", "Failed to authenticate user account."));
+
                 authenticateUserResponse.isSuccessful = false;
                 authenticateUserResponse.errorMessage = userAccount.errorMessage + ", {failed: _accountAuthentication.AuthenticateUserAccount}";
                 return authenticateUserResponse;
@@ -79,12 +105,16 @@ namespace TeamBigData.Utification.Manager
             var userProfile = await _accountAuthentication.AuthenticatedUserProfile(userAccount.data._userID).ConfigureAwait(false);
             if (!userProfile.isSuccessful)
             {
+                await _logger.Logs(new Log(0, "Error", userhash, "_accountAuthentication.AuthenticatedUserProfile", "Data", "Failed to insert user profile."));
+
                 authenticateUserResponse.isSuccessful = false;
                 authenticateUserResponse.errorMessage = userProfile.errorMessage + ", {failed: _accountAuthentication.AuthenticatedUserProfile}";
                 return authenticateUserResponse;
             }
             else
             {
+                await _logger.Logs(new Log(0, "Info", userhash, "Passed Login User Attempt", "Data", "User is attempting to login."));
+
                 userAccount.data.GenerateOTP();
                 authenticateUserResponse.data = new AuthenticateUserResponse(userAccount.data._userID, userAccount.data._username, userAccount.data._otp, userAccount.data._otpCreated, userProfile.data.Identity.AuthenticationType, userAccount.data._userHash);
                 authenticateUserResponse.isSuccessful = true;
@@ -92,6 +122,167 @@ namespace TeamBigData.Utification.Manager
 
             return authenticateUserResponse;
         }
+
+
+        //------------------------------------------------------------------------
+        // RecoveryController
+        //------------------------------------------------------------------------
+
+        public async Task<Response> RecoverAccountPassword(String username, String password, String userhash)
+        {
+            // TODO: Time process
+            await _logger.Logs(new Log(0, "Info", userhash, "Recover Account Password Attempt", "Data", "User is attempting to login."));
+            
+            var response = await _recoveryServices.RequestRecoveryNewPassword(username, password);
+            if (!response.isSuccessful)
+            {
+                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.RequestRecoveryNewPassword", "Data", "User failed to login."));
+
+                return new Response(false, response.errorMessage + ", {failed: _recoveryServices.RequestRecoveryNewPassword}");
+            }
+            else
+            {
+                await _logger.Logs(new Log(0, "Info", userhash, "Passed Recover Account Password Attempt", "Data", "User is attempting to login."));
+
+                return new Response(true, response.errorMessage);
+            }
+
+            /*
+            var result = new Response();
+            //decrypt password
+            String newPassword = encryptor.decryptString(encryptedPassword);
+            //check if its valid
+            if (!AccountRegisterer.IsValidPassword(newPassword))
+            {
+                result.errorMessage = "Invalid new password. Please make it at least 8 characters and no weird symbols";
+                return result;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            SqlDAO userDao = new SqlDAO(connectionString);
+            var selectResponse = await userDao.SelectUserAccount(username);
+            var userAccount = selectResponse.data;
+            if (!selectResponse.isSuccessful)
+            {
+                result.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                return result;
+            }
+            //if valid password and otp, then we can hash password and proceed
+            var hasher = new SecureHasher();
+            //TODO: Add Salt to hash
+            var newDigest = SecureHasher.HashString(userAccount._salt, newPassword);
+            result = await userDao.CreateRecoveryRequest(userAccount._userID, newDigest);
+            if (result.isSuccessful)
+            {
+                result.errorMessage = "Account recovery request sent";
+            }
+            return result;*/
+        }
+
+        public async Task<DataResponse<List<RecoveryRequests>>> GetRecoveryRequests(String userhash)
+        {
+            // TODO: Time process
+            await _logger.Logs(new Log(0, "Info", userhash, "Get Recovery Requests Attempt", "Data", "Admin is attempting to get recovery requests."));
+
+            var dataResponse = await _recoveryServices.GetRecoveryRequestsTable().ConfigureAwait(false);
+            if (!dataResponse.isSuccessful)
+            {
+                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.GetRecoveryRequestsTable", "Data", "Admin failed to get recovery requests."));
+
+                dataResponse.isSuccessful = false;
+                dataResponse.errorMessage += ", {failed: _recoveryServices.GetRecoveryRequestsTable}";
+                return dataResponse;
+            }
+            else
+            {
+                await _logger.Logs(new Log(0, "Info", userhash, "Passed Get Recovery Requests Attempt", "Data", "User is attempting to login."));
+
+                dataResponse.isSuccessful = true;
+            }
+
+            return dataResponse;
+            /*
+            var response = new DataResponse<List<UserProfile>>();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
+            var recoveryDao = new SqlDAO(connectionString);
+            response = await recoveryDao.GetRecoveryRequests();
+            return response;*/
+        }
+
+        public async Task<Response> ResetAccount(int disabledUserId, String userhash)
+        {
+            await _logger.Logs(new Log(0, "Info", userhash, "Reset Account Attempt", "Data", "Admin is attempting to reset account."));
+
+            //Find What they want to reset password to
+            var validRecovery = await _recoveryServices.GetNewPassword(disabledUserId).ConfigureAwait(false);
+            if (!validRecovery.isSuccessful)
+            {
+                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.GetNewPassword", "Data", "Admin failed to get new password."));
+
+                return new Response(false, validRecovery.errorMessage + ", {failed: _recoveryServices.GetNewPassword}");
+            }
+
+            //Change Password
+            var response = await _recoveryServices.SaveNewPassword(disabledUserId,validRecovery.data._password,validRecovery.data._salt).ConfigureAwait(false); 
+            if (!response.isSuccessful)
+            {
+                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.SaveNewPassword", "Data", "Admin failed to save new password."));
+
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _recoveryServices.SaveNewPassword}";
+                return response;
+            }
+            else
+            {
+                response.isSuccessful = true;
+            }
+
+            return response;
+            /*
+            var response = new Response();
+            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            {
+                response.isSuccessful = false;
+                response.errorMessage = "Unauthorized access to data";
+                return response;
+            }
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var userDao = new SqlDAO(connectionString);
+            //Find What they want to reset password to
+            var findTask = await userDao.GetNewPassword(disabledUserId);
+            //Change Password
+            if (findTask.isSuccessful)
+            {
+                var changeTask = await userDao.ResetAccount(disabledUserId, (String)findTask.data);
+                if (changeTask.isSuccessful)
+                {
+                    //Mark Request as Fullfilled
+                    var requestConnectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+                    var requestDB = new SqlDAO(requestConnectionString);
+                    var RequestFulfilled = await requestDB.RequestFulfilled(disabledUserId);
+                    if (RequestFulfilled.isSuccessful)
+                    {
+                        response.isSuccessful = true;
+                        response.errorMessage = "Account recovery completed successfully for user";
+                    }
+                }
+                else
+                {
+                    response = changeTask;
+                }
+            }
+            else
+            {
+                response = findTask;
+            }
+            return response;*/
+        }
+
 
         /*
          * 

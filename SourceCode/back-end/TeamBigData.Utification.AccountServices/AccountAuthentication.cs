@@ -14,58 +14,55 @@ namespace TeamBigData.Utification.AccountServices
     public class AccountAuthentication
     {
         private readonly IUsersDBSelecter _usersDBSelecter;
-        //private readonly ILogsDBInserter _logsDBInserter;
 
-        public AccountAuthentication(IUsersDBSelecter usersDBSelecter)//, ILogsDBInserter logsDBInserter)
+        public AccountAuthentication(IUsersDBSelecter usersDBSelecter)
         {
             _usersDBSelecter = usersDBSelecter;
-            //_logsDBInserter = logsDBInserter;
         }
 
         public async Task<DataResponse<UserAccount>> AuthenticateUserAccount(String email, String password)
         {
-            // TODO: Maybe log here and entry point
+            var userAccount = await _usersDBSelecter.SelectUserAccount(email).ConfigureAwait(false);
 
-            var userAccountDataResult = await _usersDBSelecter.SelectUserAccount(email).ConfigureAwait(false);
-            if (!userAccountDataResult.isSuccessful)
+            if (!userAccount.isSuccessful)
             {
-                userAccountDataResult.isSuccessful = false;
-                userAccountDataResult.errorMessage += ", {failed: _usersDBSelecter.SelectUserAccount}";
-                return userAccountDataResult;
+                userAccount.isSuccessful = false;
+                userAccount.errorMessage += ", {failed: _usersDBSelecter.SelectUserAccount}";
+                return userAccount;
             }
 
-            var digest = SecureHasher.HashString(userAccountDataResult.data._salt, password);
-            if (digest != userAccountDataResult.data._password) 
+            var digest = SecureHasher.HashString(userAccount.data._salt, password);
+
+            if (digest != userAccount.data._password) 
             {
-                userAccountDataResult.isSuccessful = false;
-                userAccountDataResult.errorMessage += ", {failed: digest validation}";
-                return userAccountDataResult;
+                userAccount.isSuccessful = false;
+                userAccount.errorMessage += ", {failed: digest validation}";
+                return userAccount;
             }
             else
             {
-                userAccountDataResult.isSuccessful = true;
+                userAccount.isSuccessful = true;
             }
 
-            return userAccountDataResult;
+            return userAccount;
         }
 
         public async Task<DataResponse<UserProfile>> AuthenticatedUserProfile(int userID)
         {
-            // TODO: Maybe log here and entry point
+            var userProfile = await _usersDBSelecter.SelectUserProfile(userID).ConfigureAwait(false);
 
-            var dataResponse = await _usersDBSelecter.SelectUserProfile(userID).ConfigureAwait(false);
-            if (!dataResponse.isSuccessful)
+            if (!userProfile.isSuccessful)
             {
-                dataResponse.isSuccessful = false;
-                dataResponse.errorMessage += ", {failed, _usersDBSelecter.SelectUserProfile}";
-                return dataResponse;
+                userProfile.isSuccessful = false;
+                userProfile.errorMessage += ", {failed, _usersDBSelecter.SelectUserProfile}";
+                return userProfile;
             }
             else
             {
-                dataResponse.isSuccessful = true;
+                userProfile.isSuccessful = true;
             }
 
-            return dataResponse;
+            return userProfile;
         }
     }
 }
