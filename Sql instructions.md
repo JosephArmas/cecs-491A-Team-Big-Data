@@ -75,27 +75,37 @@ CONSTRAINT UserProfiles_Foreign_Key_01 FOREIGN KEY (userID) references dbo.Users
 
 * Open console for TeamBigData.Utification.Features
 ```
-CREATE TABLE dbo."Events"
+-- auto-generated definition
+create table dbo.Events
 (
-title        char(30)      not null,
-    description  char(150)     not null,
-    eventID      int identity (200, 1)
+    title          char(30)      not null,
+    description    char(150)     not null,
+    eventID        int identity (200, 1)
         constraint Events_pk
             primary key,
-    eventCreated date          not null,
-    count        int default 0 not null,
-    userID       int           not null
-);
+    eventCreated   date          not null,
+    count          int default 0 not null,
+    userID         int           not null,
+    disabled       int default 0 not null,
+    lat            float         not null,
+    lng            float         not null,
+    showAttendance int default 0 not null
+)
+go
 
+-- auto-generated definition
 create table dbo.EventsJoined
 (
     userID  int not null,
     eventID int not null
         constraint EventsJoined_Events_eventID_fk
-            references dbo.Events,
+            references dbo.Events
+            on delete cascade,
     constraint EventsJoined_pk
         primary key (userID, eventID)
-);
+)
+go
+
 
 CREATE TABLE dbo.Pictures
 (
