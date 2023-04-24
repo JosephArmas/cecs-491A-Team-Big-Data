@@ -37,8 +37,290 @@ CONSTRAINT ProfilePic_PK PRIMARY KEY(userID),
 CONSTRAINT ProfilePic_UK_01 UNIQUE ("key")
 );
 
-CREATE TABLE dbo."Services"
+--User Services
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  Table [dbo].[Services]    Script Date: 4/24/2023 2:11:06 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Services](
+	[ServiceID] [int] IDENTITY(1,1) NOT NULL,
+	[CompanyName] [nvarchar](30) NOT NULL,
+	[CompanyDesc] [nvarchar](1000) NOT NULL,
+	[CompanyPhone] [nvarchar](16) NULL,
+	[CompanyURL] [nvarchar](2048) NULL,
+	[ServiceLat] [varchar](50) NOT NULL,
+	[ServiceLong] [varchar](50) NOT NULL,
+	[PinTypes] [int] NOT NULL,
+	[Distance] [int] NOT NULL,
+	[CreationDate] [date] NOT NULL,
+	[CreatedBy] [int] NULL,
+	[LastModifiedBy] [int] NOT NULL,
+	[ApprovedBy] [int] NULL,
+	[disabled] [int] NOT NULL,
+ CONSTRAINT [IX_Services] UNIQUE NONCLUSTERED 
 (
-userID int NOT NULL,
-"disabled" int DEFAULT 0,
-);
+	[CreatedBy] ASC,
+	[CompanyName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Services] ADD  CONSTRAINT [DF__Services__disabl__4E88ABD4]  DEFAULT ((0)) FOR [disabled]
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  Table [dbo].[ServiceRequests]    Script Date: 4/24/2023 2:12:18 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[ServiceRequests](
+	[RequestID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceID] [int] NOT NULL,
+	[ServiceName] [nvarchar](30) NOT NULL,
+	[RequestedBy] [int] NOT NULL,
+	[RequestLat] [varchar](50) NOT NULL,
+	[RequestLong] [varchar](50) NOT NULL,
+	[PinType] [int] NOT NULL,
+	[CreationDateTime] [datetime] NOT NULL,
+	[Active] [int] NOT NULL,
+	[Accept] [int] NOT NULL,
+	[LastModified] [datetime] NOT NULL,
+	[LastModifiedBy] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[AcceptRequest]    Script Date: 4/24/2023 2:12:47 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[AcceptRequest] @RequestID int, @UserID int
+AS
+BEGIN
+UPDATE dbo.ServiceRequests SET Active = 1, Accept = 1,LastModified = GETDATE(), LastModifiedBy = @UserID WHERE RequestID = @RequestID
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[AddRequest]    Script Date: 4/24/2023 2:14:15 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[AddRequest] @ServiceID int, @ServiceName nvarchar(30), @User int, @RequestLat varchar(50), @RequestLong varchar(50),@PinType int
+AS
+BEGIN
+INSERT INTO dbo.ServiceRequests([ServiceID], [ServiceName], RequestedBy, RequestLat, RequestLong, PinType, CreationDateTime, Active, Accept,LastModified,LastModifiedBy)
+VALUES (@ServiceID,@ServiceName,@User,@RequestLat,@RequestLong,@PinType,GETDATE(),1,2,GETDATE(),@User)
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[AddService]    Script Date: 4/24/2023 2:14:37 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[AddService] @ServiceName nvarchar(30), @ServiceDesc nvarchar(1000), @ServicePhone nvarchar(16), @ServiceURL nvarchar(2048), @ServiceLat varchar(50), @ServiceLong varchar(50), @PinTypes int,@Distance int, @CreatedBy int, @CreationDate date
+AS
+BEGIN
+INSERT INTO dbo.Services([CompanyName],[CompanyDesc],[CompanyPhone],[CompanyURL],[ServiceLat],[ServiceLong],[PinTypes],[Distance],[CreatedBy],[CreationDate],[LastModifiedBy]) VALUES (@ServiceName, @ServiceDesc, @ServicePhone, @ServiceURL, @ServiceLat, @ServiceLong, @PinTypes,@Distance, @CreatedBy,@CreationDate,@CreatedBy)
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[CountServices]    Script Date: 4/24/2023 2:14:47 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create Procedure [dbo].[CountServices]
+AS
+BEGIN
+SELECT COUNT([disabled])
+FROM [TeamBigData.Utification.Features].[dbo].[Services]
+WHERE [disabled] = 0
+HAVING COUNT([disabled])<10000
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[DeleteService]    Script Date: 4/24/2023 2:14:56 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[DeleteService] @CreatedBy int
+AS
+BEGIN
+UPDATE dbo.Services SET [disabled] = 1,[CreatedBy] = NULL WHERE CreatedBy = @CreatedBy
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[DenyRequest]    Script Date: 4/24/2023 2:15:04 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[DenyRequest] @RequestID int, @UserID int
+AS
+BEGIN
+UPDATE dbo.ServiceRequests SET Active = 0, Accept = 0,LastModified = GETDATE(), LastModifiedBy = @UserID WHERE RequestID = @RequestID
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetNearbyServices]    Script Date: 4/24/2023 2:15:13 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create Procedure [dbo].[GetNearbyServices] @RequestLat varchar(50),@RequestLong varchar(50),@Distance int
+AS
+BEGIN
+SELECT 
+CompanyName,CompanyDesc,CompanyPhone,CompanyURL,ServiceID,ServiceLat,ServiceLong,PinTypes,Distance
+FROM dbo.Services
+WHERE (3959 *
+   acos(cos(radians(@RequestLat)) * 
+   cos(radians(ServiceLat)) * 
+   cos(radians(ServiceLong) - 
+   radians(@RequestLong)) + 
+   sin(radians(@RequestLat)) * 
+   sin(radians(ServiceLat )))
+   ) < @Distance
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetProviderRequests]    Script Date: 4/24/2023 2:15:26 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create Procedure [dbo].[GetProviderRequests] @ServiceID int
+AS
+BEGIN
+SELECT RequestID,ServiceID,ServiceName,RequestedBy,RequestLat,RequestLong,PinType,Accept 
+FROM [TeamBigData.Utification.Features].[dbo].[ServiceRequests]
+WHERE ServiceID = @ServiceID AND Active = 1
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetUserRequests]    Script Date: 4/24/2023 2:15:38 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create Procedure [dbo].[GetUserRequests] @RequestedBy int
+AS
+BEGIN
+SELECT RequestID,ServiceID,ServiceName,RequestedBy,RequestLat,RequestLong,PinType,Accept 
+FROM [TeamBigData.Utification.Features].[dbo].[ServiceRequests]
+WHERE RequestedBy= @RequestedBy AND Active = 1
+END
+GO
+
+USE [TeamBigData.Utification.Features]
+GO
+
+/****** Object:  StoredProcedure [dbo].[UpdateService]    Script Date: 4/24/2023 2:15:47 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[UpdateService] @ServiceName nvarchar(30), @ServiceDesc nvarchar(1000), @ServicePhone nvarchar(16), @ServiceURL nvarchar(2048), @ServiceLat varchar(50), @ServiceLong varchar(50), @PinTypes int, @Distance int, @Updater int
+AS
+BEGIN
+UPDATE dbo.Services
+SET [CompanyName] = @ServiceName,[CompanyDesc]=@ServiceDesc,[CompanyPhone]=@ServicePhone,[CompanyURL]=@ServiceURL,[ServiceLat]=@ServiceLat,[ServiceLong] = @ServiceLong,[PinTypes]=@PinTypes,[Distance]=@Distance,[LastModifiedBy]=@Updater 
+WHERE CreatedBy = @Updater
+END
+GO
+
+USE [TeamBigData.Utification.Users]
+GO
+
+/****** Object:  StoredProcedure [dbo].[UpdateRemoveServiceRole]    Script Date: 4/24/2023 2:17:17 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create procedure [dbo].[UpdateRemoveServiceRole] @ID int
+AS
+Begin
+Update dbo.UserProfiles SET role = 'Regular User' where userid = @ID;
+end
+GO
+
+USE [TeamBigData.Utification.Users]
+GO
+
+/****** Object:  StoredProcedure [dbo].[UpdateRoleService]    Script Date: 4/24/2023 2:17:32 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create procedure [dbo].[UpdateRoleService] @ID int
+AS
+Begin
+Update dbo.UserProfiles SET role = 'Service User' where userid = @ID;
+end
+GO
+
