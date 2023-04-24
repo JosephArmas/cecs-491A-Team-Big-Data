@@ -8,13 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.16" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.AlertManagers\TeamBigData.Utification.AlertManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.AnalysisManager\TeamBigData.Utification.AnalysisManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
   </ItemGroup>

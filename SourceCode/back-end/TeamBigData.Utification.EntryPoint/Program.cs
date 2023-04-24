@@ -1,11 +1,18 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using System.Linq;
 using System.Text;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.PinManagers;
+using TeamBigData.Utification.PinServices;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Alerts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +54,13 @@ builder.Services.AddAuthentication(f =>
         ClockSkew = TimeSpan.Zero
     };
 });
+
+//Alert dependencies
+builder.Services.AddDbContext<IAlertDBInserter, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IAlertDBSelecter, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IAlertDBUpdater, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<PinService>();
+builder.Services.AddTransient<PinManager>();
 
 // Add services to the container.
 builder.Services.AddControllers();

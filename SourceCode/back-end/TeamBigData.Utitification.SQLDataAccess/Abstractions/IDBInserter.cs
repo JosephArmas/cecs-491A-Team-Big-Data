@@ -15,5 +15,6 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
         public Task<Response> InsertUserHash(String userHash, int userID);
         public Task<Response> IncrementUserAccountDisabled(UserAccount userAccount);
         public Task<Response> InsertPin(Pin pin);
+        //public Task<Response> InsertAlert(Alert alert);
     }
 }

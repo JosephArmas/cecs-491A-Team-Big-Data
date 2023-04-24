@@ -8,8 +8,10 @@ namespace TeamBigData.Utification.SQLDataAccess.Abstractions
     {
         public Task<Response> UpdateUserProfile(UserProfile user);
         public Task<Response> UpdatePinToComplete(int pinID);
+        //public Task<Response> MarkAsRead(int alertID,int userID);
         public Task<Response> UpdatePinType(int pinID, int pinType);
         public Task<Response> UpdatePinContent(int pinID, string description);
+        //public Task<Response> UpdateAlertContent(int alertID, int userID, string description);
         public Task<Response> UpdatePinToDisabled(int pinID);
     }
 }

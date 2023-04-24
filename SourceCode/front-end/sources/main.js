@@ -30,6 +30,7 @@ function homeClicked()
     var globalErrors = document.querySelector("#errors");
     var recoveryContainer = document.querySelector(".recovery-container");
     var recoveryOTPContainer = document.querySelector(".recOTP-container");
+    var alertContainer = document.querySelector(".alert-container");
     var profileContainer = document.querySelector(".profileContainer");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
@@ -39,6 +40,7 @@ function homeClicked()
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
     profileContainer.style.display = "none";
+    alertContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 
@@ -59,6 +61,18 @@ function profileClicked()
     downloadProfilePic();
 }
 
+function showAlertView() {
+    var alertContainer = document.querySelector(".alert-container");
+    var homeContainer = document.querySelector(".home-container");
+    alertContainer.style.display = "block";
+    homeContainer.style.display = "none";
+}
+function alertBack() {
+    var alertContainer = document.querySelector(".alert-container");
+    var homeContainer = document.querySelector(".home-container");
+    homeContainer.style.display = "block";
+    alertContainer.style.display = "none";
+}
 function recoveryClicked()
 {
     var recoveryContainer = document.querySelector(".recovery-container");

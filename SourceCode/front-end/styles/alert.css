@@ -1,0 +1,98 @@
+
+.alert-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    display:flex;
+  }
+  
+  /* Alert box */
+  .alert {
+    position: relative;
+    max-height: 80%;
+    width: 80%;
+    overflow-y: auto;
+    background-color: white;
+    box-sizing: border-box;
+    padding: 20px
+  }
+  
+  .alertback-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+  }
+  
+  .alertback-button button {
+    padding: 10px 20px;
+    min-width: 50px;
+    background-color: #e72cf5;
+    color: white;
+    border: none;
+    
+  }
+  
+  .alertback-button button:hover {
+    background-color: #ca27d6;
+    cursor: pointer;
+  }
+  
+  /* Notification view */
+  .notification-view {
+    position:flex;
+    font-size: 3em;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .alert-messages {
+    padding: 20px;
+    overflow: auto;
+  }
+
+  .alert-message {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  /* Alert timestamp */
+  .alert-timestamp {
+    font-size: 12px;
+    color: gray;
+  }
+  
+  .alert-text {
+    margin-left:10px
+}
+  /* Read button */
+  .read-button {
+
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 20px;
+
+  }
+  
+  .read-button:hover {
+    color: black;
+  }
+  
+  /* "Mark All as Read" button */
+.readAll-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #17c51c;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .readAll-button:hover {
+    background-color: #0a6d0d;
+  }

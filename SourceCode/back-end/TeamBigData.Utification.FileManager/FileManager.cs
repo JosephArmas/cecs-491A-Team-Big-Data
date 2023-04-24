@@ -7,7 +7,7 @@ namespace TeamBigData.Utification.FileManagers
 {
     public class FileManager
     {
-        private readonly String _connectionString;
+       /* private readonly String _connectionString;
         public FileManager()
         {
             _connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
@@ -219,6 +219,6 @@ namespace TeamBigData.Utification.FileManagers
                 }
             }
             return result;
-        }
+        }*/
     }
 }
