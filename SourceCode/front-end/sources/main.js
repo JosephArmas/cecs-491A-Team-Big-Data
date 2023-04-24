@@ -29,14 +29,14 @@ function homeClicked()
     var homeContainer = document.querySelector(".home-container")
     var globalErrors = document.querySelector("#errors");
     var recoveryContainer = document.querySelector(".recovery-container");
-    var recoveryOTPContainer = document.querySelector(".recOTP-container");    
+    var recoveryOTPContainer = document.querySelector(".recOTP-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
     regContainer.style.display = "none";     
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
-    recoveryOTPContainer.style.display = "none";    
+    recoveryOTPContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 
@@ -107,11 +107,9 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
-    var reputationContainer = document.querySelector(".reputation-reports-container");
     var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
-    reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
     var script = document.createElement('script');

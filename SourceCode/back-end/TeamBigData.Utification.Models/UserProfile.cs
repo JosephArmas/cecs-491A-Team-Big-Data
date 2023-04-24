@@ -15,7 +15,6 @@ namespace TeamBigData.Utification.Models
         public String _lastName { get; private set; }
         public String _address { get; private set; }
         public DateTime _birthday { get; private set; }
-        public double _reputation { get; private set; }
         public IIdentity? Identity { get; private set; }
         public UserProfile() 
         {
@@ -55,18 +54,6 @@ namespace TeamBigData.Utification.Models
             _birthday = new DateTime(2000, 1, 1);
             Identity = new GenericIdentity(_userID.ToString(), role);
         }
-        public UserProfile(int userID, double reputation, string role)
-        {
-            _userID = userID;
-            _reputation = reputation;
-            Identity = new GenericIdentity(_userID.ToString(), role);
-        }
-        public UserProfile(int userID, double reputation, string role)
-        {
-            _userID = userID;
-            _reputation = reputation;
-            Identity = new GenericIdentity(_userID.ToString(), role);
-        }
 
         public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, GenericIdentity identity)
         {
@@ -75,17 +62,6 @@ namespace TeamBigData.Utification.Models
             _lastName = lastName;
             _address = address;
             _birthday = birthday;
-            Identity = identity;
-        }
-
-        public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, double reputation, GenericIdentity identity)
-        {
-            _userID = userID;
-            _firstName = firstName;
-            _lastName = lastName;
-            _address = address;
-            _birthday = birthday;
-            _reputation = reputation;
             Identity = identity;
         }
         public UserProfile(GenericIdentity identity)
