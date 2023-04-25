@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.PinServices\TeamBigData.Utification.PinServices.csproj" />

@@ -14,23 +14,23 @@ document.querySelector(".back-button").addEventListener("click", homeClicked());
 
 function loginClicked()
 {
-    var anonContainer = document.querySelector(".anon-container");
-    var loginContainer = document.querySelector(".login-container");
+    let anonContainer = document.querySelector(".anon-container");
+    let loginContainer = document.querySelector(".login-container");
     anonContainer.style.display = "none";
     loginContainer.style.display = "block";
 }
 
 function homeClicked()
 {
-    var regContainer = document.querySelector(".registration-container");
-    var otpContainer = document.querySelector(".otp-container");
-    var anonContainer = document.querySelector(".anon-container");
-    var loginContainer = document.querySelector(".login-container");
-    var homeContainer = document.querySelector(".home-container")
-    var globalErrors = document.querySelector("#errors");
-    var recoveryContainer = document.querySelector(".recovery-container");
-    var recoveryOTPContainer = document.querySelector(".recOTP-container");
-    var profileContainer = document.querySelector(".profileContainer");
+    let regContainer = document.querySelector(".registration-container");
+    let otpContainer = document.querySelector(".otp-container");
+    let anonContainer = document.querySelector(".anon-container");
+    let loginContainer = document.querySelector(".login-container");
+    let homeContainer = document.querySelector(".home-container")
+    let globalErrors = document.querySelector("#errors");
+    let recoveryContainer = document.querySelector(".recovery-container");
+    let recoveryOTPContainer = document.querySelector(".recOTP-container");
+    let profileContainer = document.querySelector(".profileContainer");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
@@ -44,16 +44,16 @@ function homeClicked()
 
 function regClicked()
 {
-    var regContainer = document.querySelector(".registration-container");
-    var anonContainer = document.querySelector(".anon-container");
+    let regContainer = document.querySelector(".registration-container");
+    let anonContainer = document.querySelector(".anon-container");
     anonContainer.style.display = "none";
     regContainer.style.display = "block";
 }
 
 function profileClicked()
 {
-    var profileContainer = document.querySelector(".profileContainer");
-    var homeContainer = document.querySelector(".home-container");
+    let profileContainer = document.querySelector(".profileContainer");
+    let homeContainer = document.querySelector(".home-container");
     homeContainer.style.display = "none";
     profileContainer.style.display = "block";
     downloadProfilePic();
@@ -61,16 +61,16 @@ function profileClicked()
 
 function recoveryClicked()
 {
-    var recoveryContainer = document.querySelector(".recovery-container");
-    var anonContainer = document.querySelector(".anon-container");
+    let recoveryContainer = document.querySelector(".recovery-container");
+    let anonContainer = document.querySelector(".anon-container");
     anonContainer.style.display = "none";
     recoveryContainer.style.display = "block";
 }
 
 function recoveryClickedLogin()
 {
-    var loginContainer = document.querySelector(".login-container");
-    var recoveryContainer = document.querySelector(".recovery-container");
+    let loginContainer = document.querySelector(".login-container");
+    let recoveryContainer = document.querySelector(".recovery-container");
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "block";
 }
@@ -80,12 +80,14 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
+    var reputationContainer = document.querySelector(".reputation-reports-container");
     var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
+    reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
-    var script = document.createElement('script');
+    let script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
     script.async = true;
 
@@ -94,18 +96,26 @@ function regView()
 
 function showOtp()
 {
-    var otpContainer = document.querySelector(".otp-container");
-    var loginContainer = document.querySelector(".login-container");
+    let otpContainer = document.querySelector(".otp-container");
+    let loginContainer = document.querySelector(".login-container");
     otpContainer.style.display = "block";
     loginContainer.style.display = "none";
 }
 
 function showRecOTP()
 {
-    var otpContainer = document.querySelector(".recOTP-container");
-    var recoveryContainer = document.querySelector(".recovery-container");
+    let otpContainer = document.querySelector(".recOTP-container");
+    let recoveryContainer = document.querySelector(".recovery-container");
     otpContainer.style.display = "block";
     recoveryContainer.style.display = "none";
+}
+
+function backToMap()
+{
+    let homeContainer = document.querySelector(".home-container");
+    let profileContainer = document.querySelector(".profileContainer");
+    profileContainer.style.display = "none";
+    homeContainer.style.display = "block";
 }
 
 

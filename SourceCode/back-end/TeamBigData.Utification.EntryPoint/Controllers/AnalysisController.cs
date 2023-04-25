@@ -7,14 +7,19 @@ namespace Utification.EntryPoint.Controllers
     [Route("[controller]")]
     public class AnalysisController : ControllerBase
     {
+        private readonly AnalysisManager manager;
+        public AnalysisController(AnalysisManager Amanager)
+        {
+            manager = Amanager;
+        }
+
         [Route("logins")]
         [HttpGet]
         public Task<IActionResult> GetLogins()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
-            var manager = new AnalysisManager();
-            var rows = manager.GetLogins().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetLogins().Result;
+            //tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
 
@@ -23,9 +28,8 @@ namespace Utification.EntryPoint.Controllers
         public Task<IActionResult> GetRegistrations()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
-            var manager = new AnalysisManager();
-            var rows = manager.GetRegistrations().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetRegistrations().Result;
+            //tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
 
@@ -34,9 +38,8 @@ namespace Utification.EntryPoint.Controllers
         public Task<IActionResult> GetPinsAdded()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
-            var manager = new AnalysisManager();
-            var rows = manager.GetPinsAdded().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetPinsAdded().Result;
+            //tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
 
@@ -45,9 +48,8 @@ namespace Utification.EntryPoint.Controllers
         public Task<IActionResult> GetPinPulls()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
-            var manager = new AnalysisManager();
-            var rows = manager.GetPinPulls().Result;
-            tcs.SetResult(Ok(rows));
+            //var rows = manager.GetPinPulls().Result;
+            // tcs.SetResult(Ok(rows));
             return tcs.Task;
         }
     }

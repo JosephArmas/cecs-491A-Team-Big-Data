@@ -1,29 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using TeamBigData.Utification.ErrorResponse;
 
 namespace Utification.EntryPoint.Controllers
 {
-    public class FileInput
-    {
-        public String fileName { get; set; }
-        public int ID { get; set; }
-
-        public String role { get; set; }
-
-        public int userID { get; set; }
-    }
 
     [ApiController]
     [Route("[controller]")]
     public class FileController : ControllerBase
     {
+        private readonly FileManager manager;
+        public FileController(FileManager fileManager)
+        {
+            manager = fileManager;
+        }
+
         [Route("pinUpload")]
         [HttpPost]
         public async Task<IActionResult> PinUpload([FromBody] FileInput input)
         {
-            var manager = new FileManager();
             var profile = new UserProfile(input.userID, input.role);
             var result = new Response();
             try
@@ -48,7 +45,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinDownload([FromHeader] int ID)
         {
-            var manager = new FileManager();
             var result = new Response();
             try
             {
@@ -72,7 +68,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinUpdate([FromBody] FileInput input)
         {
-            var manager = new FileManager();
             var profile = new UserProfile(input.userID, input.role);
             var result = new Response();
             try
@@ -97,7 +92,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinDelete([FromBody] FileInput input)
         {
-            var manager = new FileManager();
             var profile = new UserProfile(input.userID, input.role);
             var result = new Response();
             try
@@ -122,7 +116,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileUpload([FromBody] FileInput input)
         {
-            var manager = new FileManager();
             var profile = new UserProfile(input.userID, input.role);
             var result = new Response();
             try
@@ -147,7 +140,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileDownload([FromHeader] int ID)
         {
-            var manager = new FileManager();
             var result = new Response();
             try
             {
@@ -171,7 +163,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileUpdate([FromBody] FileInput input)
         {
-            var manager = new FileManager();
             var profile = new UserProfile(input.userID, input.role);
             var result = new Response();
             try
@@ -196,7 +187,6 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileDelete([FromBody] FileInput input)
         {
-            var manager = new FileManager();
             var profile = new UserProfile(input.userID, input.role);
             var result = new Response();
             try

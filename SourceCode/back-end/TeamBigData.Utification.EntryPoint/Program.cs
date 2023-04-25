@@ -1,11 +1,31 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using System.Linq;
 using System.Text;
+using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.FileServices;
+using TeamBigData.Utification.FileManagers;
+using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.PinManagers;
+using TeamBigData.Utification.PinServices;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
+using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+using TeamBigData.Utification.ErrorResponse;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +70,39 @@ builder.Services.AddAuthentication(f =>
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<SecurityManager>();
+//builder.Services.AddSingleton<SecurityManager>();
+
+var sqlDAOFactory = new SqlDAOFactory();
+
+// Logging dependencies
+builder.Services.AddDbContext<ILogsDBInserter, LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddTransient<ILogger, Logger>();
+
+// Security manager dependencies
+builder.Services.AddDbContext<IUsersDBInserter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddDbContext<IUsersDBSelecter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddTransient<AccountRegisterer>();
+builder.Services.AddTransient<AccountAuthentication>();
+
+builder.Services.AddDbContext<IUsersDBUpdater, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddTransient<RecoveryServices>();
+
+builder.Services.AddDbContext<IUserhashDBInserter, UserhashSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserHashSQLDBConnection")));
+builder.Services.AddTransient<UserhashServices>(); 
+builder.Services.AddTransient<SecurityManager>();
+
+
+// Pin dependencies
+builder.Services.AddDbContext<IPinDBInserter, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IPinDBSelecter, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IPinDBUpdater, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<PinService>();
+builder.Services.AddTransient<PinManager>();
+
+//File dependencies
+builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<FileService>();
+builder.Services.AddTransient<FileManager>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -64,8 +116,8 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<CorsMiddleware>(corsTest);
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 

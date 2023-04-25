@@ -1,3 +1,4 @@
+const errorsDiv = document.querySelector("#errors");
 function addProfilePic()
 {
     let userID = localStorage.getItem("id");

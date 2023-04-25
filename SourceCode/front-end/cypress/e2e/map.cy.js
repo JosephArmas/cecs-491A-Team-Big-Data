@@ -93,7 +93,7 @@ describe('map e2e test cases', () => {
     cy.get('button[id=sub-login]').click().wait(500)
 
     // Assert
-    cy.get('#errors').invoke('text').should('eq','User doesn\'t exist.')
+    cy.get('#errors').invoke('text').should('eq','Invalid username or password provided. Retry again or contact system administrator')
     cy.get('div[id=map]').should('not.be.visible')
   })
 })
