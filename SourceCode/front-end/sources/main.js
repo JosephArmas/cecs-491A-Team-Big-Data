@@ -84,7 +84,6 @@ function regView()
     var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
-    reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
     let script = document.createElement('script');
