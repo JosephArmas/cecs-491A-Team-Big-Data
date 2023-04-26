@@ -229,7 +229,7 @@ function buildHomeUserView()
     logoutBtn.textContent = 'Logout';
     logoutBtn.addEventListener('click', homeClicked);
     profileBtn.setAttribute('type','button');
-    profileBtn.textContent = 'Profile'
+    profileBtn.textContent = localStorage.getItem('username');
     profileBtn.id ="profileBtn"
     profileBtn.addEventListener('click', profileClicked);
     profileDiv.appendChild(profileBtn);

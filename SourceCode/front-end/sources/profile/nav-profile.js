@@ -194,6 +194,7 @@ async function buildEventsCreated(userID)
 
 async function buildEventsJoined(userID)
 {
+        
     if(!eventsJoinedBuild)
     {
         // timeOut(userID,'red',errorsDiv);
@@ -211,6 +212,7 @@ async function buildEventsJoined(userID)
             // window.location.reload();
             eventJoinDiv.style.display = "none";
             homeDiv.style.display = "block";
+            // return initMap();
         });
         let title = document.createElement('h1')
         title.textContent = "Events Joined"
@@ -237,8 +239,8 @@ async function buildEventsJoined(userID)
             eventContainer.appendChild(eventList);
             unjoinBtn.addEventListener('click', () => {
 
-                unjoinEvent(eventID, userID);
-                return initMap();
+                return unjoinEvent(eventID, userID);
+                // return initMap();
 
             })
 

@@ -327,23 +327,20 @@
         });
     }
 
-    function placeNewPin(latLng, map,pinType) {
+    function placeNewPin(latLng, map) {
         const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
 
-        /*
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
             errorsDiv.innerHTML = "Invalid Pin Input...";
             return;
         };
-        */
-        /*
+        
         if (pinType == "2")
         {
             return showEventMenu(latLng);
         }
-        */
 
         let title = prompt("Enter pin title.");
         if (title == null || !titleLimit(title))
@@ -440,26 +437,30 @@
             map.addListener("click", (e) => 
             {
                 if (!pinBounds(e.latLng)){
-                    timeOut("Pin is placed out of bounds... ", 'red', errorsDiv)
-                    return;
-                }
-                let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
-
-                if (pinType == "2")
-                {
-                    showEventMenu(e.latLng);
-                } 
-                else if ((pinType == "1" || pinType == "3" ||pinType == "4" ||pinType == "5") ||pinType == null)
-                {
-                    placeNewPin(e.latLng, map, pinType);
-
-                    return;
+                    return timeOut("Pin is placed out of bounds... ", 'red', errorsDiv);
                 }
                 else
                 {
+                    placeNewPin(e.latLng, map);
+                }
+                /*
+                let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
+                if (pinType == "2")
+                {
+                    return showEventMenu(e.latLng);
+                } 
+
+                if ((pinType == "1" || pinType == "3" ||pinType == "4" ||pinType == "5") ||pinType == null)
+                {
+                    return placeNewPin(e.latLng, map, pinType);
+                }
+                else
+                {
+                    // placeNewPin(e.latLng, map,);
                     timeOut("Invalid Pin Input...", 'red', errorsDiv)
 
                 }
+                */
             });
         }
     }

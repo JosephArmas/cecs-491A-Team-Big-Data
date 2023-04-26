@@ -22,6 +22,7 @@ loginBtn.addEventListener('click', function (event)
 
     } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
     {
+        localStorage.setItem('username',email.value);
         loginUser();
         // sendOtp();
 
@@ -86,6 +87,7 @@ function loginUser()
 {
     user.username = email.value;
     user.password = password.value;
+    getUsername(email.value)
     axios.post(authenticationServer, user).then(function (responseAfter)
     {
         // turning jwt signature from the response into a json object
@@ -162,7 +164,12 @@ function loginUser()
         });
 }
 
+function getUsername(username)
+{
+    let name = username.substring(0,username.lastIndexOf("@"));
 
+    return localStorage.setItem('username', name);
+}
 
 
 // * Debugging Purposes

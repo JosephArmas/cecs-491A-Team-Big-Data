@@ -120,19 +120,25 @@ function createEvent(title, description, userID, lat, lng)
 
     axios.post(endPoint.createEventPin, event).then(function (response)
     {
+        let pinColor = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
         timeOut(response.data, 'green', errorsDiv);
-        alert(response.data)
-        let marker = new google.maps.Marker({
-            position: {lat: lat, lng: lng}, 
-            title: title,
-            description: description,
-            icon: pinColor
-    });
+        let choice = confirm(response.data)
+        if (choice)
+        {
+            new google.maps.Marker
+            ({
+                position: {lat: lat, lng: lng}, 
+                title: title,
+                description: description,
+                icon: pinColor
+            });
+            return initMap();
+        }
     }).catch (function (error)
     {
         timeOut(error.data, 'red', errorsDiv);
     })
-    return initMap();
+    // return initMap();
 
 }
 
@@ -283,8 +289,6 @@ async function placeMarker(map, userID)
                     if (choice == "1")
                     {
                         let newTitle = prompt("Enter new title");
-                        if (newTitle)
-                        {
                             /*
                             let sendTitle = {
                                 "title": newTitle,
@@ -300,10 +304,9 @@ async function placeMarker(map, userID)
                                 // timeOut(error.response.data, 'red', errorsDiv);
                             });
                             */
-                            modifyEvent(newTitle, marker.eventID, userID);
-                            return;
+                        modifyEvent(newTitle, marker.eventID, userID);
+                        return;
 
-                        }
                     }
 
                 });
@@ -328,8 +331,9 @@ function modifyEvent(title, eventID, userID)
     const endPoint = getEndPoint();
     axios.post(endPoint.modifyEventTitle, data).then((response) => {
         timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
+        return initMap();
     })
-    return initMap();
+    // return initMap();
 
 }
 
