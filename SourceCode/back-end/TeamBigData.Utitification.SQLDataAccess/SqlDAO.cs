@@ -1,7 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq.Expressions;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
@@ -378,6 +382,7 @@ namespace TeamBigData.Utification.SQLDataAccess
                             String address = "";
                             DateTime birthday = new DateTime();
                             String role = "";
+                            decimal reputation = 0;
 
                             int ordinal = reader.GetOrdinal("userID");
                             if (!reader.IsDBNull(ordinal))
@@ -410,11 +415,17 @@ namespace TeamBigData.Utification.SQLDataAccess
                             {
                                 birthday = reader.GetDateTime(ordinal);
                             }
-                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, new GenericIdentity(userID.ToString(), role));
+                            ordinal = reader.GetOrdinal("reputation");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                reputation = reader.GetDecimal(ordinal);
+                            }
+                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, Decimal.ToDouble(reputation), new GenericIdentity(userID.ToString(), role));
                         }
                         reader.Close();
-                    }
+                        }
                     connect.Close();
+                    result.isSuccessful = true;
                 }
                 catch (SqlException s)
                 {
@@ -1221,6 +1232,215 @@ namespace TeamBigData.Utification.SQLDataAccess
                 response.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
             }
             return response;
+                    result.errorMessage = e.Message;
+                }
+                tcs.SetResult(result);
+                return tcs.Task;
+            }
+        }
+
+        public async Task<Response> SelectUserReportsAsync(UserProfile userProfile)
+        {
+            Response result = new Response();
+
+            SqlDataAdapter adapter = new SqlDataAdapter();            
+            DataSet set = new DataSet();                   
+            
+            using(SqlConnection connection = new SqlConnection( _connectionString)) 
+            {
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "PartitionSelectUserReports";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+
+                        adapter.SelectCommand = command;
+                        
+                        adapter.Fill(set, "dbo.Reports");                                             
+
+                    }
+                    result.isSuccessful = true;
+                    result.data = set;
+                }
+                catch(SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+            }
+            return result;
+        }
+
+        public async Task<Response> UpdateUserRoleAsync(UserProfile userProfile)
+        {
+            Response result = new Response();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    try
+                    {
+                        await connection.OpenAsync().ConfigureAwait(false);
+
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = connection;
+                            command.CommandText = "UpdateUserRole";
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                            command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
+
+                            int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                            if (updateRole == 1)
+                            {
+                                result.data = 1;
+                                result.isSuccessful = true;
+                            }
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+                        result.errorMessage = e.Message;
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                result.errorMessage = e.Message;
+            }
+            
+            return result;                        
+        }
+
+        public async Task<Response> SelectNewReputationAsync(Report report)
+        {
+            Response result = new Response();
+            double newReputation = report._rating;
+            int numberOfReports = 1;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+                    
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "NumberOfUserReports";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", report._reportedUser);
+
+                        using (SqlDataReader execute = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                        {
+                            while (await execute.ReadAsync())
+                            {
+                                var rating = execute.GetOrdinal("rating");
+                                newReputation += Decimal.ToDouble(execute.GetDecimal(rating));
+
+                                numberOfReports++;
+                            }
+                        }
+                    }                    
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+            }
+            
+            Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
+            result.isSuccessful = true;
+            result.data = updateReputation;
+
+            return result;
+        }
+
+        public async Task<Response> UpdateUserReputationAsync(UserProfile userProfile, double newReputation)
+        {
+            Response result = new Response();
+            CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            CancellationToken token = cts.Token;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {                
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+                    
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "UpdateUserReputation";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                        command.Parameters.AddWithValue("@newReputation", newReputation);
+
+                        int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
+                        if (execute == 1 )
+                        {
+                            result.data = 1;
+                            result.isSuccessful = true;
+                        }                           
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+            }
+            return result;
+        }
+
+        public async Task<Response> InsertUserReportAsync(Report report)
+        {
+            Response result = new Response();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using(SqlCommand command = new SqlCommand())
+                    {
+                        command.Parameters.AddWithValue("@rating", (Decimal)report._rating);
+                        command.Parameters.AddWithValue("@reportedUser", report._reportedUser);
+                        command.Parameters.AddWithValue("@reportingUser", report._reportingUser);
+                        command.Parameters.AddWithValue("@feedback", report._feedback);
+                        command.Parameters.AddWithValue("@createDate", DateTime.Now);
+                        command.Parameters.AddWithValue("@updateDate", DateTime.Now);
+                        command.Parameters.AddWithValue("@lastModifierUser", report._reportingUser);
+
+                        command.Connection = connection;
+                        command.CommandText = "InsertUserReport";
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                        if (execute == 1)
+                        {
+                            result.data = 1;
+                            result.isSuccessful = true;
+                        }
+                    }                 
+                }
+                catch (SqlException s)
+                {               
+                    result.errorMessage = s.Message;
+                }       
+            }
+            return result;
         }
     }
 }
