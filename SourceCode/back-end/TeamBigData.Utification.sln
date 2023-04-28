@@ -67,6 +67,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Fil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.FileTests", "TeamBigData.Utification.FileTests\TeamBigData.Utification.FileTests.csproj", "{FD6A692E-1F74-457D-93B5-05C5AFC6927E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ReputationManager", "TeamBigData.Utification.ReputationManager\TeamBigData.Utification.ReputationManager.csproj", "{6591D056-017E-4716-9927-3736E6DF2E92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ReputationServices", "TeamBigData.Utification.ReputationService\TeamBigData.Utification.ReputationServices.csproj", "{CD0DB2DB-E7A5-4A32-BFBD-18850C9FE5FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.ReputationTests", "TeamBigData.Utification.ReputationTests\TeamBigData.Utification.ReputationTests.csproj", "{6799740B-454D-4A6E-83F4-1E0EBF738EF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -177,6 +183,18 @@ Global
 		{FD6A692E-1F74-457D-93B5-05C5AFC6927E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD6A692E-1F74-457D-93B5-05C5AFC6927E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD6A692E-1F74-457D-93B5-05C5AFC6927E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6591D056-017E-4716-9927-3736E6DF2E92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6591D056-017E-4716-9927-3736E6DF2E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6591D056-017E-4716-9927-3736E6DF2E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6591D056-017E-4716-9927-3736E6DF2E92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD0DB2DB-E7A5-4A32-BFBD-18850C9FE5FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0DB2DB-E7A5-4A32-BFBD-18850C9FE5FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0DB2DB-E7A5-4A32-BFBD-18850C9FE5FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0DB2DB-E7A5-4A32-BFBD-18850C9FE5FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6799740B-454D-4A6E-83F4-1E0EBF738EF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6799740B-454D-4A6E-83F4-1E0EBF738EF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6799740B-454D-4A6E-83F4-1E0EBF738EF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6799740B-454D-4A6E-83F4-1E0EBF738EF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -208,6 +226,9 @@ Global
 		{8D1D6DFB-AF61-4D43-8F27-8C93C12B28D0} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
 		{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
 		{FD6A692E-1F74-457D-93B5-05C5AFC6927E} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
+		{6591D056-017E-4716-9927-3736E6DF2E92} = {3A51F7F3-2C14-4045-9D99-CC84346E2D47}
+		{CD0DB2DB-E7A5-4A32-BFBD-18850C9FE5FF} = {F44CF66C-C235-4D52-8EDE-19D386F10DBA}
+		{6799740B-454D-4A6E-83F4-1E0EBF738EF0} = {F03EC98E-BAD9-49CB-AD9E-B43CAC58ED2D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3DAF13A-2974-4087-87BE-B77C46741866}
