@@ -3,33 +3,32 @@ using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using System.Data;
 
 namespace TeamBigData.Utification.Services
 {
     public class ReputationService
     {
-        private readonly Response _result;
-        private readonly IDBSelecter _selectReports;
-        private readonly IDBInserter _insertReport;
-        private readonly IDBUpdater _updateUserProfile;
-        private readonly IDBSelecter _selectUserProfile;
+        private readonly Response _result = new Response();
+        private readonly IReportsDBInserter _insertReport;
+        private readonly IReportsDBSelecter _selectReports;
+        private readonly IUsersDBUpdater _updateUserProfile;
+        private readonly IUsersDBSelecter _selectUserProfile;
         private readonly Report _report;
         private readonly ILogger _logger;
-        private UserAccount _userAccount;
-        private UserProfile _userProfile;
-        public ReputationService(Response result, IDBSelecter selectReports, IDBInserter insertReport, IDBUpdater updateUserProfile,
-                    IDBSelecter selectUserProfile, Report report, UserAccount userAccount, UserProfile userProfile, ILogger logger)
+        private UserAccount _userAccount = new UserAccount();
+        private UserProfile _userProfile = new UserProfile();
+        public ReputationService(IReportsDBInserter insertReport, IReportsDBSelecter selectReports, IUsersDBUpdater updateUserProfile,
+                    IUsersDBSelecter selectUserProfile, ILogger logger)
         {
-            _result = result;            
-            _selectReports = selectReports;
             _insertReport = insertReport;
+            _selectReports = selectReports;            
             _updateUserProfile = updateUserProfile;
             _selectUserProfile = selectUserProfile;
-            _report = report;
             _logger = logger;
-            _userAccount = userAccount; 
-            _userProfile = userProfile;
         }
 
         public async Task<Response> GetUserReportsAsync(int amount)
@@ -57,7 +56,7 @@ namespace TeamBigData.Utification.Services
         }
         public async Task<Response> GetCurrentReputationAsync()
         {
-            var getReputation = await _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID).ConfigureAwait(false);
+            var getReputation = await _selectUserProfile.SelectUserProfile(_userAccount._userID).ConfigureAwait(false);
             
             _result.isSuccessful = getReputation.isSuccessful;
             _result.data = _userProfile._reputation;
@@ -82,7 +81,7 @@ namespace TeamBigData.Utification.Services
                 log = new Log(1, "Error", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Failed to update users role to {role}");
             }
 
-            await _logger.Log(log).ConfigureAwait(false);
+            await _logger.Logs(log).ConfigureAwait(false);
 
             return _result;
         }
@@ -108,7 +107,7 @@ namespace TeamBigData.Utification.Services
             
             var getNewReputation = await _selectReports.SelectNewReputationAsync(_report).ConfigureAwait(false);
             
-            var getOldReputation = _selectUserProfile.SelectUserProfile(ref _userProfile, _userAccount._userID);                   
+            var getOldReputation = _selectUserProfile.SelectUserProfile(_userAccount._userID);                   
                         
             if (getNewReputation.isSuccessful)
             {               

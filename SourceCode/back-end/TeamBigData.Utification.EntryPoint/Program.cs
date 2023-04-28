@@ -11,13 +11,13 @@ using TeamBigData.Utification.FileServices;
 using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
-using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Services;
 using TeamBigData.Utification.PinManagers;
 using TeamBigData.Utification.PinServices;
 using TeamBigData.Utification.SQLDataAccess;
-using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
 using TeamBigData.Utification.SQLDataAccess.LogsDB;
 using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UserhashDB;
@@ -25,7 +25,6 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
-using TeamBigData.Utification.ErrorResponse;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +102,13 @@ builder.Services.AddTransient<PinManager>();
 builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<FileService>();
 builder.Services.AddTransient<FileManager>();
+
+// Reputation dependencies
+builder.Services.AddDbContext<IReportsDBInserter, ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IReportsDBSelecter, ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IUsersDBUpdater, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddTransient<ReputationManager>();
+builder.Services.AddTransient<ReputationService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

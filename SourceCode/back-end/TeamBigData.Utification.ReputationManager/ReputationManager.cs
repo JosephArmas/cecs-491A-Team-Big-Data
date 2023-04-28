@@ -1,8 +1,7 @@
 ﻿using TeamBigData.Utification.Services;
 using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Logging.Abstraction;
-using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Models;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using System.Security.Principal;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
@@ -19,14 +18,10 @@ namespace TeamBigData.Utification.Manager
         private UserAccount _userAccount;
         private UserProfile _userProfile;
 
-        public ReputationManager(ReputationService reputationService, Response result, Report report, Logger logger, UserAccount userAccount, UserProfile userProfile)
+        public ReputationManager(ReputationService reputationService, ILogger logger)
         {
             _reputationService = reputationService;
-            _result = result;
-            _report = report;
             _logger = logger;
-            _userAccount = userAccount;
-            _userProfile = userProfile;
         }
 
         public async Task<Response> ViewCurrentReputationAsync()
@@ -45,7 +40,7 @@ namespace TeamBigData.Utification.Manager
                 getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Failed to retrieve users reputation from the data store");
             }
 
-            await _logger.Log(getReputationLog).ConfigureAwait(false);
+            await _logger.Logs(getReputationLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -65,7 +60,7 @@ namespace TeamBigData.Utification.Manager
                 getReportsLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Failed to retrieve reports from the data store");
             }
 
-            await _logger.Log(getReportsLog).ConfigureAwait(false);
+            await _logger.Logs(getReportsLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -96,7 +91,7 @@ namespace TeamBigData.Utification.Manager
                                                     "Data Store", "Failed to increase reputation by 0.1");
                 }
 
-                await _logger.Log(updateReputationLog).ConfigureAwait(false);
+                await _logger.Logs(updateReputationLog).ConfigureAwait(false);
             }
             else
             {
@@ -104,7 +99,7 @@ namespace TeamBigData.Utification.Manager
                                             "Data", "Failed to retrieve current user reputation");
             }
 
-            await _logger.Log(getReputationLog).ConfigureAwait(false);
+            await _logger.Logs(getReputationLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -169,7 +164,7 @@ namespace TeamBigData.Utification.Manager
                                                         "Data Store", "Failed to store new report of the reported user");
                         }
 
-                        await _logger.Log(storeReportLog).ConfigureAwait(false);
+                        await _logger.Logs(storeReportLog).ConfigureAwait(false);
 
                     }
                     else
@@ -178,7 +173,7 @@ namespace TeamBigData.Utification.Manager
                                                         "Data Store", "Failed to update user's reputation");
                     }
 
-                    await _logger.Log(updateReputationLog).ConfigureAwait(false);
+                    await _logger.Logs(updateReputationLog).ConfigureAwait(false);
 
                 }
                 else
@@ -187,9 +182,9 @@ namespace TeamBigData.Utification.Manager
                                                 "Data", "Failed to retrieve user's new calculated reputation");
                 }
 
-                await _logger.Log(getReputationLog).ConfigureAwait(false);
+                await _logger.Logs(getReputationLog).ConfigureAwait(false);
             }
-            await _logger.Log(feedbackValidationLog).ConfigureAwait(false);
+            await _logger.Logs(feedbackValidationLog).ConfigureAwait(false);
 
             return _result;
         }
