@@ -5,7 +5,6 @@ using Microsoft.Net.Http.Headers;
 using System.Text;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
-using TeamBigData.Utification.Services;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 using System.Linq.Expressions;
@@ -56,7 +55,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<SecurityManager>();
 
 // Reputation Dependencies
-builder.Services.AddTransient<SqlDAO>(reportsDAO => { return new SqlDAO(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")); });
+//builder.Services.AddTransient<SqlDAO>(reportsDAO => { return new SqlDAO(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")); });
 //builder.Services.AddTransient<ReputationService>(reputationService => { return new ReputationService(new Response(), reportsDAO, )});
 //builder.Services.AddTransient<ReputationManager>(reputationManager => { return new ReputationManager()});
 
