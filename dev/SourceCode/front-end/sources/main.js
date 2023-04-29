@@ -8,7 +8,7 @@
 */
 
 // reuse function to list on back button click
-document.querySelector(".back-button").addEventListener("click", homeClicked());
+// document.querySelector(".back-button").addEventListener("click", homeClicked());
 // document.querySelector("#regBtn-submit").addEventListener("click", homeClicked());
 //document.querySelector(".home-logoutBtn").addEventListener("click", homeClicked());
 
@@ -22,6 +22,7 @@ function loginClicked()
 
 function homeClicked()
 {
+    window.location.reload();
     let regContainer = document.querySelector(".registration-container");
     let otpContainer = document.querySelector(".otp-container");
     let anonContainer = document.querySelector(".anon-container");
@@ -38,7 +39,7 @@ function homeClicked()
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
-    profileContainer.style.display = "none";
+    // profileContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 
@@ -84,7 +85,7 @@ function regView()
     var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
-    reputationContainer.style.display = "none";
+    // reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
     let script = document.createElement('script');
