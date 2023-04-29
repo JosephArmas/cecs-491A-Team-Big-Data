@@ -1,0 +1,52 @@
+ .change-username-container
+{
+    display:none;
+
+} 
+.change-pw-top-container
+{
+
+    display: flex;
+    padding-top: 20px;
+    justify-content: space-evenly;
+
+}
+
+#cu-b
+{  
+
+    min-width: 100px;;
+    background-color: #ca74ff;
+    color: white;
+}
+
+#cu-l
+{
+
+    min-width: 100px;
+    background-color: #00acb7;
+    color: white;
+
+}
+
+#cu-h
+{
+  
+    min-width: 100px;
+    background-color: #00acb7;
+    color: white;
+
+}
+
+.cu-input
+{
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    gap: 20px;
+
+
+} 
+
