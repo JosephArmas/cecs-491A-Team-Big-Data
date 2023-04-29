@@ -41,6 +41,8 @@ namespace Utification.EntryPoint.Controllers
             }
         }
 
+        //Check the flag. 
+
         [Route("PostNewReport")]
         [HttpPost]
         public async Task<IActionResult> PostNewReportAsync()

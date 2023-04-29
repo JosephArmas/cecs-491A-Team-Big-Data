@@ -130,6 +130,7 @@ namespace TeamBigData.Utification.Services
             return _result;
         }
                 
+        //Make a comment to determine what I want to do in the layer, I have some intention
         public async Task<Response> StoreNewReportAsync()
         {
             var insertReport = await _insertReport.InsertUserReportAsync(_report).ConfigureAwait(false);

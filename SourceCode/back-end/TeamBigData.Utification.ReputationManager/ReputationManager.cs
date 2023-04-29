@@ -109,6 +109,8 @@ namespace TeamBigData.Utification.Manager
             return _result;
         }
 
+        //Do the inverse for if statements
+        //Line 141 is type cast heavy, use a strongly typed dto.
         public async Task<Response> RecordNewUserReportAsync(double minimumRating)
         {
             Log feedbackValidationLog;

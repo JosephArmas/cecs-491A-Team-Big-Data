@@ -1738,6 +1738,11 @@ namespace TeamBigData.Utification.SQLDataAccess
             return result;
         }
 
+
+        //EntityModel should be as close to the database datatypes as possible.
+        //Big issue with DateTime.Now, the current time of the server. Use UTC time so that it is universal.
+        //Have a parameter that has the expected result instead of the if execute == 1
+        //execute is a verb, should've been a noun
         public async Task<Response> InsertUserReportAsync(Report report)
         {
             Response result = new Response();
