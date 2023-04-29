@@ -71,17 +71,15 @@ namespace TeamBigData.Utification.Services
 
             var update = await _updateUserProfile.UpdateUserRoleAsync(_userProfile).ConfigureAwait(true);
 
-            if(update.isSuccessful)
-            {
-                log = new Log(1, "Info", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Successfully updated users role to {role}");
-                _result.isSuccessful = true;
-            }
-            else 
+            if(!update.isSuccessful)
             {
                 log = new Log(1, "Error", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Failed to update users role to {role}");
             }
 
+            log = new Log(1, "Info", _userAccount._userHash, "UpdateUserRole()", "Data Store", $"Successfully updated users role to {role}");            
             await _logger.Logs(log).ConfigureAwait(false);
+            
+            _result.isSuccessful = true;
 
             return _result;
         }
