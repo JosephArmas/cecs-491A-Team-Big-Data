@@ -17,7 +17,21 @@
     padding: 50px;
 } 
 
+.recOTP 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+} 
+
 .otp input
+{
+    border-color: black;
+    padding: 15px;
+}
+
+.recOTP input
 {
     border-color: black;
     padding: 15px;
@@ -48,7 +62,19 @@
     justify-content: center;
 }
 
+.recOTP-header
+{
+    display: flex;
+    justify-content: center;
+}
+
 #otp-display
+{
+    padding-top: 20px;
+    text-align: center;
+}
+
+#recOTP-display
 {
     padding-top: 20px;
     text-align: center;

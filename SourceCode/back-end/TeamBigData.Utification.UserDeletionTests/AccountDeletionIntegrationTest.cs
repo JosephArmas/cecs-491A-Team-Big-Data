@@ -26,7 +26,6 @@ namespace TeamBigData.Utification.AccountDeletionTests
             IDBSelecter testDBO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
             IDAO featDBO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False");
             IRegister register = new SecurityManager();
-            UserAccount userAccount = new UserAccount();
             var username = "Deletius" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
@@ -34,7 +33,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var delMan = new DeletionManager();
             //Act
             var test = await register.RegisterUser(username, encryptedPassword, encryptor);
-            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            var expected = await testDBO.SelectUserAccount(username);
+            var userAccount = expected.data;
             user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Regular User"));
             var result = delMan.DeleteAccount(user, user); //Start the deletion manager 
             //Assert
@@ -51,7 +51,6 @@ namespace TeamBigData.Utification.AccountDeletionTests
             IDBSelecter testDBO = new SqlDAO(connectionString);
             IDAO featDBO = new SqlDAO(connectionString);
             IRegister register = new SecurityManager();
-            UserAccount userAccount = new UserAccount();
             var username = "Abel" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
@@ -59,7 +58,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var delMan = new DeletionManager();
             //Act
             var test = await register.RegisterUser(username, encryptedPassword, encryptor);
-            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            var expected = await testDBO.SelectUserAccount(username);
+            var userAccount = expected.data;
             user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity(userAccount._userID.ToString(), "Admin User"));
             var admin = new UserProfile(new GenericIdentity("1001", "Admin User"));
             var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 
@@ -77,7 +77,6 @@ namespace TeamBigData.Utification.AccountDeletionTests
             IDBSelecter testDBO = new SqlDAO(connectionString);
             IDAO featDBO = new SqlDAO(connectionString);
             IRegister register = new SecurityManager();
-            UserAccount userAccount = new UserAccount();
             var username = "Abel" + Convert.ToBase64String(RandomNumberGenerator.GetBytes(4)) + "@yahoo.com";
             var encryptor = new Encryptor();
             var encryptedPassword = encryptor.encryptString("password");
@@ -85,7 +84,8 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var delMan = new DeletionManager();
             //Act
             var test = await register.RegisterUser(username, encryptedPassword, encryptor);
-            var expected = await testDBO.SelectUserAccount(ref userAccount, username);
+            var expected = await testDBO.SelectUserAccount(username);
+            var userAccount = expected.data;
             user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity(userAccount._userID.ToString(), "Regular User"));
             var admin = new UserProfile(new GenericIdentity("1001", "Admin User"));
             var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 

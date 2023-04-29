@@ -4,105 +4,178 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.PinManagers;
 
 namespace Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-    public class PinInfo
-    {
-        public int pinID { get; set; }
-        public int userID { get; set; }
-        public string lat { get; set; }
-        public string lng { get; set; }
-        public int pinType { get; set; }
-        public string description { get; set; }
-        public int disabled { get; set; }
-    }
     [ApiController]
     [Route("[controller]")]
-    public class PinController : Controller
+    public class PinController : ControllerBase
     {
-        private readonly SecurityManager _securityManager;
-        private UserAccount _userAccount;
-        private UserProfile _userProfile;
+        [BindProperties]
+        public class Pins
+        {
+            public int _pinID {  get; set; }
+            public int _userID { get; set; }
+            public String _lat { get; set; }
+            public String _lng { get; set; }
+            public int _pinType { get; set; }
+            public String _description { get; set; }
+            public String _userhash { get; set; }
+        }
+
+        private readonly PinManager _pinManager;
         private readonly String _role;
-        public PinController(SecurityManager secMan)
+        private readonly String _userhash;
+
+        public PinController(PinManager pinManager)
         {
-            _securityManager = secMan;
-            _userAccount = new UserAccount();
-            _userProfile = new UserProfile();
-        }
-        [Authorize]
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
-        [Authorize]
-        [Route("GetAllPins")]
-        [HttpGet]
-        public Task<IActionResult> GetAllPins()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
+            _pinManager = pinManager;
+
             // get authorization header
             const string HeaderKeyName = "HeaderKey";
             Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
             HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
             string clean = authorizationToken;
             clean = clean.Remove(0, 7);
+
             // get role from JWT signature
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(clean);
             IEnumerable<Claim> claims = token.Claims;
-            // check role of user
-            if (claims.ElementAt(2).Value == "Anonymouse User")
-            {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
-            }
-            var pinMan = new PinManager();
-            List<Pin> list = pinMan.GetListOfAllPins(_userAccount);
-            tcs.SetResult(Ok(list));
-            return tcs.Task;
+            _role = claims.ElementAt(2).Value;
+            _userhash = claims.ElementAt(6).Value;
         }
-        [Authorize]
-        [Route("GetUserPins")]
+        
+        [Route("GetAllPins")]
         [HttpGet]
-        public Task<IActionResult> GetUsersPins()
+        public async Task<IActionResult> GetAllPins()
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            //if (_userProfile.Identity.AuthenticationType == "Anonymouse User")
-            //{
-            //    tcs.SetResult(Conflict("Unauthorized User."));
-            //    return tcs.Task;
-            //}
-            var pinMan = new PinManager();
-            List<Pin> list = pinMan.GetListOfAllPins(_userAccount);
-            tcs.SetResult(Ok(list));
-            return tcs.Task;
-        }
-        [Authorize]
-        [HttpPost]
-        public Task<IActionResult> PostNewPin(PinInfo newPin)
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            if (_role == "Anonymouse User" || _role == "Regular User")
+            
+
+            // check role of user
+            if (_role == "Anonymouse User")
             {
-                tcs.SetResult(Conflict("Unauthorized User."));
-                return tcs.Task;
+                return Unauthorized(_role);
             }
-            Pin pin = new Pin(newPin.lat, newPin.lng, newPin.description, newPin.pinType);
-            var pinMan = new PinManager();
-            var response = pinMan.SaveNewPin(pin, _userAccount);
-            tcs.SetResult(Ok(response));
-            return tcs.Task;
+
+            var result = await _pinManager.GetListOfAllPins(_userhash).ConfigureAwait(false);
+            if (!result.isSuccessful)
+            {
+                result.isSuccessful = false;
+                result.errorMessage += ", {failed: _pinManager.GetListOfAllPins}";
+                return Conflict(result.errorMessage);
+            }
+            else
+            {
+                result.isSuccessful = true;
+            }
+
+            return Ok(result.data);
         }
 
+
+        [Route("PostNewPin")]
+        [HttpPost]
+        public async Task<IActionResult> PostNewPin([FromBody]Pins newPin)
+        {
+            // TODO: Validate user and pin inputs
+
+            Pin pin = new Pin(newPin._userID, newPin._lat, newPin._lng, newPin._pinType, newPin._description);
+
+            var result = await _pinManager.SaveNewPin(pin,newPin._userhash).ConfigureAwait(false);
+            if (!result.isSuccessful)
+            {
+                result.errorMessage += ", {failed: _pinManager.SaveNewPin}";
+                return Conflict(result.errorMessage);
+            }
+            else 
+            { 
+                return Ok(result.errorMessage); 
+            }
+        }
+
+        
+        [Route("CompleteUserPin")]
+        [HttpPost]
+        public async Task<IActionResult> CompleteUserPin([FromBody]Pins pin)
+        {
+            // TODO: Validate user and pin inputs
+
+            var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
+            if (!result.isSuccessful)
+            {
+                result.isSuccessful = false;
+                result.errorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
+                return Conflict(result.errorMessage);
+            }
+            else
+            {
+                return Ok(result.errorMessage);
+            }
+        }
+
+        [Route("ModifyPinContent")]
+        [HttpPost]
+        public async Task<IActionResult> ModifyPinContent(Pins pin)
+        {
+            // TODO: Validate user and pin inputs
+
+            var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, pin._userhash).ConfigureAwait(false);
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinManager.ChangePinContent}";
+                return Conflict(response.errorMessage);
+            }
+            else
+            {
+                return Ok(response.errorMessage);
+            }
+        }
+
+
+        [Route("ModifyPinType")]
+        [HttpPost]
+        public async Task<IActionResult> ModifyPinType(Pins pin)
+        {
+            // TODO: Validate user and pin inputs
+
+            var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, pin._userhash);
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinManager.ChangePinType}";
+                return Conflict(response.errorMessage);
+            }
+            else 
+            { 
+                return Ok(response.errorMessage); 
+            }
+        }
+
+        [Route("DisablePin")]
+        [HttpPost]
+        public async Task<IActionResult> DisablePin(Pins pin)
+        {
+            // TODO: Validate user and pin inputs
+
+            var response = await _pinManager.DisablePin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful=false;
+                response.errorMessage += ", {failed: _pinManager.DisablePin}";
+                return Conflict(response.errorMessage);
+            }
+            else
+            { 
+                return Ok(response.errorMessage); 
+            }
+        }
     }
 }
+ 

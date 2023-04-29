@@ -1,16 +1,82 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 
 namespace TeamBigData.Utification.DeletionService
 {
-    public class AccDeletionService : IDeletionService
+    public class AccDeletionService// : IDeletionService
     {
-        private UserProfile _userProfile;
-        public AccDeletionService(UserProfile user)
+        private readonly IUsersDBSelecter _usersDBSelecter;
+        private readonly IUsersDBDeleter _usersDBDeleter;
+        private readonly IPinDBDeleter _pinDBDeleter;
+        private readonly IUserhashDBUpdater _userhashDBUpdater;
+        public AccDeletionService(UsersSqlDAO usersSqlDAO, PinsSqlDAO pinsSqlDAO, UserhashSqlDAO userhashSqlDAO)
         {
-            _userProfile = user;
+            _usersDBSelecter = usersSqlDAO;
+            _usersDBDeleter = usersSqlDAO;
+            _pinDBDeleter = pinsSqlDAO;
+            _userhashDBUpdater = userhashSqlDAO;
         }
+
+        public async Task<Response> DeletePII(String username)
+        {
+            // Check if real person if so return userhash
+            var userAccount = await _usersDBSelecter.SelectUserAccount(username).ConfigureAwait(false);
+
+            if (!userAccount.isSuccessful)
+            {
+                return new Response(false,userAccount.errorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}");
+            }
+
+            // Delete features linked to account
+            var response = await _pinDBDeleter.DeletePinsLinkedToUser(userAccount.data._userID).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBDeleter.DeletePinsLinkedToUser}";
+                return response;
+            }
+
+            // Delete account
+            response = await _usersDBDeleter.DeletePIIUserProfile(userAccount.data._userID).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBDeleter.DeletePinsLinkedToUser}";
+                return response;
+            }
+
+            response = await _usersDBDeleter.DeletePIIUserAccount(userAccount.data._userID).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBDeleter.DeletePinsLinkedToUser}";
+                return response;
+            }
+
+            // Unlink userhash
+            response = await _userhashDBUpdater.UpdateUserID(userAccount.data._userID).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _userhashDBUpdater.UpdateUserID}";
+                return response;
+            }
+
+            response.isSuccessful = true;
+            return response;
+        }
+        /*
         public async Task<Response> DeletePIIFeatures()
         {
             var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
@@ -26,7 +92,6 @@ namespace TeamBigData.Utification.DeletionService
             var result = await DeletePII(connectionString,err,0).ConfigureAwait(false);
             return result;
         }
-
         public async Task<Response> DeletePII(String connString, String err,int piData)
         {
             var result = new Response();
@@ -45,6 +110,6 @@ namespace TeamBigData.Utification.DeletionService
                 result.errorMessage = err;
             }
             return result;
-        }
+        }*/
     }
 }

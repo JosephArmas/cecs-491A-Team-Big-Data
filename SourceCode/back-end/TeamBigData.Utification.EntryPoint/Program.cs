@@ -1,11 +1,30 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using System.Linq;
 using System.Text;
+using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.DeletionService;
+using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.PinManagers;
+using TeamBigData.Utification.PinServices;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
+using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +69,36 @@ builder.Services.AddAuthentication(f =>
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<SecurityManager>();
+//builder.Services.AddSingleton<SecurityManager>();
+
+//var sqlDAOFactory = new SqlDAOFactory();
+
+// Pin dependencies
+builder.Services.AddDbContext<PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<PinService>();
+builder.Services.AddTransient<PinManager>();
+
+// Logging dependencies
+builder.Services.AddDbContext<LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddTransient<ILogger, Logger>();
+
+builder.Services.AddTransient<InputValidation>();
+
+// Security manager dependencies
+builder.Services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddTransient<AccountRegisterer>();
+builder.Services.AddTransient<AccountAuthentication>();
+
+builder.Services.AddTransient<RecoveryServices>();
+
+builder.Services.AddDbContext<UserhashSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserHashSQLDBConnection")));
+builder.Services.AddTransient<UserhashServices>();
+
+builder.Services.AddTransient<AccDeletionService>();
+
+builder.Services.AddTransient<SecurityManager>();
+
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -64,8 +112,8 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<CorsMiddleware>(corsTest);
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 

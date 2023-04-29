@@ -9,7 +9,7 @@ namespace TeamBigData.Utification.ErrorResponse
 {
     public class InputValidation
     {
-        public bool IsValidPassword(String password)
+        public async Task<bool> IsValidPassword(String password)
         {
             Regex passwordAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.,!\s-]*$");
             if (passwordAllowedCharacters.IsMatch(password) && password.Length >= 8)
@@ -18,7 +18,7 @@ namespace TeamBigData.Utification.ErrorResponse
                 return false;
         }
 
-        public bool IsValidEmail(String email)
+        public async Task<bool> IsValidEmail(String email)
         {
             Regex emailAllowedCharacters = new Regex(@"^[a-zA-Z0-9@.-]*$");
             if (emailAllowedCharacters.IsMatch(email) && email.Contains('@') && (!email.StartsWith("@")))

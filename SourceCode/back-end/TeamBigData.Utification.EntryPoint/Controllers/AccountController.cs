@@ -1,171 +1,147 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.Manager;
-using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Cryptography;
-using TeamBigData.Utification.Models;
-using TeamBigData.Utification.PinManagers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using TeamBigData.Utification.Models;
+using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.Cryptography;
+using System.Security.Principal;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
     [BindProperties]
-    public class AccountInfo
-    {
-        public String username { get; set; }
-        public String password { get; set; }
-
-        //TODO: add encryption Key parameter
-    }
 
 
     [ApiController]
     [Route("[controller]")]
-    public class AccountController : Controller
+
+    public class AccountController : ControllerBase
     {
+        // TODO: Need to take out of Controller and put into different file
+        // Taking it out will break current code
+
+        [BindProperties]
+        public class IncomingUser
+        {
+            public String Username { get; set; }
+            public String Password { get; set; }
+        }
+
         private readonly SecurityManager _securityManager;
-        private UserAccount _userAccount;
-        private UserProfile _userProfile;
         private readonly IConfiguration _configuration;
-        /*public AccountController(SecurityManager secMan)
-        {
-            _securityManager = secMan;
-            _userAccount = new UserAccount();
-            _userProfile = new UserProfile();
-        }*/
+        private readonly InputValidation _inputValidation;
 
-        public AccountController(IConfiguration configuration)
+        // TODO: variables to pull from jwt
+
+        public AccountController(IConfiguration configuration,SecurityManager securityManager, InputValidation inputValidation)
         {
+            _securityManager = securityManager;
             _configuration = configuration;
-
+            _inputValidation = inputValidation;
         }
 
-        [Route("health")]
-        [HttpGet]
-        public Task<IActionResult> HealthCheck()
-        {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            tcs.SetResult(Ok("Working"));
-            return tcs.Task;
-        }
-        //try curl -i -X GET "https://localhost:7259/account/health"
-
-        //2 Main ways to send parameters forms which curl uses on the top
-        //curl -d "username=testUser@yahoo.com&password=password" -X POST "https://localhost:7259/account/authentication"
-        //And in the body of the http request
-        //curl -H "Content-Type: application/json" -d "{"username":"testUser@yahoo.com", "password":"password"}" -X POST "https://localhost:7259/account/authentication"
-        //You have to specify where its coming from with the tags on the parameters, either make it [FromForm] or [FromBody] 
-
-        //curl -H "Content-Type: application/json" -d "@data.json" -X Post "https://localhost:7259/account/authentication"
-        
-        
-        // Allow anonymous doesn't check for authorization header
-        [AllowAnonymous]
         [Route("authentication")]
         [HttpPost]
-        public Task<IActionResult> Login([FromBody] AccountInfo login)
+        public async Task<IActionResult> Login([FromBody]IncomingUser login)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(login.password);
-            _userAccount = new UserAccount();
-            _userProfile = new UserProfile();
-            var secMan = new SecurityManager();
-            var response = secMan.LoginUser(login.username, encryptedPassword, encryptor, ref _userAccount, ref _userProfile).Result;
-            if (response.isSuccessful)
+
+
+            // Validate user role
+            // Validate inputs
+            if (!await _inputValidation.IsValidEmail(login.Username).ConfigureAwait(false) || !await _inputValidation.IsValidPassword(login.Password).ConfigureAwait(false))
             {
-                //Create JWT token with our claims
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
-
-                //Token specifications
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, _userAccount._userID.ToString()),
-                    new Claim(ClaimTypes.Name, _userAccount._username),
-                    new Claim(ClaimTypes.Role, _userProfile.Identity.AuthenticationType),
-                    new Claim("authenticated", "true", ClaimValueTypes.String),
-                    new Claim("otp", _userAccount._otp, ClaimValueTypes.String)
-                };
-
-                
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Audience = _configuration["JWT:Audience"],
-                    Issuer = _configuration["JWT:Issuer"],
-                    Expires = DateTime.UtcNow.AddHours(2),
-                    Subject = new ClaimsIdentity(claims),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyDetail), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                
-                //Send token signature back to client
-                tcs.SetResult(Ok(tokenHandler.WriteToken(token)));
+                return Conflict("Invalid credentials provided. Retry again or contact system administrator");
             }
-            else
+
+            // Check if user is a user
+
+            var userhash = SecureHasher.HashString(login.Username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+
+            var dataResponse = await _securityManager.LoginUser(login.Username, login.Password, userhash).ConfigureAwait(false);
+            if (!dataResponse.isSuccessful)
             {
-                tcs.SetResult(Conflict(response.errorMessage));
+                return Conflict(dataResponse.errorMessage + ", {failed: _securityManager.LoginUser}");
             }
-            return tcs.Task;
+
+            // Create JWT
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var keyDetail = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+
+            //Token specifications
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, dataResponse.data._userId.ToString()),
+                new Claim(ClaimTypes.Name, dataResponse.data._username),
+                new Claim(ClaimTypes.Role, dataResponse.data._role),
+                new Claim("authenticated", "true", ClaimValueTypes.String),
+                new Claim("otp", dataResponse.data._otp, ClaimValueTypes.String),
+                new Claim("otpCreated", dataResponse.data._otpCreated, ClaimValueTypes.String),
+                new Claim("userhash", dataResponse.data._userhash, ClaimValueTypes.String)
+            };
+
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Audience = _configuration["JWT:Audience"],
+                Issuer = _configuration["JWT:Issuer"],
+                Expires = DateTime.UtcNow.AddHours(2),
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyDetail), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            //Send token signature back to client
+            return Ok(tokenHandler.WriteToken(token));
         }
 
-        //Authorize requires JWT signature in authorization header
-        [Authorize]
+        
         [Route("authentication")]
         [HttpGet]
-        public Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout()
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            var user = new UserProfile();
-            tcs.SetResult(Ok(user));
-            return tcs.Task;
+            return Ok("");
         }
 
-        [AllowAnonymous]
+        [Route("delete")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteAccount([FromBody] IncomingUser login)
+        {
+            // TODO: Validate if is  this user or an admin
+
+            // Do action
+            var response = await _securityManager.DeleteUser(login.Username).ConfigureAwait(false);
+            if (!response.isSuccessful)
+            {
+                return Conflict(response.errorMessage + ", {failed: _securityManager.DeleteUser}");
+            }
+
+            return Ok(response.errorMessage);
+        }
+
         [Route("registration")]
         [HttpPost]
-        public Task<IActionResult> CreateAccount(AccountInfo newAccount)
+        public async Task<IActionResult> CreateAccount([FromBody]IncomingUser newAccount)
         {
-            var tcs = new TaskCompletionSource<IActionResult>();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(newAccount.password);
-            var response = _securityManager.RegisterUser(newAccount.username, encryptedPassword, encryptor).Result;
+
+            // TODO: Decrypt incoming encryptedpassword with incoming key
+            // TODO: Validate they are an anonymous user from jwt key
+            //          If no JWT in Authentication header the  user is anonymous 
+
+            var userhash = SecureHasher.HashString("5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI", newAccount.Username);
+
+            var response = await _securityManager.RegisterUser(newAccount.Username,  newAccount.Password, userhash).ConfigureAwait(false);
             if(response.isSuccessful)
             {
-                tcs.SetResult(Ok(response.errorMessage));
+                return Ok(response.errorMessage);
             }
             else
             {
-                tcs.SetResult(Conflict(response.errorMessage));
+                return Conflict(response.errorMessage + ", {failed:_securityManager.RegisterUser}");
             }
-            return tcs.Task;
-        }
-
-
-        //Test controller can be deleted
-        [Authorize]
-        [Route("header")]
-        [HttpGet]
-        public IActionResult ExtractFromBasic()
-        {
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-
-            return Ok(claims.ElementAt(2).Value);
         }
     }
 }

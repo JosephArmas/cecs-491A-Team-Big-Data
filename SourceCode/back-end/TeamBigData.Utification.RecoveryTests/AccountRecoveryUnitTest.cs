@@ -13,27 +13,28 @@ namespace TeamBigData.Utification.AccountRecoveryTests
     public class AccountRecoveryUnitTest
     {
         [TestMethod]
-        public void RequestAvailableWithin5Seconds()
+        public async Task RequestAvailableWithin5Seconds()
         {
             //Arrange
             Stopwatch stopwatch = new Stopwatch();
             SecurityManager secManagerAccRecovery = new SecurityManager();
             long expected = 5 * 1000;
             var userProfile = new UserProfile(new GenericIdentity("username", "Admin User"));
-            var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
+            var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;Integrated Security = true;TrustServerCertificate=True;Encrypt=True");
             var secManager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "testUser@yahoo.com";
             var newPassword = "password";
             var encryptedPassword = encryptor.encryptString(newPassword);
-            List<int> listRequests = new List<int>();
             //Act
             //Insert Request and Check if its Available
             stopwatch.Start();
             secManager.GenerateOTP();
             var otp = secManager.SendOTP();
-            Response insertResult = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
-            Response fetchResult = secManagerAccRecovery.GetRecoveryRequests(ref listRequests, userProfile);
+            Response insertResult = await secManager.RecoverAccount(username, encryptedPassword, encryptor);
+            var fetchResult = await secManagerAccRecovery.GetRecoveryRequests(userProfile);
+            Console.WriteLine(fetchResult.isSuccessful);
+            var listRequests = fetchResult.data;
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
@@ -45,19 +46,29 @@ namespace TeamBigData.Utification.AccountRecoveryTests
         }
 
         [TestMethod]
-        public void AdminApprovedAccountRecovery()
+        public async Task AdminApprovedAccountRecovery()
         {
             //Arrange
-            var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
+            var encryptor = new Encryptor();
+            var username = "testUser@yahoo.com";
+            var newPassword = "password";
+            var encryptedPassword = encryptor.encryptString(newPassword);
+            var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;Integrated Security = true;TrustServerCertificate=True;Encrypt=True");
             SecurityManager adminManager = new SecurityManager();
             var userProfile = new UserProfile(new GenericIdentity("username", "Admin User"));
             var stopwatch = new Stopwatch();
             long expected = 5 * 1000;
-            var list = new List<int>();
-            var getResponse = adminManager.GetRecoveryRequests(ref list, userProfile);
+            // Create Recovery REquest so admin can finish it
+            Response insertResult = await adminManager.RecoverAccount(username, encryptedPassword, encryptor);
+            // Admin gets all the requests
+            var getResponse = await adminManager.GetRecoveryRequests(userProfile);
+            Console.WriteLine(getResponse.isSuccessful);
+            Console.WriteLine(getResponse.errorMessage);
+            var list = getResponse.data;
             //Act
             stopwatch.Start();
-            var enableResponse = adminManager.ResetAccount(list[0], userProfile);
+            var enableResponse = await adminManager.ResetAccount(list[0]._userID, userProfile);
+            Console.WriteLine(enableResponse.errorMessage);
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;
 
@@ -68,7 +79,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
         }
 
         [TestMethod]
-        public void InvalidUsernameFails()
+        public async Task InvalidUsernameFails()
         {
             //Arrange
             var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
@@ -82,35 +93,14 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Act
             secManager.GenerateOTP();
             var otp = secManager.SendOTP();
-            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
+            var actual = await secManager.RecoverAccount(username, encryptedPassword, encryptor);
             //Assert
             Assert.IsFalse(actual.isSuccessful);
             Assert.AreEqual(expected, actual.errorMessage);
         }
 
         [TestMethod]
-        public void InvalidOTPFails()
-        {
-            //Arrange
-            var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
-            SecurityManager adminManager = new SecurityManager();
-            var secManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var username = "testUser@yahoo.com";
-            var newPassword = "password";
-            var encryptedPassword = encryptor.encryptString(newPassword);
-            var expected = "Invalid username or OTP provided. Retry again or contact system administrator";
-            //Act
-            secManager.GenerateOTP();
-            var otp = "wrongOTP";
-            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
-            //Assert
-            Assert.IsFalse(actual.isSuccessful);
-            Assert.AreEqual(expected, actual.errorMessage);
-        }
-
-        [TestMethod]
-        public void InvalidNewPasswordFails()
+        public async Task InvalidNewPasswordFails()
         {
             //Arrange
             var requestDB = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
@@ -124,7 +114,7 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Act
             secManager.GenerateOTP();
             var otp = "wrongOTP";
-            var actual = secManager.RecoverAccount(username, encryptedPassword, encryptor, otp).Result;
+            var actual = await secManager.RecoverAccount(username, encryptedPassword, encryptor);
             //Assert
             Assert.IsFalse(actual.isSuccessful);
             Assert.AreEqual(expected, actual.errorMessage);

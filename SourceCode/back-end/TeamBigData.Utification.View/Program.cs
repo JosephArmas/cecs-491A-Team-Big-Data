@@ -1,4 +1,6 @@
-﻿using System.Security.Principal;
+﻿using System.Collections;
+using System.Security.Principal;
+using System.Text;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Manager.Abstractions;
@@ -15,15 +17,15 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
         static void Main(string[] args)
         {
             var response = new Response();
-            UserAccount userAccount = new UserAccount("","","","");
             UserProfile userProfile = new UserProfile(0);
+            String userHash = "";
             IView menu = new AnonymousView();
             while (true)
             {
                 if (((IPrincipal)userProfile).IsInRole("Anonymous User"))
                 {
                     menu = new AnonymousView();
-                    response = menu.DisplayMenu(ref userAccount, ref userProfile);
+                    response = menu.DisplayMenu(ref userProfile, ref userHash);
                     if (!response.isSuccessful && response.errorMessage == "")
                     {
                         Console.Clear();
@@ -41,7 +43,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                 else if (((IPrincipal)userProfile).IsInRole("Regular User"))
                 {
                     menu = new RegularView();
-                    response = menu.DisplayMenu(ref userAccount, ref userProfile);
+                    response = menu.DisplayMenu(ref userProfile, ref userHash);
                     if (!response.isSuccessful && response.errorMessage == "")
                     {
                         Console.WriteLine("\nExiting Utification...\nPress Enter to Continue...");
@@ -58,7 +60,7 @@ namespace TeamBigData.Utification // Note: actual namespace depends on the proje
                 else if (((IPrincipal)userProfile).IsInRole("Admin User"))
                 {
                     menu = new AdminView();
-                    response = menu.DisplayMenu(ref userAccount, ref userProfile);
+                    response = menu.DisplayMenu(ref userProfile, ref userHash);
                     if (!response.isSuccessful && response.errorMessage == "")
                     {
                         Console.WriteLine("\nExiting Utification...\nPress Enter to Continue...");

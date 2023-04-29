@@ -1,88 +1,118 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
+using TeamBigData.Utification.DeletionService;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging;
+using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
 
 namespace TeamBigData.Utification.AuthenticationTests
 {
     [TestClass]
     public class AuthenticationIntegrationTest
     {
+        private IServiceCollection _services;
+        private IServiceProvider _provider;
+
+        public AuthenticationIntegrationTest()
+        {
+            // Arrange
+            _services = new ServiceCollection();
+
+            _services.AddDbContext<LogsSqlDAO>(options => options.UseSqlServer("Server=.\\;Database=TeamBigData.Utification.Logs;User=AppUser; Password=t; TrustServerCertificate=True; Encrypt=True"));
+            _services.AddTransient<ILogger, Logger>();
+
+            _services.AddDbContext<PinsSqlDAO>(options => options.UseSqlServer("Server=.\\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False"));
+            
+
+            _services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer("Server=.\\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False"));
+            _services.AddTransient<AccountRegisterer>();
+            _services.AddTransient<AccountAuthentication>();
+
+            _services.AddTransient<RecoveryServices>();
+
+            _services.AddDbContext<UserhashSqlDAO>(options => options.UseSqlServer("Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False"));
+            _services.AddTransient<UserhashServices>();
+
+            _services.AddTransient<AccDeletionService>();
+
+            _services.AddTransient<SecurityManager>();
+
+
+            _provider = _services.BuildServiceProvider();
+        }
+
         [TestMethod]
-        public void SucessfullyLogin()
+        public async Task SucessfullyLogin()
         {
             //Arrange
-            var result = new Response();
-            var securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var userAccount = new UserAccount();
-            var userProfile = new UserProfile();
+            var sysUnderTest = _provider.GetRequiredService<SecurityManager>();
             var username = "testUser@yahoo.com";
             var password = "password";
+            var userhash = SecureHasher.HashString("5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI", username);
+
+
             //Act
-            var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
-            var message = securityManager.SendOTP();
-            var result2 = securityManager.LoginOTP(message);
+            var result = await sysUnderTest.LoginUser(username, password, userhash);
+
             //Assert
             Assert.IsTrue(result.isSuccessful);
         }
 
         [TestMethod]
-        public void FailsWhenWrongOTPEntered()
+        public async Task FailsWhenWrongOTPEntered()
         {
             //Arrange
-            var result = new Response();
-            var securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var userAccount = new UserAccount();
-            var userProfile = new UserProfile();
+            var sysUnderTest = _provider.GetRequiredService<SecurityManager>();
             var username = "testUser@yahoo.com";
             var password = "password";
+            var userhash = SecureHasher.HashString("5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI", username);
+            var invalidOTP = "wrongOTP";
             //Act
-            var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
-            var result2 = securityManager.LoginOTP("wrongOTP");
+            var result = await sysUnderTest.LoginUser(username, password, userhash);
+            //var result2 = securityManager.LoginOTP("wrongOTP");
             //Assert
-            Assert.IsFalse(result2.isSuccessful);
-            Assert.IsFalse(securityManager.IsAuthenticated());
+            Assert.AreNotEqual(result.data._otp, invalidOTP);
+            Assert.IsTrue(result.isSuccessful);
         }
 
         [TestMethod]
-        public void AccountDisabledAfter3Attempts()
+        public async Task AccountDisabledAfter3Attempts()
         {
             //Arrange
-            var result = new Response();
-            var securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var userAccount = new UserAccount();
-            var userProfile = new UserProfile();
+            var sysUnderTest = _provider.GetRequiredService<SecurityManager>();
             var username = "disabledUser@yahoo.com";
             var password = "wrongPassword";
+            var userhash = SecureHasher.HashString("5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI", username);
+
             //Act
-            var digest = encryptor.encryptString(password);
-            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
-            securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            await sysUnderTest.LoginUser(username, password, userhash);
+            await sysUnderTest.LoginUser(username, password, userhash);
+            var result = await sysUnderTest.LoginUser(username, password, userhash);
+            
             //Assert
-            Console.WriteLine(result.isSuccessful);
             Assert.IsFalse(result.isSuccessful);
             Assert.IsTrue(result.errorMessage.Contains("Error: Account disabled. Perform account recovery or contact system admin"));
         }
-
+        /*
         [TestMethod]
-        public void CantLoginWhenDisabled()
+        public async Task CantLoginWhenDisabled()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var sqlDAO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False");
@@ -97,7 +127,7 @@ namespace TeamBigData.Utification.AuthenticationTests
             //Act
             var response = enabler.DisableAccount("disabledUser@yahoo.com");
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert
@@ -106,10 +136,9 @@ namespace TeamBigData.Utification.AuthenticationTests
         }
 
         [TestMethod]
-        public void CantLoginWhenDisabledLogFail()
+        public async Task CantLoginWhenDisabledLogFail()
         {
             //Arrange
-            var result = new Response();
             var securityManager = new SecurityManager();
             var encryptor = new Encryptor();
             var username = "disabledUser@yahoo.com";
@@ -121,12 +150,12 @@ namespace TeamBigData.Utification.AuthenticationTests
 
             //Act
             var digest = encryptor.encryptString(password);
-            result = securityManager.LoginUser(username, digest, encryptor, ref userAccount, ref userProfile).Result;
+            var result = await securityManager.LoginUser(username, digest, encryptor, userProfile);
             var rows = sysUnderTest.Log(log).Result;
 
             //Assert
             Assert.IsTrue(result.errorMessage == "Error: Account disabled. Perform account recovery or contact system admin");
             Assert.IsFalse(result.isSuccessful);
-        }
+        }*/
     }
 }

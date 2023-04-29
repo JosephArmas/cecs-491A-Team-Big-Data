@@ -72,7 +72,7 @@ namespace TeamBigData.Utification.Manager
                 tcs.SetResult(response);
                 return response;
             }
-            SecurityManager securityManager = new SecurityManager();
+            //SecurityManager securityManager = new SecurityManager();
 
             //Switch cases will handle bulk cases better than ifelse
             Stopwatch stopwatch = new Stopwatch();
@@ -85,27 +85,27 @@ namespace TeamBigData.Utification.Manager
                         var encryptor = new Encryptor();
                         var encryptedPassword = encryptor.encryptString(line.password);
                         //var hasher = new SecureHasher();
-                        response = securityManager.RegisterUser(line.email, encryptedPassword, encryptor).Result;
-                        
+                        response = new Response();//= securityManager.RegisterUser(line.email, line.password).Result;
+
                         break;
                     case RequestType.DELETE:
                         line.password = null;
-                        response = securityManager.DeleteProfile(line.email, userProfile);
+                        response = new Response();//= securityManager.DeleteProfile(line.email, userProfile).Result;
                         break;
                     case RequestType.UPDATE:
                         //var hasher = new SecureHasher();
                         var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security = True;Encrypt=False";
-                        var userDao = new SqlDAO(connectionString);
+                        //var userDao = new SqlDAO(connectionString);
                         
                         var digest = SecureHasher.HashString(line.email, line.password);
-                        response = userDao.ChangePassword(line.email, digest).Result;
+                        response = new Response();//= userDao.ChangePassword(line.email, digest).Result;
                         //response = securityManager.ChangePassword(line.email, userProfile);
                         break;
                     case RequestType.ENABLE:
-                        response = securityManager.EnableAccount(line.email, userProfile).Result;
+                        response = new Response();//= securityManager.EnableAccount(line.email, userProfile).Result;
                         break;
                     case RequestType.DISABLE:
-                        response = securityManager.DisableAccount(line.email, userProfile);
+                        response = new Response();//= securityManager.DisableAccount(line.email, userProfile).Result;
                         break;
                     
                 }

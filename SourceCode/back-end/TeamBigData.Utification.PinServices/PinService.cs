@@ -3,57 +3,134 @@ using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging;
+using System.Net.NetworkInformation;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.DTO;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 
 namespace TeamBigData.Utification.PinServices
 {
     public class PinService
     {
-        public async Task<List<Pin>> GetPinTable(UserAccount userAccount)
+        private readonly IPinDBInserter _pinDBInserter;
+        private readonly IPinDBSelecter _pinDBSelecter;
+        private readonly IPinDBUpdater _pinDBUpdater;
+
+        public PinService(PinsSqlDAO pinsSqlDAO)
         {
-            var tcs = new TaskCompletionSource<List<Pin>>();
-            List<Pin> pins = new List<Pin>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBSelecter sqlSelect = new SqlDAO(connectionString);
-            Log log;
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            var result = await sqlSelect.SelectPinTable().ConfigureAwait(false);
-            if (result.Count== 0)
-            {
-                log = new Log(1, "Error", userAccount._userHash, "PinService.GetPinTable()", "Data", "Error Select Pint Table returns empty.");
-                logger.Log(log);
-                tcs.SetResult(result);
-                return tcs.Task.Result;
-            }
-            else
-            {
-                log = new Log(1, "Info", userAccount._userHash, "PinService.GetPinTable()", "Data", "Get pins table Successfully.");
-                logger.Log(log);
-            } 
-            tcs.SetResult(result);
-            return tcs.Task.Result;
+            _pinDBInserter = pinsSqlDAO;
+            _pinDBSelecter = pinsSqlDAO;
+            _pinDBUpdater = pinsSqlDAO;
         }
-        public async Task<Response> StoreNewPin(Pin pin, UserAccount userAccount)
+
+        public async Task<Response> StoreNewPin(Pin pin)
         {
-            var tcs = new TaskCompletionSource<Response>();
-            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
-            IDBInserter sqlInsert = new SqlDAO(connectionString);
-            Log log = new Log(1, "info", userAccount._userHash, "PinService.GetPinTable()", "Data", "Get pins table successfully.");
-            var logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            var result = await sqlInsert.InsertPin(pin).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            var response = await _pinDBInserter.InsertNewPin(pin).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
             {
-                log = new Log(1, "Error", userAccount._userHash, "PinService.StoreNewPin()", "Data", result.errorMessage);
-                logger.Log(log);
-                tcs.SetResult(result);
-                return tcs.Task.Result;
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBInserter.InsertNewPin}";
+                return response;
             }
             else
             {
-                log = new Log(1, "Info", userAccount._userHash, "PinService.StoreNewPin()", "Data", result.errorMessage);
-                logger.Log(log);
+                response.isSuccessful = true;
             }
-            tcs.SetResult(result);
-            return tcs.Task.Result;
+
+            return response;
+        }
+
+        public async Task<DataResponse<List<PinResponse>>> GetPinTable()
+        {
+            var pinResponse = await _pinDBSelecter.SelectPinTable().ConfigureAwait(false);
+
+            if (!pinResponse.isSuccessful) 
+            {
+                pinResponse.isSuccessful = false;
+                pinResponse.errorMessage += ", {failed: _pinDBSelecter.SelectPinTable}";
+                return pinResponse;
+            }
+            else
+            { 
+                pinResponse.isSuccessful = true;
+            }
+
+            return pinResponse;
+        }
+
+
+        public async Task<Response> MarkAsCompleted(int pinID, int userID)
+        {
+            var response = await _pinDBUpdater.UpdatePinToComplete(pinID, userID).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {false: _pinDBUpdater.UpdatePinToComplete}";
+                return response;
+            }
+            else
+            {
+                response.isSuccessful = true;
+            }
+
+            return response;
+        }
+
+
+        public async Task<Response> ChangePinContentTo(int pinID, int userID, String description)
+        {
+            var response = await _pinDBUpdater.UpdatePinContent(pinID, userID, description).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBUpdater.UpdatePinContent}";
+                return response;
+            }
+            else 
+            { 
+                response.isSuccessful = true; 
+            }
+
+            return response;
+        }
+
+        public async Task<Response> ChangePinTypeTo(int pinID, int userID, int pinType)
+        {
+            var response = await _pinDBUpdater.UpdatePinType(pinID, userID, pinType).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBUpdater.UpdatePinType}";
+                return response;
+            }
+            else
+            {
+                response.isSuccessful = true;
+            }
+
+            return response;
+        }
+
+        public async Task<Response> DisablingPin(int pinID, int userID)
+        {
+            var response = await _pinDBUpdater.UpdatePinToDisabled(pinID, userID).ConfigureAwait(false);
+
+            if (!response.isSuccessful)
+            {
+                response.isSuccessful = false;
+                response.errorMessage += ", {failed: _pinDBUpdater.UpdatePinToDisabled}";
+                return response;
+            }
+            else 
+            { 
+                response.isSuccessful = true; 
+            }
+
+            return response;
         }
     }
 }

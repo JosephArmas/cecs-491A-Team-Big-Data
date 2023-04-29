@@ -6,6 +6,6 @@ namespace TeamBigData.Utification.Manager.Abstractions
 {
     public interface IRegister
     {
-        public Task<Response> RegisterUser(string email, byte[] encryptedPassword, Encryptor encryptor);
+        public Task<Response> RegisterUser(String email, String password, String userhash);
     }
 }

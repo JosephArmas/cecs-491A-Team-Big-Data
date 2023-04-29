@@ -10,6 +10,6 @@ namespace TeamBigData.Utification.Logging.Abstraction
 {
     public interface ILogger
     {
-        Task<Response> Log(Log log);
+        Task<Response> Logs(Log log);
     }
 }

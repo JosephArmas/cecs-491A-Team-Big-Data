@@ -44,20 +44,20 @@ regHome.addEventListener('click', function (event)
 function registerUser()
 {
    
-   newUser.username = registerEmail.value;
-   newUser.password = registerPassword.value;
+   newUser._username = registerEmail.value;
+   newUser._password = registerPassword.value;
    // console.log(newUser)
    axios.post(registrationServer,newUser).then(function (response)
    {
       let responseAfter = response.data
-      let cleanResponse = responseAfter.replace(/"/g,"");
+      //let cleanResponse = responseAfter.replace(/"/g,"");
          errorsCont.style.color = "green";
-         errorsCont.innerHTML = cleanResponse +  ". Please return to home screen to login.";
+         errorsCont.innerHTML = responseAfter +  ". Please return to home screen to login.";
    }).catch(function (error)
    {
-      let errorAfter = error.response.data
-      let cleanError = errorAfter.replace(/"/g,"");
-      errorsCont.innerHTML = cleanError; 
+      let errorAfter = error.data
+      //let cleanError = errorAfter.replace(/"/g,"");
+      errorsCont.innerHTML = errorAfter; 
 
    });
    regForm.reset();
