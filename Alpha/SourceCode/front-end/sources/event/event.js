@@ -289,24 +289,14 @@ async function placeMarker(map, userID)
                     if (choice == "1")
                     {
                         let newTitle = prompt("Enter new title");
-                            /*
-                            let sendTitle = {
-                                "title": newTitle,
-                                "eventID": marker.eventID,
-                                "userID": userID
-                            };
-                            */
-                            /*
-                            axios.post(endPoint.modifyEventTitle, sendTitle).then((response) => {
-                                timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
-                                return initMap();
-                            }).catch((error) => {
-                                // timeOut(error.response.data, 'red', errorsDiv);
-                            });
-                            */
-                        modifyEvent(newTitle, marker.eventID, userID);
-                        return;
+                        return modifyEventTitle(newTitle, marker.eventID, userID);
 
+                    }
+
+                    if (choice == "2")
+                    {
+                        let newDescription = prompt("Enter new description");
+                        return modifyEventDescription(newDescription, marker.eventID, userID);
                     }
 
                 });
@@ -321,7 +311,7 @@ async function placeMarker(map, userID)
     return markers;
 }
 
-function modifyEvent(title, eventID, userID)
+function modifyEventTitle(title, eventID, userID)
 {
     let data = {
         "title": title,
@@ -329,11 +319,27 @@ function modifyEvent(title, eventID, userID)
         "userID": userID
     }
     const endPoint = getEndPoint();
-    axios.post(endPoint.modifyEventTitle, data).then((response) => {
-        timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
+
+    axios.post(endPoint.modifyTitle, data).then((response) => {
+        timeOut(response.data ,'green', errorsDiv);
         return initMap();
     })
-    // return initMap();
+
+}
+
+function modifyEventDescription(description, eventID, userID)
+{
+    let data = {
+        "description": description,
+        "eventID": eventID,
+        "userID": userID
+    }
+    const endPoint = getEndPoint();
+
+    axios.post(endPoint.modifyDescription, data).then((response) => {
+        timeOut(response.data , 'green', errorsDiv);
+        return initMap();
+    })
 
 }
 

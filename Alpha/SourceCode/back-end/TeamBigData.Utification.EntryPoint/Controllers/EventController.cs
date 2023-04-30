@@ -131,7 +131,7 @@ public class EventController : Controller
         
     }
 
-    [Route("event/modifyTitle")]
+    [Route("event/title")]
     [HttpPost]
     public async Task<IActionResult> ModifyEventTitle([FromBody] EventPin eventpin)
     {
@@ -149,7 +149,7 @@ public class EventController : Controller
     }
 
     
-    [Route("event/modifyEventDescription")]
+    [Route("event/description")]
     [HttpPost]
     public async Task<IActionResult> ModifyEventDescription([FromBody] EventPin eventPin)
     {

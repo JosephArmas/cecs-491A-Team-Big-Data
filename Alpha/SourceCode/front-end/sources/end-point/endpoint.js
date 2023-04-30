@@ -25,7 +25,8 @@ function getEndPoint()
         joinEvent: 'https://localhost:7259/event/join',
         createdEvents: 'https://localhost:7259/event/createdEvents',
         cancelEvent: 'https://localhost:7259/event/deleteEvent',
-        modfiyEventTitle: 'https://localhost:7259/event/modifyTitle',
+        modifyTitle: 'https://localhost:7259/event/title',
+        modifyDescription: 'https://localhost:7259/event/description',
 
     }
 
