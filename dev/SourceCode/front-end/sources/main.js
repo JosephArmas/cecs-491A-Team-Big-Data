@@ -1,17 +1,4 @@
-// Todo: 
-/*
- * notify what a user their username when logged in
- * check if a user is first logged in -> update-profile view
- * input validations for login/registration?
- * home view - hamburger menu
- * do error screen - show message validations & status codes
-*/
-
-// reuse function to list on back button click
-// document.querySelector(".back-button").addEventListener("click", homeClicked());
-// document.querySelector("#regBtn-submit").addEventListener("click", homeClicked());
-//document.querySelector(".home-logoutBtn").addEventListener("click", homeClicked());
-
+let regViewBuild = false;
 function loginClicked()
 {
     let anonContainer = document.querySelector(".anon-container");
@@ -78,13 +65,14 @@ function recoveryClickedLogin()
 
 function regView()
 {
+    buildHomeUserView();
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
     var reputationContainer = document.querySelector(".reputation-reports-container");
     var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
-    anonContainer.style.display = "none";
+    // anonContainer.style.display = "none";
     // reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
@@ -145,3 +133,104 @@ function IsValidEmail(email)
     }
 
 }
+
+function buildHomeUserView()
+{
+    let logoutBtn = document.createElement('button');
+    let profileBtn = document.createElement('button');
+    let nav = document.querySelector(".home-container .ham-menu-container");
+    let menu = document.querySelector('.home-container .menu-container')
+    let featureBtn = document.createElement('button');
+    featureBtn.setAttribute('type','button');
+    featureBtn.textContent = 'Features';
+    menu.insertBefore(featureBtn, nav);
+    let features = document.querySelector(".home-container .features");
+    featureBtn.setAttribute('type','button');
+    featureBtn.textContent = 'Features';
+    let createdEvent = document.createElement('button');
+    createdEvent.setAttribute('type','button');
+    createdEvent.textContent = 'Created Events';
+    let joinedEvent = document.createElement('button');
+    joinedEvent.setAttribute('type','button');
+    joinedEvent.textContent = 'Joined Events';
+    let uploadBtn = document.createElement('input');
+    uploadBtn.setAttribute('type','file');
+    uploadBtn.setAttribute('accept','image/jpg');
+    uploadBtn.setAttribute('name','Select File');
+    uploadBtn.id = 'fileSelector';
+
+
+    features.appendChild(createdEvent)
+    features.appendChild(joinedEvent)
+    features.appendChild(uploadBtn);
+    let userID = localStorage.getItem('id');
+
+    // create events listener
+    createdEvent.addEventListener('click', function(event)
+    {
+        let homeDiv = document.querySelector(".home-container");
+        let createEventDiv = document.querySelector(".events-created-container");
+        buildEventsCreated(userID);
+        homeDiv.style.display = "none";
+        createEventDiv.style.display = "block";
+        
+    })
+
+    // joined events listener
+    joinedEvent.addEventListener('click', function(event)
+    {
+        let homeDiv = document.querySelector(".home-container");
+        let createEventDiv = document.querySelector(".events-joined-container");
+        buildEventsJoined(userID);
+        homeDiv.style.display = "none";
+        createEventDiv.style.display = "block";
+    })
+    
+    // upload profile pic listener
+
+
+    features.style.display = 'none';
+    nav.append(features);
+
+    featureBtn.addEventListener('click',function()
+    {
+        if (features.style.display === 'none')
+        {
+            features.style.display = 'flex';
+
+        }
+        else{
+            features.style.display = 'none';
+        }
+
+    });
+
+    let profileDiv = document.querySelector(".home-container #profile");
+    let logoutDiv = document.querySelector(".home-container #logout");
+    let contactDiv = document.querySelector(".home-container .reg-contact-home");
+    let contactBtn = document.createElement('button');
+    contactBtn.setAttribute('type','button');
+    contactBtn.textContent = 'Contact Support';
+    contactBtn.addEventListener('click', function(event)
+    {
+        alert("Contact Support");
+    });
+    contactDiv.appendChild(contactBtn);
+    nav.appendChild(features);
+    logoutBtn.setAttribute('type','button');
+    logoutBtn.id ="home-logoutBtn"
+    logoutBtn.textContent = 'Logout';
+    logoutBtn.addEventListener('click', homeClicked);
+    profileBtn.setAttribute('type','button');
+    profileBtn.textContent = localStorage.getItem('profileUsername');
+    // profileBtn.textContent = localStorage.getItem('username');
+    profileBtn.id ="profileBtn"
+    profileBtn.addEventListener('click', profileClicked);
+    profileDiv.appendChild(profileBtn);
+    logoutDiv.appendChild(logoutBtn);
+
+    regViewBuild = true;
+    
+}
+
+// regView();

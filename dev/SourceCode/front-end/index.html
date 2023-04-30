@@ -14,14 +14,47 @@
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/recovery.css">
         <link rel="stylesheet" href="styles/profile.css">
+        <link rel="stylesheet" href="styles/nav-profile.css">
+        <link rel="stylesheet" href="styles/nav-profile-events.css">
+        <link rel="stylesheet" href="styles/events.css">
     </head>
     <body>
         <div id="test-data"></div>
+        <div id="errors"></div>
+        
+
+
+        <!-- * Events -->
+        <div class="events-container">
+            <div class="top-button-container"></div> 
+            <div class="title"></div>
+            <div class="options"></div>
+        </div>
+
+
+        <!-- * Events Created -->
+        <div class="events-created-container">
+            <div class="top-button-container"></div> 
+            <div class="title"></div>
+            <!-- * Injecting needs to be done-->
+            <div class="events-created"></div>
+        </div>
+
+        <!-- * Events Joined-->
+        <div class="events-joined-container">
+            <div class="top-button-container"></div> 
+            <div class="title"></div>
+            <!-- * Injecting needs to be done-->
+            <div class="events-joined"></div>
+        </div>
+
+
+
+
 
         <!-- * Home view -->
-        <div id="errors"></div>
+        <!-- 
         <div class="home-container" hidden>
-            <!-- reused from anon  -->
             <div class="home-header-container">
                 <div class="menu-container">
                     <nav class="ham-menu-container">
@@ -40,9 +73,8 @@
                 <div class="title">
                     <h1>Utification</h1>
                 </div>
-                <div class="header-container">
+                <div class="profile-container">
                     <div>
-                        <!-- to not be bloated have a ajax call for the profile-nav -->
                         <button type="button" id="profileBtn" onclick="profileClicked()">Profile</button>
                     </div>
                     <div>
@@ -60,6 +92,38 @@
                 <footer>&copy; 2023 Utification</footer>
             </div>
         </div>
+    -->
+
+    <div class="home-container" hidden>
+        <div class="home-header-container">
+            <div class="menu-container">
+                <nav class="ham-menu-container">
+                    <ul class="features"></ul>
+                </nav>
+            </div>
+                <h1>Utification</h1>
+            <div class="profile-container">
+                <div id="profile"></div>
+                <div id="logout"></div>
+            </div>
+        </div>
+        <div class="map" id="map"></div>
+            <div class="misc">
+                <div class="reg-contact-home">
+                    <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
+                </div>
+            </div>
+        <div class="footer">
+            <footer>&copy; 2023 Utification</footer>
+        </div>
+    </div>
+    
+
+
+
+
+
+
 
         <!-- * OTP -->
         <div class="otp-container" hidden>
@@ -202,6 +266,7 @@
         <script src="node_modules/axios/dist/axios.js"></script>
 
         <!-- App Dependency -->
+        <script src="sources/end-point/endpoint.js"></script>
         <script src="sources/login/login.js"> </script>
         <script src="sources/registration/register.js"> </script>
         <!--<script src="sources/otp/otp.js"> </script>-->
@@ -215,6 +280,9 @@
 
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
+        <script src="sources/response/response.js"></script>
+        <script src="sources/roles/roles.js"></script> 
+        <script src="sources/profile/nav-profile.js"></script>
 
     </body>
 </html>

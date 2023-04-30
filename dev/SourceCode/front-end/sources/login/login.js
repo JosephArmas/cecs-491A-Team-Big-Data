@@ -22,43 +22,7 @@
 
 var otpContainer = document.querySelector(".otp-container");
 var errorsOtp = document.getElementById("errors");
-//const otpForm = document.querySelector("#otp-form");
-//const otpDisplay = document.querySelector("#otp-display");
 var otpInput = document.querySelector("#otp-input");
-/*otpBtn.addEventListener('click', function (event)
-{
-    event.preventDefault();
-    if (otpInput.value == '')
-    {
-        errorsOtp.innerHTML = "Please enter OTP";
-
-    } else if (otpInput.value == otpVal) 
-    {
-        errorsOtp.innerHTML = "";
-        regView();
-        
-    } else 
-    {
-        errorsOtp.style.color = "red";
-        errorsOtp.innerHTML = "Invalid OTP. Please try again";
-    } 
-    otpForm.reset();
-});
-
-function sendOtp()
-{
-    otpVal = generateOTP();
-    otpDisplay.style.color = "blue";
-    otpDisplay.innerHTML = otpVal;
-    otpDisplay.style.fontSize = "20px";
-}
-
-function showOtp()
-{
-    
-    otpContainer.style.display = "block";
-    loginContainer.style.display = "none";
-}*/
 
 var otpContainer = document.querySelector(".otp-container");
 var loginContainer = document.querySelector(".login-container");
@@ -106,40 +70,6 @@ var loginContainer = document.querySelector(".login-container");
     const otpForm = document.querySelector("#otp-form");
     const otpDisplay = document.querySelector("#otp-display");
     
-    /*otpBtn.addEventListener('click', function (event)
-    {
-        event.preventDefault();
-        if (otpInput.value == '')
-        {
-            errorsOtp.innerHTML = "Please enter OTP";
-
-        } else if (otpInput.value == otpVal) 
-        {
-            errorsOtp.innerHTML = "";
-            regView();
-            
-        } else 
-        {
-            errorsOtp.style.color = "red";
-            errorsOtp.innerHTML = "Invalid OTP. Please try again";
-        } 
-        otpForm.reset();
-    });
-
-    function sendOtp()
-    {
-        otpVal = generateOTP();
-        otpDisplay.style.color = "blue";
-        otpDisplay.innerHTML = otpVal;
-        otpDisplay.style.fontSize = "20px";
-    }
-
-    function showOtp()
-    {
-        
-        otpContainer.style.display = "block";
-        loginContainer.style.display = "none";
-    }*/
 
     var otpContainer = document.querySelector(".otp-container");
     var loginContainer = document.querySelector(".login-container");
@@ -148,6 +78,7 @@ var loginContainer = document.querySelector(".login-container");
     {
         user._username = email.value;
         user._password = password.value;
+        getProfileUsername(email.value);
         axios.post(authenticationServer, user).then(function (responseAfter)
         {
             // turning jwt signature from the response into a json object
@@ -166,6 +97,7 @@ var loginContainer = document.querySelector(".login-container");
                 localStorage.setItem("role", jsonObj.role)
                 localStorage.setItem("id",jsonObj.nameid)
                 localStorage.setItem("userhash",jsonObj.userhash)
+                
 
                 /*jwtToken = responseAfter.data;
                 userID = jsonObj.nameid;
@@ -248,6 +180,12 @@ var loginContainer = document.querySelector(".login-container");
     function getUserhash()
     {
         return userhash;
+    }
+    
+    function getProfileUsername(username)
+    {
+        let name = username.substring(0,username.lastIndexOf("@"));
+        return localStorage.setItem('profileUsername',name);
     }
 
 
