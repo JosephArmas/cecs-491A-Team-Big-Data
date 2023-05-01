@@ -17,6 +17,7 @@ public interface IEventDBSelect
     public Task<Response> SelectEventCount(int eventID);
     public Task<Response> SelectEventOwner(int eventID);
     public Task<Response> SelectAttendance(int eventID);
+    public Task<Response> SelectEventDate(int userID);
 
 
 

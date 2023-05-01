@@ -498,6 +498,43 @@ public class EventsSqlDAO: DbContext, IEventDBInsert, IEventDBSelect, IEventDBUp
             return response;  
         } 
         
+        // Select Event Date
+        public async Task<Response> SelectEventDate(int userID)
+        {
+            var sqlstatement = "SELECT eventCreated FROM dbo.Events WHERE userID = @userID";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            // Date stored in type obj
+                            response.data = reader.GetDateTime(reader.GetOrdinal("eventCreated"));
+                            response.isSuccessful = true;
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error Getting Event Date Created";
+
+                    }
+                }
+            }
+            
+            return response; 
+        }
+        
+        
+        
         
         
         //-------------------------
@@ -574,13 +611,71 @@ public class EventsSqlDAO: DbContext, IEventDBInsert, IEventDBSelect, IEventDBUp
             return ExecuteSqlCommand(connection, cmd);
         } 
         
+        // Update Event Title
+        public Task<Response> UpdateEventTitle(string title, int eventID)
+        {
+            var sqlstatement = "UPDATE dbo.Events SET title = @title WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            cmd.Parameters.AddWithValue("@title", title);
+            return ExecuteSqlCommand(connection, cmd); 
+        }
+
+        // Update Event Description
+        public Task<Response> UpdateEventDescription(string description, int eventID)
+        {
+            var sqlstatement = "UPDATE dbo.Events SET description = @description WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            cmd.Parameters.AddWithValue("@description", description);
+            return ExecuteSqlCommand(connection, cmd); 
+        }
+        
+        // Update Event to Disabled
+        public Task<Response> UpdateEventToDisabled(int eventID)
+        {
+            var sqlstatement = "UPDATE dbo.Events SET disabled = 1 WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+             
+            return ExecuteSqlCommand(connection, cmd); 
+             
+        } 
         
         
         
+        //---------------------------------- 
+        // Delete
+        //---------------------------------- 
         
+        // Delete Event
+        public Task<Response> DeleteEvent(int eventID)
+        {
+            var sqlstatement = "DELETE FROM dbo.Events WHERE eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+            
+            return ExecuteSqlCommand(connection, cmd); 
+        } 
         
-        
-        
-        
-        
+        // Delete Joined Event
+        public Task<Response> DeleteJoinedEvent(int userID, int eventID)
+        {
+            var sqlstatement = "DELETE FROM dbo.EventsJoined WHERE userID = @userID and eventID = @eventID";
+            var connection = new SqlConnection(_connectionString);
+            var cmd = new SqlCommand(sqlstatement, connection);
+            cmd.Parameters.AddWithValue("@userID", userID);
+            cmd.Parameters.AddWithValue("@eventID", eventID);
+
+            return ExecuteSqlCommand(connection, cmd);
+            
+        }
+
+
+
+
 }

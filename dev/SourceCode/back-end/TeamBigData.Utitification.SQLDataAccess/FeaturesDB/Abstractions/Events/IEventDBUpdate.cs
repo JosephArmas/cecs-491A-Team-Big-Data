@@ -10,7 +10,11 @@ public interface IEventDBUpdate
     public Task<Response> UpdateEventCount(int eventID, int count);
     public Task<Response> UpdateEventAttendanceShow(int eventID);
     public Task<Response> UpdateEventAttendanceDisable(int eventID);
-
+    public Task<Response> UpdateEventToDisabled(int eventID);
+ 
+    public Task<Response> UpdateEventTitle(string title, int eventID);
+    public Task<Response> UpdateEventDescription(string description, int eventID);
+    
 
 
 }

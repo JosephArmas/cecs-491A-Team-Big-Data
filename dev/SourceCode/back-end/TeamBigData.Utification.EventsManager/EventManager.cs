@@ -1,13 +1,15 @@
 ﻿using System.Text.RegularExpressions;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.EventsServices;
 
 namespace TeamBigData.Utification.EventsManager
 {
     
     public class EventManager
     {
-        
         // Private
+        private readonly EventService _eventService;
+        
         private readonly string[] userRolesAuth =
         {
             "Reputable User", "Admin User"
@@ -18,20 +20,20 @@ namespace TeamBigData.Utification.EventsManager
             "Reputable User", "Service User", "Regular User"
         }; 
         
+        // Public
         
-        
-        
-        
-        
-        
-        
+        // Ctor w/ dependency injection
+        public EventManager(EventService eventService)
+        {
+            _eventService = eventService;
+        }
         
         
         //--------------------------
         // Check Statements
         //--------------------------
         
-        // Check event id
+        // Check event ID
         public bool IsValidEventID(Response response)
         {
             var result = Convert.ToInt32(response.data);
@@ -120,6 +122,74 @@ namespace TeamBigData.Utification.EventsManager
                return true;
            } 
         } 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
     }
     
