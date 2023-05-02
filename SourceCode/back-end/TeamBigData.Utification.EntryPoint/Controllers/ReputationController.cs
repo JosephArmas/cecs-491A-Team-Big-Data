@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Models.ControllerModels;
 
 namespace Utification.EntryPoint.Controllers
 {
@@ -26,14 +27,14 @@ namespace Utification.EntryPoint.Controllers
 #endif        
 
         [Route("GetReputation")]
-        [HttpGet]
-        public async Task<IActionResult> GetReportsAsync()
-        {
-            var result = await _reputationManager.ViewCurrentReputationAsync().ConfigureAwait(false);
+        [HttpPost]
+        public async Task<IActionResult> GetReputationAsync([FromBody] Reports reports)
+        {            
+            var result = await _reputationManager.ViewCurrentReputationAsync(reports.UserID).ConfigureAwait(false);
 
             if (result.IsSuccessful)
             {
-                return Ok(result);
+                return Ok(result.Data);
             }
             else
             {
@@ -47,29 +48,46 @@ namespace Utification.EntryPoint.Controllers
         {
             var result = await _reputationManager.RecordNewUserReportAsync(4.2).ConfigureAwait(false);
 
-            if (result.ErrorMessage != null)
+            if (!result.IsSuccessful)
             {
                 IActionResult error = Unauthorized(result.ErrorMessage);
                 switch(result.ErrorMessage)
                 {
                     case "Bad Request":
-                        error = BadRequest(result);
+                        error = BadRequest(result.ErrorMessage);
+                        break;
+                    case "Conflict":
+                        error = Conflict(result.ErrorMessage);
                         break;
 
                 }
                 return error;
             }
-            else
-            {
-                return Ok(result);
-            }
+
+            return Ok(result);
         }
 
         [Route("ViewReports")]
+        [HttpPost]
         public async Task<IActionResult> ViewReportsAsync()
         {
-            var result = _reputationManager.ViewUserReportsAsync().ConfigureAwait(false);     
-            return Ok(result);
+            var result = await _reputationManager.ViewUserReportsAsync().ConfigureAwait(false);  
+            
+            if(!result.IsSuccessful)
+            {
+                IActionResult error = Unauthorized(result.ErrorMessage);
+                switch(result.ErrorMessage)
+                {
+                    case "Bad Request":
+                        error = BadRequest(result.ErrorMessage);
+                        break;
+                    case "Conflict":
+                        error = Conflict(result.ErrorMessage);
+                        break;
+                }
+                return error;
+            }
+            return Ok(result.Data);
         }
     }
 }

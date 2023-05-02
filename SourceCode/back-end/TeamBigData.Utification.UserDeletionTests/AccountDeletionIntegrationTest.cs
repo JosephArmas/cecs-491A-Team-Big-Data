@@ -59,10 +59,10 @@ namespace TeamBigData.Utification.AccountDeletionTests
             user = new UserProfile(userAccount._userID, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Regular User"));
             var result = delMan.DeleteAccount(user, user); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful" + result.errorMessage);
+            Console.WriteLine("Account Deletion Successful" + result.ErrorMessage);
             Assert.IsNotNull(result);
-            Assert.IsTrue((int)result.data > 0);
-            Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue((int)result.Data > 0);
+            Assert.IsTrue(result.IsSuccessful);
         }
         [TestMethod]
         public async Task CanAdminDeleteOtherAdminAccountAsync()
@@ -94,10 +94,10 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var admin = new UserProfile(new GenericIdentity("1001", "Admin User"));
             var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful" + result.errorMessage);
+            Console.WriteLine("Account Deletion Successful" + result.ErrorMessage);
             Assert.IsNotNull(result);
-            Assert.IsTrue((int)result.data > 0);
-            Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue((int)result.Data > 0);
+            Assert.IsTrue(result.IsSuccessful);
         }
         [TestMethod]
         public async Task CanAdminDeleteUserAccountAsync()
@@ -129,10 +129,10 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var admin = new UserProfile(new GenericIdentity("1001", "Admin User"));
             var result = delMan.DeleteAccount(user, admin); //Start the deletion manager 
             //Assert
-            Console.WriteLine("Account Deletion Successful" + result.errorMessage);
+            Console.WriteLine("Account Deletion Successful" + result.ErrorMessage);
             Assert.IsNotNull(result);
-            Assert.IsTrue((int)result.data > 0);
-            Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue((int)result.Data > 0);
+            Assert.IsTrue(result.IsSuccessful);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace TeamBigData.Utification.Models.ControllerModels
+﻿namespace TeamBigData.Utification.Models.ControllerModels
 {
     public class IncomingUser
     {

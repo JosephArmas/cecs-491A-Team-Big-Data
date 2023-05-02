@@ -100,7 +100,7 @@ namespace TeamBigData.Utification.UserManagementTests
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
-            if (actual < expected && (response.isSuccessful || response.errorMessage.Contains("PRIMARY KEY") || response.errorMessage.Contains("UNIQUE KEY")))
+            if (actual < expected && (response.IsSuccessful || response.ErrorMessage.Contains("PRIMARY KEY") || response.ErrorMessage.Contains("UNIQUE KEY")))
             {
                 Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
@@ -144,7 +144,7 @@ namespace TeamBigData.Utification.UserManagementTests
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && response.IsSuccessful)
             {
                 Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
@@ -187,7 +187,7 @@ namespace TeamBigData.Utification.UserManagementTests
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && response.IsSuccessful)
             {
                 Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
@@ -231,7 +231,7 @@ namespace TeamBigData.Utification.UserManagementTests
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
 
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && response.IsSuccessful)
             {
                 Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
@@ -445,7 +445,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Assert
 
-            if (actual < expected && !response.isSuccessful)
+            if (actual < expected && !response.IsSuccessful)
             {
                 //Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);
@@ -533,11 +533,11 @@ namespace TeamBigData.Utification.UserManagementTests
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
 
-            Console.WriteLine(response.errorMessage);
+            Console.WriteLine(response.ErrorMessage);
 
             //Assert
 
-            if (actual < expected && (response.isSuccessful || response.errorMessage.Contains("PRIMARY KEY") || response.errorMessage.Contains("UNIQUE")))
+            if (actual < expected && (response.IsSuccessful || response.ErrorMessage.Contains("PRIMARY KEY") || response.ErrorMessage.Contains("UNIQUE")))
             {
                 Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);
@@ -618,7 +618,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Assert
 
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && response.IsSuccessful)
             {
                 Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);

@@ -30,7 +30,7 @@ namespace TeamBigData.Utification.DeletionService
         public async Task<Response> DeletePII(String connString, String err,int piData)
         {
             var result = new Response();
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             var userDao = new SQLDeletionDAO(connString);
             if (piData == 0)
             {
@@ -40,9 +40,9 @@ namespace TeamBigData.Utification.DeletionService
             {
                 result = await userDao.DeleteFeatureInfo(_userProfile).ConfigureAwait(false);
             }
-            if (result.isSuccessful == false)
+            if (result.IsSuccessful == false)
             {
-                result.errorMessage = err;
+                result.ErrorMessage = err;
             }
             return result;
         }

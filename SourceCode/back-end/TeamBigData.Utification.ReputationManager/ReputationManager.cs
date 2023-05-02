@@ -12,7 +12,7 @@ namespace TeamBigData.Utification.Manager
     public class ReputationManager
     {
         private readonly ReputationService _reputationService;
-        private readonly Response _result;
+        private readonly Response _result = new Response();
         private readonly Report _report;
         private readonly ILogger _logger;
         private UserAccount _userAccount;
@@ -24,23 +24,24 @@ namespace TeamBigData.Utification.Manager
             _logger = logger;
         }
 
-        public async Task<Response> ViewCurrentReputationAsync()
+        public async Task<Response> ViewCurrentReputationAsync(int user)
         {
             Log getReputationLog;
 
-            var getReputation = await _reputationService.GetCurrentReputationAsync().ConfigureAwait(false);
+            var getReputation = await _reputationService.GetCurrentReputationAsync(user).ConfigureAwait(false);
 
             if(getReputation.IsSuccessful)
             {
                 _result.IsSuccessful = true;
-                getReputationLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Successfully retrieved the users reputation from the data store.");    
+                _result.Data = getReputation.Data;
+                //getReputationLog = new Log(1, "Info", user, "ReputationService.GetCurrentReputationAsync()", "Data", "Successfully retrieved the users reputation from the data store.");    
             }
             else
             {
                 getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Failed to retrieve users reputation from the data store");
             }
 
-            await _logger.Logs(getReputationLog).ConfigureAwait(false);
+            //await _logger.Logs(getReputationLog).ConfigureAwait(false);
 
             return _result;
         }
@@ -51,26 +52,30 @@ namespace TeamBigData.Utification.Manager
 
             var getReports = await _reputationService.GetUserReportsAsync(0).ConfigureAwait(false);
 
-            if(getReports.IsSuccessful) 
-            {
-                getReportsLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Successfully retrieved reports from the data store");
-            }
-            else
+            if(!getReports.isSuccessful)
             {
                 getReportsLog = new Log(1, "Error", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Failed to retrieve reports from the data store");
-            }
 
+                await _logger.Logs(getReportsLog).ConfigureAwait(false);
+
+                return _result;
+                
+            }
+            
+            getReportsLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Successfully retrieved reports from the data store");
             await _logger.Logs(getReportsLog).ConfigureAwait(false);
+
+            _result.Data = getReports.data;
 
             return _result;
         }
 
-        public async Task<Response> IncreaseReputationByPointOneAsync()
+        public async Task<Response> IncreaseReputationByPointOneAsync(int user)
         {
             Log getReputationLog;
             Log updateReputationLog;
 
-            var getReputation = await _reputationService.GetCurrentReputationAsync().ConfigureAwait(false);
+            var getReputation = await _reputationService.GetCurrentReputationAsync(user).ConfigureAwait(false);
 
             if (!getReputation.IsSuccessful)
             {

@@ -36,9 +36,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<Response> SelectUserReportsAsync(UserProfile userProfile)
+        public async Task<DataResponse<DataSet>> SelectUserReportsAsync(UserProfile userProfile)
         {
-            Response result = new Response();
+            DataResponse<DataSet> result = new DataResponse<DataSet>();          
 
             SqlDataAdapter adapter = new SqlDataAdapter();
             DataSet set = new DataSet();
@@ -61,12 +61,12 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         adapter.Fill(set, "dbo.Reports");
 
                     }
-                    result.IsSuccessful = true;
-                    result.Data = set;
+                    result.isSuccessful = true;
+                    result.data = set;
                 }
                 catch (SqlException s)
                 {
-                    result.ErrorMessage = s.Message;
+                    result.errorMessage = s.Message;
                 }
             }
             return result;

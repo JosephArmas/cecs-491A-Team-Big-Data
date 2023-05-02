@@ -32,35 +32,44 @@ namespace TeamBigData.Utification.Services
             _logger = logger;
         }
 
-        public async Task<Response> GetUserReportsAsync(int amount)
+        public async Task<DataResponse<List<DataRow>>> GetUserReportsAsync(int amount)
         {
+            DataResponse<List<DataRow>> result = new DataResponse<List<DataRow>>();
             List<DataRow> dataReports = new List<DataRow>();
             var getReports = await _selectReports.SelectUserReportsAsync(_userProfile).ConfigureAwait(false);
 
-            if(getReports.Data != null)
+            if(!getReports.isSuccessful)
             {
-               var reports = getReports.Data as DataSet;
-
-                IEnumerable<DataRow> data = reports.Tables[0].AsEnumerable();
-                int start = 0 + amount;
-                int max = 5 + amount;
-                Range range = new Range(start, max);
-
-                foreach (DataRow report in data.Take(range))
-                {
-                    dataReports.Add(report);
-                }
-                _result.IsSuccessful = true;
-                _result.Data = dataReports;
+                result.errorMessage = "Failed to retrieve user's reports";
+                return result;
             }
-            return _result;
+
+            IEnumerable<DataRow> data = getReports.data.Tables[0].AsEnumerable();
+            int start = 0 + amount;
+            int max = 5 + amount;
+            Range range = new Range(start, max);
+
+            foreach (DataRow report in data.Take(range))
+            {
+                Console.WriteLine(report.ToString());
+                dataReports.Add(report);
+            }
+            result.isSuccessful = true;
+            result.data = dataReports;
+
+            for (int i = 0; i < dataReports.Count; i++)
+            {
+                Console.WriteLine("Yup, it's loopin");
+                Console.WriteLine(dataReports[i].Table);
+            }
+            return result;
         }
-        public async Task<Response> GetCurrentReputationAsync()
+        public async Task<Response> GetCurrentReputationAsync(int user)
         {
-            var getReputation = await _selectUserProfile.SelectUserProfile(_userAccount._userID).ConfigureAwait(false);
+            var getReputation = await _selectUserProfile.SelectUserProfile(user).ConfigureAwait(false);
             
             _result.IsSuccessful = getReputation.isSuccessful;
-            _result.Data = _userProfile._reputation;
+            _result.Data = getReputation.data._reputation;
 
             return _result;
         }

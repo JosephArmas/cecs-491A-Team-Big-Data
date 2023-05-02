@@ -114,7 +114,7 @@
         
             for (var i = 0; i < response.data.length; i++) {
                 var currResponse = response.data[i]
-                
+                console.log(response.data[i]);
                 const pin = new google.maps.Marker({
                     position: {lat:parseFloat(currResponse._lat),lng:parseFloat(currResponse._lng)},
                     map: map,
@@ -126,12 +126,17 @@
                 //Users can mark a pin complete
                 var pinContent = currResponse._description + `<br>Created: ${currResponse._dateTime}<br><button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`
 
+                if(localStorage.getItem("role")=="Regular User")
+                {
+                    pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse._userID})'>View Reputation</button>`;
+                }
+                console.log(localStorage.getItem("id"));
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
                 if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
                 {
                     pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
-                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
+                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;                    
                 }
     
                 const infowindow = new google.maps.InfoWindow({

@@ -29,7 +29,7 @@ namespace TeamBigData.Utification.AnalysisTests
             var response = await SqlDAO.Execute(insertSQl);
             var after = manager.GetLogins().Result;
             //Assert
-            Assert.IsTrue(response.isSuccessful);
+            Assert.IsTrue(response.IsSuccessful);
             Assert.AreEqual(before.data[90] + 1, after.data[90]);
         }
 
@@ -45,7 +45,7 @@ namespace TeamBigData.Utification.AnalysisTests
             var response = await loginSqlDAO.Execute(insertSQl);
             var after = await manager.GetLogins();
             //Assert
-            Assert.IsTrue(response.isSuccessful);
+            Assert.IsTrue(response.IsSuccessful);
             Assert.AreEqual(before.data[0] + 1, after.data[0]);
         }
     }
