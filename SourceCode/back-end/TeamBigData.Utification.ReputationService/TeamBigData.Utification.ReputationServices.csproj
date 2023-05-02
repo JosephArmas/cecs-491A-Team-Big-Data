@@ -13,4 +13,8 @@
     <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Reputation DTOs\" />
+  </ItemGroup>
+
 </Project>

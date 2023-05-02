@@ -4,6 +4,14 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.Logging.Abstraction;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
 
 namespace TeamBigData.Utification.ReputationTests
 {
@@ -14,46 +22,38 @@ namespace TeamBigData.Utification.ReputationTests
         public void SubmitReportAndAffectReputation()
         {
             // Arrange
-            Response result = new Response();
-            SqlDAO reportsDao = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True;Integrated Security=False;
-                    Encrypt=True");
-            SqlDAO profileDAO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Integrated Security=False");
-            Report report = new Report(5.0, 1001, 1002, "This is to test the role changing works");
-            UserAccount userAccount = new UserAccount(1001, "CatchesDuplicateEmailTest@yahoo.com", "", "", "8A-C2-0D-FD-44-9A-72-DB-86-C6-C2-6D-98-A5-2E-E9-58-3E-20-D4-A0-26-D8-63-" +
-                "70-F0-4E-07-C6-C8-C9-E1-25-2D-2E-2F-49-CC-DE-F1-C7-8E-F2-3B-64-84-EE-97-6F-72-DF-0F-45-B8-EC-6E-4D-E7-47-04-2A-77-88-A5");
-            UserProfile userProfile = new UserProfile();
-            
-            Logger logger = new Logger(new SqlDAO( @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(result, reportsDao, reportsDao, profileDAO, profileDAO, report, userAccount, userProfile, logger);
-            ReputationManager repMan = new ReputationManager(repSer, result, report, logger, userAccount, userProfile);
+            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
+            ReputationManager repMan = new ReputationManager(repSer, logger);
 
             // Act
             var act = repMan.RecordNewUserReportAsync(4.2);
 
             // Assert
-            Assert.IsTrue(act.Result.isSuccessful);
+            Assert.IsTrue(act.Result.IsSuccessful);
         }
 
         [TestMethod]
         public void GetReports()
         {
             // Arrange
-            Response result = new Response();
-            SqlDAO profileDAO = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True;Integrated Security=False");
-            Report report = new Report(5.0, 1001, 1002, "This is to test the role changing works");
-            UserAccount userAccount = new UserAccount(1001, "CatchesDuplicateEmailTest@yahoo.com", "", "", "8A-C2-0D-FD-44-9A-72-DB-86-C6-C2-6D-98-A5-2E-E9-58-3E-20-D4-A0-26-" +
-                "D8-63-70-F0-4E-07-C6-C8-C9-E1-25-2D-2E-2F-49-CC-DE-F1-C7-8E-F2-3B-64-84-EE-97-6F-72-DF-0F-45-B8-EC-6E-4D-E7-47-04-2A-77-88-A5");
-            UserProfile userProfile = new UserProfile(1001);
-            SqlDAO reportsDao = new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True;Integrated Security=False;
-                                            Encrypt=True");
-            Logger logger = new Logger(new SqlDAO(@"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(result, reportsDao, reportsDao, profileDAO, profileDAO, report, userAccount, userProfile, logger);
+            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
+            ReputationManager repMan = new ReputationManager(repSer, logger);
             
             // Act
             var getReports = repSer.GetUserReportsAsync(10);
 
             // Assert
-            Assert.IsTrue(getReports.Result.isSuccessful);
+            Assert.IsTrue(getReports.Result.IsSuccessful);
         }
     }
 }

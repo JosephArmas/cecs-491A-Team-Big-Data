@@ -28,13 +28,13 @@ namespace TeamBigData.Utification.FileServices
         {
             var key = SecureHasher.Base64Hash(pinId + filename + pinId);
             var result = await _pinpicUploader.UploadPinPic(key, pinId);
-            if(result.isSuccessful)
+            if(result.IsSuccessful)
             {
-                result.data = key;
+                result.Data = key;
             }
-            if(result.errorMessage.Contains("PRIMARY KEY"))
+            if(result.ErrorMessage.Contains("PRIMARY KEY"))
             {
-                result.errorMessage = "Can't Upload Picture Because Pin already has Picture, Use Update Instead";
+                result.ErrorMessage = "Can't Upload Picture Because Pin already has Picture, Use Update Instead";
             }
             return result;
         }
@@ -42,13 +42,13 @@ namespace TeamBigData.Utification.FileServices
         {
             var key = SecureHasher.Base64Hash(userId + filename + userId);
             var result = await _profilepicUploader.UploadProfilePic(key, userId);
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                result.data = key;
+                result.Data = key;
             }
-            if (result.errorMessage.Contains("PRIMARY KEY"))
+            if (result.ErrorMessage.Contains("PRIMARY KEY"))
             {
-                result.errorMessage = "Can't Upload Picture Because Profile already has Picture, Use Update Instead";
+                result.ErrorMessage = "Can't Upload Picture Because Profile already has Picture, Use Update Instead";
             }
             return result;
         }
@@ -56,14 +56,14 @@ namespace TeamBigData.Utification.FileServices
         {
             var result = new Response();
             var keyResult = await _pinpicDownloader.DownloadPinPic(pinId);
-            if (keyResult.isSuccessful)
+            if (keyResult.IsSuccessful)
             {
                 result = await _pinpicDeleter.DeletePinPic(pinId);
-                result.data = keyResult.data;
+                result.Data = keyResult.Data;
             }
             else
             {
-                result.errorMessage = "Error Finding Picture to Delete";
+                result.ErrorMessage = "Error Finding Picture to Delete";
             }
             return result;
         }
@@ -71,14 +71,14 @@ namespace TeamBigData.Utification.FileServices
         {
             var result = new Response();
             var keyResult = await _profilepicDownloader.DownloadProfilePic(userId);
-            if(keyResult.isSuccessful)
+            if(keyResult.IsSuccessful)
             {
                 result = await _profilepicDeleter.DeleteProfilePic(userId);
-                result.data = keyResult.data;
+                result.Data = keyResult.Data;
             }
             else
             {
-                result.errorMessage = "Error Finding Picture to Delete";
+                result.ErrorMessage = "Error Finding Picture to Delete";
             }
             return result;
         }

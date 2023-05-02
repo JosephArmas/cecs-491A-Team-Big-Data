@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.LoggingTest
             //Act
             var rows = sysUnderTest.Logs(log).Result;
             //Assert
-            Assert.IsTrue(rows.isSuccessful);
+            Assert.IsTrue(rows.IsSuccessful);
         }
         [TestMethod]
         public void DAO_LogMustBeImmutable()
@@ -32,7 +32,7 @@ namespace TeamBigData.Utification.LoggingTest
             //Act
             var rows = sysUnderTest.Execute(updateSql).Result;
             //Assert
-            Assert.IsFalse(rows.isSuccessful);
+            Assert.IsFalse(rows.IsSuccessful);
         }
         [TestMethod]
         public void DAO_MustLogWithin5Secs()
@@ -51,7 +51,7 @@ namespace TeamBigData.Utification.LoggingTest
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(actual >= 0);
-            Assert.IsTrue(logResult.isSuccessful);
+            Assert.IsTrue(logResult.IsSuccessful);
         }
     }
 }

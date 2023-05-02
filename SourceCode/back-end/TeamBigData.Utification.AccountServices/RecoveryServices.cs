@@ -42,13 +42,13 @@ namespace TeamBigData.Utification.AccountServices
             // send a recovery request
             var response = await _userDBInserter.InsertRecoveryRequest(userAccount.data._userID, digest, salt).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                return new Response(false, response.errorMessage + ", {failed: _userDBInserter.InsertRecoveryRequest}");
+                return new Response(false, response.ErrorMessage + ", {failed: _userDBInserter.InsertRecoveryRequest}");
             }
             else
             {
-                return new Response(true, response.errorMessage);
+                return new Response(true, response.ErrorMessage);
             }
         }
 
@@ -82,7 +82,7 @@ namespace TeamBigData.Utification.AccountServices
             
             var response = await _userDBUpdater.UpdateRecoveryFulfilled(userID).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
                 validRecovery.isSuccessful = false;
                 validRecovery.errorMessage += ", {failed: _userDBUpdater.UpdateRecoveryFulfilled}";
@@ -100,15 +100,15 @@ namespace TeamBigData.Utification.AccountServices
         {
             var response = await _userDBUpdater.UpdateUserPassword(userID, password, salt).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _userDBUpdater.UpdateUserPassword}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _userDBUpdater.UpdateUserPassword}";
                 return response;
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
             }
 
             return response;

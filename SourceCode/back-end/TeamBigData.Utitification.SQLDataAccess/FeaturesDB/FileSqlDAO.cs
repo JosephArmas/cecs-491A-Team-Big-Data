@@ -31,23 +31,23 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 var rows = command.ExecuteNonQuery();
                 if (rows > 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "SqlCommand Passed";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "SqlCommand Passed";
                 }
                 else if (rows == 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Nothing Affected";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "Nothing Affected";
                 }
                 connection.Close();
             }
             catch (SqlException s)
             {
-                result.errorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
             }
             catch (Exception e)
             {
-                result.errorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
             }
             tcs.SetResult(result);
             return result;
@@ -68,17 +68,17 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     int id = (int)command.ExecuteScalar();
                     if (id > 0)
                     {
-                        result.data = id;
-                        result.isSuccessful = true;
+                        result.Data = id;
+                        result.IsSuccessful = true;
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
@@ -127,23 +127,23 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     {
                         if (id.Length > 0)
                         {
-                            result.data = id;
-                            result.isSuccessful = true;
+                            result.Data = id;
+                            result.IsSuccessful = true;
                         }
                     }
                     else
                     {
                         id = "";
-                        result.data = id;
+                        result.Data = id;
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
@@ -167,21 +167,21 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     if (id is null)
                     {
                         id = "";
-                        result.data = id;
+                        result.Data = id;
                     }
                     else if (id.Length > 0)
                     {
-                        result.data = id;
-                        result.isSuccessful = true;
+                        result.Data = id;
+                        result.IsSuccessful = true;
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;

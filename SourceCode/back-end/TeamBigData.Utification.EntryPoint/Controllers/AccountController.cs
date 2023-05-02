@@ -103,13 +103,13 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             var userhash = SecureHasher.HashString(newAccount._username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
 
             var response = await _securityManager.RegisterUser(newAccount._username,  newAccount._password, userhash).ConfigureAwait(false);
-            if(response.isSuccessful)
+            if(response.IsSuccessful)
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
             else
             {
-                return Conflict(response.errorMessage + ", {failed:_securityManager.RegisterUser}");
+                return Conflict(response.ErrorMessage + ", {failed:_securityManager.RegisterUser}");
             }
         }
     }

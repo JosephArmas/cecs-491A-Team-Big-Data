@@ -27,7 +27,7 @@ namespace TeamBigData.Utification.FileManagers
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
-                result.errorMessage = "Unsupported File Extension";
+                result.ErrorMessage = "Unsupported File Extension";
                 return result;
             }
 
@@ -38,13 +38,13 @@ namespace TeamBigData.Utification.FileManagers
             else if(cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
                 var getResponse = await _pinOwnerGetter.GetPinOwner(pinID);
-                if(!getResponse.isSuccessful)
+                if(!getResponse.IsSuccessful)
                 {
                     result = getResponse;
                 }
-                else if(cred._userID != (int)getResponse.data)
+                else if(cred._userID != (int)getResponse.Data)
                 {
-                    result.errorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
                 else
                 {
@@ -60,7 +60,7 @@ namespace TeamBigData.Utification.FileManagers
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
-                result.errorMessage = "Unsupported File Extension";
+                result.ErrorMessage = "Unsupported File Extension";
                 return result;
             }
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
@@ -75,7 +75,7 @@ namespace TeamBigData.Utification.FileManagers
                 }
                 else
                 {
-                    result.errorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
             }
             return result;
@@ -92,13 +92,13 @@ namespace TeamBigData.Utification.FileManagers
             else if (cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
                 var getResponse = await _pinOwnerGetter.GetPinOwner(pinID);
-                if (!getResponse.isSuccessful)
+                if (!getResponse.IsSuccessful)
                 {
                     result = getResponse;
                 }
-                else if (cred._userID != (int)getResponse.data)
+                else if (cred._userID != (int)getResponse.Data)
                 {
-                    result.errorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
                 else
                 {
@@ -124,7 +124,7 @@ namespace TeamBigData.Utification.FileManagers
                 }
                 else
                 {
-                    result.errorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
             }
             return result;
@@ -133,13 +133,13 @@ namespace TeamBigData.Utification.FileManagers
         public async Task<Response> DownloadPinPic(int pinID)
         {
             var result = await _pinpicDownloader.DownloadPinPic(pinID);
-            if (((String)result.data).Length > 0)
+            if (((String)result.Data).Length > 0)
             {
                 return result;
             }
             else
             {
-                result.errorMessage = "Could not find uploaded file";
+                result.ErrorMessage = "Could not find uploaded file";
                 return result;
             }
         }
@@ -147,13 +147,13 @@ namespace TeamBigData.Utification.FileManagers
         public async Task<Response> DownloadProfilePic(int userID)
         {
             var result = await _profilepicDownloader.DownloadProfilePic(userID);
-            if (((String)result.data).Length > 0)
+            if (((String)result.Data).Length > 0)
             {
                 return result;
             }
             else
             {
-                result.errorMessage = "Could not find uploaded file. Try Uploading a Profile Picture if you haven't yet";
+                result.ErrorMessage = "Could not find uploaded file. Try Uploading a Profile Picture if you haven't yet";
                 return result;
             }
         }
@@ -164,7 +164,7 @@ namespace TeamBigData.Utification.FileManagers
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
-                result.errorMessage = "Unsupported File Extension";
+                result.ErrorMessage = "Unsupported File Extension";
                 return result;
             }
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
@@ -174,13 +174,13 @@ namespace TeamBigData.Utification.FileManagers
             else if (cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
                 var getResponse = await _pinOwnerGetter.GetPinOwner(pinID);
-                if (!getResponse.isSuccessful)
+                if (!getResponse.IsSuccessful)
                 {
                     result = getResponse;
                 }
-                else if (cred._userID != (int)getResponse.data)
+                else if (cred._userID != (int)getResponse.Data)
                 {
-                    result.errorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
                 else
                 {
@@ -196,7 +196,7 @@ namespace TeamBigData.Utification.FileManagers
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
-                result.errorMessage = "Unsupported File Extension";
+                result.ErrorMessage = "Unsupported File Extension";
                 return result;
             }
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
@@ -211,7 +211,7 @@ namespace TeamBigData.Utification.FileManagers
                 }
                 else
                 {
-                    result.errorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
             }
             return result;

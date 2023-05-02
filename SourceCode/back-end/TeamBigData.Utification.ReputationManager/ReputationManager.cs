@@ -30,9 +30,9 @@ namespace TeamBigData.Utification.Manager
 
             var getReputation = await _reputationService.GetCurrentReputationAsync().ConfigureAwait(false);
 
-            if(getReputation.isSuccessful)
+            if(getReputation.IsSuccessful)
             {
-                _result.isSuccessful = true;
+                _result.IsSuccessful = true;
                 getReputationLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Successfully retrieved the users reputation from the data store.");    
             }
             else
@@ -51,7 +51,7 @@ namespace TeamBigData.Utification.Manager
 
             var getReports = await _reputationService.GetUserReportsAsync(0).ConfigureAwait(false);
 
-            if(getReports.isSuccessful) 
+            if(getReports.IsSuccessful) 
             {
                 getReportsLog = new Log(1, "Info", _userAccount._userHash, "ReputationService.GetUserReports()", "Data", "Successfully retrieved reports from the data store");
             }
@@ -72,7 +72,7 @@ namespace TeamBigData.Utification.Manager
 
             var getReputation = await _reputationService.GetCurrentReputationAsync().ConfigureAwait(false);
 
-            if (!getReputation.isSuccessful)
+            if (!getReputation.IsSuccessful)
             {
                 getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.GetCurrentReputation()",
                                            "Data", "Failed to retrieve current user reputation");
@@ -82,13 +82,13 @@ namespace TeamBigData.Utification.Manager
                 return _result;
             }
 
-            double newReputation = (double)getReputation.data + 0.1;
+            double newReputation = (double)getReputation.Data + 0.1;
             getReputationLog = new Log(1, "Info", _userAccount._userHash, "ReputationServices.GetCurrentReputation()", "Data", "Successfully retrieved current user reputation");
 
 
             var updateReputation = await _reputationService.UpdateReputationAsync(newReputation).ConfigureAwait(false);
 
-            if (!updateReputation.isSuccessful)
+            if (!updateReputation.IsSuccessful)
             {
                 updateReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.UpdateReputation()",
                                                 "Data Store", "Failed to increase reputation by 0.1");
@@ -98,7 +98,7 @@ namespace TeamBigData.Utification.Manager
                 return _result;
             }
             
-            _result.isSuccessful = true;
+            _result.IsSuccessful = true;
 
             updateReputationLog = new Log(1, "Info", _userAccount._userHash, "ReputationServices.UpdateReputation()", "Data Store", "Successfully increased reputation by 0.1");            
 
@@ -123,7 +123,7 @@ namespace TeamBigData.Utification.Manager
             if (!(feedbackValidation.IsMatch(_report._feedback) && _report._feedback.Length > 7 && _report._feedback.Length <= 150))
             {
                 feedbackValidationLog = new Log(1, "Error", _userAccount._userHash, "Report Feedback Validation", "Business", "Users feedback violates validation check");
-                _result.errorMessage = "Bad Request";
+                _result.ErrorMessage = "Bad Request";
 
                 await _logger.Logs(feedbackValidationLog).ConfigureAwait(false);
 
@@ -133,7 +133,7 @@ namespace TeamBigData.Utification.Manager
             feedbackValidationLog = new Log(1, "Info", _userAccount._userHash, "Report Feedback Validation", "Business", "Users feedback passes validation check");
             var newReputation = await _reputationService.CalculateNewUserReputationAsync().ConfigureAwait(false);
 
-            if (!newReputation.isSuccessful)
+            if (!newReputation.IsSuccessful)
             {
                 getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.CalculateNewUserReputation()",
                                             "Data", "Failed to retrieve user's new calculated reputation");
@@ -145,10 +145,10 @@ namespace TeamBigData.Utification.Manager
             getReputationLog = new Log(1, "Info", _userAccount._userHash, "ReputationServices.CalculateNewUserReputation()",
                                             "Data", "Successfully retrieved users new calculated reputation");        
 
-            _userProfile = newReputation.data as UserProfile;
+            _userProfile = newReputation.Data as UserProfile;
 
             var updateReputation = await _reputationService.UpdateReputationAsync(_userProfile._reputation).ConfigureAwait(false);
-            if (updateReputation.isSuccessful)
+            if (updateReputation.IsSuccessful)
             {
                 updateReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.UpdateReputation()", "Data Store", "Failed to update user's reputation");
 
@@ -174,7 +174,7 @@ namespace TeamBigData.Utification.Manager
             {
                 var updateRole = await _reputationService.UpdateRoleAsync(_userProfile, role).ConfigureAwait(false);
 
-                if(!updateRole.isSuccessful)
+                if(!updateRole.IsSuccessful)
                 {
                     updateRoleLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.UpdateRoleAsync()", "Data Store", $"Failed to update users role to {role}");
                     await _logger.Logs(updateRoleLog).ConfigureAwait (false);
@@ -189,7 +189,7 @@ namespace TeamBigData.Utification.Manager
             
 
             var storeReport = await _reputationService.StoreNewReportAsync().ConfigureAwait(false);
-            if (!storeReport.isSuccessful)
+            if (!storeReport.IsSuccessful)
             {
                 storeReportLog = new Log(1,"Error",_userAccount._userHash,"ReputationServices.StoreNewReport()","Data Store","Failed to store new report of the reported user");
                 await _logger.Logs(storeReportLog).ConfigureAwait (false);
@@ -197,7 +197,7 @@ namespace TeamBigData.Utification.Manager
                 return _result;
             }
 
-            _result.isSuccessful = true;
+            _result.IsSuccessful = true;
             storeReportLog = new Log(1,"Info",_userAccount._userHash,"ReputationServices.StoreNewReport()","Data Store","Successfully stored new report of the reported user");
 
             await _logger.Logs(storeReportLog).ConfigureAwait(false);          

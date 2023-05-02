@@ -66,12 +66,12 @@ namespace TeamBigData.Utification.Models
         public Response VerifyOTP(String otp)
         {
             var result = new Response();
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             var currentTime = DateTime.Now;
             if ((currentTime.Ticks - float.Parse(_otpCreated)) > 1200000000) //2 minutes in microseconds
             {
-                result.isSuccessful = false;
-                result.errorMessage = "OTP Expired, Please Authenticate Again";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "OTP Expired, Please Authenticate Again";
                 GenerateOTP();
             }
             else
@@ -79,13 +79,13 @@ namespace TeamBigData.Utification.Models
                 if (otp.Equals(_otp))
                 {
                     _verified = true;
-                    result.isSuccessful = true;
-                    result.errorMessage = "You have been sucessfully authenticated";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "You have been sucessfully authenticated";
                 }
                 else
                 {
-                    result.isSuccessful = false;
-                    result.errorMessage = "Error OTP does not match, Please Try Again";
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Error OTP does not match, Please Try Again";
                 }
             }
             return result;

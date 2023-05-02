@@ -36,23 +36,23 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 var rows = command.ExecuteNonQuery();
                 if (rows > 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "SqlCommand Passed";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "SqlCommand Passed";
                 }
                 else if (rows == 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Nothing Affected";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "Nothing Affected";
                 }
                 connection.Close();
             }
             catch (SqlException s)
             {
-                result.errorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
             }
             catch (Exception e)
             {
-                result.errorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
             }
             tcs.SetResult(result);
             return result;
@@ -73,13 +73,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@s", salt));
             command.Parameters.Add(new SqlParameter("@h", userhash));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -98,14 +98,14 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -119,10 +119,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@newP", password));
             command.Parameters.Add(new SqlParameter("@salt", salt));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.errorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
+            if (response.ErrorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
             }
             return response;
         }
@@ -489,15 +489,15 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@ID", userID));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.errorMessage.Equals("Nothing Affected"))
+            if (response.ErrorMessage.Equals("Nothing Affected"))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "No Request for User Found";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "No Request for User Found";
             }
-            else if (response.isSuccessful)
+            else if (response.IsSuccessful)
             {
-                response.isSuccessful = true;
-                response.errorMessage = "Account recovery completed successfully for user";
+                response.IsSuccessful = true;
+                response.ErrorMessage = "Account recovery completed successfully for user";
             }
             return response;
         }
@@ -511,15 +511,15 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@pass", password));
             command.Parameters.Add(new SqlParameter("@salt", salt));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.errorMessage.Equals("Nothing Affected"))
+            if (response.ErrorMessage.Equals("Nothing Affected"))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "No Request for User Found";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "No Request for User Found";
             }
-            else if (response.isSuccessful)
+            else if (response.IsSuccessful)
             {
-                response.isSuccessful = true;
-                response.errorMessage = "Account recovery completed successfully for user";
+                response.IsSuccessful = true;
+                response.ErrorMessage = "Account recovery completed successfully for user";
             }
             return response;
         }
@@ -548,20 +548,20 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                             if (updateRole == 1)
                             {
-                                result.data = 1;
-                                result.isSuccessful = true;
+                                result.Data = 1;
+                                result.IsSuccessful = true;
                             }
                         }
                     }
                     catch (SqlException e)
                     {
-                        result.errorMessage = e.Message;
+                        result.ErrorMessage = e.Message;
                     }
                 }
             }
             catch (SqlException e)
             {
-                result.errorMessage = e.Message;
+                result.ErrorMessage = e.Message;
             }
 
             return result;
@@ -591,14 +591,14 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                         if (execute == 1)
                         {
-                            result.data = 1;
-                            result.isSuccessful = true;
+                            result.Data = 1;
+                            result.IsSuccessful = true;
                         }
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
             }
             return result;

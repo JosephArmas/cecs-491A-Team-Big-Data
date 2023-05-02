@@ -37,23 +37,23 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 var rows = command.ExecuteNonQuery();
                 if (rows > 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "SqlCommand Passed";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "SqlCommand Passed";
                 }
                 else if (rows == 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Nothing Affected";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "Nothing Affected";
                 }
                 connection.Close();
             }
             catch (SqlException s)
             {
-                result.errorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
             }
             catch (Exception e)
             {
-                result.errorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
             }
             tcs.SetResult(result);
             return result;
@@ -77,15 +77,15 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             command.Parameters.Add(new SqlParameter("@d", pin._description));
             command.Parameters.Add(new SqlParameter("@mod", pin._userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
                 return result;
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -174,15 +174,15 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.isSuccessful = true;
-                result.errorMessage = "Update Pin To Complete successfully for user";
+                result.IsSuccessful = true;
+                result.ErrorMessage = "Update Pin To Complete successfully for user";
             }
             return result;
         }
@@ -197,15 +197,15 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
-            {
-                result.isSuccessful = true;
-                result.errorMessage = "Update Pin Content successfully for user";
+            else if (result.IsSuccessful)
+            {   
+                result.IsSuccessful = true;
+                result.ErrorMessage = "Update Pin Content successfully for user";
             }
             return result;
         }
@@ -220,15 +220,15 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.isSuccessful = true;
-                result.errorMessage = "Update Pin Type successfully for user";
+                result.IsSuccessful = true;
+                result.ErrorMessage = "Update Pin Type successfully for user";
             }
             return result;
         }
@@ -243,14 +243,14 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.errorMessage = "Update Pin To Disabled successfully for user";
+                result.ErrorMessage = "Update Pin To Disabled successfully for user";
             }
             return result;
         }
@@ -271,17 +271,17 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     int id = (int)command.ExecuteScalar();
                     if (id > 0)
                     {
-                        result.data = id;
-                        result.isSuccessful = true;
+                        result.Data = id;
+                        result.IsSuccessful = true;
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;

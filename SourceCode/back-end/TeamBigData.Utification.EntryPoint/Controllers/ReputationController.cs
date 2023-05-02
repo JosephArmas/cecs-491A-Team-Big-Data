@@ -31,7 +31,7 @@ namespace Utification.EntryPoint.Controllers
         {
             var result = await _reputationManager.ViewCurrentReputationAsync().ConfigureAwait(false);
 
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
                 return Ok(result);
             }
@@ -47,10 +47,10 @@ namespace Utification.EntryPoint.Controllers
         {
             var result = await _reputationManager.RecordNewUserReportAsync(4.2).ConfigureAwait(false);
 
-            if (result.errorMessage != null)
+            if (result.ErrorMessage != null)
             {
-                IActionResult error = Unauthorized(result.errorMessage);
-                switch(result.errorMessage)
+                IActionResult error = Unauthorized(result.ErrorMessage);
+                switch(result.ErrorMessage)
                 {
                     case "Bad Request":
                         error = BadRequest(result);

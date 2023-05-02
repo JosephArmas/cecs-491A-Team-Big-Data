@@ -34,16 +34,16 @@ namespace Utification.EntryPoint.Controllers
             // Make recovery request
             var response = await _securityManager.RecoverAccountPassword(user._username, user._newPassword, user._userhash).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _securityManager.RecoverAccount}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _securityManager.RecoverAccount}";
 
-                return Conflict(response.errorMessage);
+                return Conflict(response.ErrorMessage);
             }
             else
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
 
             /*
@@ -103,13 +103,13 @@ namespace Utification.EntryPoint.Controllers
             // Validate inputs
             // Reset account
             var response = await _securityManager.ResetAccount(body._userID,body._userhash).ConfigureAwait(false);
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                return Conflict(response.errorMessage);
+                return Conflict(response.ErrorMessage);
             }
             else 
             { 
-                return Ok(response.errorMessage); 
+                return Ok(response.ErrorMessage); 
             }
             /*
             //var manager = new SecurityManager();

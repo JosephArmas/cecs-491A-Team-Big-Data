@@ -70,15 +70,15 @@ namespace TeamBigData.Utification.Manager
 
             if (fileSize > 2147483648)
             {
-                response.errorMessage = "File Size is too Big";
-                response.isSuccessful = false;
+                response.ErrorMessage = "File Size is too Big";
+                response.IsSuccessful = false;
                 return response;
             }
             response = CheckFor10kLines(filename).Result;
-            if(!response.isSuccessful) 
+            if(!response.IsSuccessful) 
             {
-                response.isSuccessful = false;
-                response.errorMessage = "File has too many lines";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "File has too many lines";
                 tcs.SetResult(response);
                 return response;
             }
@@ -128,8 +128,8 @@ namespace TeamBigData.Utification.Manager
             stopwatch.Stop();
             if (stopwatch.ElapsedMilliseconds > 60000)
             {
-                response.isSuccessful = false;
-                response.errorMessage = "Bulk UM operation was NOT successful";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "Bulk UM operation was NOT successful";
             }
                 tcs.SetResult(response);
             return response;
@@ -271,14 +271,14 @@ namespace TeamBigData.Utification.Manager
                         lines++;
                         if (lines > 10000)
                         {
-                            response.isSuccessful = false;
-                            response.errorMessage = "File has too many lines";
+                            response.IsSuccessful = false;
+                            response.ErrorMessage = "File has too many lines";
                             return response;
                         }
                     }
                 }
            // }
-            response.isSuccessful = true;
+            response.IsSuccessful = true;
             //tcs.SetResult(response);
             return response;
         }

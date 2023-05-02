@@ -68,14 +68,14 @@ namespace Utification.EntryPoint.Controllers
             Pin pin = new Pin(newPin._userID, newPin._lat, newPin._lng, newPin._pinType, newPin._description);
 
             var result = await _pinManager.SaveNewPin(pin,newPin._userhash).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += ", {failed: _pinManager.SaveNewPin}";
-                return Conflict(result.errorMessage);
+                result.ErrorMessage += ", {failed: _pinManager.SaveNewPin}";
+                return Conflict(result.ErrorMessage);
             }
             else 
             { 
-                return Ok(result.errorMessage); 
+                return Ok(result.ErrorMessage); 
             }
         }
 
@@ -87,15 +87,15 @@ namespace Utification.EntryPoint.Controllers
             // TODO: Validate user and pin inputs
 
             var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
-                return Conflict(result.errorMessage);
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
+                return Conflict(result.ErrorMessage);
             }
             else
             {
-                return Ok(result.errorMessage);
+                return Ok(result.ErrorMessage);
             }
         }
 
@@ -106,15 +106,15 @@ namespace Utification.EntryPoint.Controllers
             // TODO: Validate user and pin inputs
 
             var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, pin._userhash).ConfigureAwait(false);
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinManager.ChangePinContent}";
-                return Conflict(response.errorMessage);
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.ChangePinContent}";
+                return Conflict(response.ErrorMessage);
             }
             else
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
         }
 
@@ -126,15 +126,15 @@ namespace Utification.EntryPoint.Controllers
             // TODO: Validate user and pin inputs
 
             var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, pin._userhash);
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinManager.ChangePinType}";
-                return Conflict(response.errorMessage);
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.ChangePinType}";
+                return Conflict(response.ErrorMessage);
             }
             else 
             { 
-                return Ok(response.errorMessage); 
+                return Ok(response.ErrorMessage); 
             }
         }
 
@@ -146,15 +146,15 @@ namespace Utification.EntryPoint.Controllers
 
             var response = await _pinManager.DisablePin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful=false;
-                response.errorMessage += ", {failed: _pinManager.DisablePin}";
-                return Conflict(response.errorMessage);
+                response.IsSuccessful =false;
+                response.ErrorMessage += ", {failed: _pinManager.DisablePin}";
+                return Conflict(response.ErrorMessage);
             }
             else
             { 
-                return Ok(response.errorMessage); 
+                return Ok(response.ErrorMessage); 
             }
         }
     }

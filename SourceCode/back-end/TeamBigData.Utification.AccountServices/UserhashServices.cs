@@ -21,15 +21,15 @@ namespace TeamBigData.Utification.AccountServices
         {
             var response = await _userhashDBInserter.InsertUserHash(userhash,userId).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _userhashDBInserter.InsertUserHash}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _userhashDBInserter.InsertUserHash}";
                 return response;
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
                 return response;
             }
         }

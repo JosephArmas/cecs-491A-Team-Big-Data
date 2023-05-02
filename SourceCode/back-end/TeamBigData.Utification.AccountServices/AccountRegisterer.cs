@@ -37,26 +37,26 @@ namespace TeamBigData.Utification.AccountServices
 
             var response = await _usersDBInserter.InsertUserAccount(email, digest, salt, userHash).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                userID.errorMessage = response.errorMessage + ", {failed: _usersDBInserter.InsertUser}";
+                userID.errorMessage = response.ErrorMessage + ", {failed: _usersDBInserter.InsertUser}";
                 userID.data = 0;
                 return userID;
             }
 
             var data = await _usersDBSelecter.SelectUserAccount(email).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
 
-                userID.errorMessage = response.errorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}";
+                userID.errorMessage = response.ErrorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}";
                 userID.data = 0;
                 userID.isSuccessful = false;
             }
             else 
             {
                 userID.isSuccessful = true;
-                userID.errorMessage = response.errorMessage; 
+                userID.errorMessage = response.ErrorMessage; 
                 userID.data = data.data._userID;
             }
 
@@ -67,14 +67,14 @@ namespace TeamBigData.Utification.AccountServices
         {
             var response = await _usersDBInserter.InsertUserProfile(userId).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {false: _usersDBInserter.InsertUserProfile}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {false: _usersDBInserter.InsertUserProfile}";
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
             }
 
             return response;

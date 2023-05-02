@@ -28,7 +28,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             var username = user;
             Response result = new Response();
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -42,18 +42,18 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(deleteSql, connection);
                     var rows = command.ExecuteNonQuery();
-                    result.isSuccessful = true;
-                    result.data = rows;
+                    result.IsSuccessful = true;
+                    result.Data = rows;
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
-                Console.WriteLine(result.errorMessage);
+                Console.WriteLine(result.ErrorMessage);
                 tcs.SetResult(result);
                 return tcs.Task;
             }
@@ -68,7 +68,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             Response result = new Response();
             var username = user;
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -80,17 +80,17 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var rows = command.ExecuteNonQuery();
                     if (rows > 0)
                     {
-                        result.isSuccessful = true;
-                        result.data = rows;
+                        result.IsSuccessful = true;
+                        result.Data = rows;
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;

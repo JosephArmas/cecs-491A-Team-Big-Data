@@ -12,12 +12,28 @@ using TeamBigData.Utification.ErrorResponse;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
-    public class ReportsSqlDAO : DbContext, IReportsDBInserter, IReportsDBSelecter
+    public class ReportsSqlDAO : DbContext, IReportsDBInserter, IReportsDBSelecter, IReportsDBUpdater, IReportsDBDeleter
     {
         private readonly string _connectionString;
         public ReportsSqlDAO(DbContextOptions<ReportsSqlDAO> options) : base(options) 
         {
             _connectionString = this.Database.GetDbConnection().ConnectionString;
+        }
+
+        public ReportsSqlDAO(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        public async Task<Response> DeleteUserReport()
+        {
+            Response result = new Response();
+            return result;
+        }
+        public async Task<Response> UpdateFeedback()
+        {
+            Response result = new Response();
+            return result;
         }
 
         public async Task<Response> SelectUserReportsAsync(UserProfile userProfile)
@@ -45,12 +61,12 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         adapter.Fill(set, "dbo.Reports");
 
                     }
-                    result.isSuccessful = true;
-                    result.data = set;
+                    result.IsSuccessful = true;
+                    result.Data = set;
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
             }
             return result;
@@ -89,17 +105,17 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
             }
 
             Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
-            result.isSuccessful = true;
-            result.data = updateReputation;
+            result.IsSuccessful = true;
+            result.Data = updateReputation;
 
             return result;
         }
@@ -131,14 +147,14 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
                         if (execute == 1)
                         {
-                            result.data = 1;
-                            result.isSuccessful = true;
+                            result.Data = 1;
+                            result.IsSuccessful = true;
                         }
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
             }
             return result;

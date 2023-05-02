@@ -31,13 +31,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if(result.isSuccessful)
+            if(result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -54,13 +54,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -78,13 +78,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -102,13 +102,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -126,13 +126,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -149,13 +149,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -173,13 +173,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
 
@@ -197,13 +197,13 @@ namespace Utification.EntryPoint.Controllers
             {
 
             }
-            if (result.isSuccessful)
+            if (result.IsSuccessful)
             {
-                return Ok((String)result.data);
+                return Ok((String)result.Data);
             }
             else
             {
-                return Conflict(result.errorMessage);
+                return Conflict(result.ErrorMessage);
             }
         }
     }
