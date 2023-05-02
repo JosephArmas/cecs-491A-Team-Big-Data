@@ -1,6 +1,7 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Events;
 
 namespace TeamBigData.Utification.EventsServices
@@ -14,12 +15,12 @@ namespace TeamBigData.Utification.EventsServices
         private readonly ILogger _logger;
 
         // Ctor w/ dependency injection
-        public EventService(IEventDBInsert IEventDBInsert, IEventDBUpdate IEventDBUpdate, IEventDBSelect IEventDBSelect, IEventDBDelete IEventDBDelete, ILogger logger)
+        public EventService(EventsSqlDAO sqlDao, ILogger logger)
         {
-             _iEventDbSelect = IEventDBSelect;
-             _iEventDbInsert = IEventDBInsert;
-             _iEventDbUpdate = IEventDBUpdate;
-             _iEventDbDelete = IEventDBDelete;
+             _iEventDbSelect = sqlDao;
+             _iEventDbInsert = sqlDao;
+             _iEventDbUpdate = sqlDao;
+             _iEventDbDelete = sqlDao;
              _logger = logger;
         }
         
@@ -179,7 +180,15 @@ namespace TeamBigData.Utification.EventsServices
             return await _iEventDbUpdate.UpdateEventAttendanceDisable(eventID);
         } 
         
-        
+        //--------------------------
+        // Delete
+        //--------------------------
+        public async Task<Response> DeleteCreatedEvent(int eventID,int userID)
+        {
+
+            return await _iEventDbDelete.DeleteEvent(eventID).ConfigureAwait(false);
+        } 
+
         
         
         

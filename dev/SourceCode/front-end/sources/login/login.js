@@ -49,7 +49,6 @@ var loginContainer = document.querySelector(".login-container");
         } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
         {
             loginUser();
-            // sendOtp();
 
         } else
         {
