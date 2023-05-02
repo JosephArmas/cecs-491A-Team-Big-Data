@@ -32,7 +32,7 @@ namespace TeamBigData.Utification.Manager
             {
                 Task<Response> taskF = deletionService.DeletePIIFeatures();
                 Task<Response> taskP = deletionService.DeletePIIProfile();
-                if (taskF.Result.isSuccessful == false)
+                if (taskF.Result.IsSuccessful == false)
                 {
                     answer = taskF.Result;
                 }
@@ -44,9 +44,9 @@ namespace TeamBigData.Utification.Manager
             else
             {
                 var err = "User does not have permission to delete the account";
-                answer.isSuccessful = false;
-                answer.errorMessage = err;
-                answer.data = 0;
+                answer.IsSuccessful = false;
+                answer.ErrorMessage = err;
+                answer.Data = 0;
             }
             
             return answer;

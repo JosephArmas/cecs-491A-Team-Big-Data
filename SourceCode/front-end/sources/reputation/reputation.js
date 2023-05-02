@@ -1,6 +1,7 @@
 'use strict';
 
 const reputationBox = document.querySelector(".reputation");
+const reportsContainer = document.querySelector(".reports-box");
 
 function createReportView()
 {
@@ -17,7 +18,8 @@ function reputationView(id)
     reputationBox.style.height = "50px";
     reputationBox.style.margin = "50px";
     reputationBox.style.marginLeft = "700px";
-    reputationBox.style.width = "25%";
+    reputationBox.style.width = "450px";
+    reputationBox.style.overflow = "hidden";
 
 
     for(let i = 1; i < 6; i++)
@@ -35,30 +37,99 @@ function reputationView(id)
         const userProfile = {}
         userProfile.UserID = id;
 
-        let reputationRequest = axios.post(reputationUrl, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("id")}`
-            }
+        let reputationRequest = axios.post(reputationUrl, userProfile, {
         });
         reputationRequest.then(function(response){
-            console.log(response.data);
+
+            if(response.data < 2.0)
+            {
+                document.getElementById("star-1").style.color = "orange";
+            }
+            else if (response.data < 3.0)
+            {
+                document.getElementById("star-1").style.color = "orange";
+                document.getElementById("star-2").style.color = "orange";
+            }
+            else if (response.data < 4.0)
+            {
+                document.getElementById("star-1").style.color = "orange";
+                document.getElementById("star-2").style.color = "orange";
+                document.getElementById("star-3").style.color = "orange";
+            }
+            else if (response.data < 5.0)
+            {
+                document.getElementById("star-1").style.color = "orange";
+                document.getElementById("star-2").style.color = "orange";
+                document.getElementById("star-3").style.color = "orange";
+                document.getElementById("star-4").style.color = "orange";
+            }
+            else if (response.data === 5.0)
+            {
+                document.getElementById("star-1").style.color = "orange";
+                document.getElementById("star-2").style.color = "orange";
+                document.getElementById("star-3").style.color = "orange";
+                document.getElementById("star-4").style.color = "orange";
+                document.getElementById("star-5").style.color = "orange";
+            }
+
+            let reputationTitle = document.createElement("span");
+            reputationTitle.style.fontSize = "35px";
+            reputationTitle.id = "reputation-title";
+            reputationTitle.innerHTML = "Reputation: ";
+            reputationTitle.style.marginLeft = "20%";
+            reputationBox.appendChild(reputationTitle);
+
+            let reputationNumber = document.createElement("span");
+            reputationNumber.id = "reputation-number";
+            reputationNumber.style.fontSize = "35px";            
+            reputationNumber.style.color = "orange";
+            reputationNumber.innerHTML = response.data;
+            reputationBox.appendChild(reputationNumber);
         })
     }
 
     reportsView();
 
-    document.querySelector(".home-container").style.display = 'none';
-    document.querySelector(".reputation-reports-container").style.display = 'block';
+    const homeContainer = document.querySelector(".home-container")
+    const reputationContainer = document.querySelector(".reputation-reports-container");
+    homeContainer.style.display = "none";
+    reputationContainer.style.display = "block";
 }
 
 function reportsView()
 {
-    const reportsContainer = document.querySelector(".reports-box");
     reportsContainer.style.border = "2px solid";
     reportsContainer.style.backgroundColor = "gray";
     reportsContainer.style.height = "1000px";
-    reportsContainer.style.width = "50%";
-    reportsContainer.style.marginLeft = "25%";
+    reportsContainer.style.width = "900px";
+    reportsContainer.style.marginLeft = "475px";    
+    reportsContainer.style.overflow = "hidden";
+
+    for(let i = 1; i < 6; i++)
+    {
+        let report = document.createElement("div");
+        report.id = "report-" + i;
+        report.style.border = "2px solid";
+        report.style.backgroundColor = "white";
+        report.style.height = "170px";
+        report.style.width = "75%";
+        report.style.marginTop = "20px";
+        report.style.marginLeft = "115px";
+
+        reportsContainer.appendChild(report);
+
+        let reportNumber = document.getElementById("report-" + i);
+        for(let j = 1; j < 6; j++)
+        {
+            let star = document.createElement("span");
+            star.id = "star" + i + "-" + j;
+            star.innerHTML = "&starf;";
+            star.style.fontSize = "200%";
+            star.style.color = "gray";
+
+            reportNumber.appendChild(star);
+        }         
+    }
 }
 
 const homeReturnBtn = document.querySelector("#map-return-button");
@@ -77,6 +148,17 @@ function resetReportsView()
     {
         let removeStars = document.getElementById("star-" + i);
         reputationBox.removeChild(removeStars);
+    }
+
+    let resetReputationTitle = document.getElementById("reputation-title");
+    reputationBox.removeChild(resetReputationTitle);
+    let resetReputationNumber = document.getElementById("reputation-number");
+    reputationBox.removeChild(resetReputationNumber);
+
+    for(let i = 1; i < 6; i++)
+    {
+        let resetReport = document.getElementById("report-" + i);
+        reportsContainer.removeChild(resetReport); 
     }
 }
 /*(function (userID){

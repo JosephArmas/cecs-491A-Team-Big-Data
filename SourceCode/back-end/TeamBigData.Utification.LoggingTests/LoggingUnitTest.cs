@@ -17,8 +17,8 @@ namespace TeamBigData.Utification.LoggingTests
             //Act
             var logResult = sysUnderTest.Logs(log);
             //Assert
-            Console.WriteLine(logResult.Result.errorMessage);
-            Assert.IsFalse(logResult.Result.isSuccessful);
+            Console.WriteLine(logResult.Result.ErrorMessage);
+            Assert.IsFalse(logResult.Result.IsSuccessful);
         }
         [TestMethod]
         public void SQL_LogHasWrongCategory()
@@ -29,8 +29,8 @@ namespace TeamBigData.Utification.LoggingTests
             //Act
             var logResult = sysUnderTest.Logs(log);
             //Assert
-            Console.WriteLine(logResult.Result.errorMessage);
-            Assert.IsFalse(logResult.Result.isSuccessful);
+            Console.WriteLine(logResult.Result.ErrorMessage);
+            Assert.IsFalse(logResult.Result.IsSuccessful);
         }
     }
 }

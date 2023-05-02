@@ -239,7 +239,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             {
                 try
                 {
-                    connect.Open();
+                    await connect.OpenAsync();
                     var command = new SqlCommand(sqlStatement, connect);
                     command.Parameters.Add(new SqlParameter("@ID", userID));
                     using (var reader = command.ExecuteReader())
@@ -252,6 +252,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             int age = 0;
                             String address = "";
                             DateTime birthday = new DateTime();
+                            double reputation = 2.0;
                             String role = "";
 
                             int ordinal = reader.GetOrdinal("userID");
@@ -285,7 +286,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             {
                                 birthday = reader.GetDateTime(ordinal);
                             }
-                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, new GenericIdentity(userID.ToString(), role));
+                            ordinal = reader.GetOrdinal("reputation");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                reputation = Decimal.ToDouble(reader.GetDecimal(ordinal));
+                            }
+                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, reputation, new GenericIdentity(userID.ToString(), role));
                         }
                         reader.Close();
                     }

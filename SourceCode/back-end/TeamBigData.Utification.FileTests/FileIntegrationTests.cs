@@ -30,9 +30,9 @@ namespace TeamBigData.Utification.FileTests
             //Act
             var response1 = await manager.DeletePinPic(1, admin);
             var response2 = await manager.UploadPinPic("tes.jpg", 1, admin);
-            var data = (String)response2.data;
+            var data = (String)response2.Data;
             //Assert
-            Assert.IsTrue(response2.isSuccessful);
+            Assert.IsTrue(response2.IsSuccessful);
             Assert.IsTrue(data.Length > 10);
         }
 
@@ -48,9 +48,9 @@ namespace TeamBigData.Utification.FileTests
             //Act
             var response1 = await manager.DeleteProfilePic(1, admin);
             var response2 = await manager.UploadProfilePic("tes.jpg", 1, admin);
-            var data = (String)response2.data;
+            var data = (String)response2.Data;
             //Assert
-            Assert.IsTrue(response2.isSuccessful);
+            Assert.IsTrue(response2.IsSuccessful);
             Assert.IsTrue(data.Length > 10);
         }
 

@@ -56,7 +56,7 @@ namespace TeamBigData.Utification.PinTests
             //Act
             var result = await pinMan.SaveNewPin(pin, userAccount._userHash).ConfigureAwait(false);
             //Assert
-            Assert.IsTrue(result.isSuccessful);
+            Assert.IsTrue(result.IsSuccessful);
         }
     }
 }

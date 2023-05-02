@@ -214,7 +214,7 @@ var loginContainer = document.querySelector(".login-container");
             }
         }).catch(function (error)
             {
-                let errorAfter = error.response.data;
+                let errorAfter = error.responseAfter.data;
                 let cleanError = errorAfter.replace(/"/g,"");
                 errorsDiv.innerHTML = cleanError; 
             });

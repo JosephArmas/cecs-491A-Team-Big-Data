@@ -51,9 +51,31 @@ namespace TeamBigData.Utification.ReputationTests
             
             // Act
             var getReports = repSer.GetUserReportsAsync(10);
+              
 
             // Assert
-            Assert.IsTrue(getReports.Result.IsSuccessful);
+            Assert.IsTrue(getReports.Result.isSuccessful);
+        }
+
+        [TestMethod]
+        public void GetReputation()
+        {
+            // Arrange
+            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
+            ReputationManager repMan = new ReputationManager(repSer, logger);
+
+            // Act
+            var getReputation = repMan.ViewCurrentReputationAsync(1001);
+            Console.WriteLine(getReputation.Result.Data);
+
+            // Assert
+            Assert.IsTrue(getReputation.Result.IsSuccessful);
+
         }
     }
 }

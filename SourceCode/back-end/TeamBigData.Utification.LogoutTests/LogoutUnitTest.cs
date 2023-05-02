@@ -21,8 +21,8 @@ namespace TeamBigData.Utification.LogoutTests
             //Act
             result = securityManager.LogOut();
             //Assert
-            Assert.IsFalse(result.isSuccessful);
-            Assert.AreEqual(expected, result.errorMessage);
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.AreEqual(expected, result.ErrorMessage);
         }
     }
 }

@@ -1,3 +1,8 @@
+.reputation-reports-container
+{
+    display: none;
+}
+
 #map-return-button
 {
     background-color: #CA75FF;
@@ -6,17 +11,32 @@
     margin: 10px;
 }
 
+.reputation-controls
+{
+    margin-left: 475px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
 .reputation-controls #previous-reports
 {
     background-color: #00ACB7;
+    color: white;
+    font-size: 25px;
 }
 
 .reputation-controls #create-report-btn
 {
     background-color: #CA75FF;
+    color: white;
+    font-size: 40px;
+    margin-left: 175px;
 }
 
 .reputation-controls #next-reports
 {
     background-color: #00ACB7;
+    color: white;
+    font-size: 25px;
+    margin-left: 215px;
 }
