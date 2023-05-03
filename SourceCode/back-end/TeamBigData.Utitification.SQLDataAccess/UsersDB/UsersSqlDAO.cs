@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
@@ -552,6 +553,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                             int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
+                            Console.WriteLine(updateRole);
                             if (updateRole == 1)
                             {
                                 result.Data = 1;
@@ -573,7 +575,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             return result;
         }
 
-        public async Task<Response> UpdateUserReputationAsync(UserProfile userProfile, double newReputation)
+        public async Task<Response> UpdateUserReputationAsync(int user, double newReputation)
         {
             Response result = new Response();
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -590,15 +592,14 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         command.Connection = connection;
                         command.CommandText = "UpdateUserReputation";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
-                        command.Parameters.AddWithValue("@newReputation", newReputation);
+                        command.Parameters.AddWithValue("@reportedUser", user);
+                        command.Parameters.AddWithValue("@newReputation", (SqlDecimal)newReputation);
 
                         int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
 
-                        if (execute == 1)
+                        if (execute == 0)
                         {
-                            result.Data = 1;
-                            result.IsSuccessful = true;
+                            return result;
                         }
                     }
                 }
@@ -607,6 +608,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                     result.ErrorMessage = s.Message;
                 }
             }
+            result.IsSuccessful = true;
             return result;
         }
     }

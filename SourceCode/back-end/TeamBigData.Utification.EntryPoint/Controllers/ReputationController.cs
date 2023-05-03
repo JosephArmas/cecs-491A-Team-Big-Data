@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.Manager;
+using TeamBigData.Utification.Models;
 using TeamBigData.Utification.Models.ControllerModels;
 
 namespace Utification.EntryPoint.Controllers
@@ -44,9 +45,10 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("PostNewReport")]
         [HttpPost]
-        public async Task<IActionResult> PostNewReportAsync()
+        public async Task<IActionResult> PostNewReportAsync([FromBody] Reports reports)
         {
-            var result = await _reputationManager.RecordNewUserReportAsync(4.2).ConfigureAwait(false);
+            Report report = new Report(reports.Rating, reports.UserID, reports.ReportingUserID, reports.Feedback);
+            var result = await _reputationManager.RecordNewUserReportAsync(report, 4.2).ConfigureAwait(false);
 
             if (!result.IsSuccessful)
             {
@@ -69,25 +71,25 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("ViewReports")]
         [HttpPost]
-        public async Task<IActionResult> ViewReportsAsync()
+        public async Task<IActionResult> ViewReportsAsync([FromBody] Reports reports)
         {
-            var result = await _reputationManager.ViewUserReportsAsync().ConfigureAwait(false);  
+            var result = await _reputationManager.ViewUserReportsAsync(reports.UserID).ConfigureAwait(false);  
             
-            if(!result.IsSuccessful)
+            if(!result.isSuccessful)
             {
-                IActionResult error = Unauthorized(result.ErrorMessage);
-                switch(result.ErrorMessage)
+                IActionResult error = Unauthorized(result.errorMessage);
+                switch(result.errorMessage)
                 {
                     case "Bad Request":
-                        error = BadRequest(result.ErrorMessage);
+                        error = BadRequest(result.errorMessage);
                         break;
                     case "Conflict":
-                        error = Conflict(result.ErrorMessage);
+                        error = Conflict(result.errorMessage);
                         break;
                 }
                 return error;
             }
-            return Ok(result.Data);
+            return Ok(result.data);
         }
     }
 }

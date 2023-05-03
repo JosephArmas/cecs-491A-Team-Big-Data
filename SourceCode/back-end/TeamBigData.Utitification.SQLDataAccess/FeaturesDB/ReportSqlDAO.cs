@@ -36,7 +36,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<DataResponse<DataSet>> SelectUserReportsAsync(UserProfile userProfile)
+        public async Task<DataResponse<DataSet>> SelectUserReportsAsync(int user)
         {
             DataResponse<DataSet> result = new DataResponse<DataSet>();          
 
@@ -54,7 +54,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         command.Connection = connection;
                         command.CommandText = "PartitionSelectUserReports";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                        command.Parameters.AddWithValue("@reportedUser", user);
 
                         adapter.SelectCommand = command;
 
@@ -135,8 +135,8 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         command.Parameters.AddWithValue("@reportedUser", report._reportedUser);
                         command.Parameters.AddWithValue("@reportingUser", report._reportingUser);
                         command.Parameters.AddWithValue("@feedback", report._feedback);
-                        command.Parameters.AddWithValue("@createDate", DateTime.Now);
-                        command.Parameters.AddWithValue("@updateDate", DateTime.Now);
+                        command.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
+                        command.Parameters.AddWithValue("@updateDate", DateTime.UtcNow);
                         command.Parameters.AddWithValue("@lastModifierUser", report._reportingUser);
 
                         command.Connection = connection;
@@ -145,10 +145,10 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
                         int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
-                        if (execute == 1)
+                        if (execute == 0)
                         {
-                            result.Data = 1;
-                            result.IsSuccessful = true;
+                            result.IsSuccessful = false;
+                            return result;
                         }
                     }
                 }
