@@ -88,8 +88,8 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         public async Task<Response> InsertUserProfile(int userId)
         {
             //Creates an Insert SQL statements using the collumn names and values given
-            var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, \"role\") values" +
-                "(@uID, @n, @ln, @add, @bday, @role)";
+            var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, reputation, \"role\") values" +
+                "(@uID, @n, @ln, @add, @bday, @reputation, @role)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(insertSql, connection);
             command.Parameters.Add(new SqlParameter("@uID", userId));
@@ -97,6 +97,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@ln", ""));
             command.Parameters.Add(new SqlParameter("@add", ""));
             command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
+            command.Parameters.Add(new SqlParameter("@reputation", (decimal)2.0));
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (!result.IsSuccessful)
@@ -144,7 +145,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 {
                     var command = new SqlCommand(sqlStatement, connect);
                     command.Parameters.Add(new SqlParameter("@u", username));
-                    connect.Open();
+                    await connect.OpenAsync();
                     using (var reader = command.ExecuteReader())
                     {
                         // read through all rows

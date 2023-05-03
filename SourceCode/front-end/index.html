@@ -76,6 +76,38 @@
             </div>
         </div>
 
+         <!-- * Profile View -->
+         <div class="profileContainer">
+            <div class = "profilePicture" id="profilePicture">
+                <img id="profilePic" style="height:400px; width:100%; object-fit:contain" src="blank image.jpg">
+            </div>
+            <div class="buttonContainer" id="profileButtons">
+                    <button type = "button" id="p-BackButton" onclick=backToMap()>Back</button>
+                    <input type="file" id="p-fileSelector" name="Select File" accept="image/jpg, image/png">
+                    <button class="profileButton" type="button" id="p-AddPic" onclick=addProfilePic()>Add Profile Picture</button>
+                    <button class="profileButton" type="button" id="p-UpdatePic" onclick=updateProfilePic()>Update Profile Picture</button>
+                    <button class="profileButton" type="button" id="p-DeletePic" onclick=deleteProfilePic()>Delete Profile Picture</button>
+            </div>
+            <div class="profileInfoBox" id="profileInfo">
+                <ul>
+                    <div class="profileInfo" id="profileName">Your Name is </div>
+                    <div class="profileInfo" id="profileLastName">Your Last Name is</div>
+                    <div class="profileInfo" id="profileAddress">Your address is</div>
+                    <div class="profileInfo" id="profileBirthay">Your Birthday is</div>
+                </ul>
+            </div>
+            <div class="profileInput" id="profileInput">
+                <ul>
+                <li><input type="firstname" class="profileInfo" id ="p-f" placeholder="firstname"></li>
+                <li><input type="lastname" class="profileInfo" id="p-l" placeholder="lastname"></li>
+                <li><input type="address" class="profileInfo" id="p-add" placeholder="address"></li>
+                <li><b3 class="profileInfo">Please enter birthday as MM/DD/YYYY</h3></li>
+                <li><input type="birthday" class="profileInfo" id="p-bd" placeholder="birthday" minlength="10"></li>
+                <li><button type="button" onclick=updateProfile()>Submit</button> 
+                </ul>
+            </div>
+        </div>
+
         <!-- * OTP -->
         <div class="otp-container" hidden>
             <form action="/" method="POST" id="otp-form">
