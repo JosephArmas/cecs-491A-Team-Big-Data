@@ -73,7 +73,8 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ViewReportsAsync([FromBody] Reports reports)
         {
-            var result = await _reputationManager.ViewUserReportsAsync(reports.UserID).ConfigureAwait(false);  
+            Console.WriteLine("Partition: " + reports.ButtonCommand);
+            var result = await _reputationManager.ViewUserReportsAsync(reports.UserID, reports.ButtonCommand).ConfigureAwait(false);  
             
             if(!result.isSuccessful)
             {

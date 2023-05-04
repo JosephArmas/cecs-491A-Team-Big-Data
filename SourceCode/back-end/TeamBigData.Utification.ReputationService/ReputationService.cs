@@ -34,13 +34,13 @@ namespace TeamBigData.Utification.Services
             _logger = logger;
         }
 
-        public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, int amount)
+        public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, string buttonCommand)
         {
             DataResponse<List<Reports>> result = new DataResponse<List<Reports>>();
-            List<Reports> dataReports = new List<Reports>();            
-            var getReports = await _selectReports.SelectUserReportsAsync(user).ConfigureAwait(false);
+            List<Reports> dataReports = new List<Reports>();
+            int amount = 0;
 
-            Console.WriteLine("If the row exists -> " + getReports.data.Tables[0].Rows.Count);
+            var getReports = await _selectReports.SelectUserReportsAsync(user).ConfigureAwait(false);
 
             if(!getReports.isSuccessful)
             {
@@ -48,17 +48,27 @@ namespace TeamBigData.Utification.Services
                 return result;
             }
 
+            if(buttonCommand == "Next" && amount <= getReports.data.Tables[0].Rows.Count)
+            {
+                amount += 5;
+            }
+            else if(buttonCommand == "Previous" && amount >= 5)
+            {
+                amount -= 5;
+            }
+
             IEnumerable<DataRow> data = getReports.data.Tables[0].AsEnumerable();
             int start = 0 + amount;
             int max = 5 + amount;
-            Range range = new Range(start, max);            
+            Range range = new Range(start, max);
+            Console.WriteLine(range.ToString());
 
             foreach (DataRow report in data.Take(range))
             {
                 Reports reports = new();
                 reports.Rating = Decimal.ToDouble((decimal)report["rating"]);
                 reports.Feedback = (string)report["feedback"];
-                reports.CreateDate = ((DateTime)report["createDate"]).Date.ToString();
+                reports.CreateDate = ((DateTime)report["createDate"]).ToUniversalTime().ToShortDateString().ToString();
                 reports.ReportingUserID = (int)report["reportingUserID"];
                 dataReports.Add(reports);                    
             }

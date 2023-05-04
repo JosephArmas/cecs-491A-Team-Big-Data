@@ -47,12 +47,12 @@ namespace TeamBigData.Utification.Manager
             return _result;
         }
 
-        public async Task<DataResponse<List<Reports>>> ViewUserReportsAsync(int user)
+        public async Task<DataResponse<List<Reports>>> ViewUserReportsAsync(int user, string btnCommand)
         {
             Log getReportsLog;
             DataResponse<List<Reports>> result = new DataResponse<List<Reports>>();
 
-            var getReports = await _reputationService.GetUserReportsAsync(user, 0).ConfigureAwait(false);
+            var getReports = await _reputationService.GetUserReportsAsync(user, btnCommand).ConfigureAwait(false);
 
             if(!getReports.isSuccessful)
             {

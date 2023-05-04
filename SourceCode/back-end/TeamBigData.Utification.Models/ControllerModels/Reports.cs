@@ -13,5 +13,6 @@ namespace TeamBigData.Utification.Models.ControllerModels
         public string Feedback { get; set; }
         public string CreateDate { get; set; }
         public int ReportingUserID { get; set; }
+        public string ButtonCommand { get; set; }
     }
 }

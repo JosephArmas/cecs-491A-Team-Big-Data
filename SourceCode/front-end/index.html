@@ -61,10 +61,26 @@
                 <footer>&copy; 2023 Utification</footer>
             </div>
         </div>
+
+        <!--* Create Report View-->
+        <div class="create-report-container" hidden>
+            <div class="report-creation-header">
+                <header class="rating-instructions">Enter a rating from 0.0-5.0</header>
+            </div>
+            <form id="new-report-form">    
+                <div class="rating-box">
+                    <input type="text" id="new-rating" maxlength="3" required>
+                </div>
+                <div class="feedback-box">                        
+                    <textarea id="new-feedback" required></textarea>    
+                </div>
+                <button type="button" id="submit-report-btn">Submit Report</button>
+            </form>
+        </div>
         
         <!--* Reports/Reputation View-->
         <div class="reputation-reports-container" hidden>
-            <div class="header">
+            <div class="reputation-header">
                 <button type="button" id="map-return-button">Back</button>
             </div>
             <div class="reputation"></div>
