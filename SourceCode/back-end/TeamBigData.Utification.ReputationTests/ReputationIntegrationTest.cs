@@ -29,11 +29,13 @@ namespace TeamBigData.Utification.ReputationTests
             ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
             ReputationManager repMan = new ReputationManager(repSer, logger);
-            Report report = new Report(4.5, 1001, 1002, "This user's information is very accurate, lets go clean that area.");
+            // The report's user IDs vary upon the device and the users that are in the DB
+            Report report = new Report(0.5, 1010, 1011, "This user sucks.");
 
             // Act
             var act = repMan.RecordNewUserReportAsync(report, 4.2);
 
+            Console.WriteLine(act.Result.ErrorMessage);
             // Assert
             Assert.IsTrue(act.Result.IsSuccessful);
         }
@@ -51,7 +53,7 @@ namespace TeamBigData.Utification.ReputationTests
             ReputationManager repMan = new ReputationManager(repSer, logger);
             
             // Act
-            var getReports = repSer.GetUserReportsAsync(1001, 1);
+            var getReports = repSer.GetUserReportsAsync(1001, "");
               
 
             // Assert

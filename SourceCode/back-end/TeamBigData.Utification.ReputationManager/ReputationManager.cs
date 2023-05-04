@@ -144,10 +144,11 @@ namespace TeamBigData.Utification.Manager
 
             if (!newReputation.IsSuccessful)
             {
-                getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.CalculateNewUserReputation()",
-                                            "Data", "Failed to retrieve user's new calculated reputation");
+                Console.WriteLine("Failed to calculate reputation");
+                //getReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.CalculateNewUserReputation()",
+                                           // "Data", "Failed to retrieve user's new calculated reputation");
 
-                await _logger.Logs(getReputationLog).ConfigureAwait(false);
+                //await _logger.Logs(getReputationLog).ConfigureAwait(false);
 
                 return _result;
             }            
@@ -160,7 +161,9 @@ namespace TeamBigData.Utification.Manager
             var updateReputation = await _reputationService.UpdateReputationAsync(report._reportedUser, _userProfile._reputation).ConfigureAwait(false);
             if (!updateReputation.IsSuccessful)
             {
+                Console.WriteLine("Failed to update reputation");
                 _result.IsSuccessful = false;
+                _result.ErrorMessage = updateReputation.ErrorMessage;
                 //updateReputationLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.UpdateReputation()", "Data Store", "Failed to update user's reputation");
 
                 //await _logger.Logs(updateReputationLog).ConfigureAwait (false);
@@ -187,6 +190,7 @@ namespace TeamBigData.Utification.Manager
 
                 if(!updateRole.IsSuccessful)
                 {
+                    Console.WriteLine("Failed to update role");
                     updateRoleLog = new Log(1, "Error", _userAccount._userHash, "ReputationServices.UpdateRoleAsync()", "Data Store", $"Failed to update users role to {role}");
                     await _logger.Logs(updateRoleLog).ConfigureAwait (false);
 
@@ -202,6 +206,7 @@ namespace TeamBigData.Utification.Manager
             var storeReport = await _reputationService.StoreNewReportAsync(report).ConfigureAwait(false);
             if (!storeReport.IsSuccessful)
             {
+                Console.WriteLine("Failed to Store Report");
                 storeReportLog = new Log(1,"Error",_userAccount._userHash,"ReputationServices.StoreNewReport()","Data Store","Failed to store new report of the reported user");
                 await _logger.Logs(storeReportLog).ConfigureAwait (false);
 
