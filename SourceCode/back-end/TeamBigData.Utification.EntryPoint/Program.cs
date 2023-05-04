@@ -26,6 +26,9 @@ using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.ServiceOfferingsManagers;
+using TeamBigData.Utification.ServiceOfferingsServices;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.UserServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +106,16 @@ builder.Services.AddTransient<PinManager>();
 builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<FileService>();
 builder.Services.AddTransient<FileManager>();
+
+//Service Offering dependencies
+builder.Services.AddDbContext<IServicesDBInserter,ServicesSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IServicesDBSelecter, ServicesSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IServicesDBUpdater, ServicesSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<ServiceOfferingService>();
+builder.Services.AddTransient<ServiceRequestService>();
+builder.Services.AddTransient<ServiceOfferingManager>();
+builder.Services.AddTransient<ServiceRequestManager>();
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

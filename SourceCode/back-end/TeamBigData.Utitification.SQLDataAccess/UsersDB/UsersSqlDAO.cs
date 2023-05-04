@@ -523,5 +523,60 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             }
             return response;
         }
+        public async Task<Response> UpdateServiceRole(int userid)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Response();
+
+                var insertSql = "UpdateRoleService";
+                var command = new SqlCommand(insertSql, connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@ID", userid));
+
+                try
+                {
+                    result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                }
+                catch (Microsoft.Data.SqlClient.SqlException e)
+                {
+                    result.errorMessage = e.ToString();
+                    result.isSuccessful = false;
+                    result.data = 0;
+                }
+                return result;
+            }
+
+        }
+
+        public async Task<Response> UpdateRemoveServiceRole(int userid)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Response();
+
+                var insertSql = "UpdateRemoveServiceRole";
+                var command = new SqlCommand(insertSql, connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@ID", userid));
+
+                try
+                {
+                    result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                }
+                catch (Microsoft.Data.SqlClient.SqlException e)
+                {
+                    result.errorMessage = e.ToString();
+                    result.isSuccessful = false;
+                    result.data = 0;
+                }
+                return result;
+            }
+
+        }
     }
 }

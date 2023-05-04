@@ -19,6 +19,7 @@
     <ProjectReference Include="..\TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.UserServicesManager\TeamBigData.Utification.ServiceOfferingsManagers.csproj" />
   </ItemGroup>
 
 </Project>
