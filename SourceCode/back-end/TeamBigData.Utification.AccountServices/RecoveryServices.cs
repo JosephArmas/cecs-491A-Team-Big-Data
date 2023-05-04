@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.SQLDataAccess.DTO;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
@@ -18,11 +19,11 @@ namespace TeamBigData.Utification.AccountServices
         private readonly IUsersDBInserter _userDBInserter;
         private readonly IUsersDBUpdater _userDBUpdater;
 
-        public RecoveryServices(IUsersDBSelecter usersDBSelecter, IUsersDBInserter usersDBInserter, IUsersDBUpdater usersDBUpdater)
+        public RecoveryServices(UsersSqlDAO usersSqlDAO)
         {
-            _usersDBSelecter = usersDBSelecter;
-            _userDBInserter = usersDBInserter;
-            _userDBUpdater = usersDBUpdater;
+            _usersDBSelecter = usersSqlDAO;
+            _userDBInserter = usersSqlDAO;
+            _userDBUpdater = usersSqlDAO;
         }
 
         public async Task<Response> RequestRecoveryNewPassword(String username, String password)
@@ -30,9 +31,9 @@ namespace TeamBigData.Utification.AccountServices
             // validate is a user
             var userAccount = await _usersDBSelecter.SelectUserAccount(username).ConfigureAwait(false);
 
-            if (!userAccount.isSuccessful)
+            if (!userAccount.IsSuccessful)
             {
-                return new Response(false, userAccount.errorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}");
+                return new Response(false, userAccount.ErrorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}");
             }
 
             // Make salt and digest
@@ -40,15 +41,15 @@ namespace TeamBigData.Utification.AccountServices
             var digest = SecureHasher.HashString(salt, password);
 
             // send a recovery request
-            var response = await _userDBInserter.InsertRecoveryRequest(userAccount.data._userID, digest, salt).ConfigureAwait(false);
+            var response = await _userDBInserter.InsertRecoveryRequest(userAccount.Data.UserID, digest, salt).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                return new Response(false, response.errorMessage + ", {failed: _userDBInserter.InsertRecoveryRequest}");
+                return new Response(false, response.ErrorMessage + ", {failed: _userDBInserter.InsertRecoveryRequest}");
             }
             else
             {
-                return new Response(true, response.errorMessage);
+                return new Response(true, response.ErrorMessage);
             }
         }
 
@@ -56,14 +57,14 @@ namespace TeamBigData.Utification.AccountServices
         {
             var dataResponse = await _usersDBSelecter.SelectRecoveryRequestsTable().ConfigureAwait(false);
 
-            if (!dataResponse.isSuccessful)
+            if (!dataResponse.IsSuccessful)
             {
-                dataResponse.isSuccessful = false;
-                dataResponse.errorMessage += ", {failed: _usersDBSelecter.SelectRecoveryRequestsTable}";
+                dataResponse.IsSuccessful = false;
+                dataResponse.ErrorMessage += ", {failed: _usersDBSelecter.SelectRecoveryRequestsTable}";
             }
             else
             {
-                dataResponse.isSuccessful = true;
+                dataResponse.IsSuccessful = true;
             }
 
             return dataResponse;
@@ -73,24 +74,24 @@ namespace TeamBigData.Utification.AccountServices
         {
             var validRecovery = await _usersDBSelecter.SelectRecoveryUser(userID).ConfigureAwait(false);
 
-            if (!validRecovery.isSuccessful)
+            if (!validRecovery.IsSuccessful)
             {
-                validRecovery.isSuccessful = false;
-                validRecovery.errorMessage += ", {failed: _usersDBSelecter.SelectRecoveryUser}"; 
+                validRecovery.IsSuccessful = false;
+                validRecovery.ErrorMessage += ", {failed: _usersDBSelecter.SelectRecoveryUser}"; 
                 return validRecovery;
             }
             
             var response = await _userDBUpdater.UpdateRecoveryFulfilled(userID).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                validRecovery.isSuccessful = false;
-                validRecovery.errorMessage += ", {failed: _userDBUpdater.UpdateRecoveryFulfilled}";
+                validRecovery.IsSuccessful = false;
+                validRecovery.ErrorMessage += ", {failed: _userDBUpdater.UpdateRecoveryFulfilled}";
                 return validRecovery;
             }
             else
             {
-                validRecovery.isSuccessful = true;
+                validRecovery.IsSuccessful = true;
             }
 
             return validRecovery;
@@ -100,15 +101,15 @@ namespace TeamBigData.Utification.AccountServices
         {
             var response = await _userDBUpdater.UpdateUserPassword(userID, password, salt).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _userDBUpdater.UpdateUserPassword}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _userDBUpdater.UpdateUserPassword}";
                 return response;
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
             }
 
             return response;

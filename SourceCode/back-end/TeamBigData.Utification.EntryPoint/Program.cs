@@ -7,6 +7,8 @@ using Microsoft.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.FileServices;
+using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
@@ -23,6 +25,7 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+using TeamBigData.Utification.ErrorResponse;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +99,10 @@ builder.Services.AddDbContext<IPinDBUpdater, PinsSqlDAO>(options => options.UseS
 builder.Services.AddTransient<PinService>();
 builder.Services.AddTransient<PinManager>();
 
+//File dependencies
+builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<FileService>();
+builder.Services.AddTransient<FileManager>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

@@ -2,7 +2,7 @@ using TeamBigData.Utification.AccountServices;
 using System.Diagnostics;
 using TeamBigData.Utification.ErrorResponse;
 
-namespace TeamBigData.Utification.Registration.Test
+namespace TeamBigData.Utification.RegistrationTests
 {
     [TestClass]
     public class RegistrationTests
@@ -11,11 +11,9 @@ namespace TeamBigData.Utification.Registration.Test
         [TestMethod]
         public void ChecksInvalidPassphraseCharacters()
         {
-            //Arrange
-            InputValidation valid = new InputValidation();
-            String password = "pa$$w*rd";
+            string password = "pa$$w*rd";
             //Act
-            bool actual = valid.IsValidPassword(password);
+            bool actual = InputValidation.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -25,9 +23,9 @@ namespace TeamBigData.Utification.Registration.Test
         {
             //Arrange
             InputValidation valid = new InputValidation();
-            String password = "pass word";
+            string password = "pass word";
             //Act
-            bool actual = valid.IsValidPassword(password);
+            bool actual = InputValidation.IsValidPassword(password);
             //Assert
             Assert.IsTrue(actual);
         }
@@ -37,9 +35,9 @@ namespace TeamBigData.Utification.Registration.Test
         {
             //Arrange
             InputValidation valid = new InputValidation();
-            String password = "123";
+            string password = "123";
             //Act
-            bool actual = valid.IsValidPassword(password);
+            bool actual = InputValidation.IsValidPassword(password);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -49,9 +47,9 @@ namespace TeamBigData.Utification.Registration.Test
         {
             //Arrange
             InputValidation valid = new InputValidation();
-            String email = "pa$$w*rd@yahoo.com";
+            string email = "pa$$w*rd@yahoo.com";
             //Act
-            bool actual = valid.IsValidEmail(email);
+            bool actual = InputValidation.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }
@@ -62,9 +60,9 @@ namespace TeamBigData.Utification.Registration.Test
 
             //Arrange
             InputValidation valid = new InputValidation();
-            String email = "email.email";
+            string email = "email.email";
             //Act
-            bool actual = valid.IsValidEmail(email);
+            bool actual = InputValidation.IsValidEmail(email);
             //Assert
             Assert.IsFalse(actual);
         }

@@ -3,19 +3,12 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using System.Security.Principal;
 using TeamBigData.Utification.Manager.Abstractions;
 
 namespace Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-    public class RequestBody
-    {
-        public int _userID { get; set; }
-        public String _username { get; set; }
-        public String _newPassword { get; set; }
-        public String _userhash { get; set; }
-    }
 
     [ApiController]
     [Route("[controller]")]
@@ -39,18 +32,18 @@ namespace Utification.EntryPoint.Controllers
 
 
             // Make recovery request
-            var response = await _securityManager.RecoverAccountPassword(user._username, user._newPassword, user._userhash).ConfigureAwait(false);
+            var response = await _securityManager.RecoverAccountPassword(user.Username, user.NewPassword, user.Userhash).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _securityManager.RecoverAccount}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _securityManager.RecoverAccount}";
 
-                return Conflict(response.errorMessage);
+                return Conflict(response.ErrorMessage);
             }
             else
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
 
             /*
@@ -77,15 +70,15 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> GetRequests([FromBody] RequestBody user)
         {
             // Validate user to be admin
-            var dataResponse = await _securityManager.GetRecoveryRequests(user._userhash).ConfigureAwait(false);
+            var dataResponse = await _securityManager.GetRecoveryRequests(user.Userhash).ConfigureAwait(false);
 
-            if (!dataResponse.isSuccessful)
+            if (!dataResponse.IsSuccessful)
             {
-                return Conflict(dataResponse.errorMessage + ", {failed: _securityManager.GetRecoveryRequests}");
+                return Conflict(dataResponse.ErrorMessage + ", {failed: _securityManager.GetRecoveryRequests}");
             }
             else
             {
-                return Ok(dataResponse.data);
+                return Ok(dataResponse.Data);
             }
             /*var tcs = new TaskCompletionSource<IActionResult>();
             //var manager = new SecurityManager();
@@ -109,14 +102,14 @@ namespace Utification.EntryPoint.Controllers
             // Validate user
             // Validate inputs
             // Reset account
-            var response = await _securityManager.ResetAccount(body._userID,body._userhash).ConfigureAwait(false);
-            if (!response.isSuccessful)
+            var response = await _securityManager.ResetAccount(body.UserID,body.Userhash).ConfigureAwait(false);
+            if (!response.IsSuccessful)
             {
-                return Conflict(response.errorMessage);
+                return Conflict(response.ErrorMessage);
             }
             else 
             { 
-                return Ok(response.errorMessage); 
+                return Ok(response.ErrorMessage); 
             }
             /*
             //var manager = new SecurityManager();

@@ -8,11 +8,11 @@ using TeamBigData.Utification.DeletionService;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 
-namespace TeamBigData.Utification.Manager
+namespace TeamBigData.Utification.DeletionManager
 {
     public class DeletionManager
     {
-        
+
         /// <summary>
         /// Takes in 2 user accounts to check if valid and delete the second
         /// </summary>
@@ -27,8 +27,8 @@ namespace TeamBigData.Utification.Manager
             }
             IDeletionService deletionService = new AccDeletionService(del);
             var answer = new Response();
-            
-            if ((user._userID == del._userID) || isAdmin())
+
+            if (user._userID == del._userID || isAdmin())
             {
                 Task<Response> taskF = deletionService.DeletePIIFeatures();
                 Task<Response> taskP = deletionService.DeletePIIProfile();
@@ -48,7 +48,7 @@ namespace TeamBigData.Utification.Manager
                 answer.errorMessage = err;
                 answer.data = 0;
             }
-            
+
             return answer;
         }
 

@@ -4,66 +4,51 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Cryptography;
 using System.Security.Principal;
 
-namespace TeamBigData.Utification.EntryPoint.Controllers
+namespace Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-
-
     [ApiController]
     [Route("[controller]")]
 
     public class AccountController : ControllerBase
     {
-        // TODO: Need to take out of Controller and put into different file
-        // Taking it out will break current code
-
-        [BindProperties]
-        public class IncomingUser
-        {
-            public String _username { get; set; }
-            public String _password { get; set; }
-        }
-
         private readonly SecurityManager _securityManager;
         private readonly IConfiguration _configuration;
-        private readonly InputValidation _inputValidation;
 
         // TODO: variables to pull from jwt
 
-        public AccountController(IConfiguration configuration,SecurityManager securityManager, InputValidation inputValidation)
+        public AccountController(IConfiguration configuration, SecurityManager securityManager)
         {
             _securityManager = securityManager;
             _configuration = configuration;
-            _inputValidation = inputValidation;
         }
 
         [Route("authentication")]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody]IncomingUser login)
+        public async Task<IActionResult> Login([FromBody] IncomingUser login)
         {
 
 
             // Validate user role
             // Validate inputs
-            if (!await _inputValidation.IsValidEmail(login._username).ConfigureAwait(false) || !await _inputValidation.IsValidPassword(login._password).ConfigureAwait(false))
+            if (!InputValidation.IsValidEmail(login.Username) || !InputValidation.IsValidPassword(login.Password))
             {
                 return Conflict("Invalid credentials provided. Retry again or contact system administrator");
             }
 
             // Check if user is a user
 
-            var userhash = SecureHasher.HashString(login._username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+            var userhash = SecureHasher.HashString(login.Username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
 
-            var dataResponse = await _securityManager.LoginUser(login._username, login._password, userhash).ConfigureAwait(false);
-            if (!dataResponse.isSuccessful)
+            var dataResponse = await _securityManager.LoginUser(login.Username, login.Password, userhash).ConfigureAwait(false);
+            if (!dataResponse.IsSuccessful)
             {
-                return Conflict(dataResponse.errorMessage + ", {failed: _securityManager.LoginUser}");
+                return Conflict(dataResponse.ErrorMessage + ", {failed: _securityManager.LoginUser}");
             }
 
             // Create JWT
@@ -74,13 +59,13 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             //Token specifications
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, dataResponse.data._userId.ToString()),
-                new Claim(ClaimTypes.Name, dataResponse.data._username),
-                new Claim(ClaimTypes.Role, dataResponse.data._role),
+                new Claim(ClaimTypes.NameIdentifier, dataResponse.Data.UserId.ToString()),
+                new Claim(ClaimTypes.Name, dataResponse.Data.Username),
+                new Claim(ClaimTypes.Role, dataResponse.Data.Role),
                 new Claim("authenticated", "true", ClaimValueTypes.String),
-                new Claim("otp", dataResponse.data._otp, ClaimValueTypes.String),
-                new Claim("otpCreated", dataResponse.data._otpCreated, ClaimValueTypes.String),
-                new Claim("userhash", dataResponse.data._userhash, ClaimValueTypes.String)
+                new Claim("otp", dataResponse.Data.Otp, ClaimValueTypes.String),
+                new Claim("otpCreated", dataResponse.Data.OtpCreated, ClaimValueTypes.String),
+                new Claim("userhash", dataResponse.Data.Userhash, ClaimValueTypes.String)
             };
 
 
@@ -98,7 +83,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             return Ok(tokenHandler.WriteToken(token));
         }
 
-        
+
         [Route("authentication")]
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -108,24 +93,40 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
         [Route("registration")]
         [HttpPost]
-        public async Task<IActionResult> CreateAccount([FromBody]IncomingUser newAccount)
+        public async Task<IActionResult> CreateAccount([FromBody] IncomingUser newAccount)
         {
 
             // TODO: Decrypt incoming encryptedpassword with incoming key
             // TODO: Validate they are an anonymous user from jwt key
             //          If no JWT in Authentication header the  user is anonymous 
 
-            var userhash = SecureHasher.HashString(newAccount._username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+            var userhash = SecureHasher.HashString(newAccount.Username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
 
-            var response = await _securityManager.RegisterUser(newAccount._username,  newAccount._password, userhash).ConfigureAwait(false);
-            if(response.isSuccessful)
+            var response = await _securityManager.RegisterUser(newAccount.Username, newAccount.Password, userhash).ConfigureAwait(false);
+            if (response.IsSuccessful)
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
             else
             {
-                return Conflict(response.errorMessage + ", {failed:_securityManager.RegisterUser}");
+                return Conflict(response.ErrorMessage + ", {failed:_securityManager.RegisterUser}");
             }
+        }
+
+        [Route("delete")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteAccount([FromBody] IncomingUser login)
+        {
+            // TODO: Validate if is  this user or an admin
+
+            // Do action
+            var response = await _securityManager.DeleteUser(login.Username).ConfigureAwait(false);
+            if (!response.IsSuccessful)
+            {
+                return Conflict(response.ErrorMessage + ", {failed: _securityManager.DeleteUser}");
+            }
+
+            return Ok(response.ErrorMessage);
         }
     }
 }

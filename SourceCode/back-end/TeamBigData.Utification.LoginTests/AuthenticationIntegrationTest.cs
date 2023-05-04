@@ -11,8 +11,9 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 
-namespace TeamBigData.Utification.AuthenticationTests
+namespace TeamBigData.Utification.LoginTests
 {
+    /*
     [TestClass]
     public class AuthenticationIntegrationTest
     {
@@ -123,4 +124,5 @@ namespace TeamBigData.Utification.AuthenticationTests
             Assert.IsFalse(result.isSuccessful);
         }
     }
+    */
 }

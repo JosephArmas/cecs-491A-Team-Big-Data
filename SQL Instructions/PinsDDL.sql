@@ -7,8 +7,9 @@ lng varchar(50),
 pinType int,
 "description" varchar(MAX),
 "disabled" int DEFAULT 0,
-completed int DEFAULT 0,
-dateCreated DateTime default DateTime.Now(),
-dateLastModified DateTime default DateTime.Now(),
+dateCreated DateTime default GETUTCDATE(),
+dateLastModified DateTime default GETUTCDATE(),
 userLastModified int
+CONSTRAINT Pins_PK PRIMARY KEY (pinID),
+CONSTRAINT Pins_UK UNIQUE (lat, lng)
 );

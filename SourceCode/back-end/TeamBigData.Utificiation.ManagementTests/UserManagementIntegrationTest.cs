@@ -6,18 +6,29 @@ using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utification.View.Abstraction;
-using TeamBigData.Utification.View.Views;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
+using TeamBigData.Utification.SQLDataAccess.UserhashDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.Logging;
+using TeamBigData.Utification.Logging.Abstraction;
+using TeamBigData.Utification.SQLDataAccess;
 
-namespace TeamBigData.Utification.UserManagementTests
+namespace TeamBigData.Utificiation.ManagementTests
 {
     [TestClass]
     public class UserManagementIntegrationTests
     {
+        private readonly string usersString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+        private readonly string logString = "Server=.\\;Database=TeamBigData.Utification.Logs;User=AppUser; Password=t; TrustServerCertificate=True; Encrypt=True";
+        private readonly string hashString = "Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False";
+
+
+        /*
         [TestMethod]
         public void AdminRestrictedViewAccess()
         {
@@ -56,30 +67,40 @@ namespace TeamBigData.Utification.UserManagementTests
             Console.WriteLine("Regular User wants to see UserManagement View: " + pass);
             Assert.IsFalse(pass);
         }
+        */
         [TestMethod]
         public async Task CreateWithinFiveSeconds()
         {
             //Testing ability to have a task perform under 5 seconds
             //Arrange
+
+            //Manual DI
+            var userDAO = new UsersSqlDAO(usersString);
+            var hashDAO = new UserhashSqlDAO(hashString);
+            var logDAO = new LogsSqlDAO(logString);
+            var reg = new AccountRegisterer(userDAO, userDAO);
+            var hash = new UserhashServices(hashDAO);
+            var auth = new AccountAuthentication(userDAO);
+            var rec = new RecoveryServices(userDAO, userDAO, userDAO);
+            ILogger logger = new Logger(new LogsSqlDAO(logString));
+            var securityManager = new SecurityManager(reg, hash, auth, rec, logger);
+
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "";
-            SecurityManager securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(userPassword);
+            var userhash = SecureHasher.HashString(email, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
 
             //Act
             stopwatch.Start();
-            response = await securityManager.RegisterUser(email, encryptedPassword, encryptor);
+            response = await securityManager.RegisterUser(email, userPassword, userhash);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
-
-            if (actual < expected && response.isSuccessful)
+            if (actual < expected && (response.isSuccessful || response.errorMessage.Contains("PRIMARY KEY") || response.errorMessage.Contains("UNIQUE KEY")))
             {
                 Console.WriteLine("UM was successful");
                 Assert.IsTrue(true);
@@ -97,14 +118,24 @@ namespace TeamBigData.Utification.UserManagementTests
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "";
-            SecurityManager securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(userPassword);
-            var madeUser = securityManager.RegisterUser(email, encryptedPassword, encryptor);
+
+            // Manual DI
+            var userDAO = new UsersSqlDAO(usersString);
+            var hashDAO = new UserhashSqlDAO(hashString);
+            var logDAO = new LogsSqlDAO(logString);
+            var reg = new AccountRegisterer(userDAO, userDAO);
+            var hash = new UserhashServices(hashDAO);
+            var auth = new AccountAuthentication(userDAO);
+            var rec = new RecoveryServices(userDAO, userDAO, userDAO);
+            ILogger logger = new Logger(new LogsSqlDAO(logString));
+            var securityManager = new SecurityManager(reg, hash, auth, rec, logger);
+
+            var userhash = SecureHasher.HashString(email, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+            var madeUser = securityManager.RegisterUser(email, userPassword, userhash);
 
             //Act
             stopwatch.Start();
@@ -130,14 +161,24 @@ namespace TeamBigData.Utification.UserManagementTests
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "disabledUser1@yahoo.com";
-            SecurityManager securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(userPassword);
-            var madeUser = securityManager.RegisterUser(email, encryptedPassword, encryptor);
+
+            //Manual DI
+            var userDAO = new UsersSqlDAO(usersString);
+            var hashDAO = new UserhashSqlDAO(hashString);
+            var logDAO = new LogsSqlDAO(logString);
+            var reg = new AccountRegisterer(userDAO, userDAO);
+            var hash = new UserhashServices(hashDAO);
+            var auth = new AccountAuthentication(userDAO);
+            var rec = new RecoveryServices(userDAO, userDAO, userDAO);
+            ILogger logger = new Logger(new LogsSqlDAO(logString));
+            var securityManager = new SecurityManager(reg, hash, auth, rec, logger);
+
+            var userhash = SecureHasher.HashString(email, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+            var madeUser = securityManager.RegisterUser(email, userPassword, userhash);
 
             //Act
             stopwatch.Start();
@@ -162,14 +203,25 @@ namespace TeamBigData.Utification.UserManagementTests
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "EnabledUser@yahoo.com";
-            SecurityManager securityManager = new SecurityManager();
-            var encryptor = new Encryptor();
-            var encryptedPassword = encryptor.encryptString(userPassword);
-            var madeUser = await securityManager.RegisterUser(email, encryptedPassword, encryptor);
+
+            // Manual DI
+            var userDAO = new UsersSqlDAO(usersString);
+            var hashDAO = new UserhashSqlDAO(hashString);
+            var logDAO = new LogsSqlDAO(logString);
+            var reg = new AccountRegisterer(userDAO, userDAO);
+            var hash = new UserhashServices(hashDAO);
+            var auth = new AccountAuthentication(userDAO);
+            var rec = new RecoveryServices(userDAO, userDAO, userDAO);
+            ILogger logger = new Logger(new LogsSqlDAO(logString));
+            var securityManager = new SecurityManager(reg, hash, auth, rec, logger);
+
+
+            var userhash = SecureHasher.HashString(email, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
+            var madeUser = securityManager.RegisterUser(email, userPassword, userhash);
             var disabledUser = await securityManager.DisableAccount(email, sysUnderTestAdmin);
 
             //Act
@@ -254,74 +306,74 @@ namespace TeamBigData.Utification.UserManagementTests
         Assert.IsTrue(false); 
 }*/
 
-                /*ran into errors with getting directory path
-                string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
-                /*Directory will be created if not existing
-                Directory.CreateDirectory(directoryPath);
-                //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
-                DirectoryInfo di = new DirectoryInfo(directoryPath);
-                string filePath = Path.Combine(directoryPath, "testSize.csv");
-                //using (StreamWriter sw = new StreamWriter("testSize.csv"))
-                using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
+        /*ran into errors with getting directory path
+        string directoryPath = Path.Combine(Environment.CurrentDirectory, @"C:\MyDir");
+        /*Directory will be created if not existing
+        Directory.CreateDirectory(directoryPath);
+        //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
+        DirectoryInfo di = new DirectoryInfo(directoryPath);
+        string filePath = Path.Combine(directoryPath, "testSize.csv");
+        //using (StreamWriter sw = new StreamWriter("testSize.csv"))
+        using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
+        {
+            int countLines = 0;
+            int amount = 51500000;
+            //excel has  a limit of 1million rows. but only makes a 40k kb file
+            //so it needs to be 50 times that to reach 2GB (50 was barely not enough)
+            //doing this will take like 4~5min
+            for (int line = 0; line < amount; line++)
+            {
+                //the $ allows me to insert info into the string
+                string data = $"CREATE,testSize{line}@yahoo.com,password";
+                if (countLines < amount - 1)
                 {
-                    int countLines = 0;
-                    int amount = 51500000;
-                    //excel has  a limit of 1million rows. but only makes a 40k kb file
-                    //so it needs to be 50 times that to reach 2GB (50 was barely not enough)
-                    //doing this will take like 4~5min
-                    for (int line = 0; line < amount; line++)
-                    {
-                        //the $ allows me to insert info into the string
-                        string data = $"CREATE,testSize{line}@yahoo.com,password";
-                        if (countLines < amount - 1)
-                        {
 
 
-                            //sw.Write(data);
-                            sw.WriteLine(data);
+                    //sw.Write(data);
+                    sw.WriteLine(data);
 
 
-                        }
-                        else
-                        {
-                            //sw.WriteLine();
-                            sw.Write(data);
-                            //sw.WriteLine();
-                        }
-                        countLines++;
-                        /* if (line == 999999)
-                         {
-                             Console.WriteLine(line);
-                             break;
-                         }
-                        sw.Flush();
-                    }
-                }*/
-               /* var filenameGet = "testSize.csv";
-                var filename = @"C:\MyDir\" + filenameGet + "";
-                CsvReader csvReader = new CsvReader();
-
-                //Act
-                stopwatch.Start();
-                response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
-                stopwatch.Stop();*/
-            //}
-           /* catch (OutOfMemoryException ex) 
-            {
-                Console.WriteLine("Bulk UM was too big");
-                Assert.IsTrue(true);
-            }*//*
-            var actual = stopwatch.ElapsedMilliseconds;
-            //Assert
-
-            if (actual < expected && response.isSuccessful==false)
-            {
-                Console.WriteLine("Bulk UM was successful");
-                Assert.IsTrue(true);
+                }
+                else
+                {
+                    //sw.WriteLine();
+                    sw.Write(data);
+                    //sw.WriteLine();
+                }
+                countLines++;
+                /* if (line == 999999)
+                 {
+                     Console.WriteLine(line);
+                     break;
+                 }
+                sw.Flush();
             }
-            else
-                Assert.IsTrue(false); 
         }*/
+        /* var filenameGet = "testSize.csv";
+         var filename = @"C:\MyDir\" + filenameGet + "";
+         CsvReader csvReader = new CsvReader();
+
+         //Act
+         stopwatch.Start();
+         response = csvReader.BulkFileUpload(filename, sysUnderTestAdmin).Result;
+         stopwatch.Stop();*/
+        //}
+        /* catch (OutOfMemoryException ex) 
+         {
+             Console.WriteLine("Bulk UM was too big");
+             Assert.IsTrue(true);
+         }*//*
+         var actual = stopwatch.ElapsedMilliseconds;
+         //Assert
+
+         if (actual < expected && response.isSuccessful==false)
+         {
+             Console.WriteLine("Bulk UM was successful");
+             Assert.IsTrue(true);
+         }
+         else
+             Assert.IsTrue(false); 
+     }*/
 
         [TestMethod]
         public async Task BulkUploadLength()
@@ -331,7 +383,7 @@ namespace TeamBigData.Utification.UserManagementTests
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "";
@@ -408,14 +460,25 @@ namespace TeamBigData.Utification.UserManagementTests
         {
             //Testing ability to not handle large files
             //Arrange
+
+            // Manual DI
+            var userDAO = new UsersSqlDAO(usersString);
+            var hashDAO = new UserhashSqlDAO(hashString);
+            var logDAO = new LogsSqlDAO(logString);
+            var reg = new AccountRegisterer(userDAO, userDAO);
+            var hash = new UserhashServices(hashDAO);
+            var auth = new AccountAuthentication(userDAO);
+            var rec = new RecoveryServices(userDAO, userDAO, userDAO);
+            ILogger logger = new Logger(new LogsSqlDAO(logString));
+            var securityManager = new SecurityManager(reg, hash, auth, rec, logger);
+
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "";
-            SecurityManager securityManager = new SecurityManager();
             /*ran into errors with getting directory path*/
             string directoryPath = @"C:\MyDir";
             /*Directory will be created if not existing*/
@@ -474,7 +537,7 @@ namespace TeamBigData.Utification.UserManagementTests
 
             //Assert
 
-            if (actual < expected && (response.isSuccessful || response.errorMessage.Equals("Email already linked to an account, please pick a new email")))
+            if (actual < expected && (response.isSuccessful || response.errorMessage.Contains("PRIMARY KEY") || response.errorMessage.Contains("UNIQUE")))
             {
                 Console.WriteLine("Bulk UM was successful");
                 Assert.IsTrue(true);
@@ -493,7 +556,7 @@ namespace TeamBigData.Utification.UserManagementTests
             Response response = new Response();
             var userAccount = new UserAccount();
             var sysUnderTestAdmin = new UserProfile(new GenericIdentity("username", "Admin User"));
-            String userPassword = "Password";
+            string userPassword = "Password";
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "";

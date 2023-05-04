@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="styles/registration.css">
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/recovery.css">
+        <link rel="stylesheet" href="styles/profile.css">
     </head>
     <body>
         <div id="test-data"></div>
@@ -39,10 +40,10 @@
                 <div class="title">
                     <h1>Utification</h1>
                 </div>
-                <div class="profile-container">
+                <div class="header-container">
                     <div>
                         <!-- to not be bloated have a ajax call for the profile-nav -->
-                        <button type="button" id="profileBtn">Profile</button>
+                        <button type="button" id="profileBtn" onclick="profileClicked()">Profile</button>
                     </div>
                     <div>
                         <button type="button" id="home-logoutBtn" onclick="homeClicked()">Logout</button>
@@ -183,7 +184,7 @@
             </div>
             <div class="content-container">
                 <div class="box-1">
-                    <img src="blank image.jpg" style="height:100%; width:100%; object-fit:contain">
+
                 </div>
                 <div class="box-2" id="file-container">
                 </div> 
@@ -207,6 +208,7 @@
         <script src="sources/otp/recOTP.js"></script>
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/fileUpload/file.js"></script>
+        <script src="sources/profile/profile.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>
