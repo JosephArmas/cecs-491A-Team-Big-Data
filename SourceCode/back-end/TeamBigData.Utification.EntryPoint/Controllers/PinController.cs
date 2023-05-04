@@ -7,6 +7,7 @@ using System.Security.Claims;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using TeamBigData.Utification.PinManagers;
 
 namespace Utification.EntryPoint.Controllers
@@ -15,18 +16,6 @@ namespace Utification.EntryPoint.Controllers
     [Route("[controller]")]
     public class PinController : ControllerBase
     {
-        [BindProperties]
-        public class Pins
-        {
-            public int _pinID {  get; set; }
-            public int _userID { get; set; }
-            public String _lat { get; set; }
-            public String _lng { get; set; }
-            public int _pinType { get; set; }
-            public String _description { get; set; }
-            public String _userhash { get; set; }
-        }
-
         private readonly PinManager _pinManager;
         public PinController(PinManager pinManager)
         {
@@ -43,7 +32,6 @@ namespace Utification.EntryPoint.Controllers
             HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
             string clean = authorizationToken;
             clean = clean.Remove(0, 7);
-
             // get role from JWT signature
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(clean);
@@ -80,14 +68,14 @@ namespace Utification.EntryPoint.Controllers
             Pin pin = new Pin(newPin._userID, newPin._lat, newPin._lng, newPin._pinType, newPin._description);
 
             var result = await _pinManager.SaveNewPin(pin,newPin._userhash).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += ", {failed: _pinManager.SaveNewPin}";
-                return Conflict(result.errorMessage);
+                result.ErrorMessage += ", {failed: _pinManager.SaveNewPin}";
+                return Conflict(result.ErrorMessage);
             }
             else 
             { 
-                return Ok(result.errorMessage); 
+                return Ok(result.ErrorMessage); 
             }
         }
 
@@ -99,74 +87,74 @@ namespace Utification.EntryPoint.Controllers
             // TODO: Validate user and pin inputs
 
             var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
-                return Conflict(result.errorMessage);
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
+                return Conflict(result.ErrorMessage);
             }
             else
             {
-                return Ok(result.errorMessage);
+                return Ok(result.ErrorMessage);
             }
         }
 
         [Route("ModifyPinContent")]
         [HttpPost]
-        public async Task<IActionResult> ModifyPinContent(Pins pin)
+        public async Task<IActionResult> ModifyPinContent([FromBody]Pins pin)
         {
             // TODO: Validate user and pin inputs
 
             var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, pin._userhash).ConfigureAwait(false);
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinManager.ChangePinContent}";
-                return Conflict(response.errorMessage);
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.ChangePinContent}";
+                return Conflict(response.ErrorMessage);
             }
             else
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
         }
 
 
         [Route("ModifyPinType")]
         [HttpPost]
-        public async Task<IActionResult> ModifyPinType(Pins pin)
+        public async Task<IActionResult> ModifyPinType([FromBody]Pins pin)
         {
             // TODO: Validate user and pin inputs
 
             var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, pin._userhash);
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinManager.ChangePinType}";
-                return Conflict(response.errorMessage);
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.ChangePinType}";
+                return Conflict(response.ErrorMessage);
             }
             else 
             { 
-                return Ok(response.errorMessage); 
+                return Ok(response.ErrorMessage); 
             }
         }
 
         [Route("DisablePin")]
         [HttpPost]
-        public async Task<IActionResult> DisablePin(Pins pin)
+        public async Task<IActionResult> DisablePin([FromBody] Pins pin)
         {
             // TODO: Validate user and pin inputs
 
             var response = await _pinManager.DisablePin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful=false;
-                response.errorMessage += ", {failed: _pinManager.DisablePin}";
-                return Conflict(response.errorMessage);
+                response.IsSuccessful =false;
+                response.ErrorMessage += ", {failed: _pinManager.DisablePin}";
+                return Conflict(response.ErrorMessage);
             }
             else
             { 
-                return Ok(response.errorMessage); 
+                return Ok(response.ErrorMessage); 
             }
         }
     }

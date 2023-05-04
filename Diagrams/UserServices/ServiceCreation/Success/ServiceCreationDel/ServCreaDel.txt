@@ -1,0 +1,80 @@
+title I’m a Service user, I want to stop being a Service provider
+
+actor User
+participant ServiceCreationView
+participant ServiceCreationController
+participant ServiceProviderManager
+participant ServProvService
+participant SqlDAO
+participant response
+participant datastore
+
+box over User:Precondition\nUser is in an authenticated session.\nUser is in Service creation view
+
+User->ServiceCreationView:User selects button element that says unregister
+activate ServiceCreationView
+User<--ServiceCreationView:Asks user if they really want to unregister for extra confirmation
+User->ServiceCreationView:User agrees to unregister service
+ServiceCreationView->ServiceCreationController:axios.post(JWT,Company:json):http response
+activate ServiceCreationController
+ServiceCreationController->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServiceCreationController<--response:return response object
+deactivate response
+ServiceCreationController->ServiceCreationController:JWTverification():bool
+ServiceCreationController->ServiceProviderManager:var ServManager = new ServiceProviderManager()
+activate ServiceProviderManager
+ServiceProviderManager->ServiceProviderManager:ctor()
+ServiceCreationController<--ServiceProviderManager:return ServiceProviderManager object
+deactivate ServiceProviderManager
+ServiceCreationController->ServiceProviderManager:ServManager.unregister(Company:Serv):response
+activate ServiceProviderManager
+ServiceProviderManager->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServiceProviderManager<--response:return response object
+deactivate response
+ServiceProviderManager->ServiceProviderManager:Checks security
+ServiceProviderManager->ServiceProviderManager:Checks business requirements
+ServiceProviderManager->ServiceProviderManager:Log unregister attempt
+ServiceProviderManager->ServProvService:var ServProviderService = new ServProvService
+activate ServProvService
+ServProvService->ServProvService:ctor()
+ServiceProviderManager<--ServProvService:return ServProvService
+deactivate ServProvService
+ServiceProviderManager->ServProvService:ServProviderService.unregister(Company:Serv):response
+activate ServProvService
+ServProvService->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServProvService<--response:return response object
+deactivate response
+ServProvService->SqlDAO:var dao = new SqlDAO
+activate SqlDAO
+SqlDAO->SqlDAO:ctor()
+ServProvService<--SqlDAO:return SqlDAO object
+deactivate SqlDAO
+ServProvService->SqlDAO:dao.unregister(Company:Serv):response
+activate SqlDAO
+SqlDAO->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+SqlDAO<--response:return response object
+deactivate response
+SqlDAO->datastore:dao calls stored procedure
+activate datastore
+datastore->datastore:UPDATE dbo.services\nSET active = 0, user = null\nWHERE user = userhash
+SqlDAO<--datastore:return 1
+deactivate datastore
+ServProvService<--SqlDAO:return response
+deactivate SqlDAO
+ServProvService->ServProvService:Validate Response\nif(response.isSuccessful == false)\n{\nif(response.data == 1)\n{response.errorMessage = "Service failed to be removed";\n return error}\n}
+ServiceProviderManager<--ServProvService:return response
+deactivate ServProvService
+ServiceCreationController<--ServiceProviderManager:return response
+deactivate ServiceProviderManager
+ServiceCreationView<--ServiceCreationController:return http response
+deactivate ServiceCreationController
+User<--ServiceCreationView:Displays to user 'Account is no longer a ServProvService provider'
+deactivate ServiceCreationView

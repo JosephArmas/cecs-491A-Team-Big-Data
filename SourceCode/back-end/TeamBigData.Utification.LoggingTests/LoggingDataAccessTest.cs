@@ -1,5 +1,6 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Models;
@@ -14,12 +15,12 @@ namespace TeamBigData.Utification.LoggingTest
         public void DAO_LogMustSaveToDataStore() //If updating the data store make sure to assert each individual column for maximum verification
         {
             //Arrange
-            var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var sysUnderTest = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(1, "Info", "SYSTEM", "DAO_LogMustSaveToDataStore", "Data", "This is a automated test");
             //Act
-            var rows = sysUnderTest.Log(log).Result;
+            var rows = sysUnderTest.Logs(log).Result;
             //Assert
-            Assert.IsTrue(rows.isSuccessful);
+            Assert.IsTrue(rows.IsSuccessful);
         }
         [TestMethod]
         public void DAO_LogMustBeImmutable()
@@ -31,7 +32,7 @@ namespace TeamBigData.Utification.LoggingTest
             //Act
             var rows = sysUnderTest.Execute(updateSql).Result;
             //Assert
-            Assert.IsFalse(rows.isSuccessful);
+            Assert.IsFalse(rows.IsSuccessful);
         }
         [TestMethod]
         public void DAO_MustLogWithin5Secs()
@@ -39,18 +40,18 @@ namespace TeamBigData.Utification.LoggingTest
             //Arrange
             var stopwatch = new Stopwatch();
             var expected = 5000;
-            var sysUnderTest = new Logger(new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
+            var sysUnderTest = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(2, "Info", "SYSTEM", "DAO_MustLogWithin5Secs", "Business", "This is a automated test for finding if it took longer than 5 seconds");
             //Act
             stopwatch.Start();
-            var logResult = sysUnderTest.Log(log).Result;
+            var logResult = sysUnderTest.Logs(log).Result;
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(actual >= 0);
-            Assert.IsTrue(logResult.isSuccessful);
+            Assert.IsTrue(logResult.IsSuccessful);
         }
     }
 }

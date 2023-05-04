@@ -1,0 +1,86 @@
+title As an admin, I should be able to reset the ratings of users
+actor Authenticated Admin
+participant AdminReputationView
+participant Console
+participant ReputationController
+participant ReputationManager
+participant ReputationService
+participant ReputationDataAccess
+participant Logging
+participant LoggingDataAccess
+participant SQLServer
+activate Authenticated Admin
+
+note over Authenticated Admin: Must be on Admin View\nfor reputation
+
+Authenticated Admin ->> AdminReputationView: Admin resets the ratings of users
+activate AdminReputationView
+
+AdminReputationView ->> Console: axios.post(/account/profile).then(response=>{}): JSON Object
+activate Console
+
+Console ->> ReputationController: [Route("reputation')]\n[HttpPost]\nResetUserRating(): Task Object
+activate ReputationController
+
+ReputationController ->> ReputationManager: ResetRating(): Task Object
+activate ReputationManager
+
+ReputationManager ->> ReputationService: ResetUserRating(): Response Object
+activate ReputationService
+
+ReputationService ->> ReputationDataAccess: await UpdateUserRating(): Task Object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: UPDATE dbo.UserProfile\nSET reputation = 2.0\nWHERE userID = UserAccount.userID
+activate SQLServer
+
+SQLServer -->> SQLServer: return "You have changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return 1
+deactivate SQLServer
+
+ReputationDataAccess -->> ReputationService: return Task Object
+deactivate ReputationDataAccess
+
+ReputationService ->> Logging: Log(Log log): Response Object
+activate Logging
+
+Logging ->>LoggingDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate LoggingDataAccess
+
+LoggingDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, userHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.ResetUserRating(),'app.Reputation','User's Reputation Reset Successfully')
+activate SQLServer
+
+SQLServer -->> SQLServer: return "You have changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> LoggingDataAccess: return 1
+deactivate SQLServer
+
+LoggingDataAccess -->> Logging: return Task Object
+deactivate LoggingDataAccess
+
+Logging -->> ReputationService: return Response Object
+deactivate Logging
+
+ReputationService -->> ReputationManager: return Response Object
+deactivate ReputationService
+
+ReputationManager -->> ReputationController: return Task Object
+deactivate ReputationManager
+
+ReputationController -->> Console: return Task Object
+deactivate ReputationController
+
+Console -->> AdminReputationView: return JSON Object
+deactivate Console
+
+AdminReputationView -->> Authenticated Admin: Displays back "User's reputation was reset successfully"
+deactivate AdminReputationView

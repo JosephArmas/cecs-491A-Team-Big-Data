@@ -1,0 +1,49 @@
+title As a User, I can Upload a File
+ 
+   actor User
+   
+    participant index.html
+    participant fileUpload.js
+    participant AWS S3 Bucket
+    participant EntryPoint
+    participant SecurityManager
+    participant FileService
+    participant SqlDAO
+    participant Database
+    
+entryspacing 1.1
+    activate User
+    User->>index.html: User loads website
+    activate index.html
+    index.html ->>fileUpload.js: User clicks on Pin or Profile
+    activate fileUpload.js
+    fileUpload.js -->>User: Please select a file on your device
+    User ->>fileUpload.js: User Selects File
+    fileUpload.js ->>fileUpload.js: check file size
+    fileUpload.js ->>fileUpload.js: check file extenstion
+    fileUpload.js ->>EntryPoint: Post to /fileUpload
+    activate EntryPoint
+    EntryPoint ->>SecurityManager: UploadFile(String fileName, int pinID, UserProfile cred)
+    activate SecurityManager
+    SecurityManager ->>SecurityManager: Check if User is a Regular User or Admin User
+    SecurityManager ->>SqlDAO: if(Regular User) Check IsPinOwner(int userID, int pinID)
+    activate SqlDAO
+    SqlDAO ->>Database: Select userID from dbo.Pins Where pinID = pinID
+        activate Database
+   Database -->>SqlDAO: return UserID
+   deactivate Database
+   SqlDAO -->>SecurityManager: return (userID == UserID)
+   SecurityManager ->>SecurityManager: if false\nerrorMessage = "Posting Issue. Invalid Action Performed"
+    SecurityManager -->>EntryPoint: return response
+    deactivate SecurityManager
+    EntryPoint -->>fileUpload.js: If successful return OK(message)\nElse return Conflict(messsage)
+    deactivate EntryPoint
+    fileUpload.js ->>AWS S3 Bucket: If(200 response)\nUpload file to S3 Bucket
+    activate AWS S3 Bucket
+    AWS S3 Bucket -->>fileUpload.js:
+    deactivate AWS S3 Bucket
+    fileUpload.js -->>index.html: alert(File Successfully Uploaded)
+    deactivate fileUpload.js
+    index.html -->>User: Display alert
+    
+    

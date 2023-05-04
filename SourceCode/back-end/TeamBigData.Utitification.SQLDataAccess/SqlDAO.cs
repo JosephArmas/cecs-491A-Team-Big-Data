@@ -1,15 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using System.Collections;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SqlDAO : DbContext, IDBInserter, IDBCounter, IDAO, IDBSelecter, IDBUpdater, IDBAnalysis
+    public class SqlDAO : DbContext, IDBInserter, IDBCounter, IDBSelecter, IDBUpdater, IDBAnalysis, IDAO
     {
         private readonly String _connectionString;
 
@@ -17,6 +17,11 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
 
             _connectionString = this.Database.GetDbConnection().ConnectionString;
+        }
+
+        public SqlDAO(String connectionString)
+        {
+            _connectionString = connectionString;
         }
 
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
@@ -30,28 +35,35 @@ namespace TeamBigData.Utification.SQLDataAccess
                 var rows = command.ExecuteNonQuery();
                 if (rows > 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "SqlCommand Passed";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "SqlCommand Passed";
                 }
-                else if(rows == 0)
+                else if (rows == 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Nothing Affected";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "Nothing Affected";
                 }
+                result.Data = rows;
                 connection.Close();
             }
             catch (SqlException s)
             {
-                result.errorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
             }
             catch (Exception e)
             {
-                result.errorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
             }
             tcs.SetResult(result);
             return result;
         }
 
+        public Task<Response> Execute(String sql)
+        {
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            return ExecuteSqlCommand(connection, command);
+        }
 
         //----------------------------------------------------------------------------------------
         // IDBInserter
@@ -66,13 +78,13 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@s", salt));
             command.Parameters.Add(new SqlParameter("@h", userhash));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -88,17 +100,17 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@n", ""));
             command.Parameters.Add(new SqlParameter("@ln", ""));
             command.Parameters.Add(new SqlParameter("@add", ""));
-            command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000,1,1)).ToString()));
+            command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -111,13 +123,13 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@hash", userHash));
             command.Parameters.Add(new SqlParameter("@ID", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += $", {{failed: ExecuteSqlCommand, connectionstring:{_connectionString} }}";
+                result.ErrorMessage += $", {{failed: ExecuteSqlCommand, connectionstring:{_connectionString} }}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -165,16 +177,16 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     var command = new SqlCommand(countSql, connection);
                     command.Parameters.Add(new SqlParameter("@s", salt));
-                    result.data = command.ExecuteScalar();
-                    result.isSuccessful = true;
+                    result.Data = command.ExecuteScalar();
+                    result.IsSuccessful = true;
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
@@ -186,7 +198,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             var list = new ArrayList();
             Response result = new Response();
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -202,52 +214,44 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         list.Add(reader.GetString(0));
                     }
-                    result.isSuccessful = true;
-                    result.data = list;
+                    result.IsSuccessful = true;
+                    result.Data = list;
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
             }
             tcs.SetResult(result);
             return tcs.Task;
         }
 
-        //----------------------------------------------------------------------------------------
-        // IDAO
-        //----------------------------------------------------------------------------------------
-        public Task<Response> Execute(object req)
+        public Task<Response> CountLogs()
         {
             var tcs = new TaskCompletionSource<Response>();
-            Response result = new Response();
-            result.isSuccessful = false;
-            if (req.GetType() != typeof(string)) //Verifies if the parameter matches the acceptable string format type
+            var result = new Response();
+            using (var connection = new SqlConnection(_connectionString))
             {
-                result.errorMessage = "Error: input parameter for SqlDAO not of type string";
-                result.isSuccessful = false;
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-            using (SqlConnection connect = new SqlConnection(_connectionString.ToString()))
-            {
-                connect.Open();
+                connection.Open();
+                // Creates an Insert SQL statements using the collumn names and values given
+                var countSql = "SELECT COUNT (logID) FROM dbo.Logs";
                 try
                 {
-                    result.data = (new SqlCommand(req.ToString(), connect)).ExecuteNonQuery();
-                    result.isSuccessful = true;
+                    var command = new SqlCommand(countSql, connection);
+                    result.Data = (int)command.ExecuteScalar();
+                    result.IsSuccessful = true;
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
@@ -613,7 +617,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             return tcs.Task;
         }
 
-        public async Task<Response> SelectLastUserID()
+        public Task<Response> SelectLastUserID()
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
@@ -629,88 +633,170 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var rows = command.ExecuteReader();
                     while (rows.Read())
                     {
-                        response.data = rows.GetInt32(0);
-                        response.isSuccessful = true;
+                        response.Data = rows.GetInt32(0);
+                        response.IsSuccessful = true;
                     }
                 }
                 catch (SqlException s)
                 {
-                    response.errorMessage = s.Message;
+                    response.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    response.errorMessage = e.Message;
+                    response.ErrorMessage = e.Message;
                 }
             }
             tcs.SetResult(response);
-            return response;
+            return tcs.Task;
         }
-        /*
-        public Task<DataResponse<List<Pin>>> SelectPinTable()
+
+        //IDB Recovery
+        public Task<DataResponse<List<UserProfile>>> GetRecoveryRequests()
         {
-            var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
-            var result = new DataResponse<List<Pin>>();
-            List<Pin> pins = new List<Pin>();
-            string sqlStatement = "SELECT * FROM dbo.Pins";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            var response = new DataResponse<List<UserProfile>>();
+            var tcs = new TaskCompletionSource<DataResponse<List<UserProfile>>>();
+            var requests = new List<UserProfile>();
+            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests join dbo.UserProfiles on(dbo.RecoveryRequests.userId = dbo.UserProfiles.userId) WHERE fulfilled = 0 ORDER BY [TimeStamp] asc";
+            using (var connect = new SqlConnection(_connectionString))
             {
+                int userId = 0;
+                int ordinal = 0;
+                String firstname = "", lastname = "", role = "";
+                DateTime birthday = new DateTime();
                 try
                 {
                     connect.Open();
                     using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
                     {
-                        // read through all rows
                         while (reader.Read())
                         {
-                            int pinID = 0;
-                            int userID = 0;
-                            string lat = "";
-                            string lng = "";
-                            int pinType = 0;
-                            string description = "";
-                            int disabled = 0;
-                            int completed = 0;
-                            string dateTime = "";
-                            pinID = reader.GetInt32(0);
-                            userID = reader.GetInt32(1);
-                            lat = reader.GetString(2);
-                            lng = reader.GetString(3);
-                            pinType = reader.GetInt32(4);
-                            description = reader.GetString(5);
-                            disabled = reader.GetInt32(6);
-                            completed = reader.GetInt32(7);
-                            dateTime = reader.GetString(8);
-                            pins.Add(new Pin(pinID, userID, lat, lng, pinType, description, disabled, completed, dateTime));
+                            if (!reader.IsDBNull(0))
+                            {
+                                userId = reader.GetInt32(0);
+                            }
+                            ordinal = reader.GetOrdinal("firstName");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                firstname = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("lastName");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                lastname = reader.GetString(ordinal);
+                            }
+                            //sometimes throws exceptions with blank message
+                            //if so change ordinal to 9
+                            //ordinal = reader.GetOrdinal("role");
+                            if (!reader.IsDBNull(9))
+                            {
+                                role = reader.GetString(9);
+                            }
+                            ordinal = reader.GetOrdinal("birthday");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                birthday = reader.GetDateTime(ordinal);
+                            }
+                            UserProfile profile = new UserProfile(userId, firstname, lastname, "", birthday, new GenericIdentity(role));
+                            requests.Add(profile);
                         }
                         reader.Close();
+                        response.isSuccessful = true;
+                        response.data = requests;
                     }
                     connect.Close();
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    response.errorMessage = s.Message;
+                    Console.WriteLine(s.StackTrace);
+                }
+                catch (IndexOutOfRangeException ie)
+                {
+                    response.errorMessage = ie.Message;
+                    Console.WriteLine(ie.Message);
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    response.errorMessage = e.Message;
+                    Console.WriteLine(e.StackTrace);
                 }
-                if (pins.Count > 0)
+            }
+            tcs.SetResult(response);
+            return tcs.Task;
+        }
+
+        public Task<Response> GetNewPassword(int userID)
+        {
+            var tcs = new TaskCompletionSource<Response>();
+            Response result = new Response();
+            using (SqlConnection connect = new SqlConnection(_connectionString))
+            {
+                connect.Open();
+                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND userId = @ID Order by [timestamp] desc; ";
+                try
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Returning List of Pins";
-                    result.data = pins;
+                    var command = new SqlCommand(sqlSelect, connect);
+                    command.Parameters.Add(new SqlParameter("@ID", userID));
+                    String newPassword = (String)command.ExecuteScalar();
+                    if (newPassword != null && newPassword != "")
+                    {
+                        result.Data = newPassword;
+                        result.IsSuccessful = true;
+                    }
+                    else
+                    {
+                        result.IsSuccessful = false;
+                        result.ErrorMessage = "No Requests Found from User";
+                    }
                 }
-                else if (pins.Count == 0 && result.errorMessage.Equals(""))
+                catch (SqlException s)
                 {
-                    result.isSuccessful = false;
-                    result.errorMessage = "Empty List of Pins";
-                    result.data = pins;
+                    result.ErrorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.ErrorMessage = e.Message;
                 }
             }
             tcs.SetResult(result);
             return tcs.Task;
         }
-        */
+
+        public async Task<Response> ResetAccount(int userID, String newPassword)
+        {
+            var updateSql = "UPDATE dbo.Users set password = @newP, \"disabled\" = 0 where userID = @ID";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(updateSql, connection);
+            command.Parameters.Add(new SqlParameter("@ID", userID));
+            command.Parameters.Add(new SqlParameter("@newP", newPassword));
+            var response = await ExecuteSqlCommand(connection, command);
+            if (response.ErrorMessage.Equals("Nothing Affected"))
+            {
+                response.IsSuccessful = false;
+                response.ErrorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+            }
+            return response;
+        }
+
+        public async Task<Response> RequestFulfilled(int userID)
+        {
+            var sql = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE userID = @ID";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@ID", userID));
+            var response = await ExecuteSqlCommand(connection, command);
+            if (response.ErrorMessage.Equals("Nothing Affected"))
+            {
+                response.IsSuccessful = false;
+                response.ErrorMessage = "No Request for User Found";
+            }
+            else if (response.IsSuccessful)
+            {
+                response.ErrorMessage = "Account recovery completed successfully for user";
+            }
+            return response;
+        }
+
 
         //----------------------------------------------------------------------------------------
         // IDBUpdater
@@ -734,14 +820,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@p", pinID));
             var result = await ExecuteSqlCommand(connection, command);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.errorMessage = "Update Pin To Complete successfully for user";
+                result.ErrorMessage = "Update Pin To Complete successfully for user";
             }
             return result;
         }
@@ -754,14 +840,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@p", pinID));
             command.Parameters.Add(new SqlParameter("@t", pinType));
             var result = await ExecuteSqlCommand(connection, command);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.errorMessage = "Update Pin Type successfully for user";
+                result.ErrorMessage = "Update Pin Type successfully for user";
             }
             return result;
         }
@@ -774,14 +860,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@p", pinID));
             command.Parameters.Add(new SqlParameter("@d", description));
             var result = await ExecuteSqlCommand(connection, command);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.errorMessage = "Update Pin Content successfully for user";
+                result.ErrorMessage = "Update Pin Content successfully for user";
             }
             return result;
         }
@@ -793,14 +879,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@p", pinID));
             var result = await ExecuteSqlCommand(connection, command);
-            if (result.errorMessage.Equals("Nothing Affected"))
+            if (result.ErrorMessage.Equals("Nothing Affected"))
             {
-                result.isSuccessful = false;
-                result.errorMessage = "No Request for Pin Found";
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
             }
-            else if (result.isSuccessful)
+            else if (result.IsSuccessful)
             {
-                result.errorMessage = "Update Pin To Disabled successfully for user";
+                result.ErrorMessage = "Update Pin To Disabled successfully for user";
             }
             return result;
         }
@@ -1008,14 +1094,14 @@ namespace TeamBigData.Utification.SQLDataAccess
             ExecuteSqlCommand(connection, command);
             return ExecuteSqlCommand(connection, command2);
         }
-        
+
 
         public Task<Response> GetUser(UserAccount user)
         {
             var tcs = new TaskCompletionSource<Response>();
             var list = new Object[8];
             Response result = new Response();
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -1031,25 +1117,25 @@ namespace TeamBigData.Utification.SQLDataAccess
                     var reader = command.ExecuteReader();
                     if (reader.Read())
                     {
-                        result.isSuccessful = true;
+                        result.IsSuccessful = true;
                         reader.GetValues(list);
                         var userProfile = new UserProfile((int)list[0], (string)list[1], (string)list[2], (string)list[3],
                             ((DateTime)list[4]), new GenericIdentity((string)list[5]));
-                        result.data = userProfile;
+                        result.Data = userProfile;
                     }
                     else
                     {
-                        result.isSuccessful = false;
-                        result.errorMessage = "Error: Invalid Username or Password";
+                        result.IsSuccessful = false;
+                        result.ErrorMessage = "Error: Invalid Username or Password";
                     }
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
-                }
+                    result.ErrorMessage = s.Message;
+                }   
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
@@ -1061,7 +1147,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             var tcs = new TaskCompletionSource<Response>();
             var list = new ArrayList();
             Response result = new Response();
-            result.isSuccessful = false;
+            result.IsSuccessful = false;
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -1077,55 +1163,21 @@ namespace TeamBigData.Utification.SQLDataAccess
                     {
                         list.Add(reader.GetString(0));
                     }
-                    result.isSuccessful = true;
-                    result.data = list;
+                    result.IsSuccessful = true;
+                    result.Data = list;
                 }
                 catch (SqlException s)
                 {
-                    result.errorMessage = s.Message;
+                    result.ErrorMessage = s.Message;
                 }
                 catch (Exception e)
                 {
-                    result.errorMessage = e.Message;
+                    result.ErrorMessage = e.Message;
                 }
                 tcs.SetResult(result);
                 return tcs.Task;
             }
         }
-
-        
-
-        public Task<Response> CountLogs()
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                // Creates an Insert SQL statements using the collumn names and values given
-                var countSql = "SELECT COUNT (logID) FROM dbo.Logs";
-                try
-                {
-                    var command = new SqlCommand(countSql, connection);
-                    result.data = (int)command.ExecuteScalar();
-                    result.isSuccessful = true;
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        
-
-        
 
         public Task<bool> IsValidUsername(String username)
         {
@@ -1163,313 +1215,12 @@ namespace TeamBigData.Utification.SQLDataAccess
             command.Parameters.Add(new SqlParameter("@ID", userID));
             command.Parameters.Add(new SqlParameter("@newP", newPassword));
             var response = await ExecuteSqlCommand(connection, command);
-            if (response.errorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
+            if (response.ErrorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
             }
             return response;
-        }
-        
-
-        public Task<DataResponse<List<UserProfile>>> GetRecoveryRequests()
-        {
-            var response = new DataResponse<List<UserProfile>>();
-            var tcs = new TaskCompletionSource<DataResponse<List<UserProfile>>>();
-            var requests = new List<UserProfile>();
-            string sqlStatement = "SELECT * FROM dbo.RecoveryRequests join dbo.UserProfiles on(dbo.RecoveryRequests.userId = dbo.UserProfiles.userId) WHERE fulfilled = 0 ORDER BY [TimeStamp] asc";
-            using (var connect = new SqlConnection(_connectionString))
-            {
-                int userId = 0;
-                int ordinal = 0;
-                String firstname = "", lastname = "", role = "";
-                DateTime birthday = new DateTime();
-                try
-                {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            if (!reader.IsDBNull(0))
-                            {
-                                userId = reader.GetInt32(0);
-                            }
-                            ordinal = reader.GetOrdinal("firstName");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                firstname = reader.GetString(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("lastName");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                lastname = reader.GetString(ordinal);
-                            }
-                            //sometimes throws exceptions with blank message
-                            //if so change ordinal to 9
-                            //ordinal = reader.GetOrdinal("role");
-                            if (!reader.IsDBNull(9))
-                            {
-                                role = reader.GetString(9);
-                            }
-                            ordinal = reader.GetOrdinal("birthday");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                birthday = reader.GetDateTime(ordinal);
-                            }
-                            UserProfile profile = new UserProfile(userId, firstname, lastname, "", birthday, new GenericIdentity(role));
-                            requests.Add(profile);
-                        }
-                        reader.Close();
-                        response.isSuccessful = true;
-                        response.data = requests;
-                    }
-                    connect.Close();
-                }
-                catch (SqlException s)
-                {
-                    response.errorMessage = s.Message;
-                    Console.WriteLine(s.StackTrace);
-                }
-                catch (IndexOutOfRangeException ie)
-                {
-                    response.errorMessage = ie.Message;
-                    Console.WriteLine(ie.Message);
-                }
-                catch (Exception e)
-                {
-                    response.errorMessage = e.Message;
-                    Console.WriteLine(e.StackTrace);
-                }
-            }
-            tcs.SetResult(response);
-            return tcs.Task;
-        }
-
-        public Task<Response> GetNewPassword(int userID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            Response result = new Response();
-            using (SqlConnection connect = new SqlConnection(_connectionString))
-            {
-                connect.Open();
-                string sqlSelect = "Select Top 1 newpassword, [timestamp] from dbo.RecoveryRequests WHERE fulfilled = 0 AND userId = @ID Order by [timestamp] desc; ";
-                try
-                {
-                    var command = new SqlCommand(sqlSelect, connect);
-                    command.Parameters.Add(new SqlParameter("@ID", userID));
-                    String newPassword = (String)command.ExecuteScalar();
-                    if(newPassword != null && newPassword != "")
-                    {
-                        result.data = newPassword;
-                        result.isSuccessful = true;
-                    }
-                    else
-                    {
-                        result.isSuccessful = false;
-                        result.errorMessage = "No Requests Found from User";
-                    }
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-            }
-            tcs.SetResult(result);
-            return tcs.Task;
-        }
-
-        
-
-        public async Task<Response> ResetAccount(int userID, String newPassword)
-        {
-            var updateSql = "UPDATE dbo.Users set password = @newP, \"disabled\" = 0 where userID = @ID";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(updateSql, connection);
-            command.Parameters.Add(new SqlParameter("@ID", userID));
-            command.Parameters.Add(new SqlParameter("@newP", newPassword));
-            var response = await ExecuteSqlCommand(connection, command);
-            if (response.errorMessage.Equals("Nothing Affected"))
-            {
-                response.isSuccessful = false;
-                response.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
-            }
-            return response;
-        }
-
-        public async Task<Response> RequestFulfilled(int userID)
-        {
-            var sql = "UPDATE dbo.RecoveryRequests SET fulfilled = 1 WHERE userID = @ID";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@ID", userID));
-            var response = await ExecuteSqlCommand(connection, command);
-            if (response.errorMessage.Equals("Nothing Affected"))
-            {
-                response.isSuccessful = false;
-                response.errorMessage = "No Request for User Found";
-            }
-            else if(response.isSuccessful)
-            {
-                response.errorMessage = "Account recovery completed successfully for user";
-            }
-            return response;
-        }
-
-        
-
-        
-
-        
-
-        
-
-        public Task<Response> GetPinOwner(int pinID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                // Creates an Insert SQL statements using the collumn names and values given
-                var sql = "SELECT userID FROM dbo.Pins Where pinID = @p";
-                try
-                {
-                    var command = new SqlCommand(sql, connection);
-                    command.Parameters.Add(new SqlParameter("@p", pinID));
-                    int id = (int)command.ExecuteScalar();
-                    if(id > 0)
-                    {
-                        result.data = id;
-                        result.isSuccessful = true;
-                    }
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public Task<Response> UploadPinPic(String key, int pinID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            var sql = "Insert into dbo.PinPic(\"key\", pinID) values (@k, @ID)";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@k", key));
-            command.Parameters.Add(new SqlParameter("@ID", pinID));
-            return ExecuteSqlCommand(connection, command);
-        }
-
-        public Task<Response> UploadProfilePic(String key, int userID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            var sql = "Insert into dbo.ProfilePic(\"key\", pinID) values (@k, @ID)";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@k", key));
-            command.Parameters.Add(new SqlParameter("@ID", userID));
-            return ExecuteSqlCommand(connection, command);
-        }
-        public Task<Response> DownloadPinPic(int pinID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                // Creates an Insert SQL statements using the collumn names and values given
-                var sql = "SELECT \"key\" FROM dbo.PinPic Where pinID = @p";
-                try
-                {
-                    var command = new SqlCommand(sql, connection);
-                    command.Parameters.Add(new SqlParameter("@p", pinID));
-                    String id = (String)command.ExecuteScalar();
-                    if (id.Length > 0)
-                    {
-                        result.data = id;
-                        result.isSuccessful = true;
-                    }
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public Task<Response> DownloadProfilePic(int userID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                // Creates an Insert SQL statements using the collumn names and values given
-                var sql = "SELECT \"key\" FROM dbo.ProfilePic Where userID = @ID";
-                try
-                {
-                    var command = new SqlCommand(sql, connection);
-                    command.Parameters.Add(new SqlParameter("@ID", userID));
-                    String id = (String)command.ExecuteScalar();
-                    if (id.Length > 0)
-                    {
-                        result.data = id;
-                        result.isSuccessful = true;
-                    }
-                }
-                catch (SqlException s)
-                {
-                    result.errorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.errorMessage = e.Message;
-                }
-                tcs.SetResult(result);
-                return tcs.Task;
-            }
-        }
-
-        public Task<Response> DeletePinPic(int pinID)
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            var sql = "Delete from dbo.PinPic where pinID = @ID";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@ID", pinID));
-            return ExecuteSqlCommand(connection, command);
-        }
-
-        public Task<Response> DeleteProfilePic(int userID) 
-        {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
-            var sql = "Delete from dbo.ProfilePic where userID = @ID";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@ID", userID));
-            return ExecuteSqlCommand(connection, command);
         }
     }
 }

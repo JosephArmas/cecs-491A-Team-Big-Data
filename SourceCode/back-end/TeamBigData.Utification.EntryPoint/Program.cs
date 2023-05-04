@@ -7,15 +7,17 @@ using Microsoft.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.FileServices;
+using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
-using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Services;
 using TeamBigData.Utification.PinManagers;
 using TeamBigData.Utification.PinServices;
 using TeamBigData.Utification.SQLDataAccess;
-using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
 using TeamBigData.Utification.SQLDataAccess.LogsDB;
 using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UserhashDB;
@@ -96,6 +98,17 @@ builder.Services.AddDbContext<IPinDBUpdater, PinsSqlDAO>(options => options.UseS
 builder.Services.AddTransient<PinService>();
 builder.Services.AddTransient<PinManager>();
 
+//File dependencies
+builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<FileService>();
+builder.Services.AddTransient<FileManager>();
+
+// Reputation dependencies
+builder.Services.AddDbContext<IReportsDBInserter, ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IReportsDBSelecter, ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IUsersDBUpdater, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddTransient<ReputationManager>();
+builder.Services.AddTransient<ReputationService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

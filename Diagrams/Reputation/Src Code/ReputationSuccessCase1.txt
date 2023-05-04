@@ -1,0 +1,168 @@
+title As a user, I want to successfully report another user and affect their reputation score
+
+actor Authenticated User
+participant ReputationView
+participant Console
+participant ReputationController
+participant ReputationManager
+participant ReputationService
+participant Logging
+participant ReputationDataAccess
+participant SQLServer
+activate Authenticated User
+
+note over Authenticated User: User must be on Reputation View
+
+Authenticated User ->> ReputationView: User submits a report of\n					 				another User 
+activate ReputationView
+
+box over ReputationView: const reputationService = "/reputation/report";\nlet userReport = {"userReportedID" : " ",\n																												"rating" : " ",\n																												"feedback: " ",\n																												"userReportingID" : " "}; 
+ 
+ReputationView ->> Console:axios.post(reputationService, userReport).then(response=>{}): JSON Object
+activate Console
+
+Console ->> ReputationController: [Route("report")]\n[HttpPost]\nPostUserReport(): Task Object
+activate ReputationController
+
+ReputationController ->> ReputationManager: RecordNewUserReport(Reputation Object, UserAccount Object): Task object
+activate ReputationManager
+
+ReputationManager ->> ReputationService: UpdateReputation(Reputation Object): Response Object
+activate ReputationService
+
+ReputationService ->> ReputationDataAccess: await SelectUserRatings(Reputation Object).ConfigureAwait(false): Task object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer:ExecuteReader(): SqlDataReader Object
+activate SQLServer
+
+SQLServer ->> SQLServer: SELECT rating\nFROM dbo.UserReports\nWHERE reportedUser = userReportedID;
+activate SQLServer
+
+SQLServer -->> SQLServer: returns the rating value from the dbo.UserReports\nrow that meets the condition
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return SqlDataReader Object
+deactivate SQLServer
+
+box over ReputationDataAccess: double rows = 0.0;
+group while(reader.Read())
+box over ReputationDataAccess: rows = rows + 1.0;\ndouble newRating = rating + newRating;
+end
+
+box over ReputationDataAccess: newRating = newRating / rows + 1.0;
+
+ReputationDataAccess -->> ReputationService: return Task
+deactivate ReputationDataAccess
+
+group if (result.isSuccessful)
+ReputationService ->> ReputationDataAccess: await UpdateUserReputation(Reputation Object, double newRating): Task Object
+activate ReputationDataAccess
+end
+
+ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32 
+activate SQLServer
+
+SQLServer ->> SQLServer: UPDATE dbo.UserProfile\nSET reputation = newRating\nWHERE reportedUser = 'newReport._reportedUser';
+activate SQLServer
+
+SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return 1
+deactivate SQLServer
+
+ReputationDataAccess -->> ReputationService: return Task Object
+deactivate ReputationDataAccess
+
+ReputationService ->> Logging: Log(Log log): Response Object
+activate Logging
+
+Logging ->> ReputationDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.UpdateReputation()', 'app.Reputation', 'User Reputation Updated Successfully');
+activate SQLServer
+
+SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess:  return 1 
+deactivate SQLServer
+
+ReputationDataAccess -->> Logging: return Task Object
+deactivate ReputationDataAccess
+
+Logging -->> ReputationService: return Response Object
+deactivate Logging
+
+ReputationService -->> ReputationManager: return Response Object
+deactivate ReputationService
+
+group if (response.isSuccessful) 
+ReputationManager ->> ReputationService: StoreNewUserReport(Reputation Object): Response Object
+activate ReputationService
+end
+
+ReputationService ->> ReputationDataAccess: await InsertUserReport(Reputation Object).ConfigureAwait(false): Task Object
+activate ReputationDataAccess
+
+
+ReputationDataAccess ->> SQLServer:  ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.UserReports(rating, feedback, reportedUser)\nVALUES(newReport._rating, 'newReport._feedback', 'newReport_reportedUser);
+activate SQLServer
+
+SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return 1
+deactivate SQLServer
+
+ReputationDataAccess -->> ReputationService: return Task Object
+deactivate ReputationDataAccess
+
+ReputationService ->> Logging: Log(Log log): Response Object
+activate Logging
+
+Logging ->> ReputationDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs (CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'ReputationService.StoreNewUserReport()', 'app.Reputation', 'New Report Stored Successfully');
+activate SQLServer
+
+SQLServer -->> SQLServer: returns "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess:  return 1 
+deactivate SQLServer
+
+ReputationDataAccess -->> Logging: return Task Object
+deactivate ReputationDataAccess
+
+Logging -->> ReputationService: return Response Object
+deactivate Logging
+
+ReputationService -->> ReputationManager: return Response Object
+deactivate ReputationService
+
+ReputationManager -->> ReputationController: return Task Object
+deactivate ReputationManager
+
+ReputationController -->> Console: return Task Object
+deactivate ReputationController
+
+Console -->> ReputationView: returns response JSON Object
+deactivate Console
+
+ReputationView -->> Authenticated User: Displays back to user "Report submitted successfully"
+deactivate ReputationView
+
+deactivate Authenticated User

@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Cryptography;
@@ -12,35 +12,20 @@ using System.Security.Principal;
 
 namespace TeamBigData.Utification.EntryPoint.Controllers
 {
-    [BindProperties]
-
-
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]")] 
 
     public class AccountController : ControllerBase
     {
-        // TODO: Need to take out of Controller and put into different file
-        // Taking it out will break current code
-
-        [BindProperties]
-        public class IncomingUser
-        {
-            public String _username { get; set; }
-            public String _password { get; set; }
-        }
-
         private readonly SecurityManager _securityManager;
         private readonly IConfiguration _configuration;
-        private readonly InputValidation _inputValidation;
 
         // TODO: variables to pull from jwt
 
-        public AccountController(IConfiguration configuration,SecurityManager securityManager, InputValidation inputValidation)
+        public AccountController(IConfiguration configuration,SecurityManager securityManager)
         {
             _securityManager = securityManager;
             _configuration = configuration;
-            _inputValidation = inputValidation;
         }
 
         [Route("authentication")]
@@ -51,7 +36,7 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
 
             // Validate user role
             // Validate inputs
-            if (!await _inputValidation.IsValidEmail(login._username).ConfigureAwait(false) || !await _inputValidation.IsValidPassword(login._password).ConfigureAwait(false))
+            if (!InputValidation.IsValidEmail(login._username) || !InputValidation.IsValidPassword(login._password))
             {
                 return Conflict("Invalid credentials provided. Retry again or contact system administrator");
             }
@@ -118,13 +103,13 @@ namespace TeamBigData.Utification.EntryPoint.Controllers
             var userhash = SecureHasher.HashString(newAccount._username, "5j90EZYCbgfTMSU+CeSY++pQFo2p9CcI");
 
             var response = await _securityManager.RegisterUser(newAccount._username,  newAccount._password, userhash).ConfigureAwait(false);
-            if(response.isSuccessful)
+            if(response.IsSuccessful)
             {
-                return Ok(response.errorMessage);
+                return Ok(response.ErrorMessage);
             }
             else
             {
-                return Conflict(response.errorMessage + ", {failed:_securityManager.RegisterUser}");
+                return Conflict(response.ErrorMessage + ", {failed:_securityManager.RegisterUser}");
             }
         }
     }

@@ -1,0 +1,122 @@
+title As an authenticated User, I have recieved a notification but the the information is for another User
+actor User
+    
+    participant main.js
+    participant NotificationView
+    participant NotificationController
+    participant AlertManager
+    participant UserProfile
+    participant AlertServices
+    participant Logger
+    participant SqlDAO
+    
+    participant IDBSelector
+    participant App DB
+User->>main.js:Authenticated User trys to connect to Notification View
+activate main.js
+main.js->>NotificationView: fucntion notifcationView()\n{var notificationView = document.querySelector(".notification-container");}
+activate NotificationView
+NotificationView->>NotificationView:const alertUrl = 'https://account/alert';
+NotificationView->>NotificationController:var request = axios.get(alertUrl)
+activate NotificationController
+NotificationController->>NotificationController:If User.jwt == true{\nresponse.ok\napp = request.then(response=>{}):Json\n}
+
+NotificationController->>AlertManager:app.Get()
+activate AlertManager
+AlertManager->>UserProfile:UserProfile userProfile = UserProfile.IsInRole("Regular User");
+activate UserProfile
+UserProfile->>UserProfile:{\nString _username\nString _firstname\nString _lastName\nint _age\nString _email\nString _address\nDateTime _birthday\nIIdentity? Identity\n}
+UserProfile-->>AlertManager: return Regular User
+deactivate UserProfile
+AlertManager->>AlertServices:[Route("RegularView")]\nAlerts alert = new Alerts
+activate AlertServices
+AlertServices->>AlertManager:return alert
+deactivate AlertServices
+AlertManager->>AlertManager:if User.this==true{\nalert.list <=100\nalert.zip(expected) == true\nalert.type(expected) == true\nalert.distance(expectedMin,expectedMax) == true\nalert.time(expected) == true\nalert.alertNum() <= 100\n}
+AlertManager->>AlertServices: var alerts = alert.GetAlerts()
+activate AlertServices
+AlertServices->>Logger:var sysLogger = new Logger();
+activate Logger
+Logger->>AlertServices:return logger
+deactivate Logger
+AlertServices->>AlertServices:alert.log()
+AlertServices->>SqlDAO:var connectionString = @"alertsconnectionstring"\nalert.getAlerts():List<Alerts>
+activate SqlDAO
+SqlDAO->>IDBSelector:SqlDAO:IDBSelector
+activate IDBSelector
+IDBSelector->>IDBSelector: sqlAlert= new SqlDAO(connectionString)
+
+IDBSelector->>SqlDAO:return sqlAlert
+deactivate IDBSelector
+SqlDAO->>SqlDAO:var alerts = new List<Alerts>()string sqlStatement = "Select * FROM dbo.Alerts"\nusing(SqlConnection connect = new SqlConnection(_connectionString))\n{\nconnect.Open()\n}
+SqlDAO->>App DB:using(var reader = new SqlCommand(sqlStatement,connect)).ExecuterReader())
+activate App DB
+App DB-->>SqlDAO: return alerts table
+deactivate App DB
+SqlDAO->>SqlDAO:connect.Close()
+SqlDAO-->>AlertServices:return list of Alerts
+deactivate SqlDAO
+AlertServices-->>AlertManager:return list of Alerts
+deactivate AlertServices
+AlertManager->>AlertManager:if User.this!=true{\nalert.list <=100\nalert.zip(expected) == true\nalert.type(list<expected>) == true\nalert.distance(expectedMin,expectedMax) == true\nalert.time(expected) <2000\nalert.alertNum() <= 100\n}
+note right of AlertManager:Comes out to be false\n
+AlertManager-->>NotificationController: list of Json(Alerts) is not returned
+deactivate AlertManager
+NotificationController-->>NotificationView: return axios response
+deactivate NotificationController
+NotificationView-->>main.js: updates content view
+deactivate NotificationView
+main.js-->>User:Display "Error. Displayed Incorrect Information. Reloading"
+User->>main.js:Automatic Response trys to reload Notifications
+main.js->>NotificationView: fucntion notifcationView()\n{var notificationView = document.querySelector(".notification-container");}
+activate NotificationView
+NotificationView->>NotificationView:const alertUrl = 'https://account/alert';
+NotificationView->>NotificationController:var request = axios.get(alertUrl)
+activate NotificationController
+NotificationController->>NotificationController:If User.jwt == true{\nresponse.ok\napp = request.then(response=>{}):Json\n}
+
+NotificationController->>AlertManager:app.Get()
+activate AlertManager
+AlertManager->>UserProfile:UserProfile userProfile = UserProfile.IsInRole("Regular User");
+activate UserProfile
+UserProfile->>UserProfile:{\nString _username\nString _firstname\nString _lastName\nint _age\nString _email\nString _address\nDateTime _birthday\nIIdentity? Identity\n}
+UserProfile-->>AlertManager: return Regular User
+deactivate UserProfile
+AlertManager->>AlertServices:[Route("RegularView")]\nAlerts alert = new Alerts
+activate AlertServices
+AlertServices->>AlertManager:return alert
+deactivate AlertServices
+AlertManager->>AlertManager:if User.this==true{\nalert.list <=100\nalert.zip(expected) == true\nalert.type(expected) == true\nalert.distance(expectedMin,expectedMax) == true\nalert.time(expected) == true\nalert.alertNum() <= 100\n}
+AlertManager->>AlertServices: var alerts = alert.GetAlerts()
+activate AlertServices
+AlertServices->>Logger:var sysLogger = new Logger();
+activate Logger
+Logger->>AlertServices:return logger
+deactivate Logger
+AlertServices->>AlertServices:alert.log()
+AlertServices->>SqlDAO:var connectionString = @"alertsconnectionstring"\nalert.getAlerts():List<Alerts>
+activate SqlDAO
+SqlDAO->>IDBSelector:SqlDAO:IDBSelector
+activate IDBSelector
+IDBSelector->>IDBSelector: sqlAlert= new SqlDAO(connectionString)
+
+IDBSelector->>SqlDAO:return sqlAlert
+deactivate IDBSelector
+SqlDAO->>SqlDAO:var alerts = new List<Alerts>()string sqlStatement = "Select * FROM dbo.Alerts"\nusing(SqlConnection connect = new SqlConnection(_connectionString))\n{\nconnect.Open()\n}
+SqlDAO->>App DB:using(var reader = new SqlCommand(sqlStatement,connect)).ExecuterReader())
+activate App DB
+App DB-->>SqlDAO: return alerts table
+deactivate App DB
+SqlDAO->>SqlDAO:connect.Close()
+SqlDAO-->>AlertServices:return list of Alerts
+deactivate SqlDAO
+AlertServices-->>AlertManager:return list of Alerts
+deactivate AlertServices
+AlertManager->>AlertManager:if User.this==true{\nalert.list <=100\nalert.zip(expected) == true\nalert.type(list<expected>) == true\nalert.distance(expectedMin,expectedMax) == true\nalert.time(expected) <2000\nalert.alertNum() <= 100\n}
+AlertManager-->>NotificationController: list of Json(Alerts) returned
+deactivate AlertManager
+NotificationController-->>NotificationView: return axios response
+deactivate NotificationController
+NotificationView-->>main.js: updates content view
+deactivate NotificationView
+main.js-->>User:Display Alerts

@@ -1,0 +1,92 @@
+title As an Admin, I can read and fullfill Account Recovery Requests
+ 
+   actor Admin
+    participant Program
+    
+    
+    participant UserProfile
+    participant AdminView
+    participant AdminManager
+    participant SqlDAO
+    participant Database
+    
+    
+    
+
+    
+    activate Admin
+    Admin->>Program: Admin wants to access application
+    activate Program
+    
+    Program->>UserProfile:((IPrincipal)userProfile).IsInRole("Admin User")
+    activate UserProfile
+    UserProfile->>UserProfile: if (this.Identity.AuthenticationType != role)\n{\n     return false;\n}\nreturn true;
+    UserProfile -->>Program:
+    deactivate UserProfile
+    
+    Program ->> AdminView: AdminView.DisplayMenu()
+       activate AdminView
+    note right of AdminView: Admin Selects Account Recovery
+    
+    AdminView ->> AdminManager: AdminManager.GetRecoveryRequest();
+    activate AdminManager
+    
+    AdminManager ->>SqlDAO: GetRecoveryRequests();
+    activate SqlDAO
+    
+    SqlDAO ->>Database: Select from dbo.RecoveryRequests \nWhere fullfilled = 0 \nGroup by username \nOrder by time
+    activate Database
+    
+    Database -->>SqlDAO: return RecoveryRequests
+    deactivate Database
+    
+    SqlDAO -->>AdminManager: return Response
+    deactivate SqlDAO
+    
+    AdminManager -->>AdminView: return Response
+    deactivate AdminManager
+    
+    AdminView ->>AdminView: Print list of usernames
+    AdminView ->>AdminManager: AdminManager.ResetAccount(username)
+    activate AdminManager
+    AdminManager->>SqlDAO 
+    AdminManager ->> SqlDAO: GetNewPassword(username)
+    activate SqlDAO
+    SqlDAO ->>Database: Select newPassword from dbo.RecoveryRequests\nWhere username = %username% AND fulfilled = 0
+    activate Database
+    Database -->>SqlDAO: return newPassword
+    deactivate Database
+    SqlDAO -->>AdminManager: return newPassword
+    deactivate SqlDAO
+    
+    AdminManager->>SqlDAO: ResetAccount(username, newPassword)
+    activate SqlDAO
+    SqlDAO ->>Database: Update dbo.Users\nSet "password" = %newPassword, Disabled = 0\nWhere username = %username%
+    activate Database
+    Database-->>SqlDAO: return 1
+    deactivate Database
+    SqlDAO -->>AdminManager:return Response
+    deactivate SqlDAO
+    
+    AdminManager ->> SqlDAO: FullfillRequest(username)
+    
+    activate SqlDAO
+    SqlDAO ->>Database: Update dbo.RecoveryRequests \nSet fullfilled = 1 \nWhere username = %username%
+    
+    activate Database
+    Database -->>SqlDAO: return n
+    deactivate Database
+    
+    SqlDAO -->>AdminManager:return Response
+    deactivate SqlDAO
+    
+    AdminManager -->>AdminView: return Response
+    deactivate AdminManager
+    
+    AdminView -->> Program: return Response
+    deactivate AdminView
+    
+    Program -->> Admin: Admin completed a Recovery Request
+    
+    deactivate Program
+

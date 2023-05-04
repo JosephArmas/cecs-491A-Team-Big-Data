@@ -1,0 +1,8 @@
+sequenceDiagram
+    activate user
+    user->>+UI: User wants to login
+    UI->>+Entry Point: HTTPS Post
+    Entry Point-->>Entry Point: isSessionAuthN(): Results
+    Entry Point-->>Entry Point: return 1
+    Entry Point-->>-UI: HTTPS response 400
+    UI-->>+user: Prompt user "Already in an authenticated session."

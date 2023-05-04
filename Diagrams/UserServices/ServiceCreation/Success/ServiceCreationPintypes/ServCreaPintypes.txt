@@ -1,0 +1,34 @@
+title I’m a service user, I want to limit pin types that my service shows up for
+
+actor User
+participant servicecreationview
+participant servicecontroller
+participant manager
+participant service
+participant dataaccess
+participant datastore
+
+box over User:Precondition\nUser is in an authenticated session.\nUser is in service creation view
+
+User->servicecreationview: User selects which pin types they want to have their service appear\nUser selects an interactable element to limit pin types
+servicecreationview->servicecreationview: the view sees if the element has been selected
+servicecreationview->servicecontroller:call function if the element is selected
+servicecontroller->servicecontroller:a generic workload handler is called
+servicecontroller->servicecontroller:try catch error handler
+servicecontroller->manager:http post request: http response
+manager->manager:Validate inputs
+manager->manager:validate security
+manager->manager:log user attempt
+manager->service:service.setpintype
+service->service:Construct object for data access layer
+service->dataaccess:dao.updatepintypes
+dataaccess->dataaccess: construct entity object for datastore
+dataaccess->datastore:sql stored procedure call
+datastore->datastore: Select * where company = givencompany
+datastore-->dataaccess:return 1
+dataaccess->dataaccess:return value = response.result
+dataaccess-->service:return response
+service-->manager:return response
+manager-->servicecontroller:return http response
+servicecontroller-->servicecreationview: return something?
+servicecreationview-->User:'updated service pin settings'

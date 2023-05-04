@@ -1,0 +1,13 @@
+title Logout Success
+
+participant User
+participant Program
+participant UserProfile
+
+activate User
+box over User: User device is not an authenticated user\nand logged in
+User->>Program: User wants to logout
+activate Program
+Program->>UserProfile: if(((IPrincipal)userProfile).IsInRole("Regular User")):bool;
+UserProfile-->>Program: Return False
+Program->>User:User is not logged in

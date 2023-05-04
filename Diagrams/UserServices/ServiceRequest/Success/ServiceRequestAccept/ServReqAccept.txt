@@ -1,0 +1,74 @@
+title I am a Service User, I want to accept a service request
+
+actor User
+participant servicerequestview
+participant servicerequestcontroller
+participant ServRequestManager
+participant ServReqService
+participant SqlDAO
+participant response
+participant datastore
+
+box over User:Precondition\nUser is on Service Request View\nUser must have a pending service request
+User->servicerequestview:User interacts with view showing requests
+activate servicerequestview
+servicerequestview->servicerequestcontroller:axios.post():http response
+activate servicerequestcontroller
+servicerequestcontroller->servicerequestcontroller:JWTverification():bool
+servicerequestcontroller->servicerequestcontroller:Try Catch 
+servicerequestcontroller->ServRequestManager:var ServManager = new ServRequestManager()
+activate ServRequestManager
+ServRequestManager->ServRequestManager:ctor()
+servicerequestcontroller<--ServRequestManager:return ServRequestManager object
+deactivate ServRequestManager
+
+servicerequestcontroller->ServRequestManager:ServManager.ProvAcceptRequest(CompanyTitle:String,RequestNum:String):response
+activate ServRequestManager
+ServRequestManager->response:var ReqResponse = new response()
+activate response
+response->response:ctor()
+ServRequestManager<--response:return response object
+deactivate response
+ServRequestManager->ServRequestManager:validate security
+ServRequestManager->ServRequestManager:Business Compliance
+ServRequestManager->ServReqService:var ServService = new ServReqService()
+activate ServReqService
+ServReqService->ServReqService:Constructor()
+ServRequestManager<--ServReqService:return ServReqService object
+deactivate ServReqService
+ServRequestManager->ServReqService:ServService.ProvAcceptRequest(CompanyTitle:String,RequestNum:String):response
+activate ServReqService
+ServReqService->response:var ReqResponse = new response()
+activate response
+response->response:ctor()
+ServReqService<--response:return response object
+deactivate response
+ServReqService->SqlDAO:var dao = new IDAO
+activate SqlDAO
+SqlDAO->SqlDAO:ctor()
+ServReqService<--SqlDAO:return SqlDAO object
+deactivate SqlDAO
+ServReqService->SqlDAO:dao.ProvAcceptRequest(CompanyTitle:String,RequestNum:String):response
+activate SqlDAO
+SqlDAO->response:var ReqResponse = new response()
+activate response
+response->response:ctor()
+SqlDAO<--response:return response object
+deactivate response
+SqlDAO->datastore:using(connectionstring)
+activate datastore
+datastore->datastore:UPDATE dbo.ServRequests \nSET Active = 0 \nWHERE userhash = user, \nCompany = CompanyName, Active = 1
+SqlDAO<--datastore:return 1
+deactivate datastore
+ServReqService<--SqlDAO:return response
+deactivate SqlDAO
+ServReqService->ServReqService:validate response
+ServRequestManager<--ServReqService:return response
+deactivate ServReqService
+ServRequestManager->ServRequestManager:validate response
+servicerequestcontroller<--ServRequestManager:return response
+deactivate ServRequestManager
+servicerequestview<--servicerequestcontroller:http response
+deactivate servicerequestcontroller
+User<--servicerequestview:Displays to user "Request has been accepted"
+deactivate servicerequestview

@@ -1,0 +1,63 @@
+title As a User, I can Recover my Account if I forgot my password
+ 
+   actor User
+    participant Program
+    
+    
+    participant UserProfile
+    participant AnonymousView
+    participant SecurityManager
+    participant SqlDAO
+    participant Database
+    
+    
+    
+    activate User
+    
+    
+    User->>Program: User wants to access application
+    activate Program
+    
+    Program->>UserProfile:((IPrincipal)userProfile).IsInRole("Anonymous User")
+    activate UserProfile
+    UserProfile->>UserProfile: if (this.Identity.AuthenticationType != role)\n{\n     return false;\n}\nreturn true;
+    UserProfile -->>Program:
+    deactivate UserProfile
+    
+    Program ->> AnonymousView: AnonymousView.DisplayMenu()
+       activate AnonymousView
+    note right of AnonymousView: User Selects Account Recovery
+    AnonymousView ->>AnonymousView: Please Enter Your Username
+    AnonymousView ->>SecurityManager: SecurityManager.GenerateOTP()
+    
+    activate SecurityManager
+    SecurityManager -->>AnonymousView : SecurityManager.SendOTP()
+    deactivate SecurityManager
+    
+    AnonymousView ->>AnonymousView: Please Enter The OTP
+    AnonymousView ->>AnonymousView: Please Enter Your New Password
+    AnonymousView ->>SecurityManager: SecurityManager.RecoverAccount(username, newPassword, enteredOTP)
+    activate SecurityManager
+
+    SecurityManager ->> SecurityManager: if(enteredOTP = _otp)\n { CreateRecoveryRequest(username, newPassword); }
+    
+    SecurityManager ->>SqlDAO: SqlDAO.CreateRecoveryRequest(username)
+    activate SqlDAO
+    SqlDAO ->>Database: Insert into dbo.RecoveryRequests(username, newPassword, time) \nvalue(%username%, %newPassword%, getDate())
+    
+    activate Database
+    Database -->>SqlDAO: return 1
+    deactivate Database
+    
+    SqlDAO -->>SecurityManager: return Response
+    deactivate SqlDAO
+   	
+    SecurityManager -->>AnonymousView: return Response
+    deactivate SecurityManager
+    
+    AnonymousView ->>AnonymousView: Print Account Recovery Request Sent
+    AnonymousView -->>Program: return Response
+    deactivate AnonymousView
+
+    Program-->>User:User sees that the request was sent
+    deactivate User

@@ -1,0 +1,55 @@
+--TeamBigData.Utification.Features
+CREATE TABLE dbo."Events"
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);
+
+CREATE TABLE dbo.Pins
+(
+pinID int NOT NULL Identity,
+userID int NOT NULL,
+lat varchar(50),
+lng varchar(50),
+pinType int,
+"description" varchar(MAX),
+"disabled" int DEFAULT 0,
+completed int DEFAULT 0,
+"dateTime" varchar(50),
+CONSTRAINT Pins_PK PRIMARY KEY (pinID)
+);
+
+CREATE TABLE dbo.PinPic
+(
+pinID int NOT NULL,
+"key" varchar(100) NOT NULL,
+CONSTRAINT PinPic_PK PRIMARY KEY(pinID),
+CONSTRAINT PinPic_FK_01 Foreign KEY (pinID) references dbo.Pins(pinID),
+CONSTRAINT PinPic_UK_01 UNIQUE ("key")
+);
+
+CREATE TABLE dbo.ProfilePic
+(
+userID int NOT NULL,
+"key" varchar(100),
+extension varchar(5),
+CONSTRAINT ProfilePic_PK PRIMARY KEY(userID),
+CONSTRAINT ProfilePic_UK_01 UNIQUE ("key")
+);
+
+CREATE TABLE dbo.Reports
+(
+rating decimal(2,1) NOT NULL,
+reportedUserID int NOT NULL,
+reportingUserID int NOT NULL,
+feedback varchar(150) NOT NULL,
+createDate datetime,
+updateDate datetime,
+lastModifierUserID int
+);
+
+CREATE TABLE dbo."Services"
+(
+userID int NOT NULL,
+"disabled" int DEFAULT 0,
+);

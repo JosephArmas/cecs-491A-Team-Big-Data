@@ -1,0 +1,15 @@
+title I’m a regular user, I want to become a Service provider but my description is too long
+
+actor User
+participant ServiceCreationView
+
+box over User:Precondition\nUser is in an authenticated session.\nUser is in Service creation view
+
+
+User->ServiceCreationView: User enters their information
+activate ServiceCreationView
+ServiceCreationView->ServiceCreationView:let CompanyName = GetElementbyID(name)\nif(CompanyName.length()>30 || Companyame.length()<4)\n{return error}\nif(CompanyName.includes(listofunacceptable))\n{return error}
+ServiceCreationView->ServiceCreationView:let CompanyDesc = GetElementbyID(description)\nif(CompanyDesc.length()>1000 || CompanyDesc.split(' ').length > 150)\n{return error}
+
+
+User<--ServiceCreationView:display to user "Syntax Error. Description is over 200 Word Limit."

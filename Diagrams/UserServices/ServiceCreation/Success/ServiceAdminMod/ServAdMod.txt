@@ -1,0 +1,90 @@
+title I am an admin user, I want to modify a service
+
+actor User
+participant ServiceAnalysisView
+participant ServiceCreationController
+participant ServiceProviderManager
+participant ServProvService
+participant SqlDAO
+participant DBInserter
+participant response
+participant datastore
+
+box over User:Precondition\nUser is in an authenticated session.\nUser is in Service analysis view
+
+
+User->ServiceAnalysisView:User enters fixes company information
+activate ServiceAnalysisView
+ServiceAnalysisView->ServiceAnalysisView:let CompanyName = GetElementbyID(name)\nif(CompanyName.length()>30 || Companyame.length()<4)\n{return error}\nif(CompanyName.includes(listofunacceptable))\n{return error}
+ServiceAnalysisView->ServiceAnalysisView:let CompanyDesc = GetElementbyID(description)\nif(CompanyDesc.length()>1000 || CompanyDesc.split(' ').length > 150)\n{return error}
+ServiceAnalysisView->ServiceAnalysisView:let CompanyPhone = GetElementbyID(phone)\nif(CompanyPhone.length()>10)\n{return error}\nif(CompanyPhone.substring(0,3).includes(listofbadarea))\n{return error}
+ServiceAnalysisView->ServiceCreationController:axios.post(company:json):http response
+activate ServiceCreationController
+ServiceCreationController->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServiceCreationController<--response:return response object
+deactivate response
+ServiceCreationController->ServiceCreationController:JWTverification():bool
+ServiceCreationController->ServiceProviderManager:var ServManager = new ServiceProviderManager()
+activate ServiceProviderManager
+ServiceProviderManager->ServiceProviderManager:Constructor()
+ServiceCreationController<--ServiceProviderManager:return ServiceProviderManager object
+deactivate ServiceProviderManager
+ServiceCreationController->ServiceProviderManager:ServManager.UpdateService(Server:Serv):response
+activate ServiceProviderManager
+ServiceProviderManager->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServiceProviderManager<--response:return response object
+deactivate response
+ServiceProviderManager->ServiceProviderManager:Check Security
+ServiceProviderManager->ServiceProviderManager:if(Server.CompanyName.length >30 || Server.Company.length<4)\n{response.isSuccessful = false; response.errorMessage = 'title length'}\nif(Server.CompanyName.Contains(listofunacceptable))\n{response.isSuccessful = false; response.errorMessage = 'title char'}
+ServiceProviderManager->ServiceProviderManager:if(Server.CompanyDesc.length>1000 || Server.CompanyDesc.split(' ').length > 150)\n{response.isSuccessful = false; response.errorMessage = 'desc length'}\nif(Server.CompanyTitle.Contains(listofunacceptable))\n{response.isSuccessful = false; response.errorMessage = 'desc char'}\n
+ServiceProviderManager->ServiceProviderManager:if(Server.CompanyPhone.length > 10)\n{response.isSuccessful = false; response.errorMessage = 'phone length'}\nif(Server.CompanyPhone.contains(listofunacceptable))\n{response.isSuccessful = false; response.errorMessage = 'phone area'}
+ServiceProviderManager->ServiceProviderManager:Log user attempt
+ServiceProviderManager->ServProvService:var ServService = new ServProvService()
+activate ServProvService
+ServProvService->ServProvService:Constructor()
+ServiceProviderManager<--ServProvService:return ServProvService object
+deactivate ServProvService
+ServiceProviderManager->ServProvService:ServService.UpdateServiceProv(Servinfo:Serv):response
+activate ServProvService
+ServProvService->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServProvService<--response:return response object
+deactivate response
+ServProvService->SqlDAO:var dao = new SqlDAO
+activate SqlDAO
+SqlDAO->SqlDAO:Constructor()
+ServProvService<--SqlDAO:return SqlDAO object
+deactivate SqlDAO
+ServProvService->SqlDAO:dao.ProviderUpdate():response
+activate SqlDAO
+SqlDAO->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+SqlDAO<--response:return response object
+deactivate response
+SqlDAO->DBInserter:new DBInserter():DBInserter object
+activate DBInserter
+DBInserter-->SqlDAO:return DBInserter
+deactivate DBInserter
+SqlDAO->datastore:Call stored procedure
+activate datastore
+datastore->datastore:UPDATE dbo.'services'\nSET CompanyName = x, CompanyDesc = y, \nCompanyPhon = z, LastMod = a\nWHERE CompanyName = v
+datastore-->SqlDAO:return count
+deactivate datastore
+activate datastore
+deactivate datastore
+SqlDAO-->ServProvService:return response
+deactivate SqlDAO
+ServProvService->ServProvService:validate for errors
+ServProvService-->ServiceProviderManager:return response
+deactivate ServProvService
+ServiceProviderManager-->ServiceCreationController:return response
+deactivate ServiceProviderManager
+ServiceCreationController-->ServiceAnalysisView:return https response
+deactivate ServiceCreationController
+ServiceAnalysisView-->User:Displays to user "successfully updated service"

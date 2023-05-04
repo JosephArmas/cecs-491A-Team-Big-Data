@@ -2,8 +2,6 @@
 using System.Globalization;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
-using TeamBigData.Utification.View.Abstraction;
-using TeamBigData.Utification.View.Views;
 
 namespace TeamBigData.Utification.AccountDeletionTests
 {
@@ -21,9 +19,9 @@ namespace TeamBigData.Utification.AccountDeletionTests
             //Act
             var result = delMan.DeleteAccount(vicUser, regUser);
             //Assert
-            Console.WriteLine(result.errorMessage);
+            Console.WriteLine(result.ErrorMessage);
             Assert.IsNotNull(result);
-            Assert.IsFalse(result.isSuccessful);
+            Assert.IsFalse(result.IsSuccessful);
         }
         [TestMethod]
         public void FailsWhenRegularUserTriesToDeleteAdmin()
@@ -36,8 +34,9 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var result = delMan.DeleteAccount(adUser, regUser);
             //Assert
             Assert.IsNotNull(result);
-            Assert.IsFalse(result.isSuccessful);
+            Assert.IsFalse(result.IsSuccessful);
         }
+        /*
         [TestMethod]
         public void DefaultCultureDisplayed()
         {
@@ -49,6 +48,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             //Assert
             Assert.IsFalse(view.culCurrent != anonView.culCurrent);
         }
+        */
         [TestMethod]
         public void CorrectMessageDisplayed()
         {
@@ -60,7 +60,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
             var result = delMan.DeleteAccount(adUser, regUser);
             //Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.errorMessage == "User does not have permission to delete the account");
+            Assert.IsTrue(result.ErrorMessage == "User does not have permission to delete the account");
         }
     }
 }

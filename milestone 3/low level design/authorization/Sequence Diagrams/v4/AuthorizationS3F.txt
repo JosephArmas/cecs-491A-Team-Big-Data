@@ -1,0 +1,97 @@
+title As an Authorized User, I want access to protected functionality, so that I may have Read access.
+   actor User
+
+   actor User
+    participant Program
+    
+    
+    participant IView
+    participant UserProfile
+    participant SecurityManager
+    
+    participant Response
+    participant SqlDAO
+    participant IDBSelector
+    participant App DB
+    
+    
+    
+    activate User
+    note over User:The User has \nbeen Authenticated
+    
+    User->>Program: User wants to access application
+    activate Program
+    
+    Program->>Response: var response = new Response();
+    activate Response
+    Response->>Response:{\nbool isSuccessful\nString errorMessage\nobject data\n}
+    Response-->>Program: return Response
+    deactivate Response
+    
+    Program->>SecurityManager:SecurityManager securityManager = new SecurityManager();
+    activate SecurityManager
+    SecurityManager->>SecurityManager:{\nUserProfile? _user;\nString _otp;\nDateTime _otpCreated;\nBoolean _otpVerified\n}
+    SecurityManager-->>Program:return SecurityManager instance
+    deactivate SecurityManager
+    Program->>UserProfile:UserProfile userProfile = new UserProfile("Anonymous User");
+    activate UserProfile
+    UserProfile->>UserProfile:{\nString _username\nString _firstname\nString _lastName\nint _age\nString _email\nString _address\nDateTime _birthday\nIIdentity? Identity\n}
+    UserProfile-->>Program:GenericIdentity "Anonymous User"
+    deactivate UserProfile
+    
+    Program->>IView:IView menu = new AnonymousView();
+    activate IView
+    IView->>IView: Response DisplayMenu(ref UserAccount userAccount, ref UserProfile userProfile)
+    IView-->>Program:return AnonymousView instance
+    deactivate IView
+    
+    Program->>UserProfile:((IPrincipal)userProfile).IsInRole("Admin User")
+    activate UserProfile
+    UserProfile->>SecurityManager:Response GetUserProfileTable(List<UserProfile> list, UserProfile userProfile)
+    activate SecurityManager
+    
+    SecurityManager->>Response: var response = new Response();
+    activate Response
+    Response->>Response:{\nbool isSuccessful\nString errorMessage\nobject data\n}
+    Response-->>SecurityManager: return Response
+    deactivate Response
+    SecurityManager->>SqlDAO:IDBSelecter selectDAO = new SqlDAO(connection)
+    activate SqlDAO
+    SqlDAO->>SqlDAO:{\nString _connectionString\n}
+    
+    SqlDAO->>IDBSelector:SqlDAO:IDBSelector
+    activate IDBSelector
+    IDBSelector->>IDBSelector:{\nUserProfile SelecteUserProfile(String username)\nList<UserProfile> SelectUserProfileTable();\nUserAccount SelectUserAccount(String username);\nLList<UserAccount> SelectUserAccountTable();\n}
+    IDBSelector-->>SqlDAO:return IDBSelector
+    deactivate IDBSelector
+    SqlDAO->>App DB: list = selectDAO.SelectUserProfileTable();
+    activate App DB
+    App DB->>App DB:"SELECT * FROM dbo.UserProfile"
+    App DB-->>SqlDAO: return list
+    deactivate App DB
+    SqlDAO-->>SecurityManager:return response
+    deactivate SqlDAO
+    SecurityManager-->>UserProfile: return response
+    deactivate SecurityManager
+    
+    
+
+    UserProfile->>UserProfile: if (this.Identity.AuthenticationType != role)\n{\n     return false;\n}\nreturn true;
+    
+    UserProfile-->>Program: return true
+    deactivate UserProfile
+    Program->>IView:menu = new AdminView()
+    activate IView
+    IView->>IView:response = \nmenu.DisplayMenu(ref userAccount, ref UserProfile)
+    IView-->>Program:return response
+    deactivate IView
+    note right of Program:Want response.isSuccessful ==true
+    Program->>Program:if(!response.isSuccessful && response.errorMessage =="")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage)\n     return\n}\nif(!response.isSuccessful && response.errorMessage != "")\n{\n     Console.Clear();\n     Console.WriteLine(response.errorMessage);\n     return;\n}
+    Program-->>User:User sees Admin View
+    User->>Program: Admin wants to view User Accounts
+    Program->>SecurityManager: SecurityManager secManagerAcc = new SecurityManager();
+    SecurityManager->>SqlDAO: response = secManagerAcc.EnableAccount(String disUser, userProfile)
+    SqlDAO-->>SecurityManager: return response
+    SecurityManager-->>Program: return response
+    Program-->>User: User has write Permissions
+    deactivate User

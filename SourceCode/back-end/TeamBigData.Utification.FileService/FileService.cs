@@ -1,63 +1,86 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.Cryptography;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Files;
+
 namespace TeamBigData.Utification.FileServices
 {
     public class FileService
     {
-       /* public async Task<Response> UploadPinPic(String filename, int pinId, String connectionString)
+        private readonly IDBUploadPinPic _pinpicUploader;
+        private readonly IDBUploadProfilePic _profilepicUploader;
+        private readonly IDBDeletePinPic _pinpicDeleter;
+        private readonly IDBDeleteProfilePic _profilepicDeleter;
+        private readonly IDBDownloadPinPic _pinpicDownloader;
+        private readonly IDBDownloadProfilePic _profilepicDownloader;
+
+        public FileService(FileSqlDAO sqlDAO)
+        {
+            _pinpicUploader = sqlDAO;
+            _profilepicUploader = sqlDAO;
+            _pinpicDeleter = sqlDAO;
+            _profilepicDeleter = sqlDAO;
+            _pinpicDownloader = sqlDAO;
+            _profilepicDownloader = sqlDAO;
+        }
+
+        public async Task<Response> UploadPinPic(String filename, int pinId)
         {
             var key = SecureHasher.Base64Hash(pinId + filename + pinId);
-            var fileDao = new SqlDAO(connectionString);
-            var result = await fileDao.UploadPinPic(key, pinId);
-            if(result.isSuccessful)
+            var result = await _pinpicUploader.UploadPinPic(key, pinId);
+            if(result.IsSuccessful)
             {
-                result.data = key;
+                result.Data = key;
+            }
+            if(result.ErrorMessage.Contains("PRIMARY KEY"))
+            {
+                result.ErrorMessage = "Can't Upload Picture Because Pin already has Picture, Use Update Instead";
             }
             return result;
         }
-        public async Task<Response> UploadProfilePic(String filename, int userId, String connectionString)
+        public async Task<Response> UploadProfilePic(String filename, int userId)
         {
             var key = SecureHasher.Base64Hash(userId + filename + userId);
-            var fileDao = new SqlDAO(connectionString);
-            var result = await fileDao.UploadProfilePic(key, userId);
-            if (result.isSuccessful)
+            var result = await _profilepicUploader.UploadProfilePic(key, userId);
+            if (result.IsSuccessful)
             {
-                result.data = key;
+                result.Data = key;
+            }
+            if (result.ErrorMessage.Contains("PRIMARY KEY"))
+            {
+                result.ErrorMessage = "Can't Upload Picture Because Profile already has Picture, Use Update Instead";
             }
             return result;
         }
-        public async Task<Response> DeletePinPic(int pinId, String connectionString)
+        public async Task<Response> DeletePinPic(int pinId)
         {
             var result = new Response();
-            var fileDao = new SqlDAO(connectionString);
-            var keyResult = await fileDao.DownloadPinPic(pinId);
-            if (keyResult.isSuccessful)
+            var keyResult = await _pinpicDownloader.DownloadPinPic(pinId);
+            if (keyResult.IsSuccessful)
             {
-                result = await fileDao.DeletePinPic(pinId);
-                result.data = keyResult.data;
+                result = await _pinpicDeleter.DeletePinPic(pinId);
+                result.Data = keyResult.Data;
             }
             else
             {
-                result.errorMessage = "Error Finding Picture to Delete";
+                result.ErrorMessage = "Error Finding Picture to Delete";
             }
             return result;
         }
-        public async Task<Response> DeleteProfilePic(int userId, String connectionString)
+        public async Task<Response> DeleteProfilePic(int userId)
         {
             var result = new Response();
-            var fileDao = new SqlDAO(connectionString);
-            var keyResult = await fileDao.DownloadProfilePic(userId);
-            if(keyResult.isSuccessful)
+            var keyResult = await _profilepicDownloader.DownloadProfilePic(userId);
+            if(keyResult.IsSuccessful)
             {
-                result = await fileDao.DeleteProfilePic(userId);
-                result.data = keyResult.data;
+                result = await _profilepicDeleter.DeleteProfilePic(userId);
+                result.Data = keyResult.Data;
             }
             else
             {
-                result.errorMessage = "Error Finding Picture to Delete";
+                result.ErrorMessage = "Error Finding Picture to Delete";
             }
             return result;
-        }*/
+        }
     }
 }

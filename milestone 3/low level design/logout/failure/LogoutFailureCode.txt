@@ -1,0 +1,39 @@
+title Logout Failure
+
+participant User
+participant Program
+
+participant RegularView
+participant Response
+participant UserProfile
+
+activate User
+box over User: User device is an authenticated user\nand logged in
+User->>Program: User wants to logout
+activate Program
+Program->>UserProfile: if(((IPrincipal)userProfile).IsInRole("Regular User")):bool;
+UserProfile-->>Program: Return True
+Program->>RegularView: menu = new RegularView():IView;
+activate RegularView
+RegularView->>RegularView: public RegularView();
+RegularView-->>Program: Return RegularView instance
+deactivate RegularView
+Program->>RegularView: menu.DisplayMenu(ref userAccount:UserAccount, ref userProfile:UserProfile):Response
+activate RegularView
+RegularView->>Response:response = new Response():Response;
+activate Response
+Response->>Response:public Response() {\n     isSuccessful = false;\n     errorMessage = "\";\n     data = 0;\n}
+Response-->>RegularView: Return Response Instance
+deactivate Response
+RegularView-->>User: Console.WriteLine("Welcome Regular User");\nConsole.WriteLine("---------MENU---------");\nConsole.WriteLine("[1] LogOut");\nConsole.WriteLine("[0] exit");\nConsole.WriteLine("Enter 0-1");
+User->>RegularView: User enters [1] Logout
+RegularView->>UserProfile: userProfile = new UserProfile(""):UserProfile
+activate UserProfile
+UserProfile->>UserProfile:Public UserProfile():UserProfile
+UserProfile-->>RegularView: Return UserProfile instance
+deactivate UserProfile
+RegularView-->User: Console.WriteLine('' '');
+RegularView-->Program:Return response;
+deactivate RegularView
+Program->>Program:if(response.isSuccessful && response.errormessage == '' '')
+Program->>User:User is not sent to homepage\n and is an anonymous user

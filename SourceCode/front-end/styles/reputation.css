@@ -1,0 +1,88 @@
+.create-report-container
+{
+    display: none;
+}
+
+#new-rating
+{
+    font-size: 20px;
+    width: 100%;
+}
+
+.report-creation-header
+{    
+    justify-content: center;
+}
+
+.rating-instructions
+{
+    font-size: 25px;
+}
+
+#new-report-form
+{
+    align-items: center;
+    border: 1px solid;
+    padding: 30px;
+    gap: 30px; 
+}
+
+.rating-box
+{
+    align-items: center;
+    border: 3px solid;
+    /*margin-left: 47%;*/
+    width: 5%;
+    overflow: hidden;
+}
+
+.feedback-box
+{
+    align-items: center;
+    border: 3px solid;
+    width: 25%;
+    overflow: hidden;
+}
+
+.reputation-reports-container
+{
+    display: none;
+}
+
+#map-return-button
+{
+    background-color: #CA75FF;
+    color: white;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.reputation-controls
+{
+    margin-left: 27%;
+    margin-top: 4%;
+    margin-bottom: 4%;
+}
+
+.reputation-controls #previous-reports
+{
+    background-color: #00ACB7;
+    color: white;
+    font-size: 25px;
+}
+
+.reputation-controls #create-report-btn
+{
+    background-color: #CA75FF;
+    color: white;
+    font-size: 40px;
+    margin-left: 14%;
+}
+
+.reputation-controls #next-reports
+{
+    background-color: #00ACB7;
+    color: white;
+    font-size: 25px;
+    margin-left: 15%;
+}

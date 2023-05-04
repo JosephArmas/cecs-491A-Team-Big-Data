@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Security.Principal;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
@@ -20,6 +21,11 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
+        public UsersSqlDAO(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
         {
             var tcs = new TaskCompletionSource<Response>();
@@ -31,23 +37,23 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 var rows = command.ExecuteNonQuery();
                 if (rows > 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "SqlCommand Passed";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "SqlCommand Passed";
                 }
                 else if (rows == 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Nothing Affected";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "Nothing Affected";
                 }
                 connection.Close();
             }
             catch (SqlException s)
             {
-                result.errorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
             }
             catch (Exception e)
             {
-                result.errorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
             }
             tcs.SetResult(result);
             return result;
@@ -68,13 +74,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@s", salt));
             command.Parameters.Add(new SqlParameter("@h", userhash));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -82,8 +88,8 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         public async Task<Response> InsertUserProfile(int userId)
         {
             //Creates an Insert SQL statements using the collumn names and values given
-            var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, \"role\") values" +
-                "(@uID, @n, @ln, @add, @bday, @role)";
+            var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, reputation, \"role\") values" +
+                "(@uID, @n, @ln, @add, @bday, @reputation, @role)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(insertSql, connection);
             command.Parameters.Add(new SqlParameter("@uID", userId));
@@ -91,16 +97,17 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@ln", ""));
             command.Parameters.Add(new SqlParameter("@add", ""));
             command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
+            command.Parameters.Add(new SqlParameter("@reputation", (decimal)2.0));
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.isSuccessful = false;
-                result.errorMessage += ", {failed: ExecuteSqlCommand}";
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }
@@ -114,10 +121,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@newP", password));
             command.Parameters.Add(new SqlParameter("@salt", salt));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.errorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
+            if (response.ErrorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "Invalid username or OTP provided. Retry again or contact system administrator";
             }
             return response;
         }
@@ -138,7 +145,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 {
                     var command = new SqlCommand(sqlStatement, connect);
                     command.Parameters.Add(new SqlParameter("@u", username));
-                    connect.Open();
+                    await connect.OpenAsync();
                     using (var reader = command.ExecuteReader())
                     {
                         // read through all rows
@@ -233,7 +240,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             {
                 try
                 {
-                    connect.Open();
+                    await connect.OpenAsync();
                     var command = new SqlCommand(sqlStatement, connect);
                     command.Parameters.Add(new SqlParameter("@ID", userID));
                     using (var reader = command.ExecuteReader())
@@ -246,6 +253,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             int age = 0;
                             String address = "";
                             DateTime birthday = new DateTime();
+                            double reputation = 2.0;
                             String role = "";
 
                             int ordinal = reader.GetOrdinal("userID");
@@ -279,7 +287,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             {
                                 birthday = reader.GetDateTime(ordinal);
                             }
-                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, new GenericIdentity(userID.ToString(), role));
+                            ordinal = reader.GetOrdinal("reputation");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                reputation = Decimal.ToDouble(reader.GetDecimal(ordinal));
+                            }
+                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, reputation, new GenericIdentity(userID.ToString(), role));
                         }
                         reader.Close();
                     }
@@ -484,15 +497,15 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@ID", userID));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.errorMessage.Equals("Nothing Affected"))
+            if (response.ErrorMessage.Equals("Nothing Affected"))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "No Request for User Found";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "No Request for User Found";
             }
-            else if (response.isSuccessful)
+            else if (response.IsSuccessful)
             {
-                response.isSuccessful = true;
-                response.errorMessage = "Account recovery completed successfully for user";
+                response.IsSuccessful = true;
+                response.ErrorMessage = "Account recovery completed successfully for user";
             }
             return response;
         }
@@ -506,17 +519,98 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@pass", password));
             command.Parameters.Add(new SqlParameter("@salt", salt));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.errorMessage.Equals("Nothing Affected"))
+            if (response.ErrorMessage.Equals("Nothing Affected"))
             {
-                response.isSuccessful = false;
-                response.errorMessage = "No Request for User Found";
+                response.IsSuccessful = false;
+                response.ErrorMessage = "No Request for User Found";
             }
-            else if (response.isSuccessful)
+            else if (response.IsSuccessful)
             {
-                response.isSuccessful = true;
-                response.errorMessage = "Account recovery completed successfully for user";
+                response.IsSuccessful = true;
+                response.ErrorMessage = "Account recovery completed successfully for user";
             }
             return response;
+        }
+
+        public async Task<Response> UpdateUserRoleAsync(UserProfile userProfile)
+        {
+            Response result = new Response();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    try
+                    {
+                        await connection.OpenAsync().ConfigureAwait(false);
+
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = connection;
+                            command.CommandText = "UpdateUserRole";
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
+                            command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
+
+                            int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                            Console.WriteLine(updateRole);
+                            if (updateRole == 1)
+                            {
+                                result.Data = 1;
+                                result.IsSuccessful = true;
+                            }
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+                        result.ErrorMessage = e.Message;
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                result.ErrorMessage = e.Message;
+            }
+
+            return result;
+        }
+
+        public async Task<Response> UpdateUserReputationAsync(int user, double newReputation)
+        {
+            Response result = new Response();
+            CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            CancellationToken token = cts.Token;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "UpdateUserReputation";
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@reportedUser", user);
+                        command.Parameters.AddWithValue("@newReputation", (SqlDecimal)newReputation);
+
+                        int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
+                        if (execute == 0)
+                        {
+                            return result;
+                        }
+                    }
+                }
+                catch (SqlException s)
+                {
+                    result.ErrorMessage = s.Message;
+                }
+            }
+            result.IsSuccessful = true;
+            return result;
         }
     }
 }

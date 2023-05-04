@@ -13,6 +13,8 @@
         <link rel="stylesheet" href="styles/registration.css">
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/recovery.css">
+        <link rel="stylesheet" href="styles/profile.css">
+        <link rel="stylesheet" href="styles/reputation.css">
     </head>
     <body>
         <div id="test-data"></div>
@@ -39,10 +41,10 @@
                 <div class="title">
                     <h1>Utification</h1>
                 </div>
-                <div class="profile-container">
+                <div class="header-container">
                     <div>
                         <!-- to not be bloated have a ajax call for the profile-nav -->
-                        <button type="button" id="profileBtn">Profile</button>
+                        <button type="button" id="profileBtn" onclick="profileClicked()">Profile</button>
                     </div>
                     <div>
                         <button type="button" id="home-logoutBtn" onclick="homeClicked()">Logout</button>
@@ -57,6 +59,68 @@
                 </div>
             <div class="footer">
                 <footer>&copy; 2023 Utification</footer>
+            </div>
+        </div>
+
+        <!--* Create Report View-->
+        <div class="create-report-container" hidden>
+            <div class="report-creation-header">
+                <header class="rating-instructions">Enter a rating from 0.0-5.0</header>
+            </div>
+            <form id="new-report-form">    
+                <div class="rating-box">
+                    <input type="text" id="new-rating" maxlength="3" required>
+                </div>
+                <div class="feedback-box">                        
+                    <textarea id="new-feedback" required></textarea>    
+                </div>
+                <button type="button" id="submit-report-btn">Submit Report</button>
+            </form>
+        </div>
+        
+        <!--* Reports/Reputation View-->
+        <div class="reputation-reports-container" hidden>
+            <div class="reputation-header">
+                <button type="button" id="map-return-button">Back</button>
+            </div>
+            <div class="reputation"></div>
+            <div class="reports-box"></div>
+            <div class="reputation-controls">
+                <button type="button" id="previous-reports">Previous</button>
+                <button type="button" id="create-report-btn">Create New Report</button>
+                <button type="button" id ="next-reports">Next</button>
+            </div>
+        </div>
+
+         <!-- * Profile View -->
+         <div class="profileContainer">
+            <div class = "profilePicture" id="profilePicture">
+                <img id="profilePic" style="height:400px; width:100%; object-fit:contain" src="blank image.jpg">
+            </div>
+            <div class="buttonContainer" id="profileButtons">
+                    <button type = "button" id="p-BackButton" onclick=backToMap()>Back</button>
+                    <input type="file" id="p-fileSelector" name="Select File" accept="image/jpg, image/png">
+                    <button class="profileButton" type="button" id="p-AddPic" onclick=addProfilePic()>Add Profile Picture</button>
+                    <button class="profileButton" type="button" id="p-UpdatePic" onclick=updateProfilePic()>Update Profile Picture</button>
+                    <button class="profileButton" type="button" id="p-DeletePic" onclick=deleteProfilePic()>Delete Profile Picture</button>
+            </div>
+            <div class="profileInfoBox" id="profileInfo">
+                <ul>
+                    <div class="profileInfo" id="profileName">Your Name is </div>
+                    <div class="profileInfo" id="profileLastName">Your Last Name is</div>
+                    <div class="profileInfo" id="profileAddress">Your address is</div>
+                    <div class="profileInfo" id="profileBirthay">Your Birthday is</div>
+                </ul>
+            </div>
+            <div class="profileInput" id="profileInput">
+                <ul>
+                <li><input type="firstname" class="profileInfo" id ="p-f" placeholder="firstname"></li>
+                <li><input type="lastname" class="profileInfo" id="p-l" placeholder="lastname"></li>
+                <li><input type="address" class="profileInfo" id="p-add" placeholder="address"></li>
+                <li><b3 class="profileInfo">Please enter birthday as MM/DD/YYYY</h3></li>
+                <li><input type="birthday" class="profileInfo" id="p-bd" placeholder="birthday" minlength="10"></li>
+                <li><button type="button" onclick=updateProfile()>Submit</button> 
+                </ul>
             </div>
         </div>
 
@@ -183,7 +247,7 @@
             </div>
             <div class="content-container">
                 <div class="box-1">
-                    <img src="blank image.jpg" style="height:100%; width:100%; object-fit:contain">
+
                 </div>
                 <div class="box-2" id="file-container">
                 </div> 
@@ -207,6 +271,8 @@
         <script src="sources/otp/recOTP.js"></script>
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/fileUpload/file.js"></script>
+        <script src="sources/profile/profile.js"></script>
+        <script src="sources/reputation/reputation.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

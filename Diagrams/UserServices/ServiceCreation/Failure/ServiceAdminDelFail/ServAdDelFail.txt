@@ -1,0 +1,84 @@
+title I am an admin user, I want to delete a service but it wasn’t successful
+
+actor User
+participant ServiceAnalysisView
+participant ServiceCreationController
+participant ServiceProviderManager
+participant ServProvService
+participant SqlDAO
+participant DBInserter
+participant response
+participant datastore
+
+box over User:Precondition\nUser is in an authenticated session.\nUser is in Service analysis view
+
+
+User->ServiceAnalysisView:User enters fixes company information
+activate ServiceAnalysisView
+ServiceAnalysisView->ServiceCreationController:axios.post(company:json):http response
+activate ServiceCreationController
+ServiceCreationController->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServiceCreationController<--response:return response object
+deactivate response
+ServiceCreationController->ServiceCreationController:JWTverification():bool
+ServiceCreationController->ServiceProviderManager:var ServManager = new ServiceProviderManager()
+activate ServiceProviderManager
+ServiceProviderManager->ServiceProviderManager:Constructor()
+ServiceCreationController<--ServiceProviderManager:return ServiceProviderManager object
+deactivate ServiceProviderManager
+ServiceCreationController->ServiceProviderManager:ServManager.DeleteService(Server:Serv):response
+activate ServiceProviderManager
+ServiceProviderManager->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServiceProviderManager<--response:return response object
+deactivate response
+ServiceProviderManager->ServiceProviderManager:Check Security
+ServiceProviderManager->ServiceProviderManager:Log user attempt
+ServiceProviderManager->ServProvService:var ServService = new ServProvService()
+activate ServProvService
+ServProvService->ServProvService:Constructor()
+ServiceProviderManager<--ServProvService:return ServProvService object
+deactivate ServProvService
+ServiceProviderManager->ServProvService:ServService.DeleteServiceProv(Servinfo:Serv):response
+activate ServProvService
+ServProvService->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+ServProvService<--response:return response object
+deactivate response
+ServProvService->SqlDAO:var dao = new SqlDAO
+activate SqlDAO
+SqlDAO->SqlDAO:Constructor()
+ServProvService<--SqlDAO:return SqlDAO object
+deactivate SqlDAO
+ServProvService->SqlDAO:dao.ProviderDelete():response
+activate SqlDAO
+SqlDAO->response:var ProvResponse = new response()
+activate response
+response->response:ctor()
+SqlDAO<--response:return response object
+deactivate response
+SqlDAO->DBInserter:new DBInserter():DBInserter object
+activate DBInserter
+DBInserter-->SqlDAO:return DBInserter
+deactivate DBInserter
+SqlDAO->datastore:Call stored procedure
+activate datastore
+datastore->datastore:UPDATE dbo.'services'\nSET Active = 0\nWHERE CompanyName = v
+datastore-->SqlDAO:return rows
+deactivate datastore
+activate datastore
+deactivate datastore
+SqlDAO-->ServProvService:return response
+deactivate SqlDAO
+ServProvService->ServProvService:if(response.data == 0)\n{response.isSuccessful = false;\nresponse.errorMessage = "Unable to Delete Service. Try Again"}
+ServProvService-->ServiceProviderManager:return response
+deactivate ServProvService
+ServiceProviderManager-->ServiceCreationController:return response
+deactivate ServiceProviderManager
+ServiceCreationController-->ServiceAnalysisView:return https response
+deactivate ServiceCreationController
+ServiceAnalysisView-->User:Displays to user "Unable to Delete Service. Try Again"

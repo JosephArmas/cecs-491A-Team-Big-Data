@@ -40,8 +40,8 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Assert
             Assert.IsNotNull(listRequests);
             Assert.IsTrue(listRequests.Count > 0);
-            Assert.IsTrue(insertResult.isSuccessful && fetchResult.isSuccessful);
-            Assert.AreEqual(insertResult.errorMessage, "Account recovery request sent");
+            Assert.IsTrue(insertResult.IsSuccessful && fetchResult.isSuccessful);
+            Assert.AreEqual(insertResult.ErrorMessage, "Account recovery request sent");
             Assert.IsTrue(actual < expected);
         }
 
@@ -68,13 +68,13 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             //Act
             stopwatch.Start();
             var enableResponse = await adminManager.ResetAccount(list[0]._userID, userProfile);
-            Console.WriteLine(enableResponse.errorMessage);
+            Console.WriteLine(enableResponse.ErrorMessage);
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;
 
             //Assert
-            Assert.IsTrue(enableResponse.isSuccessful);
-            Assert.AreEqual(enableResponse.errorMessage, "Account recovery completed successfully for user");
+            Assert.IsTrue(enableResponse.IsSuccessful);
+            Assert.AreEqual(enableResponse.ErrorMessage, "Account recovery completed successfully for user");
             Assert.IsTrue(actual < expected);
         }
 
@@ -95,8 +95,8 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var otp = secManager.SendOTP();
             var actual = await secManager.RecoverAccount(username, encryptedPassword, encryptor);
             //Assert
-            Assert.IsFalse(actual.isSuccessful);
-            Assert.AreEqual(expected, actual.errorMessage);
+            Assert.IsFalse(actual.IsSuccessful);
+            Assert.AreEqual(expected, actual.ErrorMessage);
         }
 
         [TestMethod]
@@ -116,8 +116,8 @@ namespace TeamBigData.Utification.AccountRecoveryTests
             var otp = "wrongOTP";
             var actual = await secManager.RecoverAccount(username, encryptedPassword, encryptor);
             //Assert
-            Assert.IsFalse(actual.isSuccessful);
-            Assert.AreEqual(expected, actual.errorMessage);
+            Assert.IsFalse(actual.IsSuccessful);
+            Assert.AreEqual(expected, actual.ErrorMessage);
         }
     }
 }

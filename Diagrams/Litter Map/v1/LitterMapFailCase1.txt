@@ -1,0 +1,28 @@
+sequenceDiagram
+    title Map takes longer than 10 seconds to display
+    actor user 
+    
+    note over user: Anonymous User<br/>on Anonymous View
+    activate user
+    user->>+index.html: Anonymous User connects to web application
+    index.html->>+map.js: const webServiceU = "Backend Url"<br/>const CALIFORNIA_BOUNDS = {}<br/>function initMap()
+    map.js->>map.js: var start = // get current time<br/>var end = // get current time<br/>try {<br/>var map = new google.maps.Map(// set initial location on CSULB)<br/>getMapPinsHandler()<br/>end = // get time<br/>}
+    map.js->>+Program.cs: var request = ajaxClient.get(webServiceUrl)
+    Program.cs->>Program.cs: var builder = WebApplication.CreateBuilder(args)<br/>builder.Services.AddControllers()<br/>builder.Services.AddTransient<AuthDAO>()<br/>builder.Services.AddTransient<AuthChecker>()<br/>var app = builder.Build();
+    Program.cs->>+MapManager: app.Get();
+    MapManager->>MapManager: [Route("AnonymousView")]<br/>public Task<IActionResult> Get()<br/>{<br/>var pin = new PinService()
+    MapManager->>+PinService:<br/>    var pins = pin.GetAllUserPins()
+    PinService->>+SqlDAO: var connectionString = @"Server Connection to pins"<br/>IDBSelecter sqlPinSDAO = new SqlDAO(connectionString)<br/>return sqlPinSDAO.SelectAllPins()
+    SqlDAO->>SqlDAO: var pins = new List<Pin>()string sqlStatement = "SELECT * FROM dbo.Pins"<br/>    using(SqlConnection connect = new SqlConnection(_connectionString))<br/>{<br/>connection.Open()
+    SqlDAO->>+TeamBigData.Utification.Pins: using(var reader = new SqlCommand(sqlStatement, connect)).ExecutreReader())
+    TeamBigData.Utification.Pins->>-SqlDAO: return all of pins table
+    SqlDAO->>SqlDAO: {<br/>String position = ""<br/>int type = 0<br/>int ordinal = reader.GetOrdinal("position")<br/>if (!reader.IsDBNull(ordinal))<br/>position = reader.GetString(ordinal)<br/>ordinal = reader.GetOrdinal("type")<br/>if (!reader.IsDBNull(ordinal))<br/>type = reader.GetInt32(ordinal)<br/>pins.Add(new Pin(position, type))<br/>}<br/>reader.Close()<br/>}<br/>connect.Close()<br/>}
+    SqlDAO->>-PinService: return pins
+    PinService->>-MapManager: return pins
+    MapManager->>-Program.cs: return JSON(pins)
+    Program.cs->>-map.js:  return ajax response
+    map.js->>map.js: if (// longer than 10 seconds)
+    map.js->>-index.html: updates dynamic content view 
+    index.html->>-user: Display user error. 
+    note over user: User is prompted to refresh
+    deactivate user

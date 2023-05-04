@@ -26,15 +26,15 @@ namespace TeamBigData.Utification.PinServices
         {
             var response = await _pinDBInserter.InsertNewPin(pin).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinDBInserter.InsertNewPin}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinDBInserter.InsertNewPin}";
                 return response;
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
             }
 
             return response;
@@ -63,15 +63,15 @@ namespace TeamBigData.Utification.PinServices
         {
             var response = await _pinDBUpdater.UpdatePinToComplete(pinID, userID).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {false: _pinDBUpdater.UpdatePinToComplete}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {false: _pinDBUpdater.UpdatePinToComplete}";
                 return response;
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
             }
 
             return response;
@@ -82,15 +82,15 @@ namespace TeamBigData.Utification.PinServices
         {
             var response = await _pinDBUpdater.UpdatePinContent(pinID, userID, description).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinDBUpdater.UpdatePinContent}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinDBUpdater.UpdatePinContent}";
                 return response;
             }
             else 
             { 
-                response.isSuccessful = true; 
+                response.IsSuccessful = true; 
             }
 
             return response;
@@ -100,15 +100,15 @@ namespace TeamBigData.Utification.PinServices
         {
             var response = await _pinDBUpdater.UpdatePinType(pinID, userID, pinType).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinDBUpdater.UpdatePinType}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinDBUpdater.UpdatePinType}";
                 return response;
             }
             else
             {
-                response.isSuccessful = true;
+                response.IsSuccessful = true;
             }
 
             return response;
@@ -118,15 +118,15 @@ namespace TeamBigData.Utification.PinServices
         {
             var response = await _pinDBUpdater.UpdatePinToDisabled(pinID, userID).ConfigureAwait(false);
 
-            if (!response.isSuccessful)
+            if (!response.IsSuccessful)
             {
-                response.isSuccessful = false;
-                response.errorMessage += ", {failed: _pinDBUpdater.UpdatePinToDisabled}";
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinDBUpdater.UpdatePinToDisabled}";
                 return response;
             }
             else 
             { 
-                response.isSuccessful = true; 
+                response.IsSuccessful = true; 
             }
 
             return response;

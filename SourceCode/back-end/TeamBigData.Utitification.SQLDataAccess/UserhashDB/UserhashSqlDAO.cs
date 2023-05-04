@@ -15,6 +15,11 @@ namespace TeamBigData.Utification.SQLDataAccess.UserhashDB
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
+        public UserhashSqlDAO(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
         {
             var tcs = new TaskCompletionSource<Response>();
@@ -26,23 +31,23 @@ namespace TeamBigData.Utification.SQLDataAccess.UserhashDB
                 var rows = command.ExecuteNonQuery();
                 if (rows > 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "SqlCommand Passed";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "SqlCommand Passed";
                 }
                 else if (rows == 0)
                 {
-                    result.isSuccessful = true;
-                    result.errorMessage = "Nothing Affected";
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "Nothing Affected";
                 }
                 connection.Close();
             }
             catch (SqlException s)
             {
-                result.errorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = s.Message + ", {failed: command.ExecuteNonQuery}";
             }
             catch (Exception e)
             {
-                result.errorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
+                result.ErrorMessage = e.Message + ", {failed: command.ExecuteNonQuery}";
             }
             tcs.SetResult(result);
             return result;
@@ -56,13 +61,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UserhashDB
             command.Parameters.Add(new SqlParameter("@hash", userHash));
             command.Parameters.Add(new SqlParameter("@ID", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (!result.isSuccessful)
+            if (!result.IsSuccessful)
             {
-                result.errorMessage += $", {{failed: ExecuteSqlCommand, connectionstring:{_connectionString} }}";
+                result.ErrorMessage += $", {{failed: ExecuteSqlCommand, connectionstring:{_connectionString} }}";
             }
             else
             {
-                result.isSuccessful = true;
+                result.IsSuccessful = true;
             }
             return result;
         }

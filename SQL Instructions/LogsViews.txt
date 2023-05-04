@@ -1,0 +1,23 @@
+create view loginsPast3Months as select Count("timestamp") as Logins,
+DateDiff(Day, MAX("timestamp"), getDate()) as DaysAgo from dbo.logs 
+where "event" = 'SecurityManager.LoginUser()' AND "timestamp" >= DateAdd(Day, -90, getDate())
+AND Message = 'Sucessful Login'
+group by DatePart(Year, "timestamp"), DatePart(Month, "timestamp"), DatePart(Day, "timestamp")
+Go
+create view registrationsPast3Months as select Count("timestamp") as Registrations,
+DateDiff(Day, MAX("timestamp"), getDate()) as DaysAgo from dbo.logs
+where "event" = 'SecurityManager.RegisterUser()' 
+AND Message = 'Account Registration Succesful' AND "timestamp" >= DateAdd(Day, -90, getDate()) 
+group by Month("timestamp"), Day("timestamp");
+Go
+create view newPinsPastWeek as select Count("timestamp") as PinsAdded,
+DateDiff(Day, MAX("timestamp"), getDate()) as DaysAgo from dbo.logs
+where "event" = 'PinService.StoreNewPin()' AND "timestamp" >= DateAdd(Day, -7, getDate())
+AND Message = 'Store New Pin Successfully.'
+group by Month("timestamp"), Day("timestamp");
+Go
+create view pinPullsPastMonth as select Count("timestamp") as PinPulls,
+DateDiff(Day, MAX("timestamp"), getDate()) as DaysAgo from dbo.logs 
+where "event" = 'PinService.GetPinTable()' AND "timestamp" >= DateAdd(Day, -30, getDate()) 
+AND Message = 'Get pins table Successfully.'  
+group by Month("timestamp"), Day("timestamp");

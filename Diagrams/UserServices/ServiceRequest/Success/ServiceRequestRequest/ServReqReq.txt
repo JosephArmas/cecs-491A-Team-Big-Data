@@ -1,0 +1,86 @@
+title I am a Regular or Reputable User, I want to request a service
+
+actor User
+participant main.js
+participant servicerequestview
+participant servicerequestcontroller
+participant ServRequestManager
+participant ServReqService
+participant SqlDAO
+participant response
+participant datastore
+
+box over User:Precondtion\nUser must have an active pin\nUser must be looking at the service list
+
+User->main.js:User selects service from list
+activate main.js
+main.js->servicerequestview:event listener for element 
+activate servicerequestview
+servicerequestview->servicerequestview:Start service request div for front-end
+servicerequestview->servicerequestcontroller:axios.post():http response
+activate servicerequestcontroller
+servicerequestcontroller->ServRequestManager:Var RequestServRequestManager = new ServRequestManager():ServRequestManager
+activate ServRequestManager
+ServRequestManager->ServRequestManager:Consturctor()
+servicerequestcontroller<--ServRequestManager:return ServRequestManager object
+deactivate ServRequestManager
+servicerequestcontroller->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+servicerequestcontroller<--response:return response
+deactivate response
+servicerequestcontroller->servicerequestcontroller:JWTverification():bool
+servicerequestcontroller->servicerequestcontroller:Try Catch
+servicerequestcontroller->ServRequestManager:ServRequestManager.ServiceRequest(Company:Serv):response
+activate ServRequestManager
+ServRequestManager->ServRequestManager:Security Check
+ServRequestManager->ServRequestManager:input validation
+ServRequestManager->ServRequestManager:Business Requirement compliancy 
+ServRequestManager->ServRequestManager:Log user action attempt
+ServRequestManager->ServReqService:Var RequestService = new ServReqService():ServReqService
+activate ServReqService
+ServReqService->ServReqService:Constructor()
+ServRequestManager<--ServReqService:return ServReqService object
+deactivate ServReqService
+ServRequestManager->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+ServRequestManager<--response:return response
+deactivate response
+ServRequestManager->ServReqService:RequestService.ServiceRequest():response
+activate ServReqService
+ServReqService->SqlDAO:Var RequestDAO = new SqlDAO():SqlDAO
+activate SqlDAO
+SqlDAO->SqlDAO:Constructor()
+ServReqService<--SqlDAO:return SqlDAO object
+deactivate SqlDAO
+ServReqService->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+ServReqService<--response:return response
+deactivate response
+ServReqService->SqlDAO:dao.InsertServiceReq():response
+activate SqlDAO
+SqlDAO->SqlDAO:Assemble any data into database format
+SqlDAO->response:var RequestResponse():response
+activate response
+response->response:Constructor()
+SqlDAO<--response:return response
+deactivate response
+SqlDAO->datastore:Using(ConnectionString)
+activate datastore
+datastore->datastore:INSERT INTO dbo.ServRequest \nVALUES RequestID = a, CompanyName = b,\nUserhash = c, PinLat = d, PinLong = e,\nRequestor = f, Active = g, Accept = h
+
+SqlDAO<--datastore:return rows
+deactivate datastore
+ServReqService<--SqlDAO:return response
+deactivate SqlDAO
+ServReqService->ServReqService:response validation
+ServRequestManager<--ServReqService:return response
+deactivate ServReqService
+servicerequestcontroller<--ServRequestManager:return response
+deactivate ServRequestManager
+servicerequestview<--servicerequestcontroller:return http response
+deactivate servicerequestcontroller
+main.js<--servicerequestview:Fill in area with div servicerequest
+User<--main.js:Displays to user the list of available services

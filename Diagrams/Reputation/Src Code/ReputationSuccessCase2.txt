@@ -1,0 +1,88 @@
+title As a user, I want to be able to view other user's reputation
+
+actor Authenticated User
+note over Authenticated User: Must be in Reputation View
+participant ReputationView
+participant Console
+participant ReputationController
+participant ReputationManager
+participant ReputationService
+participant Logging
+participant ReputationDataAccess
+participant LoggingDataAccess
+participant SQLServer
+activate Authenticated User
+
+Authenticated User ->> ReputationView: User enters Reputation view specifically\nto see other users reputation
+activate ReputationView
+
+ReputationView ->> Console: axios.get(reputationServer).then(response=>{}): JSON Object
+activate Console
+
+Console ->> ReputationController: [Route("reputation")]\n[HttpGet]\nGetRatingsList(): Task Object
+activate ReputationController
+
+ReputationController ->> ReputationManager: GetUsersRatingsList(): Response Object
+activate ReputationManager
+
+ReputationManager ->> ReputationService: GetOrganizedUserRatings(): Response Object
+activate ReputationService
+
+ReputationService ->> ReputationDataAccess: await SelectUserRatings(): Task Object
+activate ReputationDataAccess
+
+ReputationDataAccess ->> SQLServer: ExecuteReader(): SqlDataReader Object
+activate SQLServer
+
+SQLServer ->> SQLServer: SELECT rating\nFROM dbo.UserProfile
+activate SQLServer
+
+SQLServer -->> SQLServer: return all rows from dbo.UserProfile\nthat meet the condition
+deactivate SQLServer
+
+SQLServer -->> ReputationDataAccess: return SqlDataReader
+deactivate SQLServer
+
+ReputationDataAccess -->> ReputationService: return Task Object
+deactivate ReputationDataAccess
+
+ReputationService ->> Logging: Log(Log Object): Response Object
+activate Logging
+
+Logging ->>LoggingDataAccess: await Execute(String insertSql).ConfigureAwait(false): Task Object
+activate LoggingDataAccess
+
+LoggingDataAccess ->> SQLServer: ExecuteNonQuery(): Int32
+activate SQLServer
+
+SQLServer ->> SQLServer: INSERT INTO dbo.Logs(CorrelationID, LogLevel, UserHash, [Event], Category, [Message])\nVALUES (1, 'Info', 'log._userHash', 'Reputationservice.GetUsersRatings()', 'app.Reputation', 'Retrieved User Ratings Successfully');
+activate SQLServer
+
+SQLServer -->> SQLServer: return "You have made changes to the database. Rows affected: 1"
+deactivate SQLServer
+
+SQLServer -->> LoggingDataAccess: return 1
+deactivate SQLServer
+
+LoggingDataAccess -->> Logging: return Task Object
+deactivate LoggingDataAccess
+
+Logging -->> ReputationService: return Response Object
+deactivate Logging
+
+ReputationService -->> ReputationManager: return Response Object
+deactivate ReputationService
+
+ReputationManager -->> ReputationController: return Response Object
+deactivate ReputationManager
+
+ReputationController -->> Console: return Task Object
+deactivate ReputationController
+
+Console -->> ReputationView: return JSON Object
+deactivate Console
+
+ReputationView -->> Authenticated User: Displays a list of Users organized by ratings back to the\nUser. User can click on any User in the list of Users\nto view their reports submitted by other Users
+deactivate ReputationView
+
+deactivate Authenticated User

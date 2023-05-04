@@ -20,6 +20,48 @@
     let otpCreated = "";
     let userhash = "";
 
+var otpContainer = document.querySelector(".otp-container");
+var errorsOtp = document.getElementById("errors");
+//const otpForm = document.querySelector("#otp-form");
+//const otpDisplay = document.querySelector("#otp-display");
+var otpInput = document.querySelector("#otp-input");
+/*otpBtn.addEventListener('click', function (event)
+{
+    event.preventDefault();
+    if (otpInput.value == '')
+    {
+        errorsOtp.innerHTML = "Please enter OTP";
+
+    } else if (otpInput.value == otpVal) 
+    {
+        errorsOtp.innerHTML = "";
+        regView();
+        
+    } else 
+    {
+        errorsOtp.style.color = "red";
+        errorsOtp.innerHTML = "Invalid OTP. Please try again";
+    } 
+    otpForm.reset();
+});
+
+function sendOtp()
+{
+    otpVal = generateOTP();
+    otpDisplay.style.color = "blue";
+    otpDisplay.innerHTML = otpVal;
+    otpDisplay.style.fontSize = "20px";
+}
+
+function showOtp()
+{
+    
+    otpContainer.style.display = "block";
+    loginContainer.style.display = "none";
+}*/
+
+var otpContainer = document.querySelector(".otp-container");
+var loginContainer = document.querySelector(".login-container");
 
     const authenticationServer= 'https://localhost:7259/account/authentication';
     const loginForm = document.getElementById('login-form');
@@ -172,7 +214,7 @@
             }
         }).catch(function (error)
             {
-                let errorAfter = error.response.data;
+                let errorAfter = error.responseAfter.data;
                 let cleanError = errorAfter.replace(/"/g,"");
                 errorsDiv.innerHTML = cleanError; 
             });

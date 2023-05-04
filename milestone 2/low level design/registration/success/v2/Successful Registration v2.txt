@@ -1,0 +1,40 @@
+title Successful Registration
+
+actor User
+participant UI
+
+User ->> UI: Accesses Google Chrome v104.x Browser
+activate UI
+participant Entry Point
+UI ->> UI: Checks cookies for active session
+UI ->> Entry Point: HTTPS Request to Register a New Account
+participant RegManager
+activate Entry Point
+Entry Point ->> Entry Point: create user obj
+Entry Point ->> RegManager: sendInput(userInput: Obj): obj
+activate RegManager
+RegManager ->> RegManager: create email obj
+participant Data Access
+RegManager ->> Data Access: emailExist(email: obj): obj
+activate Data Access
+participant MySQL
+Data Access ->> MySQL: insertCredentials(user: obj): table
+activate MySQL
+MySQL -->> Data Access: return string value in email column
+Data Access ->> Data Access: userEmail(email: string): obj
+Data Access ->> Data Access: create emailExist obj
+Data Access -->> RegManager: return emailExist obj
+RegManager ->> RegManager: genUsername(emailExist: obj): obj
+RegManager ->> Data Access: userExist(genUserName: obj): obj
+Data Access ->> MySQL: insertUser(username: obj): table
+MySQL -->> Data Access: return username column
+deactivate MySQL
+Data Access ->> Data Access: create Result obj
+Data Access -->> RegManager: return Result
+deactivate Data Access
+RegManager -->> Entry Point: return Result
+deactivate RegManager
+Entry Point -->> UI: return HTTPS response: code 200
+deactivate Entry Point
+UI -->> User: return "Account successfully created"
+deactivate UI
