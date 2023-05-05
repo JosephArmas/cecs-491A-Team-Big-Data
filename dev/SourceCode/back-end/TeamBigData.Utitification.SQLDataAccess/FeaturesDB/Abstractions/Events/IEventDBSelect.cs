@@ -5,9 +5,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Events;
 
 public interface IEventDBSelect
 {
-    public Task<Response> SelectUserProfileRole(int userID);
-    public Task<Response> SelectUserID(string email);
-    public Task<Response> SelectUserHash(int userID);
     public Task<List<EventDTO>> SelectUserCreatedEvents(int userID);
     public Task<List<EventDTO>> SelectAllEvents();
     public Task<Response> SelectEventPin(int eventID);

@@ -538,6 +538,10 @@
             errorsDiv.innerHTML = "Invalid Pin Input...";
             return;
         };
+        if (pinType == "2")
+        {
+            return showEventMenu(latLng);
+        }
 
         let title = prompt("Enter pin title.");
         if (title == null || !titleLimit(title))
@@ -604,19 +608,24 @@
     root.Utification = root.Utification || {};
    
     window.initMap = function() {
-        errorsDiv.innerHTML = "";
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: CSULB,
-            minZoom: 8,
-            maxZoom: 18,
-            zoom: 15,
-            mapId: 'bb1d4678c71528ff',
-            restriction: {
-                latLngBounds: CALIFORNIA_BOUNDS,
-                strictBounds: false
-            },
-            mapTypeControl: false,
-            clickableIcons: false
+        // Getting all maps loaded on map
+        const mapElements = document.querySelectorAll('.map');
+        mapElements.forEach(mapElement => 
+        {
+            map = new google.maps.Map(mapElement, {
+                center: CSULB,
+                minZoom: 8,
+                maxZoom: 18,
+                zoom: 15,
+                mapId: 'bb1d4678c71528ff',
+                restriction: {
+                    latLngBounds: CALIFORNIA_BOUNDS,
+                    strictBounds: false
+                },
+                mapTypeControl: false,
+                clickableIcons: false
+            });
+            placeMarker(map,localStorage.getItem('id'));
         });
 
         getMarkerHandler();

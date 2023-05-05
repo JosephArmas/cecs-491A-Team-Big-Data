@@ -180,8 +180,8 @@ async function buildEventsCreated(userID)
             eventList.appendChild(cancelBtn);
             eventContainer.appendChild(eventList);
             cancelBtn.addEventListener('click', () => {
-                cancelEvent(event._eventID, userID);
-                return initMap();
+                return cancelEvent(event._eventID, userID);
+                // return initMap();
 
             })
 
@@ -194,7 +194,7 @@ async function buildEventsCreated(userID)
 
 async function buildEventsJoined(userID)
 {
-        
+
     if(!eventsJoinedBuild)
     {
         // timeOut(userID,'red',errorsDiv);
@@ -209,39 +209,27 @@ async function buildEventsJoined(userID)
         // * Add Event Listener
         headerDiv.appendChild(backBtn);
         backBtn.addEventListener('click', () => {
-            // window.location.reload();
             eventJoinDiv.style.display = "none";
             homeDiv.style.display = "block";
-            // return initMap();
         });
         let title = document.createElement('h1')
         title.textContent = "Events Joined"
         title.style.textAlign = "center";
         titleContainer.appendChild(title);
-
-
         let eventContainer = document.querySelector('.events-joined')
-        let userID = localStorage.getItem('id');
 
         // * Do injection 
-        
         let events = await getUserEvents(userID);
         events.forEach(event => {
-            // console.log(event);
             let eventList = document.createElement('ul')
-            let eventID = document.createElement('li')
             let unjoinBtn = document.createElement('button')
             unjoinBtn.textContent = "Unjoin"
             unjoinBtn.id = "unjoin"
             eventList.textContent = event._title;
-            eventID = event._evntID;
             eventList.appendChild(unjoinBtn);
             eventContainer.appendChild(eventList);
             unjoinBtn.addEventListener('click', () => {
-
-                return unjoinEvent(eventID, userID);
-                // return initMap();
-
+                return unjoinEvent(event._eventID, userID);
             })
 
         });
@@ -252,21 +240,6 @@ async function buildEventsJoined(userID)
     }
 
 }
-
-/*
-function unjoinEvent(eventID, userID)
-{
-    const endPoint = getEndPoint();
-    axios.post(endPoint.unJoinEvent, {"eventID": eventID, "userID": userID}).then((response) => {
-        timeOut(response.data + ". Refresh to take affect.", 'green', errorsDiv);
-        
-    }).catch((error) => {
-        timeOut(error.response.data, 'red', errorsDiv);
-    })
-
-    return initMap();
-}
-*/
 
 
 

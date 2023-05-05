@@ -429,6 +429,10 @@ namespace TeamBigData.Utification.SQLDataAccess
             tcs.SetResult(result);
             return tcs.Task;
         }
+        
+        
+        
+        
 
         public async Task<DataResponse<UserAccount>> SelectUserAccount(String username)
         {
@@ -968,6 +972,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
+
+                result.data = rows;
                 tcs.SetResult(result);
                 return tcs.Task;
             }

@@ -6,8 +6,8 @@ namespace Utification.EntryPoint.Controllers
     [BindProperties]
     public class EventPin
     {
-        public string title { get; set; }
-        public string description { get; set; }
+        public string? title { get; set; }
+        public string? description { get; set; }
         public int userID { get; set; }
         public int eventID { get; set; }
         public double lat { get; set; }
@@ -18,8 +18,14 @@ namespace Utification.EntryPoint.Controllers
     [Route("[controller]")]
     public class EventController : Controller
     {
-        private readonly EventManager _eventManager; 
-        // [Route("health")]
+        private readonly EventManager _eventManager;
+
+
+        public EventController(EventManager eventManager)
+        {
+            _eventManager = eventManager;
+        }
+        
         [HttpGet("health")]
         public Task<IActionResult> HealthCheck()
         {

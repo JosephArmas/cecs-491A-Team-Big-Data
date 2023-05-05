@@ -4,7 +4,7 @@ function getRole()
     {
         reg:['Regular User', 'Reputable User'],
         service: ['Service User'],
-        admin: ['Admin User'],
+        admin: ['Admin User']
     } 
 
     return Object.freeze(roles)

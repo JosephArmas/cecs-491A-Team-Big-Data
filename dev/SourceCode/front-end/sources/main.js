@@ -1,4 +1,10 @@
+let errorDiv = document.querySelector("#errors");
 let regViewBuild = false;
+let adminViewBuild = false
+
+
+
+
 function loginClicked()
 {
     let anonContainer = document.querySelector(".anon-container");
@@ -40,8 +46,9 @@ function regClicked()
 
 function profileClicked()
 {
-    let profileContainer = document.querySelector(".profileContainer");
+    let profileContainer = document.querySelector("#profile-container");
     let homeContainer = document.querySelector(".home-container");
+    // buildProfileView();
     homeContainer.style.display = "none";
     profileContainer.style.display = "block";
     downloadProfilePic();
@@ -63,17 +70,14 @@ function recoveryClickedLogin()
     recoveryContainer.style.display = "block";
 }
 
+// Regular User View
 function regView()
 {
     buildHomeUserView();
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
-    var reputationContainer = document.querySelector(".reputation-reports-container");
-    var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
-    // anonContainer.style.display = "none";
-    // reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
     let script = document.createElement('script');
@@ -82,6 +86,29 @@ function regView()
 
     document.head.appendChild(script);
 }
+
+// Admin View
+function adminView()
+{
+    let homeContainer = document.querySelector(".home-admin-container");
+    let anonContainer = document.querySelector(".anon-container");
+    let analyticsView = document.querySelector(".analytics-container");
+    let otpContainer = document.querySelector(".otp-container");
+    let analyticsCharts = document.querySelector(".charts");
+    buildAdminView();
+    homeContainer.style.display = "block";
+    analyticsCharts.style.display = "none";
+    analyticsView.style.display = "none";
+    otpContainer.style.display = "none";
+    
+    // anonContainer.style.display = "none";
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
+    script.async = true;
+
+    document.head.appendChild(script);
+}
+
 
 function showOtp()
 {
@@ -231,5 +258,97 @@ function buildHomeUserView()
     regViewBuild = true;
     
 }
+
+
+
+// Build Admin view
+function buildAdminView()
+{
+
+    if(!adminViewBuild)
+    {
+        let logoutBtn = document.createElement('button');
+        let titleDiv = document.querySelector('.home-admin-container .title');
+        let nav = document.querySelector(".home-admin-container .ham-menu-container");
+        let menu = document.querySelector('.home-admin-container .menu-container')
+        let featureBtn = document.createElement('button');
+        featureBtn.setAttribute('type','button');
+        featureBtn.textContent = 'Features';
+        menu.insertBefore(featureBtn, nav);
+        let features = document.querySelector(".home-admin-container .features");
+        featureBtn.setAttribute('type','button');
+        featureBtn.textContent = 'Features';
+        let title = document.createElement('h1');
+        title.textContent = "Admin Home";
+        titleDiv.appendChild(title);
+
+        let userManagementBtn = document.createElement('button');
+        userManagementBtn.setAttribute('type','button');
+        userManagementBtn.textContent = 'User Management';
+        features.appendChild(userManagementBtn);
+
+        let analyticsBtn = document.createElement('button');
+        analyticsBtn.setAttribute('type','button');
+        analyticsBtn.textContent = 'Analytics';
+        analyticsBtn.addEventListener('click', showAnalytics)
+        features.appendChild(analyticsBtn);
+
+        features.style.display = 'none';
+        nav.append(features);
+    
+        featureBtn.addEventListener('click',function()
+        {
+            if (features.style.display === 'none')
+            {
+                features.style.display = 'flex';
+    
+            }
+            else{
+                features.style.display = 'none';
+            }
+    
+        });
+    
+        let logoutDiv = document.querySelector(".home-admin-container .profile-container #logout");
+        logoutBtn.setAttribute('type','button');
+        logoutBtn.id ="home-logoutBtn"
+        logoutBtn.textContent = 'Logout';
+        logoutBtn.addEventListener('click', homeClicked);
+        logoutDiv.appendChild(logoutBtn);
+        adminViewBuild = true;
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // regView();

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.EventsServices;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
 
 namespace TeamBigData.Utification.EventsManager
 {
@@ -11,6 +12,7 @@ namespace TeamBigData.Utification.EventsManager
     {
         // Private
         private readonly EventService _eventService;
+        // private readonly UsersSqlDAO _usersSql;
         
         private readonly string[] userRolesAuth =
         {
@@ -28,6 +30,7 @@ namespace TeamBigData.Utification.EventsManager
         public EventManager(EventService eventService)
         {
             _eventService = eventService;
+            // _usersSql = usersSql;
         }
         
         

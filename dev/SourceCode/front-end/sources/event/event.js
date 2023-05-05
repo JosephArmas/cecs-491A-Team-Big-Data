@@ -43,7 +43,7 @@ function buildDropDown(lat, lng)
         checkMark.id = 'checkmark-label'
         titleLabel.setAttribute('for','titleEvent');
         descriptionLabel.setAttribute('for','descriptionEvent');
-        markLabel.setAttribute('for','checkmark-label');
+        // markLabel.setAttribute('for','checkmark-label');
         titleEvent.setAttribute('type','text');
         titleEvent.minLength = 8;
         titleEvent.style.placeholder = "Title";
@@ -55,14 +55,14 @@ function buildDropDown(lat, lng)
         titleLabel.style.color = "white";
         descriptionLabel.textContent = "Description";
         descriptionLabel.style.color = "white";
-        markLabel.textContent= "Check to display attendance"
-        markLabel.style.color= "white"
+        // markLabel.textContent= "Check to display attendance"
+        // markLabel.style.color= "white"
         inputDiv.appendChild(titleLabel);
         inputDiv.appendChild(titleEvent);
         inputDiv.appendChild(descriptionLabel);
         inputDiv.appendChild(descriptionEvent);
-        inputDiv.appendChild(markLabel);
-        inputDiv.appendChild(checkMark);
+        // inputDiv.appendChild(markLabel);
+        // inputDiv.appendChild(checkMark);
         boxDiv.appendChild(inputDiv);
         boxDiv.appendChild(btnDiv);
         let userID = localStorage.getItem('id');
@@ -94,7 +94,6 @@ async function getEvents()
     {
         // List of event pin obj stored
         let result = await axios.get(endPoint.getEventPins);
-
         let eventPins = result.data;
 
         // returning the list of event pins
@@ -143,7 +142,7 @@ function createEvent(title, description, userID, lat, lng)
 }
 
 // Custom Helper to genereate markers 
-function markerHelper(lat,lng,title,description, eventID)
+function markerHelper(lat,lng,title,description, eventID,count)
 {
     let pinColor = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
     let marker = new google.maps.Marker({
@@ -151,6 +150,7 @@ function markerHelper(lat,lng,title,description, eventID)
         title: title,
         description: description,
         eventID: eventID,
+        count: count,
         icon: pinColor
     });
 
@@ -223,7 +223,7 @@ async function placeMarker(map, userID)
     // Store the eventPins obj to loop through and use custom helper
     let eventPins = await getEvents();
     eventPins.forEach(pin => {
-        markers.push(markerHelper(pin._lat,pin._lng,pin._title,pin._description, pin._eventID));
+        markers.push(markerHelper(pin._lat,pin._lng,pin._title,pin._description, pin._eventID,pin._count));
     });
 
     // Loop through appended pins and add to map
@@ -232,7 +232,7 @@ async function placeMarker(map, userID)
         const infowindow = new google.maps.InfoWindow({
             content: "<div class='event-info-btn'>" +
                     "<h1>" + marker.title + "</h1>" 
-                    + "<p>" + marker.description + "'\n'attendance: " 
+                    + "<p>" + marker.description + " attendance: " + marker.count 
                     + "</p>"
                     + "<button id='modify-event'>Modify</button>"
                     + "<button id='cancel-event'>Cancel</button>"
@@ -256,8 +256,7 @@ async function placeMarker(map, userID)
             {
                 joinBtn.addEventListener('click', function (event)
                 {
-                    joinEvent(marker.eventID, userID);
-                    return; 
+                    return joinEvent(marker.eventID, userID);
                 });
                 // return;
             } 
@@ -289,24 +288,13 @@ async function placeMarker(map, userID)
                     if (choice == "1")
                     {
                         let newTitle = prompt("Enter new title");
-                            /*
-                            let sendTitle = {
-                                "title": newTitle,
-                                "eventID": marker.eventID,
-                                "userID": userID
-                            };
-                            */
-                            /*
-                            axios.post(endPoint.modifyEventTitle, sendTitle).then((response) => {
-                                timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
-                                return initMap();
-                            }).catch((error) => {
-                                // timeOut(error.response.data, 'red', errorsDiv);
-                            });
-                            */
-                        modifyEvent(newTitle, marker.eventID, userID);
-                        return;
+                        return modifyEvent(newTitle, marker.eventID, userID);
 
+                    }
+                    if (choice == "2")
+                    {
+                        let newDescription = prompt("Enter new description");
+                        return modifyEventDescription(newDescription, marker.eventID, userID);
                     }
 
                 });
@@ -329,13 +317,31 @@ function modifyEvent(title, eventID, userID)
         "userID": userID
     }
     const endPoint = getEndPoint();
-    axios.post(endPoint.modifyEventTitle, data).then((response) => {
-        timeOut(response.data +". Refresh to take affect.", 'green', errorsDiv);
+
+    axios.post(endPoint.modifyTitle, data).then((response) => {
+        timeOut(response.data, 'green', errorsDiv);
         return initMap();
     })
-    // return initMap();
 
 }
+
+function modifyEventDescription(description, eventID, userID)
+{
+    let data = {
+        "description": description,
+        "eventID": eventID,
+        "userID": userID
+    }
+    const endPoint = getEndPoint();
+
+    axios.post(endPoint.modifyDescription, data).then((response) => {
+        timeOut(response.data , 'green', errorsDiv);
+        return initMap();
+    })
+
+}
+
+
 
 function test()
 {

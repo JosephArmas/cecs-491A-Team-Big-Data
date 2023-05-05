@@ -3,6 +3,8 @@ using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Events;
+using TeamBigData.Utification.SQLDataAccess.UsersDB;
+using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 
 namespace TeamBigData.Utification.EventsServices
 {
@@ -12,15 +14,17 @@ namespace TeamBigData.Utification.EventsServices
         private readonly IEventDBInsert _iEventDbInsert;
         private readonly IEventDBUpdate _iEventDbUpdate;
         private readonly IEventDBDelete _iEventDbDelete;
+        private readonly IUsersDBSelecter _dbSelecter;
         private readonly ILogger _logger;
 
         // Ctor w/ dependency injection
-        public EventService(EventsSqlDAO sqlDao, ILogger logger)
+        public EventService(EventsSqlDAO sqlDao, UsersSqlDAO usersSqlDao, ILogger logger)
         {
              _iEventDbSelect = sqlDao;
              _iEventDbInsert = sqlDao;
              _iEventDbUpdate = sqlDao;
              _iEventDbDelete = sqlDao;
+             _dbSelecter = usersSqlDao;
              _logger = logger;
         }
         
@@ -31,7 +35,7 @@ namespace TeamBigData.Utification.EventsServices
         // Read Role
         public async Task<Response> ReadRole(int userID)
         {
-            return await _iEventDbSelect.SelectUserProfileRole(userID).ConfigureAwait(false);
+            return await _dbSelecter.SelectUserProfileRole(userID).ConfigureAwait(false);
         }
 
         // Read Event Count
@@ -96,7 +100,7 @@ namespace TeamBigData.Utification.EventsServices
         public async Task<Response> CreateEvent(EventDTO eventDto)
         {
             
-            var hashObj = await _iEventDbSelect.SelectUserHash(eventDto._userID).ConfigureAwait(false);
+            var hashObj = await _dbSelecter.SelectUserHash(eventDto._userID).ConfigureAwait(false);
             // Convert from obj to string
             string userHash = hashObj.data.ToString();
             var result = await _iEventDbInsert.InsertEvent(eventDto).ConfigureAwait(false);

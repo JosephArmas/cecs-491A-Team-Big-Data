@@ -14,21 +14,69 @@
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/recovery.css">
         <link rel="stylesheet" href="styles/profile.css">
+        <link rel="stylesheet" href="styles/analytics.css">
         <link rel="stylesheet" href="styles/nav-profile.css">
         <link rel="stylesheet" href="styles/nav-profile-events.css">
+        <link rel="stylesheet" href="styles/home-admin.css">
         <link rel="stylesheet" href="styles/events.css">
     </head>
     <body>
         <div id="test-data"></div>
+        <div class="test"></div>
         <div id="errors"></div>
         
-
+         <!-- * Events Dropdown view -->
+         <div class="event-dropdown-container">
+            <div class="event-form">
+                <div class="event-dropdown-box"></div>
+                    <div class="title"></div>
+                    <div class="event-inputs"></div>
+                    <div class="confirm-btn"></div>
+            </div>
+        </div>
 
         <!-- * Events -->
         <div class="events-container">
             <div class="top-button-container"></div> 
             <div class="title"></div>
             <div class="options"></div>
+        </div>
+        
+          <!-- * Analytics -->
+        <div class="analytics-container" >
+            <div class="analytics-home">
+            <div class="analytics-header"></div>
+            <div class ="chart-options"></div>
+            </div>
+            <div class="charts">
+                <div class="analytics-header"></div>
+                <div class ="analytics-maps-view">
+                    <h1>Analytics Maps</h1>
+                    <div class="analytics-chart-maps"></div>
+                </div>
+                <div class ="analytics-registration-view" >
+                    <h1>Analytics Registration</h1>
+                    <div class="analytics-chart-registration"></div>
+                </div>
+                <div class ="analytics-logins-view">
+                    <h1>Analytics Logins</h1>
+                    <div class="analytics-chart-logins"></div>
+                </div>
+                <div class ="analytics-pins-view">
+                    <h1>Analytics Pins</h1>
+                    <div class="analytics-chart-pins"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- * Nav Profile -->
+        <div class="nav-profile-container" id="profile-container">
+            <div class="top-button-container"></div> 
+            <div class="options-container"></div>
+            <div id="container">
+                <div class="box-container"></div>
+            </div>
         </div>
 
 
@@ -49,7 +97,22 @@
         </div>
 
 
-
+     <!-- * Admin view -->
+    <div class="home-admin-container" hidden>
+        <div class="home-header-container">
+            <div class="menu-container">
+                <nav class="ham-menu-container">
+                    <ul class="features"></ul>
+                </nav>
+            </div>
+                <div class="title"></div>
+            <div class="profile-container">
+                <div id="profile"></div>
+                <div id="logout"></div>
+            </div>
+        </div>
+        <div class="map" id="map"></div>
+    </div>
 
 
         <!-- * Home view -->
@@ -264,6 +327,7 @@
 
         <!-- Thirdparty dependency -->
         <script src="node_modules/axios/dist/axios.js"></script>
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 
         <!-- App Dependency -->
         <script src="sources/end-point/endpoint.js"></script>
@@ -274,6 +338,8 @@
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/fileUpload/file.js"></script>
         <script src="sources/profile/profile.js"></script>
+        <script src="sources/analytics/analytics.js"></script>
+        <script src="sources/event/event.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

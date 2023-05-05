@@ -24,13 +24,14 @@ namespace TeamBigData.Utification.Models
             _lng = lng;
         }
 
-        public EventDTO (string title, string description, double lat, double lng, int eventID)
+        public EventDTO (string title, string description, double lat, double lng, int eventID, int count)
         {
             _title = title;
             _description = description;
             _eventID = eventID;
             _lat = lat;
             _lng = lng;
+            _count = count;
 
         }
             

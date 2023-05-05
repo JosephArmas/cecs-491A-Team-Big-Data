@@ -21,7 +21,6 @@
     let userhash = "";
 
 var otpContainer = document.querySelector(".otp-container");
-var errorsOtp = document.getElementById("errors");
 var otpInput = document.querySelector("#otp-input");
 
 var otpContainer = document.querySelector(".otp-container");
@@ -65,7 +64,6 @@ var loginContainer = document.querySelector(".login-container");
     });
 
     var otpContainer = document.querySelector(".otp-container");
-    var errorsOtp = document.getElementById("errors");
     const otpForm = document.querySelector("#otp-form");
     const otpDisplay = document.querySelector("#otp-display");
     
@@ -98,17 +96,7 @@ var loginContainer = document.querySelector(".login-container");
                 localStorage.setItem("userhash",jsonObj.userhash)
                 
 
-                /*jwtToken = responseAfter.data;
-                userID = jsonObj.nameid;
-                username = jsonObj.unique_name;
-                role = jsonObj.role;
-                authenticated = jsonObj.authenticated;
-                otp = jsonObj.otp;
-                otpCreated = jsonObj.otpCreated;
-                userhash = jsonObj.userHash;*/
-            
-                errorsDiv.innerHTML = "";
-
+                
                 // display otp
                 otpDisplay.style.color = "blue";
                 otpDisplay.innerHTML = "<h3>" + jsonObj.otp + "</h3>";
@@ -121,20 +109,32 @@ var loginContainer = document.querySelector(".login-container");
                 const otpBtn = document.querySelector("#otp-submit");
                 otpBtn.addEventListener('click', function (event)
                 {
+                    const role = getRole();
                     event.preventDefault();
                     if (otpInput.value == '')
                     {
-                        errorsOtp.innerHTML = `Please enter OTP: ${otpInput.value}`;
+                        // errorsOtp.innerHTML = `Please enter OTP: ${otpInput.value}`;
+                        timeOut('Please enter OTP', 'red', errorsDiv)
 
                     } else if (otpInput.value == jsonObj.otp) 
                     {
-                        errorsOtp.innerHTML = "";
-                        regView();
-                        
+                        if (role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role))
+                        {
+                            return regView();
+
+                        } else if (role.admin.includes(jsonObj.role))
+                        {
+
+                            return adminView();
+                        }
+                        else 
+                        {
+                            timeOut('Unauthorized User', 'red', errorsDiv)
+                        } 
+
                     } else 
                     {
-                        errorsOtp.style.color = "red";
-                        errorsOtp.innerHTML = "Invalid OTP. Please try again";
+                        timeOut('Invalid OTP. Please try again','red',errorDiv);
                     } 
                     otpForm.reset();
                 });
@@ -142,12 +142,15 @@ var loginContainer = document.querySelector(".login-container");
             else 
             {
                 // unauthorized user
+                timeOut('Unauthorized User', 'red', errorsDiv)
+
             }
         }).catch(function (error)
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                errorsDiv.innerHTML = cleanError; 
+                timeOut(cleanError, 'red', errorsDiv)
+
             });
     }
 
@@ -160,10 +163,12 @@ var loginContainer = document.querySelector(".login-container");
     {
         return username;
     }
+    /*
     function getRole()
     {
         return role;
     }
+    */
     function getAuthenticated()
     {
         return authenticated;
@@ -193,7 +198,7 @@ var loginContainer = document.querySelector(".login-container");
 
     root.Utification.userID = getUserID();
     root.Utification.username = getUsername();
-    root.Utification.role = getRole();
+    // root.Utification.role = getRole();
     root.Utification.authenticated = getAuthenticated();
     root.Utification.otp = getOtp();
     root.Utification.otpCreated = getOtpCreated();
