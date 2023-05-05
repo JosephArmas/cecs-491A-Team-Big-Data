@@ -80,11 +80,11 @@ function regView()
     var homeContainer = document.querySelector(".home-container");
     var anonContainer = document.querySelector(".anon-container");
     var otpContainer =document.querySelector(".otp-container");
-    var reputationContainer = document.querySelector(".reputation-reports-container");
+    //var reputationContainer = document.querySelector(".reputation-reports-container");
     var globalErrors = document.querySelector("#errors");
     otpContainer.style.display = "none";
     anonContainer.style.display = "none";
-    reputationContainer.style.display = "none";
+    //reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
 
     let script = document.createElement('script');
