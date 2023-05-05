@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.ErrorResponse;
 
-namespace TeamBigData.Utification.DeletionService
+namespace TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions
 {
-    public interface IDeletionService
+    public interface IUserhashDBUpdater
     {
-        public Task<Response> DeletePII(String user);
+        public Task<Response> UnlinkUserhashFrom(int userId);
     }
 }

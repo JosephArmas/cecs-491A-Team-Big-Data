@@ -4,6 +4,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins
 {
     public interface IDBSelectPinOwner
     {
-        public Task<Response> GetPinOwner(int pinID);
+        public Task<DataResponse<int>> GetPinOwner(int pinID);
     }
 }

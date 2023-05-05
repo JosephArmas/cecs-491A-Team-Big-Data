@@ -3,7 +3,7 @@ using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 
-namespace TeamBigData.Utification.AuthenticationTests
+namespace TeamBigData.Utification.LoginTests
 {
     [TestClass]
     public class AuthenticationUnitTests

@@ -1,8 +1,9 @@
-﻿namespace TeamBigData.Utification.Models.ControllerModels
+﻿
+namespace TeamBigData.Utification.Models.ControllerModels
 {
     public class IncomingUser
     {
-        public String _username { get; set; }
-        public String _password { get; set; }
+        public String Username { get; set; }
+        public String Password { get; set; }
     }
 }

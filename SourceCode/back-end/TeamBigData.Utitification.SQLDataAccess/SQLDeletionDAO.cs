@@ -10,10 +10,10 @@ using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess
 {
-    public class SQLDeletionDAO : IDBDeleter
+    public class SQLDeletionDAO //:IDBDeleter
     {
         private String _connectionString;
-
+        /*
         public SQLDeletionDAO(String connectionString)
         {
             _connectionString = connectionString;
@@ -95,6 +95,6 @@ namespace TeamBigData.Utification.SQLDataAccess
                 tcs.SetResult(result);
                 return tcs.Task;
             }
-        }
+        }*/
     }
 }

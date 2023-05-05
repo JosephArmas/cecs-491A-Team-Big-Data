@@ -21,23 +21,23 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinUpload([FromBody] FileInput input)
         {
-            var profile = new UserProfile(input.userID, input.role);
-            var result = new Response();
+            var profile = new UserProfile(input.UserID, input.Role);
+            var dataResult = new DataResponse<String>();
             try
             {
-                result = await manager.UploadPinPic(input.fileName, input.ID, profile);
+                dataResult = await manager.UploadPinPic(input.FileName, input.ID, profile);
             }
             catch
             {
 
             }
-            if(result.IsSuccessful)
+            if(dataResult.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(dataResult.Data);
             }
             else
             {
-                return Conflict(result.ErrorMessage);
+                return Conflict(dataResult.ErrorMessage);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinDownload([FromHeader] int ID)
         {
-            var result = new Response();
+            var result = new DataResponse<String>();
             try
             {
                 result = await manager.DownloadPinPic(ID);
@@ -56,7 +56,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {
@@ -68,11 +68,11 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinUpdate([FromBody] FileInput input)
         {
-            var profile = new UserProfile(input.userID, input.role);
-            var result = new Response();
+            var profile = new UserProfile(input.UserID, input.Role);
+            var result = new DataResponse<String>();
             try
             {
-                result = await manager.UpdatePinPic(input.fileName, input.ID, profile);
+                result = await manager.UpdatePinPic(input.FileName, input.ID, profile);
             }
             catch
             {
@@ -80,7 +80,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {
@@ -92,8 +92,8 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PinDelete([FromBody] FileInput input)
         {
-            var profile = new UserProfile(input.userID, input.role);
-            var result = new Response();
+            var profile = new UserProfile(input.UserID, input.Role);
+            var result = new DataResponse<String>();
             try
             {
                 result = await manager.DeletePinPic(input.ID, profile);
@@ -104,7 +104,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {
@@ -116,11 +116,11 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileUpload([FromBody] FileInput input)
         {
-            var profile = new UserProfile(input.userID, input.role);
-            var result = new Response();
+            var profile = new UserProfile(input.UserID, input.Role);
+            var result = new DataResponse<String>();
             try
             {
-                result = await manager.UploadProfilePic(input.fileName, input.ID, profile);
+                result = await manager.UploadProfilePic(input.FileName, input.ID, profile);
             }
             catch
             {
@@ -128,7 +128,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {
@@ -140,7 +140,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileDownload([FromHeader] int ID)
         {
-            var result = new Response();
+            var result = new DataResponse<String>();
             try
             {
                 result = await manager.DownloadProfilePic(ID);
@@ -151,7 +151,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {
@@ -163,11 +163,11 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileUpdate([FromBody] FileInput input)
         {
-            var profile = new UserProfile(input.userID, input.role);
-            var result = new Response();
+            var profile = new UserProfile(input.UserID, input.Role);
+            var result = new DataResponse<String>();
             try
             {
-                result = await manager.UpdateProfilePic(input.fileName, input.ID, profile);
+                result = await manager.UpdateProfilePic(input.FileName, input.ID, profile);
             }
             catch
             {
@@ -175,7 +175,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {
@@ -187,8 +187,8 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ProfileDelete([FromBody] FileInput input)
         {
-            var profile = new UserProfile(input.userID, input.role);
-            var result = new Response();
+            var profile = new UserProfile(input.UserID, input.Role);
+            var result = new DataResponse<String>();
             try
             {
                 result = await manager.DeleteProfilePic(input.ID, profile);
@@ -199,7 +199,7 @@ namespace Utification.EntryPoint.Controllers
             }
             if (result.IsSuccessful)
             {
-                return Ok((String)result.Data);
+                return Ok(result.Data);
             }
             else
             {

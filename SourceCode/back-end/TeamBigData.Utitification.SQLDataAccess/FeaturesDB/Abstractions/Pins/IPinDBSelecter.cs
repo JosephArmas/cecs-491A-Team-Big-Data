@@ -11,6 +11,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins
 {
     public interface IPinDBSelecter
     {
-        public Task<DataResponse<List<PinResponse>>> SelectPinTable();
+        public Task<DataResponse<List<Pin>>> SelectPinTable();
+        public Task<DataResponse<List<PinResponse>>> SelectEnabledPins();
     }
 }

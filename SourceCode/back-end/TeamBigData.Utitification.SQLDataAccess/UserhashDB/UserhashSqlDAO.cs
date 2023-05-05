@@ -5,7 +5,7 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess.UserhashDB
 {
-    public class UserhashSqlDAO : DbContext, IUserhashDBInserter
+    public class UserhashSqlDAO : DbContext, IUserhashDBInserter, IUserhashDBUpdater
     {
         private readonly String _connectionString;
 
@@ -53,6 +53,11 @@ namespace TeamBigData.Utification.SQLDataAccess.UserhashDB
             return result;
         }
 
+
+        //------------------------------------------------------------------------
+        // IUserhashDBInserter
+        //------------------------------------------------------------------------
+
         public async Task<Response> InsertUserHash(String userHash, int userID)
         {
             var insertSql = "INSERT into dbo.UserHash(userHash, \"userID\") values(@hash, @ID)";
@@ -68,6 +73,30 @@ namespace TeamBigData.Utification.SQLDataAccess.UserhashDB
             else
             {
                 result.IsSuccessful = true;
+            }
+            return result;
+        }
+
+
+        //------------------------------------------------------------------------
+        // IUserhashDBUpdater
+        //------------------------------------------------------------------------
+
+        public async Task<Response> UnlinkUserhashFrom(int userId)
+        {
+            var sql = "UPDATE dbo.UserHash SET userID = 0 WHERE userID = @ID";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@ID", userId));
+            var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
+            if (result.ErrorMessage.Equals("Nothing Affected"))
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
+            }
+            else if (result.IsSuccessful)
+            {
+                result.ErrorMessage = "Update userhash userID succesfully";
             }
             return result;
         }

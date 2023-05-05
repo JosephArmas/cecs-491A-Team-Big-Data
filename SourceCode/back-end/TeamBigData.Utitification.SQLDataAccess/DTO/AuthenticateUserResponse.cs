@@ -8,20 +8,20 @@ namespace TeamBigData.Utification.SQLDataAccess.DTO
 {
     public class AuthenticateUserResponse
     {
-        public int _userId { get; set; }
-        public String _username { get; set; }
-        public String _otp { get; set; }
-        public String _otpCreated { get; set; }
-        public String _role { get; set; }
-        public String _userhash { get; set; }
+        public int UserId { get; set; }
+        public String Username { get; set; }
+        public String Otp { get; set; }
+        public String OtpCreated { get; set; }
+        public String Role { get; set; }
+        public String Userhash { get; set; }
         public AuthenticateUserResponse(int userId, string username, string otp, string otpCreated, string role, string userhash)
         {
-            _userId = userId;
-            _username = username;
-            _otp = otp;
-            _otpCreated = otpCreated;
-            _role = role;
-            _userhash = userhash;
+            UserId = userId;
+            Username = username;
+            Otp = otp;
+            OtpCreated = otpCreated;
+            Role = role;
+            Userhash = userhash;
         }
     }
 }

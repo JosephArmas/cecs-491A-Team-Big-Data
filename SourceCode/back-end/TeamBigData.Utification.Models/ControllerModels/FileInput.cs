@@ -3,11 +3,11 @@ namespace TeamBigData.Utification.Models.ControllerModels
 {
     public class FileInput
     {
-        public String fileName { get; set; }
+        public String FileName { get; set; }
         public int ID { get; set; }
 
-        public String role { get; set; }
+        public String Role { get; set; }
 
-        public int userID { get; set; }
+        public int UserID { get; set; }
     }
 }

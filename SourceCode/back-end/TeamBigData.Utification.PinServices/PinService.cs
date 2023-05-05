@@ -6,6 +6,7 @@ using TeamBigData.Utification.Logging;
 using System.Net.NetworkInformation;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
 using TeamBigData.Utification.SQLDataAccess.DTO;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 
 namespace TeamBigData.Utification.PinServices
 {
@@ -14,12 +15,14 @@ namespace TeamBigData.Utification.PinServices
         private readonly IPinDBInserter _pinDBInserter;
         private readonly IPinDBSelecter _pinDBSelecter;
         private readonly IPinDBUpdater _pinDBUpdater;
+        private readonly IPinDBDeleter _pinDBDeleter;
 
-        public PinService(IPinDBInserter pinDBInserter, IPinDBSelecter pinDBSelecter, IPinDBUpdater pinDBUpdater)
+        public PinService(PinsSqlDAO pinsSqlDAO)
         {
-            _pinDBInserter = pinDBInserter;
-            _pinDBSelecter = pinDBSelecter;
-            _pinDBUpdater = pinDBUpdater;
+            _pinDBInserter = pinsSqlDAO;
+            _pinDBSelecter = pinsSqlDAO;
+            _pinDBUpdater = pinsSqlDAO;
+            _pinDBDeleter = pinsSqlDAO;
         }
 
         public async Task<Response> StoreNewPin(Pin pin)
@@ -42,26 +45,33 @@ namespace TeamBigData.Utification.PinServices
 
         public async Task<DataResponse<List<PinResponse>>> GetPinTable()
         {
-            var pinResponse = await _pinDBSelecter.SelectPinTable().ConfigureAwait(false);
+            var pinResponse = await _pinDBSelecter.SelectEnabledPins().ConfigureAwait(false);
 
-            if (!pinResponse.isSuccessful) 
+            if (!pinResponse.IsSuccessful) 
             {
-                pinResponse.isSuccessful = false;
-                pinResponse.errorMessage += ", {failed: _pinDBSelecter.SelectPinTable}";
-                return pinResponse;
+                pinResponse.IsSuccessful = false;
+                pinResponse.ErrorMessage += ", {failed: _pinDBSelecter.SelectPinTable}";
             }
-            else
+            else if (pinResponse.Data.Count == 0)
+            {
+                pinResponse.IsSuccessful = true;
+                pinResponse.ErrorMessage = "Returning Empty List of Pins";
+            }
+            else 
             { 
-                pinResponse.isSuccessful = true;
+                pinResponse.IsSuccessful = true;
+                pinResponse.ErrorMessage = "Returning List of Pins.";
             }
+
 
             return pinResponse;
         }
 
 
-        public async Task<Response> MarkAsCompleted(int pinID, int userID)
+        public async Task<Response> DeletePin(int pinID)
         {
-            var response = await _pinDBUpdater.UpdatePinToComplete(pinID, userID).ConfigureAwait(false);
+            // TODO: Delete other linking features to this pin
+            var response = await _pinDBDeleter.DeletePinFromTable(pinID).ConfigureAwait(false);
 
             if (!response.IsSuccessful)
             {

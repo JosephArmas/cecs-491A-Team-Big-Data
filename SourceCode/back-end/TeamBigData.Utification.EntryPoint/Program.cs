@@ -25,6 +25,7 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+using TeamBigData.Utification.ErrorResponse;
 
 var builder = WebApplication.CreateBuilder(args);
 

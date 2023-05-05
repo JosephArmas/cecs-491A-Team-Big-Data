@@ -2,8 +2,8 @@
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports
 {
-    public interface IReportsDBUpdater
+    public interface IReportsDBDeleter
     {
-        public Task<Response> UpdateFeedback();
+        public Task<Response> DeleteUserReport();
     }
 }

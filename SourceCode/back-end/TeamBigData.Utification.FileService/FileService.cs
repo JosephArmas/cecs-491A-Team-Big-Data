@@ -24,63 +24,65 @@ namespace TeamBigData.Utification.FileServices
             _profilepicDownloader = sqlDAO;
         }
 
-        public async Task<Response> UploadPinPic(String filename, int pinId)
+        public async Task<DataResponse<String>> UploadPinPic(String filename, int pinId)
         {
             var key = SecureHasher.Base64Hash(pinId + filename + pinId);
             var result = await _pinpicUploader.UploadPinPic(key, pinId);
             if(result.IsSuccessful)
             {
-                result.Data = key;
+                return new DataResponse<String>(result.IsSuccessful, result.ErrorMessage, key);
             }
             if(result.ErrorMessage.Contains("PRIMARY KEY"))
             {
                 result.ErrorMessage = "Can't Upload Picture Because Pin already has Picture, Use Update Instead";
             }
-            return result;
+            return new DataResponse<String>(result.IsSuccessful, result.ErrorMessage, "");
         }
-        public async Task<Response> UploadProfilePic(String filename, int userId)
+        public async Task<DataResponse<String>> UploadProfilePic(String filename, int userId)
         {
             var key = SecureHasher.Base64Hash(userId + filename + userId);
             var result = await _profilepicUploader.UploadProfilePic(key, userId);
             if (result.IsSuccessful)
             {
-                result.Data = key;
+                return new DataResponse<String>(result.IsSuccessful, result.ErrorMessage, key);
             }
             if (result.ErrorMessage.Contains("PRIMARY KEY"))
             {
                 result.ErrorMessage = "Can't Upload Picture Because Profile already has Picture, Use Update Instead";
             }
-            return result;
+            return new DataResponse<String>(result.IsSuccessful, result.ErrorMessage, "");
         }
-        public async Task<Response> DeletePinPic(int pinId)
+        public async Task<DataResponse<String>> DeletePinPic(int pinId)
         {
             var result = new Response();
             var keyResult = await _pinpicDownloader.DownloadPinPic(pinId);
-            if (keyResult.IsSuccessful)
+            if (!keyResult.IsSuccessful)
             {
-                result = await _pinpicDeleter.DeletePinPic(pinId);
-                result.Data = keyResult.Data;
+                keyResult.IsSuccessful = false;
+                keyResult.ErrorMessage = "Error Finding Picture to Delete";
             }
             else
             {
-                result.ErrorMessage = "Error Finding Picture to Delete";
+                result = await _pinpicDeleter.DeletePinPic(pinId);
+                keyResult.IsSuccessful = true;
             }
-            return result;
+            return keyResult;
         }
-        public async Task<Response> DeleteProfilePic(int userId)
+        public async Task<DataResponse<String>> DeleteProfilePic(int userId)
         {
             var result = new Response();
             var keyResult = await _profilepicDownloader.DownloadProfilePic(userId);
-            if(keyResult.IsSuccessful)
+            if (!keyResult.IsSuccessful)
             {
-                result = await _profilepicDeleter.DeleteProfilePic(userId);
-                result.Data = keyResult.Data;
+                keyResult.IsSuccessful = false;
+                keyResult.ErrorMessage = "Error Finding Picture to Delete";
             }
             else
             {
-                result.ErrorMessage = "Error Finding Picture to Delete";
+                result = await _profilepicDeleter.DeleteProfilePic(userId);
+                keyResult.IsSuccessful = true;
             }
-            return result;
+            return keyResult;
         }
     }
 }

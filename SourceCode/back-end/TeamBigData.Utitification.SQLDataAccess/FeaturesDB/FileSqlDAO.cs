@@ -5,8 +5,7 @@ using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Files;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
-    public class FileSqlDAO : DbContext, IDBUploadPinPic, IDBUploadProfilePic, IDBDownloadPinPic, IDBDownloadProfilePic,
-        IDBDeletePinPic, IDBDeleteProfilePic
+    public class FileSqlDAO : DbContext, IDBUploadPinPic, IDBUploadProfilePic, IDBDownloadPinPic, IDBDownloadProfilePic, IDBDeletePinPic, IDBDeleteProfilePic
     {
         private readonly String _connectionString;
 
@@ -52,10 +51,10 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             tcs.SetResult(result);
             return result;
         }
-        public Task<Response> GetPinOwner(int pinID)
+        public Task<DataResponse<int>> GetPinOwner(int pinID)
         {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
+            var tcs = new TaskCompletionSource<DataResponse<int>>();
+            var result = new DataResponse<int>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -108,10 +107,10 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             command.Parameters.Add(new SqlParameter("@ID", userID));
             return ExecuteSqlCommand(connection, command);
         }
-        public Task<Response> DownloadPinPic(int pinID)
+        public Task<DataResponse<String>> DownloadPinPic(int pinID)
         {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
+            var tcs = new TaskCompletionSource<DataResponse<String>>();
+            var result = new DataResponse<String>();
             String id = "";
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -150,10 +149,10 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             }
         }
 
-        public Task<Response> DownloadProfilePic(int userID)
+        public Task<DataResponse<String>> DownloadProfilePic(int userID)
         {
-            var tcs = new TaskCompletionSource<Response>();
-            var result = new Response();
+            var tcs = new TaskCompletionSource<DataResponse<String>>();
+            var result = new DataResponse<String>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

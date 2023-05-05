@@ -4,6 +4,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Files
 {
     public interface IDBDownloadPinPic
     {
-        public Task<Response> DownloadPinPic(int pinID);
+        public Task<DataResponse<String>> DownloadPinPic(int pinID);
     }
 }

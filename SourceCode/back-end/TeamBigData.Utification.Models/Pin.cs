@@ -4,65 +4,74 @@ namespace TeamBigData.Utification.Models
 {
     public class Pin
     {
-        public int _pinID { get; set; }
-        public int _userID { get; set; }
-        public String _lat { get; set; }
-        public String _lng { get; set; }
-        public int _pinType { get; set; }
-        public String _description { get; set; }
-        public int _disabled { get; set; }
-        public int _completed { get; set; }
-        public String _dateCreated { get; set; }
-        public String _dateLastModified { get; set; }
-        public int _userLastModified { get; set; }
+        public int PinID { get; set; }
+        public int UserID { get; set; }
+        public String Lat { get; set; }
+        public String Lng { get; set; }
+        public int PinType { get; set; }
+        public String Description { get; set; }
+        public int Disabled { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime DateLastModified { get; set; }
+        public int UserLastModified { get; set; }
 
         public Pin()
         {
-            _pinID = 0;
-            _userID = 0;
-            _lat = "";
-            _lng = "";    
-            _pinType = 0;
-            _description = "";
-            _disabled = 0;
-            _completed = 0;
-            _dateCreated = "";
-            _dateLastModified = "";
-            _userLastModified = 0;
+            PinID = 0;
+            UserID = 0;
+            Lat = "";
+            Lng = "";    
+            PinType = 0;
+            Description = "";
+            Disabled = 0;
+            DateCreated = new DateTime(2000,1,1);
+            DateLastModified = new DateTime(2000, 1, 1);
+            UserLastModified = 0;
         }
 
-        public Pin(int pinID, int userID, String lat, String lng, int pinType, String description, int disabled, int completed, String dateCreated, String dateLastModified, int userLastModified)
+        public Pin(int pinID, int userID, String lat, String lng, int pinType, String description, int disabled, DateTime dateCreated, DateTime dateLastModified, int userLastModified)
         {
-            _pinID = pinID;
-            _userID = userID;
-            _lat = lat;
-            _lng = lng;
-            _pinType = pinType;
-            _description = description;
-            _disabled = disabled;
-            _completed = completed;
-            _dateCreated = dateCreated;
-            _dateLastModified = dateLastModified;
-            _userLastModified = userLastModified;
+            PinID = pinID;
+            UserID = userID;
+            Lat = lat;
+            Lng = lng;
+            PinType = pinType;
+            Description = description;
+            Disabled = disabled;
+            DateCreated = dateCreated;
+            DateLastModified = dateLastModified;
+            UserLastModified = userLastModified;
+        }
+        public Pin(int pinID, int userID, String lat, String lng, int pinType, String description, int disabled, DateTime dateCreated)
+        {
+            PinID = pinID;
+            UserID = userID;
+            Lat = lat;
+            Lng = lng;
+            PinType = pinType;
+            Description = description;
+            Disabled = disabled;
+            DateCreated = dateCreated;
+            DateLastModified = new DateTime(2000, 1, 1);
+            UserLastModified = 0;
         }
         public Pin(int userID, string lat, string lng, int pinType, string description)
         {
-            _pinID = 0;
-            _userID = userID;
-            _lat = lat;
-            _lng = lng;
-            _pinType = pinType;
-            _description = description;
-            _disabled = 0;
-            _completed = 0;
-            _dateCreated = DateTime.Now.ToString();
-            _dateLastModified = DateTime.Now.ToString();
-            _userLastModified = userID;
+            PinID = 0;
+            UserID = userID;
+            Lat = lat;
+            Lng = lng;
+            PinType = pinType;
+            Description = description;
+            Disabled = 0;
+            DateCreated = new DateTime(2000, 1, 1);
+            DateLastModified = new DateTime(2000, 1, 1);
+            UserLastModified = 0;
         }
 
         public string ToString()
         {
-            return $"{{ _pinID: {_pinID}, _userID: {_userID}, _lat: {_lat}, _lng: {_lng}, _pinType: {_pinType}, _description: {_description}, _disabled: {_disabled}, _completed: {_completed}, _dateCreated: {_dateCreated}, _dateLastModified: {_dateLastModified}, _userLastModified: {_userLastModified} }}";
+            return $"{{ PinID: {PinID}, UserID: {UserID}, Lat: {Lat}, Lng: {Lng}, PinType: {PinType}, Description: {Description}, Disabled: {Disabled}, DateCreated: {DateCreated}, DateLastModified: {DateLastModified}, UserLastModified: {UserLastModified} }}";
 
         }
     }

@@ -8,12 +8,12 @@ namespace TeamBigData.Utification.SQLDataAccess.DTO
 {
     public class ValidRecovery
     {
-        public String _password { get; set; }
-        public String _salt { get; set; }
+        public String Password { get; set; }
+        public String Salt { get; set; }
         public ValidRecovery(string password, string salt)
         {
-            _password = password;
-            _salt = salt;
+            Password = password;
+            Salt = salt;
         }
     }
     

@@ -9,7 +9,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins
 {
     public interface IPinDBUpdater
     {
-        public Task<Response> UpdatePinToComplete(int pinID, int userID);
         public Task<Response> UpdatePinContent(int pinID, int userID, String description);
         public Task<Response> UpdatePinType(int pinID, int userID, int pinType);
         public Task<Response> UpdatePinToDisabled(int pinID, int userID);

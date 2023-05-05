@@ -8,25 +8,25 @@ namespace TeamBigData.Utification.Models
 {
     public class Picture
     {
-        public String extension;
-        public long byteLength;
-        public byte[] data;
-        public int pinID;
+        public String Extension;
+        public long ByteLength;
+        public byte[] Data;
+        public int PinID;
 
         public Picture()
         {
-            extension = "";
-            byteLength = 0;
-            data = new byte[0];
-            pinID = 0;
+            Extension = "";
+            ByteLength = 0;
+            Data = new byte[0];
+            PinID = 0;
         }
 
         public Picture(byte[] data, long byteLength, String extension, int pinID)
         {
-            this.extension = extension;
-            this.byteLength = byteLength;
-            this.data = data;
-            this.pinID = pinID;
+            Extension = extension;
+            ByteLength = byteLength;
+            Data = data;
+            PinID = pinID;
         }
     }
 }

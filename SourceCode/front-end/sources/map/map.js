@@ -114,7 +114,7 @@
         
             for (var i = 0; i < response.data.length; i++) {
                 var currResponse = response.data[i]
-                console.log(response.data[i]);
+                
                 const pin = new google.maps.Marker({
                     position: {lat:parseFloat(currResponse._lat),lng:parseFloat(currResponse._lng)},
                     map: map,

@@ -20,7 +20,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             DbContextOptionsBuilder<SqlDAO> options = new DbContextOptionsBuilder<SqlDAO>();
             options.UseSqlServer(connection);
-            IDBInserter inserter = new SqlDAO(options.Options);
+            //IDBInserter inserter = new SqlDAO(options.Options);
             return options.Options;
         }
 
@@ -28,7 +28,7 @@ namespace TeamBigData.Utification.SQLDataAccess
         {
             DbContextOptionsBuilder<SqlDAO> options = new DbContextOptionsBuilder<SqlDAO>();
             options.UseSqlServer(connection);
-            IDBSelecter selecter = new SqlDAO(options.Options);
+            //IDBSelecter selecter = new SqlDAO(options.Options);
             return options.Options;
         }
     }

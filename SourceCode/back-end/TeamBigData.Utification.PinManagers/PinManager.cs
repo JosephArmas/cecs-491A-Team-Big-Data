@@ -20,11 +20,10 @@ namespace TeamBigData.Utification.PinManagers
         }
         public async Task<Response> SaveNewPin(Pin pin, String userhash)
         {
-            // TODO: Check if process time follows business rules
-
             await _logger.Logs(new Log(0, "Info", userhash, "Save New Pin Attempt", "Data", "User is attempting to save new pin."));
 
             var response = await _pinService.StoreNewPin(pin).ConfigureAwait(false);
+
             if (!response.IsSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_pinService.StoreNewPin", "Data", "Failed to store new pin."));
@@ -43,36 +42,36 @@ namespace TeamBigData.Utification.PinManagers
             return response;
         }
 
-        public async Task<DataResponse<List<PinResponse>>> GetListOfAllPins(String userhash)
+        public async Task<DataResponse<List<PinResponse>>> GetListOfAllEnabledPins(String userhash)
         {
-            // TODO: Check if process time follows business rules
             await _logger.Logs(new Log(0, "Info", userhash, "Get List Of All Pins Attempt", "Data", "User is attempting to get list of all pins."));
 
             var pinResponse = await _pinService.GetPinTable().ConfigureAwait(false);
-            if (!pinResponse.isSuccessful)
+
+            if (!pinResponse.IsSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_pinService.GetPinTable", "Data", "Failed to get list of new pin."));
 
-                pinResponse.isSuccessful = false;
-                pinResponse.errorMessage += ", {failed: _pinService.GetPinTable}";
+                pinResponse.IsSuccessful = false;
+                pinResponse.ErrorMessage += ", {failed: _pinService.GetPinTable}";
                 return pinResponse;
             }
             else
             {
                 await _logger.Logs(new Log(0, "Info", userhash, "Passed Get List Of All Pins Attempt", "Data", "User Successfully get list of all pins."));
 
-                pinResponse.isSuccessful = true;
+                pinResponse.IsSuccessful = true;
             }
 
             return pinResponse;
         }
 
-        public async Task<Response> MarkAsCompletedPin(int pinID, int userID, String userhash)
+        public async Task<Response> DeleteUserPin(int pinID, String userhash)
         {
-            // TODO: Check if process time follows business rules
             await _logger.Logs(new Log(0, "Info", userhash, "Mark As Completed Pin Attempt", "Data", "User is attempting to mark as complete pin."));
 
-            var response = await _pinService.MarkAsCompleted(pinID, userID).ConfigureAwait(false);
+            var response = await _pinService.DeletePin(pinID).ConfigureAwait(false);
+
             if (!response.IsSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_pinService.MarkAsCompleted", "Data", "Failed to mark as completed."));
@@ -92,10 +91,10 @@ namespace TeamBigData.Utification.PinManagers
 
         public async Task<Response> ChangePinContent(int pinID, int userID, String description, String userhash)
         {
-            // TODO: Check if process time follows business rules
             await _logger.Logs(new Log(0, "Info", userhash, "Change Pin Content Attempt", "Data", "User is attempting to change pin content."));
 
             var response = await _pinService.ChangePinContentTo(pinID, userID, description).ConfigureAwait(false);
+
             if (!response.IsSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_pinService.ChangePinContentTo", "Data", "Failed to change pin content."));
@@ -114,10 +113,10 @@ namespace TeamBigData.Utification.PinManagers
         }
         public async Task<Response> ChangePinType(int pinID, int userID, int pinType, String userhash)
         {
-            // TODO: Check if process time follows business rules
             await _logger.Logs(new Log(0, "Info", userhash, "Change Pin Type Attempt", "Data", "User is attempting to change pin type."));
 
             var response = await _pinService.ChangePinTypeTo(pinID, userID, pinType).ConfigureAwait(false);
+
             if (!response.IsSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_pinService.ChangePinTypeTo", "Data", "Failed to change pin type."));
@@ -139,10 +138,10 @@ namespace TeamBigData.Utification.PinManagers
         
         public async Task<Response> DisablePin(int pinID, int userID, string userhash)
         {
-            // TODO: Check if process time follows business rules
             await _logger.Logs(new Log(0, "Info", userhash, "Disable Pin Attempt", "Data", "Admin is attempting to disable pin."));
 
             var response = await _pinService.DisablingPin(pinID, userID).ConfigureAwait(false);
+
             if (!response.IsSuccessful)
             {
                 await _logger.Logs(new Log(0, "Error", userhash, "_pinService.DisablingPin", "Data", "Failed to disable pin."));
