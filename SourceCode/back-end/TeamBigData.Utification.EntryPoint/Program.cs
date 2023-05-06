@@ -34,22 +34,6 @@ using TeamBigData.Utification.DeletionService;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// adding cors
-var corsConfig = new CorsPolicyBuilder();
-
-// to listen on lite-server (front-end)
-corsConfig.WithOrigins("http://localhost:3000");
-
-// adding request types here -> using all for now
-corsConfig.WithMethods("GET","POST");
-
-corsConfig.AllowAnyHeader();
-
-// allowing cross origin request -> using lite-server
-corsConfig.AllowCredentials();
-
-var corsTest = corsConfig.Build();
-
 // JWT Middleware
 builder.Services.AddAuthentication(f =>
 {
@@ -132,8 +116,34 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<CorsMiddleware>(corsTest);
 app.UseHttpsRedirection();
+//app.UseMiddleware<CorsMiddleware>(corsTest);
+
+// Add CORS Custom Middleware
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers.Add("access-control-allow-credentials", "true");
+        context.Response.Headers.Add("access-control-allow-headers", "content-type");
+        context.Response.Headers.Add("access-control-allow-methods", "GET, POST, OPTIONS");
+        context.Response.Headers.Add("access-control-allow-origin", "*");
+        var client = new Microsoft.Extensions.Primitives.StringValues();
+        context.Request.Headers.TryGetValue("origin", out client);
+        var method = context.Request.Method;
+        if(client.Equals("http://localhost:3000") && method.Equals("OPTIONS"))
+        {
+            context.Response.StatusCode = 200;
+        }
+        context.Response.Headers.Remove("server");
+        context.Response.Headers.Remove("X-Powered-By");
+
+        return Task.FromResult(0);
+    });
+
+    await next(context);
+});
+
 
 //app.UseAuthentication();
 //app.UseAuthorization();
