@@ -21,7 +21,6 @@ function homeClicked()
     let anonContainer = document.querySelector(".anon-container");
     let loginContainer = document.querySelector(".login-container");
     let homeContainer = document.querySelector(".home-container")
-    let globalErrors = document.querySelector("#errors");
     let recoveryContainer = document.querySelector(".recovery-container");
     let recoveryOTPContainer = document.querySelector(".recOTP-container");
     let profileContainer = document.querySelector(".profileContainer");
@@ -33,7 +32,6 @@ function homeClicked()
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
     // profileContainer.style.display = "none";
-    globalErrors.innerHTML = "";
 }
 
 function regClicked()

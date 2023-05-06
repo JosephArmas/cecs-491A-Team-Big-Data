@@ -32,7 +32,6 @@ var loginContainer = document.querySelector(".login-container");
     const password = document.getElementById('password');
     const loginBtn = document.getElementById('sub-login');
     const loginHome = document.getElementById('login-home');
-    var errorsDiv = document.getElementById('errors');
     const roles =  ['Regular User']
     const user = {}
     loginBtn.addEventListener('click', function (event)
@@ -40,10 +39,10 @@ var loginContainer = document.querySelector(".login-container");
         event.preventDefault();
         if (email.value == '' || password.value == '')
         {
-            errorsDiv.innerHTML = "Please fill in all fields";
+            timeOut('Please fill in all fields', 'red', errorsDiv);
         } else if(IsValidPassword(password.value) === false)
         {
-            errorsDiv.innerHTML = "Password must be at least 8 characters long";
+            timeOut('Password must be at least 8 characters long', 'red', errorsDiv);
 
         } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
         {
@@ -51,17 +50,13 @@ var loginContainer = document.querySelector(".login-container");
 
         } else
         {
-            errorsDiv.innerHTML = "Error with email or password. Please try again"; 
+            timeOut('Error with email or password. Please try again', 'red', errorsDiv)
         }
         // reset login form when button clicked
         loginForm.reset()
 
     });
 
-    loginHome.addEventListener('click', function (event)
-    {
-        errorsDiv.innerHTML= "";
-    });
 
     var otpContainer = document.querySelector(".otp-container");
     const otpForm = document.querySelector("#otp-form");
