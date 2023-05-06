@@ -1,4 +1,4 @@
-using TeamBigData.Utification.Services;
+using TeamBigData.Utification.ReputationServices;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;

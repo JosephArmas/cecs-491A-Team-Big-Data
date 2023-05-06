@@ -32,7 +32,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<DataResponse<DataSet>> SelectUserReportsAsync(UserProfile userProfile)
+        public async Task<DataResponse<DataSet>> SelectUserReportsAsync(int user)
         {
             DataResponse<DataSet> result = new DataResponse<DataSet>();
 
@@ -50,7 +50,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         command.Connection = connection;
                         command.CommandText = "PartitionSelectUserReports";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", userProfile.UserID);
+                        command.Parameters.AddWithValue("@reportedUser", user);
 
                         adapter.SelectCommand = command;
 
@@ -68,9 +68,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<DataResponse<Tuple<double, int>>> SelectNewReputationAsync(Report report)
+        public async Task<Response> SelectNewReputationAsync(Report report)
         {
-            DataResponse<Tuple<double, int>> result = new DataResponse<Tuple<double, int>>();
+            Response result = new Response();
             double newReputation = report.Rating;
             int numberOfReports = 1;
 
@@ -109,9 +109,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 }
             }
 
-            Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
             result.IsSuccessful = true;
-            result.Data = updateReputation;
 
             return result;
         }

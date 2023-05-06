@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Manager;
@@ -20,33 +24,46 @@ namespace Utification.EntryPoint.Controllers
         private readonly String _role;
         private readonly String _userhash;
         private readonly int _userId;
-        public PinController(PinManager pinManager)
+        private readonly IConfiguration _configuration;
+        public PinController(PinManager pinManager, IConfiguration configuration)
         {
             _pinManager = pinManager;
 
-            // Get authorization header.
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
+            if (Request == null)
+            {
+                _role = "Anonymous User";
+                _userhash = "";
+                _userId = 0;
 
-            // Get role from JWT signature.
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
+            }
+            else
+            {
+                const string HeaderKeyName = "HeaderKey";
+                Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
+                HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
 
-            // Get whats needed from JWT.
-            _role = claims.ElementAt(2).Value;
-            _userhash = claims.ElementAt(6).Value;
-            _userId = Convert.ToInt32(claims.ElementAt(0).Value);
+                // Get role from JWT signature.
+                string clean = authorizationToken;
+                clean = clean.Remove(0, 7);
+
+                var handler = new JwtSecurityTokenHandler();
+                var token = handler.ReadJwtToken(clean);
+                IEnumerable<Claim> claims = token.Claims;
+
+                // Get whats needed from JWT.
+                _role = claims.ElementAt(2).Value;
+                _userhash = claims.ElementAt(6).Value;
+                _userId = Convert.ToInt32(claims.ElementAt(0).Value);
+            }
+
+            _configuration = configuration;
         }
-        
+
         [Route("GetAllPins")]
         [HttpGet]
         public async Task<IActionResult> GetAllPins()
         {
-            if (_role != "Regular User" || _role != "Reputable User" || _role != "Service User" || _role != "Admin User")
+            if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:GetAllPins"]))
             {
                 return Unauthorized("Unsupported User.");
             }
@@ -72,14 +89,14 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewPin([FromBody]Pins newPin)
         {
-            if (_role != "Reputable User" || _role != "Service User" || _role != "Admin User")
+            if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:PostNewPin"]))
             {
                 return Unauthorized("Unsupported User.");
             }
 
             if (!InputValidation.IsValidTitle(newPin.Description) || !InputValidation.IsValidDescription(newPin.Description))
             {
-                return Conflict("Invalid Pin Description.");
+                return Conflict("Invalid Pin Content.");
             }
 
             Pin pin = new Pin(newPin.UserID, newPin.Lat, newPin.Lng, newPin.PinType, newPin.Description);
@@ -102,7 +119,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> CompleteUserPin([FromBody]Pins pin)
         {
-            if (_role != "Regular User" || _role != "Reputable User" || _role != "Service User" || _role != "Admin User")
+            if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:CompleteUserPin"]))
             {
                 return Unauthorized("Unsupported User.");
             }
@@ -125,7 +142,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ModifyPinContent([FromBody]Pins pin)
         {
-            if (_role != "Admin User" || _userId != pin.UserID)
+            if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinContent"]) || _userId != pin.UserID)
             {
                 return Unauthorized("Unsupported User.");
             }
@@ -154,14 +171,14 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ModifyPinType([FromBody]Pins pin)
         {
-            if (_role != "Admin User" || _userId != pin.UserID)
+            if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinType"]) || _userId != pin.UserID)
             {
                 return Unauthorized("Unsupported User.");
             }
 
             if (!InputValidation.IsValidTitle(pin.Description) || !InputValidation.IsValidDescription(pin.Description) || !(pin.PinType >= 0 || pin.PinType <= 5))
             {
-                return Conflict("Invalid Pin Description.");
+                return Conflict("Invalid Pin.");
             }
 
             var response = await _pinManager.ChangePinType(pin.PinID, pin.UserID, pin.PinType, pin.Userhash);
@@ -182,7 +199,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> DisablePin([FromBody] Pins pin)
         {
-            if (_role != "Admin User")
+            if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:DisablePin"]))
             {
                 return Unauthorized("Unsupported User.");
             }
@@ -199,6 +216,18 @@ namespace Utification.EntryPoint.Controllers
             { 
                 return Ok(response.ErrorMessage); 
             }
+        }
+
+        [Route("LoadMap")]
+        [HttpGet]
+        public async Task<IActionResult> GetMapApiKey()
+        {
+            if (!_configuration["PinAuthorization:GetMapApiKey"].Contains(_role))
+            {
+                return Unauthorized("Unsupported User.");
+            }
+
+            return Ok(_configuration["GoogleMapsApiKey"]);
         }
     }
 }

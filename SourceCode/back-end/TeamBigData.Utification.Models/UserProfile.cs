@@ -20,10 +20,6 @@ namespace TeamBigData.Utification.Models
         public IIdentity? Identity { get; private set; }
         public UserProfile() 
         {
-            UserID= 0;
-            FirstName = "";
-            LastName = "";
-            Address = "";
             Birthday = new DateTime(2000, 1, 1);
             Reputation = 2.0;
             Identity = new GenericIdentity("0", "Anonymous User");
@@ -41,9 +37,6 @@ namespace TeamBigData.Utification.Models
         public UserProfile(int userID)
         {
             UserID = userID;
-            FirstName = "";
-            LastName = "";
-            Address = "";
             Birthday = new DateTime(2000, 1, 1);
             Reputation = 2.0;
             Identity = new GenericIdentity(UserID.ToString(), "Anonymous User");
@@ -52,9 +45,6 @@ namespace TeamBigData.Utification.Models
         public UserProfile(int userID, string role)
         {
             UserID = userID;
-            FirstName = "";
-            LastName = "";
-            Address = "";
             Birthday = new DateTime(2000, 1, 1);
             Reputation = 2.0;
             Identity = new GenericIdentity(UserID.ToString(), role);

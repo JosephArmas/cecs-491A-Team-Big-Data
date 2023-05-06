@@ -44,8 +44,8 @@ regHome.addEventListener('click', function (event)
 function registerUser()
 {
    
-   newUser._username = registerEmail.value;
-   newUser._password = registerPassword.value;
+   newUser.Username = registerEmail.value;
+   newUser.Password = registerPassword.value;
    // console.log(newUser)
    axios.post(registrationServer,newUser).then(function (response)
    {

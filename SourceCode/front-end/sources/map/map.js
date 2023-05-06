@@ -116,15 +116,19 @@
                 var currResponse = response.data[i]
                 
                 const pin = new google.maps.Marker({
-                    position: {lat:parseFloat(currResponse._lat),lng:parseFloat(currResponse._lng)},
+                    position: {lat:parseFloat(currResponse.Lat),lng:parseFloat(currResponse.Lng)},
                     map: map,
                     icon: {
-                        url: PIN_ICONS[currResponse._pinType]
+                        url: PIN_ICONS[currResponse.PinType]
                     }
                 });
 
                 //Users can mark a pin complete
-                var pinContent = currResponse._description + `<br>Created: ${currResponse._dateTime}<br><button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`
+                var pinContent = currResponse._description + `<br>Created: ${currResponse._dateTime}<br>`;
+                if (currResponse.UserID != localStorage.getItem("id"))
+                {
+                    pinContent += `<button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`;
+                }
 
                 if(localStorage.getItem("role")=="Regular User")
                 {
@@ -148,7 +152,7 @@
                 infoWindows.push(infowindow);
                 
                 // Do not display disabled or complete pins
-                if (currResponse._disabled === 1 || currResponse._completed === 1)
+                if (currResponse.Disabled === 1)
                 {
                     pinsMarker[i].setMap(null);
                 }
@@ -171,8 +175,8 @@
     // David
     window.uploadPicture = function(pos)
     {
-        let pinID = pinsInfo[pos]._pinID;
-        let content = pinsInfo[pos]._description;
+        let pinID = pinsInfo[pos].PinID;
+        let content = pinsInfo[pos].Description;
         let fileSelector = document.getElementById("fileSelector");
         let file = fileSelector.files[0];
         if(file === undefined)
@@ -193,8 +197,8 @@
                 let url = URL.createObjectURL(file);
                 //rebuild content
                 content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
-                content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
+                content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -229,9 +233,9 @@
 
     window.downloadPicture = function(pos)
     {
-        let pinID = pinsInfo[pos]._pinID;
+        let pinID = pinsInfo[pos].PinID;
         // Rebuild content
-        let content = pinsInfo[pos]._description;
+        let content = pinsInfo[pos].Description;
         let config = {
             headers : {"ID": pinID}
         };
@@ -259,7 +263,7 @@
                 {
                     // Picture stored as a DataURL for easy access
                     content += "<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
-                    content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                    content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
                     if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
                     {
                         content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
@@ -274,8 +278,8 @@
 
     window.updatePicture = function(pos)
     {
-        let pinID = pinsInfo[pos]._pinID;
-        let content = pinsInfo[pos]._description;
+        let pinID = pinsInfo[pos].PinID;
+        let content = pinsInfo[pos].Description;
         let fileSelector = document.getElementById("fileSelector");
         let file = fileSelector.files[0];
         if(file === undefined)
@@ -296,8 +300,8 @@
                 let url = URL.createObjectURL(file);
                 //rebuild content
                 content += "<img id=\"PinPic\"style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
-                content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
+                content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -331,11 +335,11 @@
 
     window.deletePicture = function(pos)
     {
-        let pinID = pinsInfo[pos]._pinID;
+        let pinID = pinsInfo[pos].PinID;
         //rebuild content
-        let content = pinsInfo[pos]._description;
-        content += `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
+        let content = pinsInfo[pos].Description;
+        content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
         {
             content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
             content += `<button id='uploadPic' onclick='uploadPicture(${pos})'>Upload Picture</button>`;
@@ -374,13 +378,13 @@
         const webServiceUrl = 'https://localhost:7259/Pin/CompleteUserPin';
         
         const pin = {}
-        pin._pinID = pinsInfo[pos]._pinID;
-        pin._userID = pinsInfo[pos]._userID;
-        pin._lat = pinsInfo[pos]._lat;
-        pin._lng = pinsInfo[pos]._lng;
-        pin._pinType = pinsInfo[pos]._pinType;
-        pin._description = pinsInfo[pos]._description;
-        pin._userhash = localStorage.getItem("userhash");
+        pin.PinID = pinsInfo[pos].PinID;
+        pin.UserID = pinsInfo[pos].UserID;
+        pin.Lat = pinsInfo[pos].Lat;
+        pin.Lng = pinsInfo[pos].Lng;
+        pin.PinType = pinsInfo[pos].PinType;
+        pin.Description = pinsInfo[pos].Description;
+        pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -434,13 +438,13 @@
         };
 
         const pin = {}
-        pin._pinID = pinsInfo[pos]._pinID;
-        pin._userID = pinsInfo[pos]._userID;
-        pin._lat = pinsInfo[pos]._lat;
-        pin._lng = pinsInfo[pos]._lng;
-        pin._pinType = pinsInfo[pos]._pinType;
-        pin._description = pinsInfo[pos]._description;
-        pin._userhash = localStorage.getItem("userhash");
+        pin.PinID = pinsInfo[pos].PinID;
+        pin.UserID = pinsInfo[pos].UserID;
+        pin.Lat = pinsInfo[pos].Lat;
+        pin.Lng = pinsInfo[pos].Lng;
+        pin.PinType = pinType;
+        pin.Description = pinsInfo[pos].Description;
+        pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -474,13 +478,13 @@
         let content = `<h1>${title}</h1><p>${description}</p>`;
 
         const pin = {}
-        pin._pinID = pinsInfo[pos]._pinID;
-        pin._userID = pinsInfo[pos]._userID;
-        pin._lat = pinsInfo[pos]._lat;
-        pin._lng = pinsInfo[pos]._lng;
-        pin._pinType = pinsInfo[pos]._pinType;
-        pin._description = pinsInfo[pos]._description;
-        pin._userhash = localStorage.getItem("userhash");
+        pin.PinID = pinsInfo[pos].PinID;
+        pin.UserID = pinsInfo[pos].UserID;
+        pin.Lat = pinsInfo[pos].Lat;
+        pin.Lng = pinsInfo[pos].Lng;
+        pin.PinType = pinsInfo[pos].PinType;
+        pin.Description = content;
+        pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -490,10 +494,10 @@
         .then(function (responseAfter){
             infoWindows[pos].close();
 
-            content = content + `<br>Created: ${pinsInfo[pos]._dateTime}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
+            content = content + `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
 
             //User can delete their pins and admin can delete anyone's pin
-            if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
+            if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
             {
                 content = content + `<button id='modifyPin' onclick='modifyPinHandler(${pos});'>Modify Pin</button>`;
             }
@@ -514,13 +518,13 @@
         pinsMarker[pos].setMap(null);
         
         const pin = {}
-        pin._pinID = pinsInfo[pos]._pinID;
-        pin._userID = pinsInfo[pos]._userID;
-        pin._lat = pinsInfo[pos]._lat;
-        pin._lng = pinsInfo[pos]._lng;
-        pin._pinType = pinsInfo[pos]._pinType;
-        pin._description = pinsInfo[pos]._description;
-        pin._userhash = localStorage.getItem("userhash");
+        pin.PinID = pinsInfo[pos].PinID;
+        pin.UserID = pinsInfo[pos].UserID;
+        pin.Lat = pinsInfo[pos].Lat;
+        pin.Lng = pinsInfo[pos].Lng;
+        pin.PinType = pinsInfo[pos].PinType;
+        pin.Description = pinsInfo[pos].Description;
+        pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -581,18 +585,14 @@
 
         map.panTo(latLng);
 
-        var today = new Date();
-        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
         const pin = {}
-        pin._pinID = 0;
-        pin._userID = localStorage.getItem('id');
-        pin._lat = `${latLng.lat()}`
-        pin._lng = `${latLng.lng()}`
-        pin._pinType = pinType-1;
-        pin._description = content;
-        pin._userhash = localStorage.getItem('userhash')
+        pin.PinID = 0;
+        pin.UserID = localStorage.getItem('id');
+        pin.Lat = `${latLng.lat()}`
+        pin.Lng = `${latLng.lng()}`
+        pin.PinType = pinType-1;
+        pin.Description = content;
+        pin.Userhash = localStorage.getItem('userhash')
 
         axios.post(webServiceUrl, pin, {
             headers: {
@@ -603,6 +603,7 @@
             initMap();
         })
         .catch(function (error){
+            errorsDiv.innerHTML = error.data;
         });
     }
 

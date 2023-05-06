@@ -24,7 +24,7 @@
     <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.ReputationManager\TeamBigData.Utification.ReputationManager.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.ReputationService\TeamBigData.Utification.ReputationServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ReputationServices\TeamBigData.Utification.ReputationServices.csproj" />
     <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 

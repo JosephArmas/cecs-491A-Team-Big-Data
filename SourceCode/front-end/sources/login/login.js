@@ -146,8 +146,8 @@ var loginContainer = document.querySelector(".login-container");
 
     function loginUser()
     {
-        user._username = email.value;
-        user._password = password.value;
+        user.Username = email.value;
+        user.Password = password.value;
         axios.post(authenticationServer, user).then(function (responseAfter)
         {
             // turning jwt signature from the response into a json object

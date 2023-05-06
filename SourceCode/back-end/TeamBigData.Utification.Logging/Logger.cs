@@ -2,6 +2,7 @@
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.LogsDB;
 using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
 
 namespace TeamBigData.Utification.Logging
@@ -9,7 +10,7 @@ namespace TeamBigData.Utification.Logging
     public class Logger : ILogger
     {
         private readonly ILogsDBInserter _logsDBInserter;
-        public Logger(ILogsDBInserter logsDBInserter)
+        public Logger(LogsSqlDAO logsDBInserter)
         {
             _logsDBInserter = logsDBInserter;
         }

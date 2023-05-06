@@ -10,7 +10,7 @@ namespace Utification.EntryPoint.Controllers
     public class ReputationController : ControllerBase
     {
         private readonly ReputationManager _reputationManager;
-        public ReputationController(ReputationManager reputationManager) 
+        public ReputationController(ReputationManager reputationManager)
         {
             _reputationManager = reputationManager;
         }
@@ -18,7 +18,7 @@ namespace Utification.EntryPoint.Controllers
 #if DEBUG
         [Route("health")]
         [HttpGet]
-        public Task<IActionResult> HealthCheck() 
+        public Task<IActionResult> HealthCheck()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
             tcs.SetResult(Ok("Working"));
@@ -29,13 +29,16 @@ namespace Utification.EntryPoint.Controllers
 
         [Route("GetReputation")]
         [HttpPost]
+
+        // TODO: Change ViewCurrentReputationAsync to return DataResponse with the proper datatype for the response
         public async Task<IActionResult> GetReputationAsync([FromBody] Reports reports)
-        {            
+        {
             var result = await _reputationManager.ViewCurrentReputationAsync(reports.UserID).ConfigureAwait(false);
 
             if (result.IsSuccessful)
             {
-                return Ok(result.Data);
+                //return Ok(result.Data);
+                return Unauthorized();
             }
             else
             {
@@ -53,7 +56,7 @@ namespace Utification.EntryPoint.Controllers
             if (!result.IsSuccessful)
             {
                 IActionResult error = Unauthorized(result.ErrorMessage);
-                switch(result.ErrorMessage)
+                switch (result.ErrorMessage)
                 {
                     case "Bad Request":
                         error = BadRequest(result.ErrorMessage);
@@ -74,23 +77,23 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> ViewReportsAsync([FromBody] Reports reports)
         {
             Console.WriteLine("Partition: " + reports.ButtonCommand);
-            var result = await _reputationManager.ViewUserReportsAsync(reports.UserID, reports.ButtonCommand).ConfigureAwait(false);  
-            
-            if(!result.isSuccessful)
+            var result = await _reputationManager.ViewUserReportsAsync(reports.UserID, reports.ButtonCommand).ConfigureAwait(false);
+
+            if (!result.IsSuccessful)
             {
-                IActionResult error = Unauthorized(result.errorMessage);
-                switch(result.errorMessage)
+                IActionResult error = Unauthorized(result.ErrorMessage);
+                switch (result.ErrorMessage)
                 {
                     case "Bad Request":
-                        error = BadRequest(result.errorMessage);
+                        error = BadRequest(result.ErrorMessage);
                         break;
                     case "Conflict":
-                        error = Conflict(result.errorMessage);
+                        error = Conflict(result.ErrorMessage);
                         break;
                 }
                 return error;
             }
-            return Ok(result.data);
+            return Ok(result.Data);
         }
     }
 }

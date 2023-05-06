@@ -12,15 +12,6 @@
         public string _category { get; private set; }
         public string _message { get; private set; }
 
-        public Log()
-        {
-            _correlationID = 0;
-            _logLevel = "";
-            _user = "";
-            _event = "";
-            _category = "";
-            _message = "";
-        }
         public Log(int correlationID, string logLevel, string user, string eventName, string category, string message)
         {
             _correlationID = correlationID;

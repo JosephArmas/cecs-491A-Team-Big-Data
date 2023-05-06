@@ -99,63 +99,66 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         // IPinDBSelecter
         //------------------------------------------------------------------------
 
-        public async Task<DataResponse<List<Pin>>> SelectPinTable()
+        public async Task<DataResponse<List<PinResponse>>> SelectPinTable()
         {
             //var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
-            var result = new DataResponse<List<Pin>>();
-            List<Pin> pins = new List<Pin>();
+            var result = new DataResponse<List<PinResponse>>();
+            List<PinResponse> pins = new List<PinResponse>();
             string sqlStatement = "SELECT * FROM dbo.Pins";
             try
             {
                 using (SqlConnection connect = new SqlConnection(_connectionString))
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    connect.OpenAsync();
+                    using (var reader = await (new SqlCommand(sqlStatement, connect)).ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         // read through all rows
                         while (reader.Read())
                         {
-                            int pinID = reader.GetInt32(0);
-                            if (pinID.Equals(null))
+                            int pinID = 0;
+                            int userID = 0;
+                            String lat = "";
+                            String lng = "";
+                            int pinType = 0;
+                            String description = "";
+                            int disabled = 0;
+                            DateTime dateCreated = new DateTime(2000,1,1);
+                            int ordinal = reader.GetOrdinal("pinID");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                pinID = reader.GetInt32(ordinal);
                             }
-                            int userID = reader.GetInt32(1);
-                            if (userID.Equals(null))
+                            ordinal = reader.GetOrdinal("userID");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                userID = reader.GetInt32(ordinal);
                             }
-                            String lat = reader.GetString(2);
-                            if (lat.Equals(null))
+                            ordinal = reader.GetOrdinal("lat");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                lat = reader.GetString(ordinal);
                             }
-                            String lng = reader.GetString(3);
-                            if (lng.Equals(null))
+                            ordinal = reader.GetOrdinal("lng");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                lng = reader.GetString(ordinal);
                             }
-                            int pinType = reader.GetInt32(4);
-                            if (pinType.Equals(null))
+                            ordinal = reader.GetOrdinal("desciption");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                description = reader.GetString(ordinal);
                             }
-                            String description = reader.GetString(5);
-                            if (description.Equals(null))
+                            ordinal = reader.GetOrdinal("disabled");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                disabled = reader.GetInt32(ordinal);
                             }
-                            int disabled = reader.GetInt32(6);
-                            if (disabled.Equals(null))
+                            ordinal = reader.GetOrdinal("dateCreated");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                dateCreated = reader.GetDateTime(ordinal);
                             }
-                            DateTime dateCreated = reader.GetDateTime(7);
-                            if (dateCreated.Equals(null))
-                            {
-                                return result;
-                            }
-                            pins.Add(new Pin(pinID, userID, lat, lng, pinType, description, disabled, dateCreated));
+                            pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
                         }
                         reader.Close();
                     }
@@ -185,53 +188,61 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             {
                 using (SqlConnection connect = new SqlConnection(_connectionString))
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    connect.OpenAsync();
+                    using (var reader = await (new SqlCommand(sqlStatement, connect)).ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         // read through all rows
                         while (reader.Read())
                         {
-                            int pinID = reader.GetInt32(0);
-                            if (pinID.Equals(null))
+                            int pinID = 0;
+                            int userID = 0;
+                            String lat = "";
+                            String lng = "";
+                            int pinType = 0;
+                            String description = "";
+                            int disabled = 0;
+                            DateTime dateCreated = new DateTime(2000, 1, 1);
+
+                            int ordinal = reader.GetOrdinal("pinID");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                pinID = reader.GetInt32(ordinal);
                             }
-                            int userID = reader.GetInt32(1);
-                            if (userID.Equals(null))
+                            ordinal = reader.GetOrdinal("userID");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                userID = reader.GetInt32(ordinal);
                             }
-                            String lat = reader.GetString(2);
-                            if (lat.Equals(null))
+                            ordinal = reader.GetOrdinal("lat");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                lat = reader.GetString(ordinal);
                             }
-                            String lng = reader.GetString(3);
-                            if (lng.Equals(null))
+                            ordinal = reader.GetOrdinal("lng");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                lng = reader.GetString(ordinal);
                             }
-                            int pinType = reader.GetInt32(4);
-                            if (pinType.Equals(null))
+                            ordinal = reader.GetOrdinal("description");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                description = reader.GetString(ordinal);
                             }
-                            String description = reader.GetString(5);
-                            if (description.Equals(null))
+                            ordinal = reader.GetOrdinal("dateCreated");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                dateCreated = reader.GetDateTime(ordinal);
                             }
-                            int disabled = reader.GetInt32(6);
-                            if (disabled.Equals(null))
+
+                            ordinal = reader.GetOrdinal("disabled");
+                            if (!reader.IsDBNull(ordinal))
                             {
-                                return result;
+                                disabled = reader.GetInt32(ordinal);
+                                if (disabled == 0)
+                                {
+                                    pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
+                                }
                             }
-                            String dateCreated = reader.GetDateTime(7).ToString();
-                            if (dateCreated.Equals(null))
-                            {
-                                return result;
-                            }
-                            pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
                         }
                         reader.Close();
                     }

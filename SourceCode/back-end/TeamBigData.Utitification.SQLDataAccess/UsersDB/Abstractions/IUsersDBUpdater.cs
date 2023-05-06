@@ -14,5 +14,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
         public Task<Response> UpdateUserPassword(int userID, String password, String salt);
         public Task<Response> UpdateUserRoleAsync(UserProfile userProfile);
         public Task<Response> UpdateUserReputationAsync(int user, double newReputation);
+        public Task<Response> UpdateServiceRole(int userid);
+        public Task<Response> UpdateRemoveServiceRole(int userid);
     }
 }

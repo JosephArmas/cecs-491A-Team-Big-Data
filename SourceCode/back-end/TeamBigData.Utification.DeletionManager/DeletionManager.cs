@@ -11,7 +11,7 @@ using TeamBigData.Utification.Models;
 namespace TeamBigData.Utification.DeletionManager
 {
     public class DeletionManager
-    {
+    {/*
 
         /// <summary>
         /// Takes in 2 user accounts to check if valid and delete the second
@@ -51,6 +51,6 @@ namespace TeamBigData.Utification.DeletionManager
 
             return answer;
         }
-
+*/
     }
 }

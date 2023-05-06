@@ -23,16 +23,7 @@ namespace TeamBigData.Utification.Models
         public bool Verified { get; private set; }
         public String UserHash { get; private set; }
 
-        public UserAccount()
-        {
-            UserID = 0;
-            Username = "";
-            Password = "";
-            Salt = "";
-            Otp = "";
-            Verified = true;
-            UserHash = "";
-        }
+        public UserAccount() { }
         public UserAccount(String username, String password, String salt, String userHash)
         {
             Verified = false;

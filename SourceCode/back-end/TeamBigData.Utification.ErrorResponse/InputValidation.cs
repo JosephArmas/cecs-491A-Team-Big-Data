@@ -60,5 +60,10 @@ namespace TeamBigData.Utification.ErrorResponse
             else
                 return false;
         }
+
+        public static bool AuthorizedUser(String role, String authorizedRoles)
+        {
+            return authorizedRoles.Contains(role);
+        }
     }
 }

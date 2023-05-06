@@ -11,7 +11,6 @@ using TeamBigData.Utification.FileServices;
 using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Manager;
-using TeamBigData.Utification.Services;
 using TeamBigData.Utification.PinManagers;
 using TeamBigData.Utification.PinServices;
 using TeamBigData.Utification.SQLDataAccess;
@@ -25,7 +24,10 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
-using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.ServiceOfferingsManagers;
+using TeamBigData.Utification.ServiceOfferingsServices;
+using TeamBigData.Utification.ReputationServices;
+using TeamBigData.Utification.DeletionService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,27 +77,24 @@ builder.Services.AddControllers();
 var sqlDAOFactory = new SqlDAOFactory();
 
 // Logging dependencies
-builder.Services.AddDbContext<ILogsDBInserter, LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddDbContext<LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
 builder.Services.AddTransient<ILogger, Logger>();
 
 // Security manager dependencies
-builder.Services.AddDbContext<IUsersDBInserter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
-builder.Services.AddDbContext<IUsersDBSelecter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
 builder.Services.AddTransient<AccountRegisterer>();
 builder.Services.AddTransient<AccountAuthentication>();
 
-builder.Services.AddDbContext<IUsersDBUpdater, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
+builder.Services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
 builder.Services.AddTransient<RecoveryServices>();
 
-builder.Services.AddDbContext<IUserhashDBInserter, UserhashSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserHashSQLDBConnection")));
+builder.Services.AddDbContext<UserhashSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserHashSQLDBConnection")));
 builder.Services.AddTransient<UserhashServices>(); 
-builder.Services.AddTransient<SecurityManager>();
+
 
 
 // Pin dependencies
-builder.Services.AddDbContext<IPinDBInserter, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
-builder.Services.AddDbContext<IPinDBSelecter, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
-builder.Services.AddDbContext<IPinDBUpdater, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<PinService>();
 builder.Services.AddTransient<PinManager>();
 
@@ -105,11 +104,21 @@ builder.Services.AddTransient<FileService>();
 builder.Services.AddTransient<FileManager>();
 
 // Reputation dependencies
-builder.Services.AddDbContext<IReportsDBInserter, ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
-builder.Services.AddDbContext<IReportsDBSelecter, ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
-builder.Services.AddDbContext<IUsersDBUpdater, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
-builder.Services.AddTransient<ReputationManager>();
+builder.Services.AddDbContext<ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<ReputationService>();
+builder.Services.AddTransient<ReputationManager>();
+
+// Service Offering dependencies
+builder.Services.AddDbContext<ServicesSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<ServiceOfferingService>();
+builder.Services.AddTransient<ServiceRequestService>();
+builder.Services.AddTransient<ServiceOfferingManager>();
+builder.Services.AddTransient<ServiceRequestManager>();
+
+// Security Manager
+builder.Services.AddTransient<AccDeletionService>();
+builder.Services.AddTransient<SecurityManager>();
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

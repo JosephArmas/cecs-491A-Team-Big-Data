@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
 using TeamBigData.Utification.SQLDataAccess.DTO;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TeamBigData.Utification.PinServices
 {
@@ -52,7 +53,7 @@ namespace TeamBigData.Utification.PinServices
                 pinResponse.IsSuccessful = false;
                 pinResponse.ErrorMessage += ", {failed: _pinDBSelecter.SelectPinTable}";
             }
-            else if (pinResponse.Data.Count == 0)
+            else if (pinResponse.Data.IsNullOrEmpty())
             {
                 pinResponse.IsSuccessful = true;
                 pinResponse.ErrorMessage = "Returning Empty List of Pins";

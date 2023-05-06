@@ -17,16 +17,8 @@ namespace TeamBigData.Utification.Models
 
         public Pin()
         {
-            PinID = 0;
-            UserID = 0;
-            Lat = "";
-            Lng = "";    
-            PinType = 0;
-            Description = "";
-            Disabled = 0;
             DateCreated = new DateTime(2000,1,1);
             DateLastModified = new DateTime(2000, 1, 1);
-            UserLastModified = 0;
         }
 
         public Pin(int pinID, int userID, String lat, String lng, int pinType, String description, int disabled, DateTime dateCreated, DateTime dateLastModified, int userLastModified)
@@ -53,20 +45,16 @@ namespace TeamBigData.Utification.Models
             Disabled = disabled;
             DateCreated = dateCreated;
             DateLastModified = new DateTime(2000, 1, 1);
-            UserLastModified = 0;
         }
         public Pin(int userID, string lat, string lng, int pinType, string description)
         {
-            PinID = 0;
             UserID = userID;
             Lat = lat;
             Lng = lng;
             PinType = pinType;
             Description = description;
-            Disabled = 0;
             DateCreated = new DateTime(2000, 1, 1);
             DateLastModified = new DateTime(2000, 1, 1);
-            UserLastModified = 0;
         }
 
         public string ToString()

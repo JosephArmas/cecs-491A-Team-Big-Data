@@ -23,8 +23,10 @@
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.ReputationManager\TeamBigData.Utification.ReputationManager.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.ReputationService\TeamBigData.Utification.ReputationServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ReputationServices\TeamBigData.Utification.ReputationServices.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ServiceOfferingsManagers\TeamBigData.Utification.ServiceOfferingsManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ServiceOfferingsServices\TeamBigData.Utification.ServiceOfferingsServices.csproj" />
     <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
   </ItemGroup>
 

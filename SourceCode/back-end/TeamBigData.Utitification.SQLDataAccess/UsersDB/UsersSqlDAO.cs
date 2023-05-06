@@ -574,7 +574,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             return result;
         }
 
-        public async Task<Response> UpdateUserReputationAsync(UserProfile userProfile, double newReputation)
+        public async Task<Response> UpdateUserReputationAsync(int user, double newReputation)
         {
             Response result = new Response();
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -591,7 +591,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         command.Connection = connection;
                         command.CommandText = "UpdateUserReputation";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", userProfile.UserID);
+                        command.Parameters.AddWithValue("@reportedUser", user);
                         command.Parameters.AddWithValue("@newReputation", newReputation);
 
                         int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
@@ -608,6 +608,63 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 }
             }
             return result;
+        }
+
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        public async Task<Response> UpdateServiceRole(int userid)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Response();
+
+                var insertSql = "UpdateRoleService";
+                var command = new SqlCommand(insertSql, connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@ID", userid));
+
+                try
+                {
+                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                }
+                catch (Microsoft.Data.SqlClient.SqlException e)
+                {
+                    result.ErrorMessage = e.ToString();
+                    result.IsSuccessful = false;
+                    //result.data = 0;
+                }
+                return result;
+            }
+
+        }
+
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        public async Task<Response> UpdateRemoveServiceRole(int userid)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Response();
+
+                var insertSql = "UpdateRemoveServiceRole";
+                var command = new SqlCommand(insertSql, connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@ID", userid));
+
+                try
+                {
+                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                }
+                catch (Microsoft.Data.SqlClient.SqlException e)
+                {
+                    result.ErrorMessage = e.ToString();
+                    result.IsSuccessful = false;
+                    //result.data = 0;
+                }
+                return result;
+            }
         }
 
 
@@ -656,5 +713,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
             return response;
         }
+
+        
     }
 }
