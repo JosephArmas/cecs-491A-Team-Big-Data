@@ -14,10 +14,13 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.PinManagers;
 using TeamBigData.Utification.PinServices;
+using TeamBigData.Utification.AlertManagers;
+using TeamBigData.Utification.AlertServices;
 using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Alerts;
 using TeamBigData.Utification.SQLDataAccess.LogsDB;
 using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UserhashDB;
@@ -82,6 +85,15 @@ builder.Services.AddDbContext<IPinDBSelecter, PinsSqlDAO>(options => options.Use
 builder.Services.AddDbContext<IPinDBUpdater, PinsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<PinService>();
 builder.Services.AddTransient<PinManager>();
+
+//Alert dependencies
+builder.Services.AddDbContext<IAlertDBInserter, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IAlertDBSelecter, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<IAlertDBUpdater, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+//builder.Services.AddDbContext<IDBAlert, AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<AlertService>();
+builder.Services.AddTransient<AlertManager>();
+
 
 //File dependencies
 builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));

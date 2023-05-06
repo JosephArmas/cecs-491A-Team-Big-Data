@@ -630,6 +630,7 @@
                     return;
                 }
                 placeNewPin(e.latLng, map);
+                postAlert(latlng.lat,latlng.lng,pinType);
             });
         }
     }

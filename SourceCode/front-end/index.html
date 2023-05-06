@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="styles/map.css">
         <link rel="stylesheet" href="styles/recovery.css">
         <link rel="stylesheet" href="styles/profile.css">
+        <link rel="stylesheet" href="styles/alert.css">
     </head>
     <body>
         <div id="test-data"></div>
@@ -27,7 +28,7 @@
                     <nav class="ham-menu-container">
                         <button type="button">ham-menu</button>
                         <ul class="features" >
-                            <li>feature 1</li>
+                            <li><button type="button" id = "alertBtn" onclick="showAlertView();">Alerts</button></li>
                             <li>feature 2</li>
                             <li>feature 3</li>
                             <li>feature 4</li>
@@ -214,6 +215,33 @@
             </div>
             </form>
         </div>
+        
+        <!--*Alert View-->
+        <div class="alert-container">
+            <div class="alertback-button">
+                <button onclick="alertBack()">Back</button>
+            </div>
+            <div class="notification-view">Notification View</div>
+            <div>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address">
+            </div>
+            <div class="alert" id="alert">
+            <div class="alert-messages">
+                <div class="alert-message">
+                     <div class="alert-timestamp">example</div>
+                    <div class="alert-text">This is an example alert message.</div>
+                    <div class="read-button" id ="read-button">
+                        <button onclick="alertHealth()">Read</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="alert-buttons">
+                <div class="readAll-button" onclick="markAllRead()">Read All</div>
+            </div>
+            
+        </div>
 
         <!-- * Anon View -->
         <div class="anon-container" id="anon-container">
@@ -256,6 +284,7 @@
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/fileUpload/file.js"></script>
         <script src="sources/profile/profile.js"></script>
+        <script src="sources/alerts/alert.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>

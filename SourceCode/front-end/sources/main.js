@@ -31,6 +31,7 @@ function homeClicked()
     let recoveryContainer = document.querySelector(".recovery-container");
     let recoveryOTPContainer = document.querySelector(".recOTP-container");
     let profileContainer = document.querySelector(".profileContainer");
+    let alertContainer = document.querySelector(".alert-container");
     anonContainer.style.display = "block";
     otpContainer.style.display="none";
     homeContainer.style.display = "none";
@@ -39,6 +40,7 @@ function homeClicked()
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
     profileContainer.style.display = "none";
+    alertContainer.style.display = "none";
     globalErrors.innerHTML = "";
 }
 
@@ -57,6 +59,19 @@ function profileClicked()
     homeContainer.style.display = "none";
     profileContainer.style.display = "block";
     downloadProfilePic();
+}
+function showAlertView() {
+    var alertContainer = document.querySelector(".alert-container");
+    var homeContainer = document.querySelector(".home-container");
+    alertContainer.style.display = "block";
+    homeContainer.style.display = "none";
+    getAlerts();
+}
+function alertBack() {
+    var alertContainer = document.querySelector(".alert-container");
+    var homeContainer = document.querySelector(".home-container");
+    homeContainer.style.display = "block";
+    alertContainer.style.display = "none";
 }
 
 function recoveryClicked()
