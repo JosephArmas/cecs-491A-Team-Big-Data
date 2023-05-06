@@ -1,0 +1,61 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.top-button-container
+{
+    display: flex;
+    justify-content: space-between;
+    padding:20px 20px;
+}
+
+#b-h
+{
+    min-width: 100px;
+    background-color: #ca74ff;
+    color: white;
+}
+
+#b-l
+{
+    min-width: 100px;
+    background-color: #00acb7;
+    color: white;
+}
+
+.options-container{
+
+    display: flex;
+    justify-content: space-around;
+
+}
+
+
+.box-container
+{
+    display: flex;
+    gap: 20px;
+    padding-top: 20px;
+    margin-left: 18%
+
+}
+
+#sec:hover
+{
+    color: #ca74ff;
+    cursor: pointer;
+}
+
+#update-profile:hover
+{
+    color: #ca74ff;
+    cursor: pointer;
+}
+
+#container
+{
+    display: none;
+}
+
+
