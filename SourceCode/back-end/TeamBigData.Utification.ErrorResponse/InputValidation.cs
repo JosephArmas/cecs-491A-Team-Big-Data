@@ -26,6 +26,7 @@ namespace TeamBigData.Utification.ErrorResponse
             else
                 return false;
         }
+<<<<<<< HEAD
 
         public static bool IsValidTitle(String content)
         {
@@ -65,5 +66,7 @@ namespace TeamBigData.Utification.ErrorResponse
         {
             return authorizedRoles.Contains(role);
         }
+=======
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
     }
 }

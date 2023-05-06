@@ -6,7 +6,7 @@ using TeamBigData.Utification.Logging;
 using TeamBigData.Utification.Models;
 using System.Diagnostics;
 
-namespace TeamBigData.Utification.LoggingTests
+namespace TeamBigData.Utification.LoggingTest
 {
     [TestClass]
     public class DataAccessTest

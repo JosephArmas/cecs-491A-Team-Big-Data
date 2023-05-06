@@ -7,7 +7,7 @@ using TeamBigData.Utification.AccountServices;
 using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 
-namespace TeamBigData.Utification.RecoveryTests
+namespace TeamBigData.Utification.AccountRecoveryTests
 {
     [TestClass]
     public class AccountRecoveryUnitTest

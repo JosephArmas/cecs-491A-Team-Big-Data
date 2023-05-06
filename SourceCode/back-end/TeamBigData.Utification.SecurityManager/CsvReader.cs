@@ -29,9 +29,9 @@ namespace TeamBigData.Utification.Manager
 
     public class CsvReader
     {
-        private readonly String _usersString = "Server=.\\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
-        private readonly String _logString = "Server=.\\;Database=TeamBigData.Utification.Logs;User=AppUser; Password=t; TrustServerCertificate=True; Encrypt=True";
-        private readonly String _hashString = "Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False";
+        private readonly String usersString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+        private readonly String logString = "Server=.\\;Database=TeamBigData.Utification.Logs;User=AppUser; Password=t; TrustServerCertificate=True; Encrypt=True";
+        private readonly String hashString = "Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False";
 
         public RequestType request { get; private set; }
         public string email { get; private set; }
@@ -82,10 +82,8 @@ namespace TeamBigData.Utification.Manager
                 tcs.SetResult(response);
                 return response;
             }
-
-            /*
             // Manual DI
-            var userDAO = new UsersSqlDAO(_usersString);
+            var userDAO = new UsersSqlDAO(usersString);
             var hashDAO = new UserhashSqlDAO(hashString);
             var logDAO = new LogsSqlDAO(logString);
             var reg = new AccountRegisterer(userDAO, userDAO);
@@ -126,16 +124,14 @@ namespace TeamBigData.Utification.Manager
                         break;
                     
                 }
-            } 
-
+            }
             stopwatch.Stop();
             if (stopwatch.ElapsedMilliseconds > 60000)
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "Bulk UM operation was NOT successful";
             }
-            */
-            tcs.SetResult(response);
+                tcs.SetResult(response);
             return response;
 
         }

@@ -8,30 +8,30 @@ namespace TeamBigData.Utification.ErrorResponse
 {
     public class DataResponse<T>
     {
-        public bool IsSuccessful;
-        public string ErrorMessage;
-        public T Data;
+        public bool isSuccessful;
+        public string errorMessage;
+        public T data;
 
         public DataResponse()
         {
-            IsSuccessful = false;
-            ErrorMessage = "";
+            isSuccessful = false;
+            errorMessage = "";
         }
         public DataResponse(bool isSuccessful, String errorMessage)
         {
-            IsSuccessful = isSuccessful;
-            ErrorMessage = errorMessage;
+            this.isSuccessful = isSuccessful;
+            this.errorMessage = errorMessage;
         }
         public DataResponse(bool isSuccessful, string errorMessage, T data)
         {
-            IsSuccessful = isSuccessful;
-            ErrorMessage = errorMessage;
-            Data = data;
+            this.isSuccessful = isSuccessful;
+            this.errorMessage = errorMessage;
+            this.data = data;
         }
 
         public String ToString()
         {
-            return $"{{ IsSuccessful: {IsSuccessful}, ErrorMessage: {ErrorMessage}, Data: {Data} }}";
+            return isSuccessful.ToString() + ": " + errorMessage;
         }
     }
 }

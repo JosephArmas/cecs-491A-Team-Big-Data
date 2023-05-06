@@ -7,19 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Abstraction\**" />
-    <EmbeddedResource Remove="Abstraction\**" />
-    <None Remove="Abstraction\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TeamBigData.Utification.AccountServices\TeamBigData.Utification.AccountServices.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
-    <ProjectReference Include="..\TeamBigData.Utification.DeletionService\TeamBigData.Utification.DeletionService.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
     <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
     <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Abstraction\" />
   </ItemGroup>
 
 </Project>

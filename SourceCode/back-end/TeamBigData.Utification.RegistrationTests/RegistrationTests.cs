@@ -2,7 +2,7 @@ using TeamBigData.Utification.AccountServices;
 using System.Diagnostics;
 using TeamBigData.Utification.ErrorResponse;
 
-namespace TeamBigData.Utification.RegistrationTests
+namespace TeamBigData.Utification.Registration.Test
 {
     [TestClass]
     public class RegistrationTests
@@ -11,7 +11,7 @@ namespace TeamBigData.Utification.RegistrationTests
         [TestMethod]
         public void ChecksInvalidPassphraseCharacters()
         {
-            string password = "pa$$w*rd";
+            String password = "pa$$w*rd";
             //Act
             bool actual = InputValidation.IsValidPassword(password);
             //Assert
@@ -23,7 +23,7 @@ namespace TeamBigData.Utification.RegistrationTests
         {
             //Arrange
             InputValidation valid = new InputValidation();
-            string password = "pass word";
+            String password = "pass word";
             //Act
             bool actual = InputValidation.IsValidPassword(password);
             //Assert
@@ -35,7 +35,7 @@ namespace TeamBigData.Utification.RegistrationTests
         {
             //Arrange
             InputValidation valid = new InputValidation();
-            string password = "123";
+            String password = "123";
             //Act
             bool actual = InputValidation.IsValidPassword(password);
             //Assert
@@ -47,7 +47,7 @@ namespace TeamBigData.Utification.RegistrationTests
         {
             //Arrange
             InputValidation valid = new InputValidation();
-            string email = "pa$$w*rd@yahoo.com";
+            String email = "pa$$w*rd@yahoo.com";
             //Act
             bool actual = InputValidation.IsValidEmail(email);
             //Assert
@@ -60,7 +60,7 @@ namespace TeamBigData.Utification.RegistrationTests
 
             //Arrange
             InputValidation valid = new InputValidation();
-            string email = "email.email";
+            String email = "email.email";
             //Act
             bool actual = InputValidation.IsValidEmail(email);
             //Assert

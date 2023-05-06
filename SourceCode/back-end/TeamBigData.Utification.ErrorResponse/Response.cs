@@ -2,24 +2,25 @@
 {
     public class Response
     {
-        public bool IsSuccessful;
-        public string ErrorMessage;
+        public bool isSuccessful;
+        public string errorMessage;
+        public Object data;
 
         public Response()
         {
-            IsSuccessful = false;
-            ErrorMessage = "";
+            isSuccessful = false;
+            errorMessage = "";
         }
 
         public Response(bool success, String message)
         {
-            IsSuccessful = success;
-            ErrorMessage = message;
+            isSuccessful = success;
+            errorMessage = message;
         }
 
         public String ToString()
         {
-            return $"{{ IsSuccessful: {IsSuccessful}, ErrorMessage: {ErrorMessage} }}";
+            return isSuccessful.ToString() + ": " + errorMessage;
         }
     }
 }

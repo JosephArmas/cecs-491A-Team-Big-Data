@@ -1,17 +1,21 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
 using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Models;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
     public class ReportsSqlDAO : DbContext, IReportsDBInserter, IReportsDBSelecter, IReportsDBUpdater, IReportsDBDeleter
     {
         private readonly string _connectionString;
-        public ReportsSqlDAO(DbContextOptions<ReportsSqlDAO> options) : base(options)
+        public ReportsSqlDAO(DbContextOptions<ReportsSqlDAO> options) : base(options) 
         {
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
@@ -34,7 +38,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
         public async Task<DataResponse<DataSet>> SelectUserReportsAsync(int user)
         {
-            DataResponse<DataSet> result = new DataResponse<DataSet>();
+            DataResponse<DataSet> result = new DataResponse<DataSet>();          
 
             SqlDataAdapter adapter = new SqlDataAdapter();
             DataSet set = new DataSet();
@@ -57,12 +61,12 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         adapter.Fill(set, "dbo.Reports");
 
                     }
-                    result.IsSuccessful = true;
-                    result.Data = set;
+                    result.isSuccessful = true;
+                    result.data = set;
                 }
                 catch (SqlException s)
                 {
-                    result.ErrorMessage = s.Message;
+                    result.errorMessage = s.Message;
                 }
             }
             return result;
@@ -71,7 +75,11 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         public async Task<Response> SelectNewReputationAsync(Report report)
         {
             Response result = new Response();
+<<<<<<< HEAD
             double newReputation = report.Rating;
+=======
+            double newReputation = report._rating;
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
             int numberOfReports = 1;
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -85,7 +93,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         command.Connection = connection;
                         command.CommandText = "NumberOfUserReports";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", report.ReportedUser);
+                        command.Parameters.AddWithValue("@reportedUser", report._reportedUser);
 
                         using (SqlDataReader execute = await command.ExecuteReaderAsync().ConfigureAwait(false))
                         {
@@ -125,13 +133,13 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
                     using (SqlCommand command = new SqlCommand())
                     {
-                        command.Parameters.AddWithValue("@rating", (Decimal)report.Rating);
-                        command.Parameters.AddWithValue("@reportedUser", report.ReportedUser);
-                        command.Parameters.AddWithValue("@reportingUser", report.ReportingUser);
-                        command.Parameters.AddWithValue("@feedback", report.Feedback);
+                        command.Parameters.AddWithValue("@rating", (Decimal)report._rating);
+                        command.Parameters.AddWithValue("@reportedUser", report._reportedUser);
+                        command.Parameters.AddWithValue("@reportingUser", report._reportingUser);
+                        command.Parameters.AddWithValue("@feedback", report._feedback);
                         command.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
                         command.Parameters.AddWithValue("@updateDate", DateTime.UtcNow);
-                        command.Parameters.AddWithValue("@lastModifierUser", report.ReportingUser);
+                        command.Parameters.AddWithValue("@lastModifierUser", report._reportingUser);
 
                         command.Connection = connection;
                         command.CommandText = "InsertUserReport";
@@ -139,9 +147,10 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
                         int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
-                        if (execute == 1)
+                        if (execute == 0)
                         {
-                            result.IsSuccessful = true;
+                            result.IsSuccessful = false;
+                            return result;
                         }
                     }
                 }

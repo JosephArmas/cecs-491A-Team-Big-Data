@@ -13,7 +13,6 @@ using TeamBigData.Utification.SQLDataAccess;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
-using TeamBigData.Utification.SQLDataAccess.UsersDB;
 
 namespace TeamBigData.Utification.AccountServices
 {
@@ -23,10 +22,10 @@ namespace TeamBigData.Utification.AccountServices
         private readonly IUsersDBInserter _usersDBInserter;
         private readonly IUsersDBSelecter _usersDBSelecter;
 
-        public AccountRegisterer(UsersSqlDAO usersSqlDAO)
+        public AccountRegisterer(IUsersDBInserter usersDBInserter, IUsersDBSelecter usersDBSelecter)
         {
-            _usersDBInserter = usersSqlDAO;
-            _usersDBSelecter = usersSqlDAO;
+            _usersDBInserter = usersDBInserter;
+            _usersDBSelecter = usersDBSelecter;
         }
 
         public async Task<DataResponse<int>> InsertUserAccount(String email, String password, String userHash)
@@ -38,27 +37,27 @@ namespace TeamBigData.Utification.AccountServices
 
             var response = await _usersDBInserter.InsertUserAccount(email, digest, salt, userHash).ConfigureAwait(false);
 
-            if (!response.IsSuccessful)
+            if (!response.isSuccessful)
             {
-                userID.ErrorMessage = response.ErrorMessage + ", {failed: _usersDBInserter.InsertUser}";
-                userID.Data = 0;
+                userID.errorMessage = response.errorMessage + ", {failed: _usersDBInserter.InsertUser}";
+                userID.data = 0;
                 return userID;
             }
 
             var data = await _usersDBSelecter.SelectUserAccount(email).ConfigureAwait(false);
 
-            if (!response.IsSuccessful)
+            if (!response.isSuccessful)
             {
 
-                userID.ErrorMessage = response.ErrorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}";
-                userID.Data = 0;
-                userID.IsSuccessful = false;
+                userID.errorMessage = response.errorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}";
+                userID.data = 0;
+                userID.isSuccessful = false;
             }
             else 
             {
-                userID.IsSuccessful = true;
-                userID.ErrorMessage = response.ErrorMessage; 
-                userID.Data = data.Data.UserID;
+                userID.isSuccessful = true;
+                userID.errorMessage = response.errorMessage; 
+                userID.data = data.data._userID;
             }
 
             return userID;
@@ -68,14 +67,14 @@ namespace TeamBigData.Utification.AccountServices
         {
             var response = await _usersDBInserter.InsertUserProfile(userId).ConfigureAwait(false);
 
-            if (!response.IsSuccessful)
+            if (!response.isSuccessful)
             {
-                response.IsSuccessful = false;
-                response.ErrorMessage += ", {false: _usersDBInserter.InsertUserProfile}";
+                response.isSuccessful = false;
+                response.errorMessage += ", {false: _usersDBInserter.InsertUserProfile}";
             }
             else
             {
-                response.IsSuccessful = true;
+                response.isSuccessful = true;
             }
 
             return response;

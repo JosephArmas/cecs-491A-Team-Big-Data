@@ -1,80 +1,50 @@
 ﻿using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
-using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
-using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
-using TeamBigData.Utification.SQLDataAccess.UserhashDB;
-using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
-using TeamBigData.Utification.SQLDataAccess.UsersDB;
-using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 
 namespace TeamBigData.Utification.DeletionService
 {
     public class AccDeletionService : IDeletionService
     {
-        private readonly IUsersDBSelecter _usersDBSelecter;
-        private readonly IUsersDBDeleter _usersDBDeleter;
-        private readonly IPinDBDeleter _pinDBDeleter;
-        private readonly IUserhashDBUpdater _userhashDBUpdater;
-        public AccDeletionService(UsersSqlDAO usersSqlDAO, PinsSqlDAO pinsSqlDAO, UserhashSqlDAO userhashSqlDAO)
+        private UserProfile _userProfile;
+        public AccDeletionService(UserProfile user)
         {
-            _usersDBSelecter = usersSqlDAO;
-            _usersDBDeleter = usersSqlDAO;
-            _pinDBDeleter = pinsSqlDAO;
-            _userhashDBUpdater = userhashSqlDAO;
+            _userProfile = user;
+        }
+        public async Task<Response> DeletePIIFeatures()
+        {
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Features;Integrated Security=True;Encrypt=False";
+            var err = "User feature data could not be deleted";
+            var result = await DeletePII(connectionString, err, 1).ConfigureAwait(false);
+            return result;
         }
 
-        public async Task<Response> DeletePII(String username)
+        public async Task<Response> DeletePIIProfile()
         {
-            // Check if real person if so return userhash
-            var userAccount = await _usersDBSelecter.SelectUserAccount(username).ConfigureAwait(false);
+            var connectionString = @"Server=.\;Database=TeamBigData.Utification.Users;Integrated Security=True;Encrypt=False";
+            var err = "User profile data could not be deleted";
+            var result = await DeletePII(connectionString,err,0).ConfigureAwait(false);
+            return result;
+        }
 
-            if (!userAccount.IsSuccessful)
+        public async Task<Response> DeletePII(String connString, String err,int piData)
+        {
+            var result = new Response();
+            result.isSuccessful = false;
+            var userDao = new SQLDeletionDAO(connString);
+            if (piData == 0)
             {
-                return new Response(false, userAccount.ErrorMessage + ", {failed: _usersDBSelecter.SelectUserAccount}");
+                result = await userDao.DeleteUser(_userProfile).ConfigureAwait(false);
             }
-
-            // Delete features linked to account
-            var response = await _pinDBDeleter.DeletePinsLinkedToUser(userAccount.Data.UserID).ConfigureAwait(false);
-
-            if (!response.IsSuccessful)
+            else
             {
-                response.IsSuccessful = false;
-                response.ErrorMessage += ", {failed: _pinDBDeleter.DeletePinsLinkedToUser}";
-                return response;
+                result = await userDao.DeleteFeatureInfo(_userProfile).ConfigureAwait(false);
             }
-
-            // Delete account
-            response = await _usersDBDeleter.DeletePIIUserProfile(userAccount.Data.UserID).ConfigureAwait(false);
-
-            if (!response.IsSuccessful)
+            if (result.isSuccessful == false)
             {
-                response.IsSuccessful = false;
-                response.ErrorMessage += ", {failed: _pinDBDeleter.DeletePinsLinkedToUser}";
-                return response;
+                result.errorMessage = err;
             }
-
-            response = await _usersDBDeleter.DeletePIIUserAccount(userAccount.Data.UserID).ConfigureAwait(false);
-
-            if (!response.IsSuccessful)
-            {
-                response.IsSuccessful = false;
-                response.ErrorMessage += ", {failed: _pinDBDeleter.DeletePinsLinkedToUser}";
-                return response;
-            }
-
-            // Unlink userhash
-            response = await _userhashDBUpdater.UnlinkUserhashFrom(userAccount.Data.UserID).ConfigureAwait(false);
-
-            if (!response.IsSuccessful)
-            {
-                response.IsSuccessful = false;
-                response.ErrorMessage += ", {failed: _userhashDBUpdater.UpdateUserID}";
-                return response;
-            }
-
-            response.IsSuccessful = true;
-            return response;
+            return result;
         }
     }
 }

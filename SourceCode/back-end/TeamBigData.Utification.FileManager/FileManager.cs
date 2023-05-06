@@ -21,102 +21,96 @@ namespace TeamBigData.Utification.FileManagers
             _profilepicDownloader = sqlDAO;
             _pinOwnerGetter = pinDAO;
         }
-        public async Task<DataResponse<String>> UploadPinPic(String filename, int pinID, UserProfile cred)
+        public async Task<Response> UploadPinPic(String filename, int pinID, UserProfile cred)
         {
-            var dataResult = new DataResponse<String>();
+            var result = new Response();
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
-                dataResult.ErrorMessage = "Unsupported File Extension";
-                return dataResult;
+                result.ErrorMessage = "Unsupported File Extension";
+                return result;
             }
 
             if(cred.Identity.AuthenticationType.Equals("Admin User"))
             {
-                dataResult = await service.UploadPinPic(filename, pinID);
+                result = await service.UploadPinPic(filename, pinID);
             }
             else if(cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
                 var getResponse = await _pinOwnerGetter.GetPinOwner(pinID);
                 if(!getResponse.IsSuccessful)
                 {
-                    dataResult = new DataResponse<String>(getResponse.IsSuccessful, getResponse.ErrorMessage, "");
+                    result = getResponse;
                 }
-                else if(cred.UserID != (int)getResponse.Data)
+                else if(cred._userID != (int)getResponse.Data)
                 {
-                    dataResult.IsSuccessful = false;
-                    dataResult.ErrorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
                 else
                 {
-                    dataResult = await service.UploadPinPic(filename, pinID);
+                    result = await service.UploadPinPic(filename, pinID);
                 }
             }
-            return dataResult;
+            return result;
         }
 
-        public async Task<DataResponse<String>> UploadProfilePic(String filename, int userID, UserProfile cred)
+        public async Task<Response> UploadProfilePic(String filename, int userID, UserProfile cred)
         {
             var result = new Response();
-            var dataResult = new DataResponse<String>();
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
-                dataResult.ErrorMessage = "Unsupported File Extension";
-                return dataResult;
+                result.ErrorMessage = "Unsupported File Extension";
+                return result;
             }
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
             {
-                dataResult = await service.UploadProfilePic(filename, userID);
+                result = await service.UploadProfilePic(filename, userID);
             }
             else if (cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
-                if(userID == cred.UserID)
+                if(userID == cred._userID)
                 {
-                    dataResult = await service.UploadProfilePic(filename, userID);
+                    result = await service.UploadProfilePic(filename, userID);
                 }
                 else
                 {
-                    dataResult.IsSuccessful = false;
-                    dataResult.ErrorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
             }
-            return dataResult;
+            return result;
         }
 
-        public async Task<DataResponse<String>> DeletePinPic(int pinID, UserProfile cred)
+        public async Task<Response> DeletePinPic(int pinID, UserProfile cred)
         {
             var result = new Response();
-            var dataResult = new DataResponse<String>();
 
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
             {
-                dataResult = await service.DeletePinPic(pinID);
+                result = await service.DeletePinPic(pinID);
             }
             else if (cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
                 var getResponse = await _pinOwnerGetter.GetPinOwner(pinID);
                 if (!getResponse.IsSuccessful)
                 {
-                    dataResult.IsSuccessful = getResponse.IsSuccessful;
-                    dataResult.ErrorMessage = getResponse.ErrorMessage;
-                    return dataResult;
+                    result = getResponse;
                 }
-                else if (cred.UserID != (int)getResponse.Data)
+                else if (cred._userID != (int)getResponse.Data)
                 {
-                    dataResult.ErrorMessage = "Posting Issue. Invalid Action Performed";
+                    result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
                 else
                 {
-                    dataResult = await service.DeletePinPic(pinID);
+                    result = await service.DeletePinPic(pinID);
                 }
             }
-            return dataResult;
+            return result;
         }
 
-        public async Task<DataResponse<String>> DeleteProfilePic(int userID, UserProfile cred)
+        public async Task<Response> DeleteProfilePic(int userID, UserProfile cred)
         {
-            var result = new DataResponse<String>();
+            var result = new Response();
 
             if (cred.Identity.AuthenticationType.Equals("Admin User"))
             {
@@ -124,7 +118,7 @@ namespace TeamBigData.Utification.FileManagers
             }
             else if (cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
-                if (userID == cred.UserID)
+                if (userID == cred._userID)
                 {
                     result = await service.DeleteProfilePic(userID);
                 }
@@ -136,10 +130,10 @@ namespace TeamBigData.Utification.FileManagers
             return result;
         }
 
-        public async Task<DataResponse<String>> DownloadPinPic(int pinID)
+        public async Task<Response> DownloadPinPic(int pinID)
         {
             var result = await _pinpicDownloader.DownloadPinPic(pinID);
-            if (result.Data.Length > 0)
+            if (((String)result.Data).Length > 0)
             {
                 return result;
             }
@@ -150,25 +144,23 @@ namespace TeamBigData.Utification.FileManagers
             }
         }
 
-        public async Task<DataResponse<String>> DownloadProfilePic(int userID)
+        public async Task<Response> DownloadProfilePic(int userID)
         {
             var result = await _profilepicDownloader.DownloadProfilePic(userID);
-            if (result.Data.Length > 0)
+            if (((String)result.Data).Length > 0)
             {
-                result.IsSuccessful = true;
                 return result;
             }
             else
             {
-                result.IsSuccessful = false;
                 result.ErrorMessage = "Could not find uploaded file. Try Uploading a Profile Picture if you haven't yet";
                 return result;
             }
         }
 
-        public async Task<DataResponse<String>> UpdatePinPic(String filename, int pinID, UserProfile cred)
+        public async Task<Response> UpdatePinPic(String filename, int pinID, UserProfile cred)
         {
-            var result = new DataResponse<String>();
+            var result = new Response();
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
@@ -184,9 +176,9 @@ namespace TeamBigData.Utification.FileManagers
                 var getResponse = await _pinOwnerGetter.GetPinOwner(pinID);
                 if (!getResponse.IsSuccessful)
                 {
-                    return result;
+                    result = getResponse;
                 }
-                else if (cred.UserID != (int)getResponse.Data)
+                else if (cred._userID != (int)getResponse.Data)
                 {
                     result.ErrorMessage = "Posting Issue. Invalid Action Performed";
                 }
@@ -198,9 +190,9 @@ namespace TeamBigData.Utification.FileManagers
             return result;
         }
 
-        public async Task<DataResponse<String>> UpdateProfilePic(String filename, int userID, UserProfile cred)
+        public async Task<Response> UpdateProfilePic(String filename, int userID, UserProfile cred)
         {
-            var result = new DataResponse<String>();
+            var result = new Response();
             var ext = filename.Substring(filename.Length - 4, 4).ToLower();
             if (!(ext.Equals(".jpg") || ext.Equals(".png")))
             {
@@ -213,7 +205,7 @@ namespace TeamBigData.Utification.FileManagers
             }
             else if (cred.Identity.AuthenticationType.Equals("Regular User") || cred.Identity.AuthenticationType.Equals("Reputable User"))
             {
-                if(cred.UserID == userID)
+                if(cred._userID == userID)
                 {
                     result = await DownloadProfilePic(userID);
                 }

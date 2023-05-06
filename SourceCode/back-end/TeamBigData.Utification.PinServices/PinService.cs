@@ -6,8 +6,11 @@ using TeamBigData.Utification.Logging;
 using System.Net.NetworkInformation;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Pins;
 using TeamBigData.Utification.SQLDataAccess.DTO;
+<<<<<<< HEAD
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB;
 using Microsoft.IdentityModel.Tokens;
+=======
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
 namespace TeamBigData.Utification.PinServices
 {
@@ -16,14 +19,12 @@ namespace TeamBigData.Utification.PinServices
         private readonly IPinDBInserter _pinDBInserter;
         private readonly IPinDBSelecter _pinDBSelecter;
         private readonly IPinDBUpdater _pinDBUpdater;
-        private readonly IPinDBDeleter _pinDBDeleter;
 
-        public PinService(PinsSqlDAO pinsSqlDAO)
+        public PinService(IPinDBInserter pinDBInserter, IPinDBSelecter pinDBSelecter, IPinDBUpdater pinDBUpdater)
         {
-            _pinDBInserter = pinsSqlDAO;
-            _pinDBSelecter = pinsSqlDAO;
-            _pinDBUpdater = pinsSqlDAO;
-            _pinDBDeleter = pinsSqlDAO;
+            _pinDBInserter = pinDBInserter;
+            _pinDBSelecter = pinDBSelecter;
+            _pinDBUpdater = pinDBUpdater;
         }
 
         public async Task<Response> StoreNewPin(Pin pin)
@@ -46,33 +47,35 @@ namespace TeamBigData.Utification.PinServices
 
         public async Task<DataResponse<List<PinResponse>>> GetPinTable()
         {
-            var pinResponse = await _pinDBSelecter.SelectEnabledPins().ConfigureAwait(false);
+            var pinResponse = await _pinDBSelecter.SelectPinTable().ConfigureAwait(false);
 
-            if (!pinResponse.IsSuccessful) 
+            if (!pinResponse.isSuccessful) 
             {
-                pinResponse.IsSuccessful = false;
-                pinResponse.ErrorMessage += ", {failed: _pinDBSelecter.SelectPinTable}";
+                pinResponse.isSuccessful = false;
+                pinResponse.errorMessage += ", {failed: _pinDBSelecter.SelectPinTable}";
+                return pinResponse;
             }
+<<<<<<< HEAD
             else if (pinResponse.Data.IsNullOrEmpty())
             {
                 pinResponse.IsSuccessful = true;
                 pinResponse.ErrorMessage = "Returning Empty List of Pins";
             }
             else 
+=======
+            else
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
             { 
-                pinResponse.IsSuccessful = true;
-                pinResponse.ErrorMessage = "Returning List of Pins.";
+                pinResponse.isSuccessful = true;
             }
-
 
             return pinResponse;
         }
 
 
-        public async Task<Response> DeletePin(int pinID)
+        public async Task<Response> MarkAsCompleted(int pinID, int userID)
         {
-            // TODO: Delete other linking features to this pin
-            var response = await _pinDBDeleter.DeletePinFromTable(pinID).ConfigureAwait(false);
+            var response = await _pinDBUpdater.UpdatePinToComplete(pinID, userID).ConfigureAwait(false);
 
             if (!response.IsSuccessful)
             {

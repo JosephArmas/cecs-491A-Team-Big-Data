@@ -13,7 +13,7 @@ using TeamBigData.Utification.SQLDataAccess.UsersDB;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
-    public class PinsSqlDAO : DbContext, IPinDBInserter, IPinDBSelecter, IPinDBUpdater, IDBSelectPinOwner, IPinDBDeleter
+    public class PinsSqlDAO : DbContext, IPinDBInserter, IPinDBSelecter, IPinDBUpdater, IDBSelectPinOwner
     {
         private readonly String _connectionString;
         public PinsSqlDAO(DbContextOptions<PinsSqlDAO> options) : base(options)
@@ -70,22 +70,18 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 "values(@ID, @lat, @lng, @type, @d, @mod)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@ID", pin.UserID));
-            command.Parameters.Add(new SqlParameter("@lat", pin.Lat));
-            command.Parameters.Add(new SqlParameter("@lng", pin.Lng));
-            command.Parameters.Add(new SqlParameter("@type", pin.PinType));
-            command.Parameters.Add(new SqlParameter("@d", pin.Description));
-            command.Parameters.Add(new SqlParameter("@mod", pin.UserID));
+            command.Parameters.Add(new SqlParameter("@ID", pin._userID));
+            command.Parameters.Add(new SqlParameter("@lat", pin._lat));
+            command.Parameters.Add(new SqlParameter("@lng", pin._lng));
+            command.Parameters.Add(new SqlParameter("@type", pin._pinType));
+            command.Parameters.Add(new SqlParameter("@d", pin._description));
+            command.Parameters.Add(new SqlParameter("@mod", pin._userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (result.ErrorMessage.Equals("Unique Key Constraint"))
-            {
-                result.IsSuccessful = false;
-                result.ErrorMessage = "Pin already exists on this location.";
-            }
-            else if (!result.IsSuccessful)
+            if (!result.IsSuccessful)
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage += ", {failed: ExecuteSqlCommand}";
+                return result;
             }
             else
             {
@@ -100,6 +96,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         //------------------------------------------------------------------------
 
         public async Task<DataResponse<List<PinResponse>>> SelectPinTable()
+<<<<<<< HEAD
         {
             //var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
             var result = new DataResponse<List<PinResponse>>();
@@ -179,14 +176,16 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         }
 
         public async Task<DataResponse<List<PinResponse>>> SelectEnabledPins()
+=======
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
         {
             //var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
             var result = new DataResponse<List<PinResponse>>();
             List<PinResponse> pins = new List<PinResponse>();
             string sqlStatement = "SELECT * FROM dbo.Pins";
-            try
+            using (SqlConnection connect = new SqlConnection(_connectionString))
             {
-                using (SqlConnection connect = new SqlConnection(_connectionString))
+                try
                 {
                     connect.OpenAsync();
                     using (var reader = await (new SqlCommand(sqlStatement, connect)).ExecuteReaderAsync().ConfigureAwait(false))
@@ -201,6 +200,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                             int pinType = 0;
                             String description = "";
                             int disabled = 0;
+<<<<<<< HEAD
                             DateTime dateCreated = new DateTime(2000, 1, 1);
 
                             int ordinal = reader.GetOrdinal("pinID");
@@ -243,20 +243,45 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                                     pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
                                 }
                             }
+=======
+                            int completed = 0;
+                            String dateCreated = "";
+                            pinID = reader.GetInt32(0);
+                            userID = reader.GetInt32(1);
+                            lat = reader.GetString(2);
+                            lng = reader.GetString(3);
+                            pinType = reader.GetInt32(4);
+                            description = reader.GetString(5);
+                            disabled = reader.GetInt32(6);
+                            completed = reader.GetInt32(7);
+                            dateCreated = reader.GetDateTime(8).ToString();
+                            pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, disabled, completed, dateCreated));
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
                         }
                         reader.Close();
                     }
                     connect.Close();
                 }
-                result.IsSuccessful = true;
-            }
-            catch (SqlException s)
-            {
-                result.ErrorMessage = s.Message;
-            }
-            catch (Exception e)
-            {
-                result.ErrorMessage = e.Message;
+                catch (SqlException s)
+                {
+                    result.errorMessage = s.Message;
+                }
+                catch (Exception e)
+                {
+                    result.errorMessage = e.Message;
+                }
+                if (pins.Count > 0)
+                {
+                    result.isSuccessful = true;
+                    result.errorMessage = "Returning List of Pins";
+                    result.data = pins;
+                }
+                else if (pins.Count == 0 && result.errorMessage.Equals("SqlCommand Passed"))
+                {
+                    result.isSuccessful = false;
+                    result.errorMessage = "Empty List of Pins";
+                    result.data = pins;
+                }
             }
 
             return result;
@@ -267,14 +292,13 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         // IPinDBUpdater
         //------------------------------------------------------------------------
 
-        public async Task<Response> UpdatePinContent(int pinID, int userID, string description)
+        public async Task<Response> UpdatePinToComplete(int pinID, int userID)
         {
-            var sql = "UPDATE dbo.Pins SET \"description\" = @desc, dateLastModified = @date, userLastModified = @user WHERE pinID = @p";
+            var sql = "UPDATE dbo.Pins SET completed = 1, dateLastModified = @date, userLastModified = @user WHERE pinID = @p";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@p", pinID));
-            command.Parameters.Add(new SqlParameter("@desc", description));
-            command.Parameters.Add(new SqlParameter("@date", DateTime.UtcNow));
+            command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (result.ErrorMessage.Equals("Nothing Affected"))
@@ -284,6 +308,29 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             }
             else if (result.IsSuccessful)
             {
+                result.IsSuccessful = true;
+                result.ErrorMessage = "Update Pin To Complete successfully for user";
+            }
+            return result;
+        }
+
+        public async Task<Response> UpdatePinContent(int pinID, int userID, string description)
+        {
+            var sql = "UPDATE dbo.Pins SET \"description\" = @desc, dateLastModified = @date, userLastModified = @user WHERE pinID = @p";
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("@p", pinID));
+            command.Parameters.Add(new SqlParameter("@desc", description));
+            command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
+            command.Parameters.Add(new SqlParameter("@user", userID));
+            var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
+            if (result.ErrorMessage.Equals("Nothing Affected"))
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = "No Request for Pin Found";
+            }
+            else if (result.IsSuccessful)
+            {   
                 result.IsSuccessful = true;
                 result.ErrorMessage = "Update Pin Content successfully for user";
             }
@@ -297,7 +344,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@p", pinID));
             command.Parameters.Add(new SqlParameter("@t", pinType));
-            command.Parameters.Add(new SqlParameter("@date", DateTime.UtcNow));
+            command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (result.ErrorMessage.Equals("Nothing Affected"))
@@ -320,7 +367,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(sql, connection);
             command.Parameters.Add(new SqlParameter("@p", pinID));
-            command.Parameters.Add(new SqlParameter("@date", DateTime.UtcNow));
+            command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@user", userID));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (result.ErrorMessage.Equals("Nothing Affected"))
@@ -335,10 +382,10 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<DataResponse<int>> GetPinOwner(int pinID)
+        public Task<Response> GetPinOwner(int pinID)
         {
-            //var tcs = new TaskCompletionSource<Response>();
-            var result = new DataResponse<int>();
+            var tcs = new TaskCompletionSource<Response>();
+            var result = new Response();
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -363,56 +410,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 {
                     result.ErrorMessage = e.Message;
                 }
-                //tcs.SetResult(result);
-                return result;
+                tcs.SetResult(result);
+                return tcs.Task;
             }
         }
-
-
-        //------------------------------------------------------------------------
-        // IPinDBDeleter
-        //------------------------------------------------------------------------
-
-        public async Task<Response> DeletePinsLinkedToUser(int userID)
-        {
-            var sql = "DELETE FROM dbo.Pins WHERE userID = @ID";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@ID", userID));
-            var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (response.ErrorMessage.Equals("Nothing Affected"))
-            {
-                response.IsSuccessful = true;
-                response.ErrorMessage = "No Pins to delete.";
-            }
-            else if (response.IsSuccessful)
-            {
-                response.IsSuccessful = true;
-                response.ErrorMessage = "Users Pins successfully deleted.";
-            }
-
-            return response;
-        }
-
-        public async Task<Response> DeletePinFromTable(int pinID)
-        {
-            var sql = "DELETE FROM dbo.Pins WHERE pinID = @p";
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("@p", pinID));
-            var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
-            if (result.ErrorMessage.Equals("Nothing Affected"))
-            {
-                result.IsSuccessful = false;
-                result.ErrorMessage = "No Request for Pin Found";
-            }
-            else if (result.IsSuccessful)
-            {
-                result.IsSuccessful = true;
-                result.ErrorMessage = "Delete Pin From Table successfully for user";
-            }
-            return result;
-        }
-
     }
 }

@@ -21,6 +21,7 @@ namespace Utification.EntryPoint.Controllers
     public class PinController : ControllerBase
     {
         private readonly PinManager _pinManager;
+<<<<<<< HEAD
         private readonly String _role;
         private readonly String _userhash;
         private readonly int _userId;
@@ -57,31 +58,51 @@ namespace Utification.EntryPoint.Controllers
             }
 
             _configuration = configuration;
+=======
+        public PinController(PinManager pinManager)
+        {
+            _pinManager = pinManager;
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
         }
 
         [Route("GetAllPins")]
         [HttpGet]
         public async Task<IActionResult> GetAllPins()
         {
+<<<<<<< HEAD
             if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:GetAllPins"]))
+=======
+            // get authorization header
+            const string HeaderKeyName = "HeaderKey";
+            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
+            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
+            string clean = authorizationToken;
+            clean = clean.Remove(0, 7);
+            // get role from JWT signature
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(clean);
+            IEnumerable<Claim> claims = token.Claims;
+
+            // check role of user
+            if (claims.ElementAt(2).Value == "Anonymouse User")
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
             {
-                return Unauthorized("Unsupported User.");
+                return Unauthorized(claims.ElementAt(1).Value);
             }
 
-            var result = await _pinManager.GetListOfAllEnabledPins(_userhash).ConfigureAwait(false);
-
-            if (!result.IsSuccessful)
+                var result = await _pinManager.GetListOfAllPins(claims.ElementAt(6).Value).ConfigureAwait(false);
+            if (!result.isSuccessful)
             {
-                result.IsSuccessful = false;
-                result.ErrorMessage += ", {failed: _pinManager.GetListOfAllPins}";
-                return Conflict(result.ErrorMessage);
+                result.isSuccessful = false;
+                result.errorMessage += ", {failed: _pinManager.GetListOfAllPins}";
+                return Conflict(result.errorMessage);
             }
             else
             {
-                result.IsSuccessful = true;
+                result.isSuccessful = true;
             }
 
-            return Ok(result.Data);
+            return Ok(result.data);
         }
 
 
@@ -89,6 +110,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewPin([FromBody]Pins newPin)
         {
+<<<<<<< HEAD
             if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:PostNewPin"]))
             {
                 return Unauthorized("Unsupported User.");
@@ -102,7 +124,13 @@ namespace Utification.EntryPoint.Controllers
             Pin pin = new Pin(newPin.UserID, newPin.Lat, newPin.Lng, newPin.PinType, newPin.Description);
 
             var result = await _pinManager.SaveNewPin(pin,newPin.Userhash).ConfigureAwait(false);
+=======
+            // TODO: Validate user and pin inputs
 
+            Pin pin = new Pin(newPin._userID, newPin._lat, newPin._lng, newPin._pinType, newPin._description);
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
+
+            var result = await _pinManager.SaveNewPin(pin,newPin._userhash).ConfigureAwait(false);
             if (!result.IsSuccessful)
             {
                 result.ErrorMessage += ", {failed: _pinManager.SaveNewPin}";
@@ -119,13 +147,18 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> CompleteUserPin([FromBody]Pins pin)
         {
+<<<<<<< HEAD
             if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:CompleteUserPin"]))
             {
                 return Unauthorized("Unsupported User.");
             }
 
             var result = await _pinManager.DeleteUserPin(pin.PinID, pin.Userhash).ConfigureAwait(false);
+=======
+            // TODO: Validate user and pin inputs
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
+            var result = await _pinManager.MarkAsCompletedPin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
             if (!result.IsSuccessful)
             {
                 result.IsSuccessful = false;
@@ -142,6 +175,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ModifyPinContent([FromBody]Pins pin)
         {
+<<<<<<< HEAD
             if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinContent"]) || _userId != pin.UserID)
             {
                 return Unauthorized("Unsupported User.");
@@ -153,7 +187,11 @@ namespace Utification.EntryPoint.Controllers
             }
 
             var response = await _pinManager.ChangePinContent(pin.PinID, pin.UserID, pin.Description, pin.Userhash).ConfigureAwait(false);
+=======
+            // TODO: Validate user and pin inputs
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
+            var response = await _pinManager.ChangePinContent(pin._pinID, pin._userID, pin._description, pin._userhash).ConfigureAwait(false);
             if (!response.IsSuccessful)
             {
                 response.IsSuccessful = false;
@@ -171,6 +209,7 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ModifyPinType([FromBody]Pins pin)
         {
+<<<<<<< HEAD
             if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinType"]) || _userId != pin.UserID)
             {
                 return Unauthorized("Unsupported User.");
@@ -182,7 +221,11 @@ namespace Utification.EntryPoint.Controllers
             }
 
             var response = await _pinManager.ChangePinType(pin.PinID, pin.UserID, pin.PinType, pin.Userhash);
+=======
+            // TODO: Validate user and pin inputs
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
+            var response = await _pinManager.ChangePinType(pin._pinID, pin._userID, pin._pinType, pin._userhash);
             if (!response.IsSuccessful)
             {
                 response.IsSuccessful = false;
@@ -199,12 +242,16 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> DisablePin([FromBody] Pins pin)
         {
+<<<<<<< HEAD
             if (InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:DisablePin"]))
             {
                 return Unauthorized("Unsupported User.");
             }
+=======
+            // TODO: Validate user and pin inputs
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
-            var response = await _pinManager.DisablePin(pin.PinID, pin.UserID, pin.Userhash).ConfigureAwait(false);
+            var response = await _pinManager.DisablePin(pin._pinID, pin._userID, pin._userhash).ConfigureAwait(false);
 
             if (!response.IsSuccessful)
             {

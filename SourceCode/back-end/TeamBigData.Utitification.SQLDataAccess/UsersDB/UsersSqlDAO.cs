@@ -12,7 +12,7 @@ using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 
 namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 {
-    public class UsersSqlDAO : DbContext, IUsersDBInserter, IUsersDBSelecter, IUsersDBUpdater, IUsersDBDeleter
+    public class UsersSqlDAO : DbContext, IUsersDBInserter, IUsersDBSelecter, IUsersDBUpdater
     {
         private readonly String _connectionString;
 
@@ -195,7 +195,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             {
                                 userHash = reader.GetString(ordinal);
                             }
-                            userAccount.Data = new UserAccount(userID, userName, password, salt, userHash, verified);
+                            userAccount.data = new UserAccount(userID, userName, password, salt, userHash, verified);
                         }
                         reader.Close();
                     }
@@ -203,29 +203,29 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 }
                 catch (SqlException s)
                 {
-                    userAccount.ErrorMessage = s.Message + ", {failed: ExecuteReader}";
+                    userAccount.errorMessage = s.Message + ", {failed: ExecuteReader}";
                 }
                 catch (Exception e)
                 {
-                    userAccount.ErrorMessage = e.Message + ", {failed: ExecuteReader}";
+                    userAccount.errorMessage = e.Message + ", {failed: ExecuteReader}";
                 }
             }
-            if (userAccount.Data == null)
+            if (userAccount.data == null)
             {
-                userAccount.IsSuccessful = false;
-                userAccount.ErrorMessage += ", {failed: userAccount null}";
+                userAccount.isSuccessful = false;
+                userAccount.errorMessage += ", {failed: userAccount null}";
                 return userAccount;
             }
-            else if (userAccount.Data.UserID > 1000)
+            else if (userAccount.data._userID > 1000)
             {
-                userAccount.IsSuccessful = true;
-                userAccount.ErrorMessage = "UserAccount Found";
+                userAccount.isSuccessful = true;
+                userAccount.errorMessage = "UserAccount Found";
                 return userAccount;
             }
             else
             {
-                userAccount.IsSuccessful = false;
-                userAccount.ErrorMessage = "No UserAccount Found";
+                userAccount.isSuccessful = false;
+                userAccount.errorMessage = "No UserAccount Found";
                 return userAccount;
             }
             
@@ -300,15 +300,15 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 }
                 catch (SqlException s)
                 {
-                    result.ErrorMessage = s.Message + $", {{failed: {_connectionString}}}";
+                    result.errorMessage = s.Message + $", {{failed: {_connectionString}}}";
                 }
                 catch (Exception e)
                 {
-                    result.ErrorMessage = e.Message + $", {{failed: {_connectionString}}}";
+                    result.errorMessage = e.Message + $", {{failed: {_connectionString}}}";
                 }
             }
-            result.Data = userProfile;
-            result.IsSuccessful = true;
+            result.data = userProfile;
+            result.isSuccessful = true;
             return result;
         }
 
@@ -422,7 +422,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             {
                                 salt = reader.GetString(ordinal);
                             }
-                            validRecovery.Data = new ValidRecovery(password, salt);
+                            validRecovery.data = new ValidRecovery(password, salt);
                             break;
                         }
                         reader.Close();
@@ -431,19 +431,19 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                 }
                 catch (SqlException s)
                 {
-                    validRecovery.IsSuccessful = false;
-                    validRecovery.ErrorMessage = s.Message + $", {{failed: {_connectionString}}}";
+                    validRecovery.isSuccessful = false;
+                    validRecovery.errorMessage = s.Message + $", {{failed: {_connectionString}}}";
                     return validRecovery;
                 }
                 catch (Exception e)
                 {
-                    validRecovery.IsSuccessful = false;
-                    validRecovery.ErrorMessage = e.Message + $", {{failed: {_connectionString}}}";
+                    validRecovery.isSuccessful = false;
+                    validRecovery.errorMessage = e.Message + $", {{failed: {_connectionString}}}";
                     return validRecovery;
                 }
             }
 
-            validRecovery.IsSuccessful = true;
+            validRecovery.isSuccessful = true;
             return validRecovery;
 
 
@@ -549,13 +549,15 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             command.Connection = connection;
                             command.CommandText = "UpdateUserRole";
                             command.CommandType = CommandType.StoredProcedure;
-                            command.Parameters.AddWithValue("@reportedUser", userProfile.UserID);
+                            command.Parameters.AddWithValue("@reportedUser", userProfile._userID);
                             command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
 
                             int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
+                            Console.WriteLine(updateRole);
                             if (updateRole == 1)
                             {
+                                result.Data = 1;
                                 result.IsSuccessful = true;
                             }
                         }
@@ -592,13 +594,17 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         command.CommandText = "UpdateUserReputation";
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@reportedUser", user);
+<<<<<<< HEAD
                         command.Parameters.AddWithValue("@newReputation", newReputation);
+=======
+                        command.Parameters.AddWithValue("@newReputation", (SqlDecimal)newReputation);
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
                         int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
 
-                        if (execute == 1)
+                        if (execute == 0)
                         {
-                            result.IsSuccessful = true;
+                            return result;
                         }
                     }
                 }
@@ -607,8 +613,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                     result.ErrorMessage = s.Message;
                 }
             }
+            result.IsSuccessful = true;
             return result;
         }
+<<<<<<< HEAD
 
         // TODO: Change to DataResponse with the the datatype you want to return back
         public async Task<Response> UpdateServiceRole(int userid)
@@ -715,5 +723,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         
+=======
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
     }
 }

@@ -11,7 +11,7 @@ using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess;
 
-namespace TeamBigData.Utification.LoginTests
+namespace TeamBigData.Utification.AuthenticationTests
 {
     /*
     [TestClass]

@@ -32,7 +32,7 @@ namespace Utification.EntryPoint.Controllers
 
 
             // Make recovery request
-            var response = await _securityManager.RecoverAccountPassword(user.Username, user.NewPassword, user.Userhash).ConfigureAwait(false);
+            var response = await _securityManager.RecoverAccountPassword(user._username, user._newPassword, user._userhash).ConfigureAwait(false);
 
             if (!response.IsSuccessful)
             {
@@ -70,15 +70,15 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> GetRequests([FromBody] RequestBody user)
         {
             // Validate user to be admin
-            var dataResponse = await _securityManager.GetRecoveryRequests(user.Userhash).ConfigureAwait(false);
+            var dataResponse = await _securityManager.GetRecoveryRequests(user._userhash).ConfigureAwait(false);
 
-            if (!dataResponse.IsSuccessful)
+            if (!dataResponse.isSuccessful)
             {
-                return Conflict(dataResponse.ErrorMessage + ", {failed: _securityManager.GetRecoveryRequests}");
+                return Conflict(dataResponse.errorMessage + ", {failed: _securityManager.GetRecoveryRequests}");
             }
             else
             {
-                return Ok(dataResponse.Data);
+                return Ok(dataResponse.data);
             }
             /*var tcs = new TaskCompletionSource<IActionResult>();
             //var manager = new SecurityManager();
@@ -102,7 +102,7 @@ namespace Utification.EntryPoint.Controllers
             // Validate user
             // Validate inputs
             // Reset account
-            var response = await _securityManager.ResetAccount(body.UserID,body.Userhash).ConfigureAwait(false);
+            var response = await _securityManager.ResetAccount(body._userID,body._userhash).ConfigureAwait(false);
             if (!response.IsSuccessful)
             {
                 return Conflict(response.ErrorMessage);

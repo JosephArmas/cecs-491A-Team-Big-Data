@@ -7,7 +7,6 @@ using TeamBigData.Utification.Cryptography;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.LogsDB.Abstractions;
-using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 
 namespace TeamBigData.Utification.AccountServices
@@ -16,33 +15,33 @@ namespace TeamBigData.Utification.AccountServices
     {
         private readonly IUsersDBSelecter _usersDBSelecter;
 
-        public AccountAuthentication(UsersSqlDAO usersSqlDAO)
+        public AccountAuthentication(IUsersDBSelecter usersDBSelecter)
         {
-            _usersDBSelecter = usersSqlDAO;
+            _usersDBSelecter = usersDBSelecter;
         }
 
         public async Task<DataResponse<UserAccount>> AuthenticateUserAccount(String email, String password)
         {
             var userAccount = await _usersDBSelecter.SelectUserAccount(email).ConfigureAwait(false);
 
-            if (!userAccount.IsSuccessful)
+            if (!userAccount.isSuccessful)
             {
-                userAccount.IsSuccessful = false;
-                userAccount.ErrorMessage += ", {failed: _usersDBSelecter.SelectUserAccount}";
+                userAccount.isSuccessful = false;
+                userAccount.errorMessage += ", {failed: _usersDBSelecter.SelectUserAccount}";
                 return userAccount;
             }
 
-            var digest = SecureHasher.HashString(userAccount.Data.Salt, password);
+            var digest = SecureHasher.HashString(userAccount.data._salt, password);
 
-            if (digest != userAccount.Data.Password) 
+            if (digest != userAccount.data._password) 
             {
-                userAccount.IsSuccessful = false;
-                userAccount.ErrorMessage += ", {failed: digest validation}";
+                userAccount.isSuccessful = false;
+                userAccount.errorMessage += ", {failed: digest validation}";
                 return userAccount;
             }
             else
             {
-                userAccount.IsSuccessful = true;
+                userAccount.isSuccessful = true;
             }
 
             return userAccount;
@@ -52,15 +51,15 @@ namespace TeamBigData.Utification.AccountServices
         {
             var userProfile = await _usersDBSelecter.SelectUserProfile(userID).ConfigureAwait(false);
 
-            if (!userProfile.IsSuccessful)
+            if (!userProfile.isSuccessful)
             {
-                userProfile.IsSuccessful = false;
-                userProfile.ErrorMessage += ", {failed, _usersDBSelecter.SelectUserProfile}";
+                userProfile.isSuccessful = false;
+                userProfile.errorMessage += ", {failed, _usersDBSelecter.SelectUserProfile}";
                 return userProfile;
             }
             else
             {
-                userProfile.IsSuccessful = true;
+                userProfile.isSuccessful = true;
             }
 
             return userProfile;

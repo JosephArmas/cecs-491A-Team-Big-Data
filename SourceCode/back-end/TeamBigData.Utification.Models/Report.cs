@@ -1,24 +1,30 @@
-﻿namespace TeamBigData.Utification.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TeamBigData.Utification.Models
 {
     public class Report
     {
-        public double Rating { get; private set; }
-        public int ReportedUser { get; private set; }
-        public int ReportingUser { get; private set; }
-        public string? Feedback { get; private set; }
+        public double _rating { get; private set; }
+        public int _reportedUser { get; private set; }
+        public int _reportingUser { get; private set; }
+        public string? _feedback { get; private set; }
 
-
+    
         public Report(double rating, int reportedUser, int reportingUser, string? feedback)
         {
-            Rating = rating;
-            ReportedUser = reportedUser;
-            ReportingUser = reportingUser;
-            Feedback = feedback;
+            _rating = rating;
+            _reportedUser = reportedUser;
+            _reportingUser = reportingUser;
+            _feedback = feedback;
         }
-
+ 
         public override string ToString()
         {
-            return "{_rating: " + Rating + ", _reportedUserID: " + ReportedUser + ", _reportingUserID: " + ReportingUser + ", _feedback: " + Feedback + "}";
+            return "{_rating: " + _rating + ", _reportedUserID: " + _reportedUser + ", _reportingUserID: " + _reportingUser +", _feedback: " + _feedback + "}";
         }
     }
 }

@@ -61,9 +61,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Ana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AnalysisTests", "TeamBigData.Utification.AnalysisTests\TeamBigData.Utification.AnalysisTests.csproj", "{70477B88-0FAE-4193-88B3-B1524A8CA84A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.FileManagers", "TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj", "{8D1D6DFB-AF61-4D43-8F27-8C93C12B28D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.FileManagers", "TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj", "{8D1D6DFB-AF61-4D43-8F27-8C93C12B28D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.FileServices", "TeamBigData.Utification.FileService\TeamBigData.Utification.FileServices.csproj", "{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.FileServices", "TeamBigData.Utification.FileService\TeamBigData.Utification.FileServices.csproj", "{7FE07FBF-4420-403A-B4FE-75A8DB4ACE40}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.FileTests", "TeamBigData.Utification.FileTests\TeamBigData.Utification.FileTests.csproj", "{FD6A692E-1F74-457D-93B5-05C5AFC6927E}"
 EndProject

@@ -24,10 +24,13 @@ using TeamBigData.Utification.SQLDataAccess.UserhashDB.Abstractions;
 using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
+<<<<<<< HEAD
 using TeamBigData.Utification.ServiceOfferingsManagers;
 using TeamBigData.Utification.ServiceOfferingsServices;
 using TeamBigData.Utification.ReputationServices;
 using TeamBigData.Utification.DeletionService;
+=======
+>>>>>>> parent of 7553d278 (Trying to integrate features together and fixing any merging problems)
 
 var builder = WebApplication.CreateBuilder(args);
 
