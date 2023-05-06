@@ -177,6 +177,8 @@ namespace TeamBigData.Utification.EventService
             IDBSelecter daoSelect = new SqlDAO(connString.devSqlFeatures);
             return await daoSelect.SelectEventPin(userID).ConfigureAwait(false);
         }
+        
+        
 
         public async Task<Response> ReadAttendance(int eventID)
         {

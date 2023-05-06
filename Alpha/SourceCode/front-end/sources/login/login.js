@@ -138,9 +138,6 @@ function loginUser()
                     {
                         timeOut('Unauthorized User', 'red', errorsDiv)
                     } 
-
-                    
-
                     
 
                     
