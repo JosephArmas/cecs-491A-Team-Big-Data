@@ -18,8 +18,8 @@ namespace Utification.EntryPoint.Controllers
         public Task<IActionResult> GetLogins()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
-            //var rows = manager.GetLogins().Result;
-            //tcs.SetResult(Ok(rows));
+            var rows = manager.GetLogins().Result;
+            tcs.SetResult(Ok(rows.data));
             return tcs.Task;
         }
 
@@ -28,8 +28,8 @@ namespace Utification.EntryPoint.Controllers
         public Task<IActionResult> GetRegistrations()
         {
             var tcs = new TaskCompletionSource<IActionResult>();
-            //var rows = manager.GetRegistrations().Result;
-            //tcs.SetResult(Ok(rows));
+            var rows = manager.GetRegistrations().Result;
+            tcs.SetResult(Ok(rows.data));
             return tcs.Task;
         }
 

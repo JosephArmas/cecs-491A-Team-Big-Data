@@ -19,7 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mappers\" />
+    <Compile Remove="Mappers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Mappers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Mappers\**" />
   </ItemGroup>
 
 </Project>

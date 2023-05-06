@@ -7,6 +7,7 @@ using Microsoft.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.AnalysisManagers;
 using TeamBigData.Utification.FileServices;
 using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Logging;
@@ -26,6 +27,8 @@ using TeamBigData.Utification.SQLDataAccess.UsersDB;
 using TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions;
 using ILogger = TeamBigData.Utification.Logging.Abstraction.ILogger;
 using TeamBigData.Utification.ErrorResponse;
+using TeamBigData.Utification.EventsManager;
+using TeamBigData.Utification.EventsServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +81,10 @@ var sqlDAOFactory = new SqlDAOFactory();
 builder.Services.AddDbContext<ILogsDBInserter, LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
 builder.Services.AddTransient<ILogger, Logger>();
 
+// Analytics
+builder.Services.AddDbContext<IDBAnalysis, SqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddTransient<AnalysisManager>();
+
 // Security manager dependencies
 builder.Services.AddDbContext<IUsersDBInserter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
 builder.Services.AddDbContext<IUsersDBSelecter, UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
@@ -103,6 +110,11 @@ builder.Services.AddTransient<PinManager>();
 builder.Services.AddDbContext<FileSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<FileService>();
 builder.Services.AddTransient<FileManager>();
+
+// Events dependencies
+builder.Services.AddDbContext<EventsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DevSqlFeatures")));
+builder.Services.AddTransient<EventService>();
+builder.Services.AddTransient<EventManager>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

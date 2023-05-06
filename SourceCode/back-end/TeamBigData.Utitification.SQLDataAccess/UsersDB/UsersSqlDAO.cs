@@ -474,6 +474,114 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             */
 
         }
+        
+         public async Task<Response> SelectUserProfileRole(int userID)
+        {
+            string sqlStatement = "SELECT role FROM dbo.UserProfiles WHERE userID = @userID";
+            // var connection = new SqlConnection(_connectionString);
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlStatement,connection);
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string role = reader.GetString(reader.GetOrdinal("role"));
+                            response.data = role;
+                            response.isSuccessful = true;
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "No role associated with user ID";
+
+                    }
+                }
+            }
+
+
+            return response;
+        }  
+        
+        public async Task<Response> SelectUserHash(int userID)
+        {
+            var sqlstatement = "SELECT userHash FROM dbo.Users WHERE userID = @userID";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@userID", userID);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            string userHash = reader.GetString(reader.GetOrdinal("userHash"));
+                            
+                            // Response obj stores the userHash value inside of the data property
+                            response.data = userHash;
+                            response.isSuccessful = true;
+
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error getting User Hash";
+
+                    }
+                }
+            }
+
+            return response;
+        } 
+        
+        public async Task<Response> SelectUserID(string email)
+        {
+            var sqlstatement = "SELECT userID FROM dbo.Users WHERE username = @email";
+            var response = new Response();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Open the connection async
+                await connection.OpenAsync();
+                var cmd = new SqlCommand(sqlstatement, connection);
+                // Sql to return the userHash associated with the passed in userID 
+                cmd.Parameters.AddWithValue("@email", email);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            int userID = reader.GetInt32(reader.GetOrdinal("userID"));
+                            
+                            // Response obj stores the userHash value inside of the data property
+                            response.data = userID;
+                            response.isSuccessful = true;
+
+                        }
+                    }
+                    else
+                    {
+                        response.errorMessage = "Error getting User Hash";
+
+                    }
+                }
+            }
+
+            return response;
+
+        }  
 
 
 

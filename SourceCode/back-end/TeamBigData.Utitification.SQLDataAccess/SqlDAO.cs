@@ -968,6 +968,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.errorMessage = e.Message;
                 }
+
+                result.data = rows;
                 tcs.SetResult(result);
                 return tcs.Task;
             }

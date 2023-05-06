@@ -21,44 +21,7 @@
     let userhash = "";
 
 var otpContainer = document.querySelector(".otp-container");
-var errorsOtp = document.getElementById("errors");
-//const otpForm = document.querySelector("#otp-form");
-//const otpDisplay = document.querySelector("#otp-display");
 var otpInput = document.querySelector("#otp-input");
-/*otpBtn.addEventListener('click', function (event)
-{
-    event.preventDefault();
-    if (otpInput.value == '')
-    {
-        errorsOtp.innerHTML = "Please enter OTP";
-
-    } else if (otpInput.value == otpVal) 
-    {
-        errorsOtp.innerHTML = "";
-        regView();
-        
-    } else 
-    {
-        errorsOtp.style.color = "red";
-        errorsOtp.innerHTML = "Invalid OTP. Please try again";
-    } 
-    otpForm.reset();
-});
-
-function sendOtp()
-{
-    otpVal = generateOTP();
-    otpDisplay.style.color = "blue";
-    otpDisplay.innerHTML = otpVal;
-    otpDisplay.style.fontSize = "20px";
-}
-
-function showOtp()
-{
-    
-    otpContainer.style.display = "block";
-    loginContainer.style.display = "none";
-}*/
 
 var otpContainer = document.querySelector(".otp-container");
 var loginContainer = document.querySelector(".login-container");
@@ -69,7 +32,6 @@ var loginContainer = document.querySelector(".login-container");
     const password = document.getElementById('password');
     const loginBtn = document.getElementById('sub-login');
     const loginHome = document.getElementById('login-home');
-    var errorsDiv = document.getElementById('errors');
     const roles =  ['Regular User']
     const user = {}
     loginBtn.addEventListener('click', function (event)
@@ -77,69 +39,29 @@ var loginContainer = document.querySelector(".login-container");
         event.preventDefault();
         if (email.value == '' || password.value == '')
         {
-            errorsDiv.innerHTML = "Please fill in all fields";
+            timeOut('Please fill in all fields', 'red', errorsDiv);
         } else if(IsValidPassword(password.value) === false)
         {
-            errorsDiv.innerHTML = "Password must be at least 8 characters long";
+            timeOut('Password must be at least 8 characters long', 'red', errorsDiv);
 
         } else if(IsValidPassword(password.value) === true && IsValidEmail(email.value) === true) 
         {
             loginUser();
-            // sendOtp();
 
         } else
         {
-            errorsDiv.innerHTML = "Error with email or password. Please try again"; 
+            timeOut('Error with email or password. Please try again', 'red', errorsDiv)
         }
         // reset login form when button clicked
         loginForm.reset()
 
     });
 
-    loginHome.addEventListener('click', function (event)
-    {
-        errorsDiv.innerHTML= "";
-    });
 
     var otpContainer = document.querySelector(".otp-container");
-    var errorsOtp = document.getElementById("errors");
     const otpForm = document.querySelector("#otp-form");
     const otpDisplay = document.querySelector("#otp-display");
     
-    /*otpBtn.addEventListener('click', function (event)
-    {
-        event.preventDefault();
-        if (otpInput.value == '')
-        {
-            errorsOtp.innerHTML = "Please enter OTP";
-
-        } else if (otpInput.value == otpVal) 
-        {
-            errorsOtp.innerHTML = "";
-            regView();
-            
-        } else 
-        {
-            errorsOtp.style.color = "red";
-            errorsOtp.innerHTML = "Invalid OTP. Please try again";
-        } 
-        otpForm.reset();
-    });
-
-    function sendOtp()
-    {
-        otpVal = generateOTP();
-        otpDisplay.style.color = "blue";
-        otpDisplay.innerHTML = otpVal;
-        otpDisplay.style.fontSize = "20px";
-    }
-
-    function showOtp()
-    {
-        
-        otpContainer.style.display = "block";
-        loginContainer.style.display = "none";
-    }*/
 
     var otpContainer = document.querySelector(".otp-container");
     var loginContainer = document.querySelector(".login-container");
@@ -148,6 +70,7 @@ var loginContainer = document.querySelector(".login-container");
     {
         user._username = email.value;
         user._password = password.value;
+        getProfileUsername(email.value);
         axios.post(authenticationServer, user).then(function (responseAfter)
         {
             // turning jwt signature from the response into a json object
@@ -166,18 +89,9 @@ var loginContainer = document.querySelector(".login-container");
                 localStorage.setItem("role", jsonObj.role)
                 localStorage.setItem("id",jsonObj.nameid)
                 localStorage.setItem("userhash",jsonObj.userhash)
+                
 
-                /*jwtToken = responseAfter.data;
-                userID = jsonObj.nameid;
-                username = jsonObj.unique_name;
-                role = jsonObj.role;
-                authenticated = jsonObj.authenticated;
-                otp = jsonObj.otp;
-                otpCreated = jsonObj.otpCreated;
-                userhash = jsonObj.userHash;*/
-            
-                errorsDiv.innerHTML = "";
-
+                
                 // display otp
                 otpDisplay.style.color = "blue";
                 otpDisplay.innerHTML = "<h3>" + jsonObj.otp + "</h3>";
@@ -190,20 +104,32 @@ var loginContainer = document.querySelector(".login-container");
                 const otpBtn = document.querySelector("#otp-submit");
                 otpBtn.addEventListener('click', function (event)
                 {
+                    const role = getRole();
                     event.preventDefault();
                     if (otpInput.value == '')
                     {
-                        errorsOtp.innerHTML = `Please enter OTP: ${otpInput.value}`;
+                        // errorsOtp.innerHTML = `Please enter OTP: ${otpInput.value}`;
+                        timeOut('Please enter OTP', 'red', errorsDiv)
 
                     } else if (otpInput.value == jsonObj.otp) 
                     {
-                        errorsOtp.innerHTML = "";
-                        regView();
-                        
+                        if (role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role))
+                        {
+                            return regView();
+
+                        } else if (role.admin.includes(jsonObj.role))
+                        {
+
+                            return adminView();
+                        }
+                        else 
+                        {
+                            timeOut('Unauthorized User', 'red', errorsDiv)
+                        } 
+
                     } else 
                     {
-                        errorsOtp.style.color = "red";
-                        errorsOtp.innerHTML = "Invalid OTP. Please try again";
+                        timeOut('Invalid OTP. Please try again','red',errorDiv);
                     } 
                     otpForm.reset();
                 });
@@ -211,12 +137,15 @@ var loginContainer = document.querySelector(".login-container");
             else 
             {
                 // unauthorized user
+                timeOut('Unauthorized User', 'red', errorsDiv)
+
             }
         }).catch(function (error)
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                errorsDiv.innerHTML = cleanError; 
+                timeOut(cleanError, 'red', errorsDiv)
+
             });
     }
 
@@ -229,10 +158,12 @@ var loginContainer = document.querySelector(".login-container");
     {
         return username;
     }
+    /*
     function getRole()
     {
         return role;
     }
+    */
     function getAuthenticated()
     {
         return authenticated;
@@ -249,6 +180,12 @@ var loginContainer = document.querySelector(".login-container");
     {
         return userhash;
     }
+    
+    function getProfileUsername(username)
+    {
+        let name = username.substring(0,username.lastIndexOf("@"));
+        return localStorage.setItem('profileUsername',name);
+    }
 
 
     // Allow access
@@ -256,7 +193,7 @@ var loginContainer = document.querySelector(".login-container");
 
     root.Utification.userID = getUserID();
     root.Utification.username = getUsername();
-    root.Utification.role = getRole();
+    // root.Utification.role = getRole();
     root.Utification.authenticated = getAuthenticated();
     root.Utification.otp = getOtp();
     root.Utification.otpCreated = getOtpCreated();
