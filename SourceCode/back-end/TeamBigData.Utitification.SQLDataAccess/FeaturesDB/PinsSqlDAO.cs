@@ -21,10 +21,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
-        public PinsSqlDAO(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
 
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
         {

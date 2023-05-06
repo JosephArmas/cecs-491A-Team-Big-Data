@@ -28,6 +28,8 @@ using TeamBigData.Utification.ServiceOfferingsManagers;
 using TeamBigData.Utification.ServiceOfferingsServices;
 using TeamBigData.Utification.ReputationServices;
 using TeamBigData.Utification.DeletionService;
+using TeamBigData.Utification.EventsManager;
+using TeamBigData.Utification.EventsServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,6 +116,11 @@ builder.Services.AddTransient<ServiceOfferingService>();
 builder.Services.AddTransient<ServiceRequestService>();
 builder.Services.AddTransient<ServiceOfferingManager>();
 builder.Services.AddTransient<ServiceRequestManager>();
+
+// Events dependencies
+builder.Services.AddDbContext<EventsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DevSqlFeatures")));
+builder.Services.AddTransient<EventService>();
+builder.Services.AddTransient<EventManager>();
 
 // Security Manager
 builder.Services.AddTransient<AccDeletionService>();

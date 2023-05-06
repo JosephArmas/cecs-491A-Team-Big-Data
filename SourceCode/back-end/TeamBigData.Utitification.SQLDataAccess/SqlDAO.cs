@@ -19,10 +19,7 @@ namespace TeamBigData.Utification.SQLDataAccess
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
-        public SqlDAO(String connectionString)
-        {
-            _connectionString = connectionString;
-        }
+        
 
         /*private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
         {
