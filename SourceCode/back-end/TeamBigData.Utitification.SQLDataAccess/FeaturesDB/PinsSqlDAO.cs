@@ -1,7 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,86 +99,83 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
         public async Task<DataResponse<List<PinResponse>>> SelectPinTable()
         {
-            //var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
             var result = new DataResponse<List<PinResponse>>();
             List<PinResponse> pins = new List<PinResponse>();
-            string sqlStatement = "SELECT * FROM dbo.Pins";
+
             try
             {
-                using (SqlConnection connect = new SqlConnection(_connectionString))
+                using (var connection = new SqlConnection(_connectionString))
                 {
-                    connect.OpenAsync();
-                    using (var reader = await (new SqlCommand(sqlStatement, connect)).ExecuteReaderAsync().ConfigureAwait(false))
+                    await connection.OpenAsync();
+                    string sqlStatement = "SELECT * FROM dbo.Pins";
+
+                    var command = new SqlCommand(sqlStatement, connection);
+                    SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+                    if (reader.HasRows)
                     {
-                        // read through all rows
-                        while (reader.Read())
+                        int pinID = 0;
+                        int userID = 0;
+                        String lat = "";
+                        String lng = "";
+                        int pinType = 0;
+                        String description = "";
+                        int disabled = 0;
+                        DateTime dateCreated = new DateTime(2000, 1, 1);
+                        int ordinal = reader.GetOrdinal("pinID");
+                        if (!reader.IsDBNull(ordinal))
                         {
-                            int pinID = 0;
-                            int userID = 0;
-                            String lat = "";
-                            String lng = "";
-                            int pinType = 0;
-                            String description = "";
-                            int disabled = 0;
-                            DateTime dateCreated = new DateTime(2000,1,1);
-                            int ordinal = reader.GetOrdinal("pinID");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                pinID = reader.GetInt32(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("userID");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                userID = reader.GetInt32(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("lat");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                lat = reader.GetString(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("lng");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                lng = reader.GetString(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("desciption");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                description = reader.GetString(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("disabled");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                disabled = reader.GetInt32(ordinal);
-                            }
-                            ordinal = reader.GetOrdinal("dateCreated");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                dateCreated = reader.GetDateTime(ordinal);
-                            }
-                            pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
+                            pinID = reader.GetInt32(ordinal);
                         }
-                        reader.Close();
+                        ordinal = reader.GetOrdinal("userID");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userID = reader.GetInt32(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("lat");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            lat = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("lng");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            lng = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("description");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            description = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("disabled");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            disabled = reader.GetInt32(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("dateCreated");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            dateCreated = reader.GetDateTime(ordinal);
+                        }
+                        pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated.ToString()));
                     }
-                    connect.Close();
+                    await reader.CloseAsync();
+                    result.Data = pins;
+                    result.IsSuccessful = true;
+                    return result;
                 }
-                result.IsSuccessful = true;
             }
-            catch (SqlException s)
+            catch (Exception e)
             {
-                result.ErrorMessage = s.Message;
-            }
-                catch (Exception e)
-            {
+                result.IsSuccessful =false;
                 result.ErrorMessage = e.Message;
+                return result;
             }
 
-            return result;
         }
 
         public async Task<DataResponse<List<PinResponse>>> SelectEnabledPins()
         {
-            //var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
+            /*//var tcs = new TaskCompletionSource<DataResponse<List<Pin>>>();
             var result = new DataResponse<List<PinResponse>>();
             List<PinResponse> pins = new List<PinResponse>();
             string sqlStatement = "SELECT * FROM dbo.Pins";
@@ -255,7 +254,87 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 result.ErrorMessage = e.Message;
             }
 
-            return result;
+            return result;*/
+
+            var result = new DataResponse<List<PinResponse>>();
+            List<PinResponse> pins = new List<PinResponse>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    string sqlStatement = "SELECT * FROM dbo.Pins";
+
+                    var command = new SqlCommand(sqlStatement, connection);
+                    SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+                    if (reader.HasRows)
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            int pinID = 0;
+                            int userID = 0;
+                            String lat = "";
+                            String lng = "";
+                            int pinType = 0;
+                            String description = "";
+                            int disabled = 0;
+                            DateTime dateCreated = new DateTime(2000, 1, 1);
+                            int ordinal = reader.GetOrdinal("pinID");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                pinID = reader.GetInt32(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("userID");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                userID = reader.GetInt32(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("lat");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                lat = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("lng");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                lng = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("description");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                description = reader.GetString(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("disabled");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                disabled = reader.GetInt32(ordinal);
+                            }
+                            ordinal = reader.GetOrdinal("dateCreated");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                dateCreated = reader.GetDateTime(ordinal);
+                            }
+                            Console.WriteLine(disabled);
+                            if (disabled == 0)
+                            {
+                                pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated.ToString()));
+                            }
+                            Console.WriteLine(pins[0].PinID);
+                        }
+                    }
+                    await reader.CloseAsync();
+                    result.Data = pins;
+                    result.IsSuccessful = true;
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = e.Message;
+                return result;
+            }
         }
 
 

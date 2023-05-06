@@ -14,9 +14,9 @@ namespace TeamBigData.Utification.SQLDataAccess.DTO
         public String Lng { get; set; }
         public int PinType { get; set; }
         public String Description { get; set; }
-        public DateTime DateCreated { get; set; }
+        public String DateCreated { get; set; }
 
-        public PinResponse(int pinID, int userID, String lat, String lng, int pinType, String description, DateTime dateCreated) 
+        public PinResponse(int pinID, int userID, String lat, String lng, int pinType, String description, String dateCreated) 
         {
             PinID = pinID;
             UserID = userID;

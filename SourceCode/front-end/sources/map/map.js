@@ -116,15 +116,15 @@
                 var currResponse = response.data[i]
                 
                 const pin = new google.maps.Marker({
-                    position: {lat:parseFloat(currResponse.Lat),lng:parseFloat(currResponse.Lng)},
+                    position: {lat:parseFloat(currResponse.lat),lng:parseFloat(currResponse.lng)},
                     map: map,
                     icon: {
-                        url: PIN_ICONS[currResponse.PinType]
+                        url: PIN_ICONS[currResponse.pinType]
                     }
                 });
 
                 //Users can mark a pin complete
-                var pinContent = currResponse._description + `<br>Created: ${currResponse._dateTime}<br>`;
+                var pinContent = currResponse.description + `<br>Created: ${currResponse.dateCreated}<br>`;
                 if (currResponse.UserID != localStorage.getItem("id"))
                 {
                     pinContent += `<button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`;
@@ -132,11 +132,11 @@
 
                 if(localStorage.getItem("role")=="Regular User")
                 {
-                    pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse._userID})'>View Reputation</button>`;
+                    pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }
                 console.log(localStorage.getItem("id"));
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse._userID)
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse.userID)
                 {
                     pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
