@@ -5,13 +5,58 @@ const reputationContainer = document.querySelector(".reputation-reports-containe
 const reportsContainer = document.querySelector(".reports-box");
 const createReportBtn = document.getElementById("create-report-btn")
 const createReportView = document.querySelector(".create-report-container");
+const submitReportBtn = document.getElementById("submit-report-btn");
+const viewOwnReportsBtn = document.getElementById("view-own-reports");
+const reportsViewReturnBtn = document.getElementById("cancel-report-creation");
+const profileView = document.querySelector(".profileContainer");
+
+viewOwnReportsBtn.addEventListener('click', function()
+{
+    profileView.style.display = "none";
+    resetReportsView();
+    reputationView(localStorage.getItem("reportedUserID"));
+});
+
+reportsViewReturnBtn.addEventListener('click', function()
+{
+    createReportView.style.display = "none";
+    resetReportsView();
+    reputationView(localStorage.getItem("reportedUserID"));
+});
+
+submitReportBtn.addEventListener('click', function()
+{
+    const insertReportURL = "https://localhost:7259/Reputation/PostNewReport";
+    let newReport = {}
+    newReport.Rating = document.getElementById("new-rating").value;
+    newReport.Feedback = document.getElementById("new-feedback").value;
+    newReport.UserID = localStorage.getItem("reportedUserID");
+    newReport.CreateDate = "";
+    newReport.ReportingUserID = localStorage.getItem("id");
+    newReport.ButtonCommand = "";
+
+    var newReportRequest = axios.post(insertReportURL, newReport, {
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+        }
+    });
+    newReportRequest.then(function(response)
+    {
+        createReportView.style.display = "none";
+        resetReportsView();
+        reputationView(localStorage.getItem("reportedUserID"));
+    })
+    .catch(function(error)
+    {
+        document.getElementById("errors").innerHTML = error;
+    })
+});
 
 createReportBtn.addEventListener('click', function()
 {   
     reputationContainer.style.display = "none";
     createReportView.style.display = "block";
 });
-
 
 function organizeReports(response)
 {
@@ -80,6 +125,17 @@ function organizeReports(response)
 
 function reputationView(id)
 {
+    if(id === localStorage.getItem("id"))
+    {
+        createReportBtn.style.display = "none";
+    }
+    else
+    {
+        createReportBtn.style.display = "block";
+    }
+
+    localStorage.setItem("reportedUserID", id);
+
     const reputationUrl = "https://localhost:7259/Reputation/GetReputation";
     
     reputationBox.style.border = "1px solid";
@@ -233,8 +289,3 @@ function resetReportsView()
 
     resetReports();
 }
-/*(function (userID){
-
-
-    
-})(currResponse._userID);*/

@@ -67,14 +67,15 @@
             <div class="report-creation-header">
                 <header class="rating-instructions">Enter a rating from 0.0-5.0</header>
             </div>
-            <form id="new-report-form">    
+            <form class="new-report">    
                 <div class="rating-box">
                     <input type="text" id="new-rating" placeholder="0.0-5.0" maxlength="3" required>
                 </div>
                 <div class="feedback-box">                        
-                    <textarea id="new-feedback" placeholder="Please enter a minimum of 8 character feedback." required></textarea>    
+                    <textarea id="new-feedback" placeholder="Please enter a minimum of 8 character feedback." minlength="8" maxlength="150" required></textarea>    
                 </div>
-                <input type="submit" id="submit-report-btn">Submit Report</input>
+                <button type="button" id="submit-report-btn">Submit Report</button>
+                <button type="button" id="cancel-report-creation">Cancel</button>
             </form>
         </div>
         

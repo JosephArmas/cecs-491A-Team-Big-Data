@@ -134,7 +134,7 @@
                 {
                     pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }
-                console.log(localStorage.getItem("id"));
+                
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
                 if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse.userID)
                 {

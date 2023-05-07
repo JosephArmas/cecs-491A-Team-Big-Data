@@ -39,7 +39,7 @@ namespace TeamBigData.Utification.ReputationServices
                 return result;
             }
 
-            if (buttonCommand == "Next" && amount <= getReports.Data.Tables[0].Rows.Count)
+            if (buttonCommand == "Next" && 5 <= getReports.Data.Tables[0].Rows.Count)
             {
                 amount += 5;
             }

@@ -86,6 +86,11 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> PostNewReportAsync([FromBody] Reports reports)
         {
             Report report = new Report(reports.Rating, reports.UserID, reports.ReportingUserID, reports.Feedback);
+            
+            if(reports.Rating.GetType().ToString() != "System.Double" || report.Feedback.Length < 8)
+            {
+                return BadRequest("Invalid report inputs. Please Try Again.");
+            }
             var result = await _reputationManager.RecordNewUserReportAsync(_userHash, report, Convert.ToDouble(_configuration["Reputation:MinimumRoleThreshold"])).ConfigureAwait(false);
 
             if (!result.IsSuccessful)

@@ -33,11 +33,11 @@
 {
     background-color:#CA75FF;
     color: white;
-    margin-left: 45%;
+    margin-left: 40%;
     font-size: 15px;
 }
 
-#new-report-form
+.new-report
 {
     align-items: center;
     border: 1px solid;
@@ -64,6 +64,13 @@
     height: 70%;
     width: 100%;
     overflow: hidden;
+}
+
+#cancel-report-creation
+{
+    background-color: #00ACB7;
+    color: white;
+    font-size: 15px;
 }
 
 .reputation-reports-container
