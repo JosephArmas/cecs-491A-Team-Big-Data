@@ -18,66 +18,57 @@ namespace TeamBigData.Utification.ReputationTests
     [TestClass]
     public class ReputationIntegrationTest
     {
-        [TestMethod]
-        public void SubmitReportAndAffectReputation()
+        private readonly string featureString = @"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True";
+        private readonly string userString = @"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True";
+        private readonly string logString = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
+        private readonly ReputationService repSer;
+        private readonly ReputationManager repMan;
+
+        public ReputationIntegrationTest()
         {
-            // Arrange
-            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
-            ReputationManager repMan = new ReputationManager(repSer, logger);
+            var reportsDAO = new ReportsSqlDAO(featureString);
+            var usersDAO = new UsersSqlDAO(userString);
+            var logger = new Logger(new LogsSqlDAO(logString));
+            repSer = new ReputationService(reportsDAO, usersDAO, logger);
+            repMan = new ReputationManager(repSer, logger);
+        }
+
+        [TestMethod]
+        public async Task SubmitReportAndAffectReputation()
+        {
+            //Arrange
             // The report's user IDs vary upon the device and the users that are in the DB
             Report report = new Report(0.5, 1010, 1011, "This user sucks.");
 
             // Act
-            var act = repMan.RecordNewUserReportAsync(report, 4.2);
+            var act = await repMan.RecordNewUserReportAsync(report, 4.2);
 
-            Console.WriteLine(act.Result.ErrorMessage);
+            Console.WriteLine(act.ErrorMessage);
             // Assert
-            Assert.IsTrue(act.Result.IsSuccessful);
+            Assert.IsTrue(act.IsSuccessful);
         }
 
         [TestMethod]
-        public void GetReports()
+        public async Task GetReports()
         {
-            // Arrange
-            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
-            ReputationManager repMan = new ReputationManager(repSer, logger);
-            
+            //Arrange
             // Act
-            var getReports = repSer.GetUserReportsAsync(1001, "");
+            var getReports = await repSer.GetUserReportsAsync(1001, "");
               
 
             // Assert
-            Assert.IsTrue(getReports.Result.isSuccessful);
+            Assert.IsTrue(getReports.IsSuccessful);
         }
 
         [TestMethod]
-        public void GetReputation()
+        public async Task GetReputation()
         {
-            // Arrange
-            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
-            ReputationManager repMan = new ReputationManager(repSer, logger);
-
+            //Arrange
             // Act
-            var getReputation = repMan.ViewCurrentReputationAsync(1001);
-            Console.WriteLine(getReputation.Result.Data);
+            var getReputation = await repMan.ViewCurrentReputationAsync(1001);
 
             // Assert
-            Assert.IsTrue(getReputation.Result.IsSuccessful);
+            Assert.IsTrue(getReputation.IsSuccessful);
 
         }
     }

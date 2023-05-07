@@ -12,30 +12,30 @@ namespace TeamBigData.Utification.LoggingTests
     public class DataAccessTest
     {
         [TestMethod]
-        public void DAO_LogMustSaveToDataStore() //If updating the data store make sure to assert each individual column for maximum verification
+        public async Task DAO_LogMustSaveToDataStore() //If updating the data store make sure to assert each individual column for maximum verification
         {
             //Arrange
             var sysUnderTest = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
             var log = new Log(1, "Info", "SYSTEM", "DAO_LogMustSaveToDataStore", "Data", "This is a automated test");
             //Act
-            var rows = sysUnderTest.Logs(log).Result;
+            var rows = await sysUnderTest.Logs(log);
             //Assert
             Assert.IsTrue(rows.IsSuccessful);
         }
         [TestMethod]
-        public void DAO_LogMustBeImmutable()
+        public async Task DAO_LogMustBeImmutable()
         {
             //Arrange
             var sysUnderTest = new SqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True");
             var updateSql = "UPDATE dbo.Logs SET Message = 'Updated' WHERE LogID = 1";
             bool check = false; //A check value used to determine if the Command successfully recieves an error.
             //Act
-            var rows = sysUnderTest.Execute(updateSql).Result;
+            var rows = await sysUnderTest.Execute(updateSql);
             //Assert
             Assert.IsFalse(rows.IsSuccessful);
         }
         [TestMethod]
-        public void DAO_MustLogWithin5Secs()
+        public async Task DAO_MustLogWithin5Secs()
         {
             //Arrange
             var stopwatch = new Stopwatch();
@@ -44,7 +44,7 @@ namespace TeamBigData.Utification.LoggingTests
             var log = new Log(2, "Info", "SYSTEM", "DAO_MustLogWithin5Secs", "Business", "This is a automated test for finding if it took longer than 5 seconds");
             //Act
             stopwatch.Start();
-            var logResult = sysUnderTest.Logs(log).Result;
+            var logResult = await sysUnderTest.Logs(log);
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert

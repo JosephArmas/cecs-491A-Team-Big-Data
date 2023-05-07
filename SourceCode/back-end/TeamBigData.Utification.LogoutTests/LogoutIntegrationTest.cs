@@ -24,12 +24,12 @@ namespace TeamBigData.Utification.LogoutTests
             var result3 = await securityManager.LogOutUser(userProfile, "Logout Test");
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
-            Console.WriteLine(result3.errorMessage);
+            Console.WriteLine(result3.ErrorMessage);
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(actual >= 0);
-            Assert.IsTrue(result3.isSuccessful);
+            Assert.IsTrue(result3.IsSuccessful);
         }
     }
 }

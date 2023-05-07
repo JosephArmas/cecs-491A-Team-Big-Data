@@ -1,0 +1,14 @@
+--UpdateUserReputation (NumberOfUserReports is used to calculate the user's new updated reputation which gets inserted via this procedure)
+CREATE PROCEDURE UpdateUserReputation @reportedUser int, @newReputation decimal(2,1)
+AS
+UPDATE dbo.UserProfiles 
+SET reputation = @newReputation 
+WHERE userID = @reportedUser
+Go
+--UpdateUserRole
+CREATE PROCEDURE UpdateUserRole @reportedUser int, @updateRole varchar(50)
+AS
+UPDATE dbo.UserProfiles
+SET role = @updateRole
+WHERE userID = @reportedUser
+GO

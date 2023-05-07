@@ -3,21 +3,14 @@ CREATE PROCEDURE InsertUserReport @rating decimal(2,1), @reportedUserID int, @re
 AS
 INSERT INTO dbo.Reports(rating, reportedUserID, reportingUserID, feedback) 
 VALUES (@rating, @reportedUserID, @reportingUserId, @feedback);
-
+Go
 --NumberOfUserReports (Get total number of reports on a specific user and the cumulative sum of all ratings on that user)
 CREATE PROCEDURE NumberOfUserReports @reportedUser int
 AS
 SELECT rating 
 FROM dbo.Reports 
 WHERE reportedUserID = @reportedUser;
-
---UpdateUserReputation (NumberOfUserReports is used to calculate the user's new updated reputation which gets inserted via this procedure)
-CREATE PROCEDURE UpdateUserReputation @reportedUser int, @newReputation decimal(2,1)
-AS
-UPDATE dbo.UserProfiles 
-SET reputation = @reputation 
-WHERE userID = @reportedUser
-
+Go
 --PartitionSelectUserReports (Partition a certain number of reports on a user)
 CREATE PROCEDURE PartitionSelectUserReports @reportedUser int
 AS
@@ -25,10 +18,4 @@ SELECT rating, feedback
 FROM dbo.Reports 
 WHERE reportedUserID = @reportedUser 
 ORDER BY createDate;
-
---UpdateUserRole
-CREATE PROCEDURE UpdateUserRole @reportedUser int, @updateRole varchar(50)
-AS
-UPDATE dbo.UserProfiles
-SET role = @updateRole
-WHERE userID = @reportedUser
+Go

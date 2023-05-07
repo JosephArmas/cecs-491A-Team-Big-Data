@@ -12,7 +12,6 @@ namespace TeamBigData.Utification.AccountServices
         {
             _dbo = dbo;
         }
-        /*
         public async Task<Response> DisableAccount(String username)
         {
             var result = new Response();
@@ -20,7 +19,7 @@ namespace TeamBigData.Utification.AccountServices
             var updateSql = "Update dbo.Users Set \"disabled\" = 3 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
             Console.WriteLine(result.ErrorMessage);
-            if ((int)result.data == 1)
+            if ((int)result.Data == 1)
             {
                 result.IsSuccessful = true;
                 result.ErrorMessage = username + " has been Successfully disabled";
@@ -28,11 +27,11 @@ namespace TeamBigData.Utification.AccountServices
             else
             {
                 result.IsSuccessful = false;
-                if ((int)result.data > 1)
+                if ((int)result.Data > 1)
                 {
                     result.ErrorMessage = "Oops multiple accounts disabled";
                 }
-                else if ((int)result.data == 0)
+                else if ((int)result.Data == 0)
                 {
                     result.ErrorMessage = "Account doesnt exist";
                 }
@@ -46,7 +45,7 @@ namespace TeamBigData.Utification.AccountServices
             result.IsSuccessful = false;
             var updateSql = "Update dbo.Users Set \"disabled\" = 0 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
-            if ((int)result.data == 1)
+            if ((int)result.Data == 1)
             {
                 result.IsSuccessful = true;
                 result.ErrorMessage = username + " has been Successfully enabled";
@@ -54,16 +53,16 @@ namespace TeamBigData.Utification.AccountServices
             else
             {
                 result.IsSuccessful = false;
-                if ((int)result.data > 1)
+                if ((int)result.Data > 1)
                 {
                     result.ErrorMessage = "Oops multiple accounts enabled";
                 }
-                else if ((int)result.data == 0)
+                else if ((int)result.Data == 0)
                 {
                     result.ErrorMessage = "Account doesnt exist or wasn't disabled";
                 }
             }
             return result;
-        }*/
+        }
     }
 }

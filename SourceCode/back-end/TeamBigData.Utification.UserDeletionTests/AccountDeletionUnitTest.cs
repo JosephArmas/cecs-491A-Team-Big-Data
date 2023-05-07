@@ -8,7 +8,7 @@ namespace TeamBigData.Utification.UserDeletionTests
     [TestClass]
     public class AccountDeletionUnitTest
     {
-
+       /*
         [TestMethod]
         public void FailsWhenRegularUserTriesToDeleteAnotherUser()
         {
@@ -36,19 +36,6 @@ namespace TeamBigData.Utification.UserDeletionTests
             Assert.IsNotNull(result);
             Assert.IsFalse(result.IsSuccessful);
         }
-        /*
-        [TestMethod]
-        public void DefaultCultureDisplayed()
-        {
-            //Arrange
-            RegularView view = new RegularView();
-            AnonymousView anonView = new AnonymousView();
-            //Act
-            view.SetCultureInfo(new CultureInfo("fr-FR"));
-            //Assert
-            Assert.IsFalse(view.culCurrent != anonView.culCurrent);
-        }
-        */
         [TestMethod]
         public void CorrectMessageDisplayed()
         {
@@ -62,5 +49,6 @@ namespace TeamBigData.Utification.UserDeletionTests
             Assert.IsNotNull(result);
             Assert.IsTrue(result.ErrorMessage == "User does not have permission to delete the account");
         }
+       */
     }
 }

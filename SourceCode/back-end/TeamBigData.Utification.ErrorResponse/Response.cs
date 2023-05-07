@@ -4,6 +4,7 @@
     {
         public bool IsSuccessful;
         public string ErrorMessage;
+        public Object Data;
 
         public Response()
         {
@@ -15,6 +16,7 @@
         {
             IsSuccessful = success;
             ErrorMessage = message;
+            Data = null;
         }
 
         public String ToString()

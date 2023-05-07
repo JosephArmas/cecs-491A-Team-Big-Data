@@ -83,9 +83,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.Eve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.EventsServices", "TeamBigData.Utification.EventsServices\TeamBigData.Utification.EventsServices.csproj", "{F69338EB-C6F9-4138-A259-0F6C0BF72A18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.AlertManagers", "TeamBigData.Utification.AlertManagers\TeamBigData.Utification.AlertManagers.csproj", "{0513C33C-EDD9-46FE-B29A-600E47DBC482}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AlertManagers", "TeamBigData.Utification.AlertManagers\TeamBigData.Utification.AlertManagers.csproj", "{0513C33C-EDD9-46FE-B29A-600E47DBC482}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamBigData.Utification.AlertServices", "TeamBigData.Utification.AlertServices\TeamBigData.Utification.AlertServices.csproj", "{B3E7536A-E586-4918-BFBD-A52B5C26DB28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamBigData.Utification.AlertServices", "TeamBigData.Utification.AlertServices\TeamBigData.Utification.AlertServices.csproj", "{B3E7536A-E586-4918-BFBD-A52B5C26DB28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

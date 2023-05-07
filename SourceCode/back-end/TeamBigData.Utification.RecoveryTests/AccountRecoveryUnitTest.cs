@@ -33,14 +33,14 @@ namespace TeamBigData.Utification.RecoveryTests
             var otp = secManager.SendOTP();
             Response insertResult = await secManager.RecoverAccount(username, encryptedPassword, encryptor);
             var fetchResult = await secManagerAccRecovery.GetRecoveryRequests(userProfile);
-            Console.WriteLine(fetchResult.isSuccessful);
-            var listRequests = fetchResult.data;
+            Console.WriteLine(fetchResult.IsSuccessful);
+            var listRequests = fetchResult.Data;
             stopwatch.Stop();
             var actual = stopwatch.ElapsedMilliseconds;
             //Assert
             Assert.IsNotNull(listRequests);
             Assert.IsTrue(listRequests.Count > 0);
-            Assert.IsTrue(insertResult.IsSuccessful && fetchResult.isSuccessful);
+            Assert.IsTrue(insertResult.IsSuccessful && fetchResult.IsSuccessful);
             Assert.AreEqual(insertResult.ErrorMessage, "Account recovery request sent");
             Assert.IsTrue(actual < expected);
         }
@@ -60,14 +60,15 @@ namespace TeamBigData.Utification.RecoveryTests
             long expected = 5 * 1000;
             // Create Recovery REquest so admin can finish it
             Response insertResult = await adminManager.RecoverAccount(username, encryptedPassword, encryptor);
+            Console.WriteLine(insertResult.IsSuccessful);
             // Admin gets all the requests
             var getResponse = await adminManager.GetRecoveryRequests(userProfile);
-            Console.WriteLine(getResponse.isSuccessful);
-            Console.WriteLine(getResponse.errorMessage);
-            var list = getResponse.data;
+            Console.WriteLine(getResponse.IsSuccessful);
+            Console.WriteLine(getResponse.ErrorMessage);
+            var list = getResponse.Data;
             //Act
             stopwatch.Start();
-            var enableResponse = await adminManager.ResetAccount(list[0]._userID, userProfile);
+            var enableResponse = await adminManager.ResetAccount(list[0].UserID, userProfile);
             Console.WriteLine(enableResponse.ErrorMessage);
             stopwatch.Stop();
             long actual = stopwatch.ElapsedMilliseconds;

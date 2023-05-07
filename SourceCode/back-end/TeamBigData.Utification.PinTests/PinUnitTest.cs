@@ -65,7 +65,7 @@ namespace TeamBigData.Utification.PinTests
             //Act
             var result = await sysUnderTest.GetListOfAllEnabledPins("Get All Pins Is Logged Test").ConfigureAwait(false);
             //Assert
-            Assert.IsTrue(result.data.Count > 0);
+            Assert.IsTrue(result.Data.Count > 0);
         }
         [TestMethod]
         public async Task PostNewPinIsLogged()
