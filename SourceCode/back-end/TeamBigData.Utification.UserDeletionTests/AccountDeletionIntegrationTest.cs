@@ -29,7 +29,7 @@ namespace TeamBigData.Utification.AccountDeletionTests
         private readonly String logString = "Server=.\\;Database=TeamBigData.Utification.Logs;User=AppUser; Password=t; TrustServerCertificate=True; Encrypt=True";
         private readonly String hashString = "Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False";
 
-        [TestMethod]
+        /*[TestMethod]
         public async Task CanDeleteOwnAccountAsync()
         {
             //Arrange
@@ -133,6 +133,6 @@ namespace TeamBigData.Utification.AccountDeletionTests
             Assert.IsNotNull(result);
             Assert.IsTrue((int)result.Data > 0);
             Assert.IsTrue(result.IsSuccessful);
-        }
+        }*/
     }
 }

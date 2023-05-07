@@ -4,7 +4,6 @@ using System.Data;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
 using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Models;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
@@ -68,9 +67,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<Response> SelectNewReputationAsync(Report report)
+        public async Task<DataResponse<Tuple<double, int>>> SelectNewReputationAsync(Report report)
         {
-            Response result = new Response();
+            DataResponse<Tuple<double,int>> result = new DataResponse<Tuple<double,int>>();
             double newReputation = report.Rating;
             int numberOfReports = 1;
 
@@ -109,7 +108,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 }
             }
 
+            Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
             result.IsSuccessful = true;
+            result.Data = updateReputation;
 
             return result;
         }

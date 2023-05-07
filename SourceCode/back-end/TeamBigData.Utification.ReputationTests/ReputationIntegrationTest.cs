@@ -22,18 +22,16 @@ namespace TeamBigData.Utification.ReputationTests
         public void SubmitReportAndAffectReputation()
         {
             // Arrange
-            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            ReportsSqlDAO reportsDAO = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            UsersSqlDAO usersDAO = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
             ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
+            ReputationService repSer = new ReputationService(reportsDAO, usersDAO);
             ReputationManager repMan = new ReputationManager(repSer, logger);
             // The report's user IDs vary upon the device and the users that are in the DB
             Report report = new Report(0.5, 1010, 1011, "This user sucks.");
 
             // Act
-            var act = repMan.RecordNewUserReportAsync(report, 4.2);
+            var act = repMan.RecordNewUserReportAsync("A2-C6-C9-5C-77-40-3F-ED-C3-45-37-ED-80-BE-B8-A7-6D-26-62-E8-49-6F-50-70-25-79-56-B9-CD-70-54-21-EA-8E-24-D7-73-E5-B8-B2-63-F8-E6-4C-7A-1C-AC-90-CD-3D-EA-F5-0A-4A-85-CE-EA-D6-13-26-69-2B-80-48", report, 4.2);
 
             Console.WriteLine(act.Result.ErrorMessage);
             // Assert
@@ -44,12 +42,10 @@ namespace TeamBigData.Utification.ReputationTests
         public void GetReports()
         {
             // Arrange
-            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            ReportsSqlDAO reportsDAO = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            UsersSqlDAO usersDAO = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
             ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
+            ReputationService repSer = new ReputationService(reportsDAO, usersDAO);
             ReputationManager repMan = new ReputationManager(repSer, logger);
             
             // Act
@@ -57,23 +53,21 @@ namespace TeamBigData.Utification.ReputationTests
               
 
             // Assert
-            Assert.IsTrue(getReports.Result.isSuccessful);
+            Assert.IsTrue(getReports.Result.IsSuccessful);
         }
 
         [TestMethod]
         public void GetReputation()
         {
             // Arrange
-            IReportsDBInserter insertReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IReportsDBSelecter selectReport = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBUpdater updateProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            IUsersDBSelecter selectProfile = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
+            ReportsSqlDAO reportsDAO = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
+            UsersSqlDAO usersDAO = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
             ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(insertReport, selectReport, updateProfile, selectProfile, logger);
+            ReputationService repSer = new ReputationService(reportsDAO, usersDAO);
             ReputationManager repMan = new ReputationManager(repSer, logger);
 
             // Act
-            var getReputation = repMan.ViewCurrentReputationAsync(1001);
+            var getReputation = repMan.ViewCurrentReputationAsync("A2-C6-C9-5C-77-40-3F-ED-C3-45-37-ED-80-BE-B8-A7-6D-26-62-E8-49-6F-50-70-25-79-56-B9-CD-70-54-21-EA-8E-24-D7-73-E5-B8-B2-63-F8-E6-4C-7A-1C-AC-90-CD-3D-EA-F5-0A-4A-85-CE-EA-D6-13-26-69-2B-80-48", 1001);
             Console.WriteLine(getReputation.Result.Data);
 
             // Assert
