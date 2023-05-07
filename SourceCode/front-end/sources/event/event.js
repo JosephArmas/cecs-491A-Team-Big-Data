@@ -220,6 +220,10 @@ async function placeMarker(map, userID)
 
     // Store the eventPins obj to loop through and use custom helper
     let eventPins = await getEvents();
+    if(eventPins === undefined)
+    {
+        return -1;
+    }
     eventPins.forEach(pin => {
         markers.push(markerHelper(pin.lat,pin.lng,pin.title,pin.description, pin.eventID,pin.count));
     });
