@@ -64,11 +64,6 @@ namespace TeamBigData.Utification.ReputationServices
                 dataReports.Add(reports);
             }
 
-            for (int i = 0; i < dataReports.Count; i++)
-            {
-                Console.WriteLine(dataReports[i].Rating.ToString() + " " + dataReports[i].Feedback + " " + dataReports[i].CreateDate + " " + dataReports[i].ReportingUserID);
-            }
-
             result.IsSuccessful = true;
             result.Data = dataReports;
 

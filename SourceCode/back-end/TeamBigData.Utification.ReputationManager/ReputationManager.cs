@@ -40,9 +40,10 @@ namespace TeamBigData.Utification.Manager
 
                 return result;
             }
-                result.Data = getReputation.Data.Reputation;
-                getReputationLog = new Log(1, "Info", userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Successfully retrieved the users reputation from the data store.");    
 
+            result.IsSuccessful = getReputation.IsSuccessful;
+            result.Data = getReputation.Data.Reputation;
+            getReputationLog = new Log(1, "Info", userHash, "ReputationService.GetCurrentReputationAsync()", "Data", "Successfully retrieved the users reputation from the data store.");    
 
             await _logger.Logs(getReputationLog).ConfigureAwait(false);
 

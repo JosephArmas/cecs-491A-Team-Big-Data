@@ -70,11 +70,10 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> GetReputationAsync([FromBody] Reports reports)
         {
             var result = await _reputationManager.ViewCurrentReputationAsync(_userHash, reports.UserID).ConfigureAwait(false);
-
+            
             if (result.IsSuccessful)
             {
-                //return Ok(result.Data);
-                return Unauthorized();
+                return Ok(result.Data);
             }
             else
             {

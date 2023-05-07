@@ -230,12 +230,12 @@ function resetReportsView()
         reputationBox.removeChild(removeStars);
     }
 
+    resetReports();
     let resetReputationTitle = document.getElementById("reputation-title");
     reputationBox.removeChild(resetReputationTitle);
     let resetReputationNumber = document.getElementById("reputation-number");
     reputationBox.removeChild(resetReputationNumber);
-
-    resetReports();
+    
 }
 /*(function (userID){
 
