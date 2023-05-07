@@ -132,7 +132,7 @@ app.Use(async (context, next) =>
     context.Response.OnStarting(() =>
     {
         context.Response.Headers.Add("access-control-allow-credentials", "true");
-        context.Response.Headers.Add("access-control-allow-headers", "content-type, authorization");
+        context.Response.Headers.Add("access-control-allow-headers", "content-type, authorization, ID");
         context.Response.Headers.Add("access-control-allow-methods", "GET, POST, OPTIONS");
         context.Response.Headers.Add("access-control-allow-origin", "*");
         context.Response.Headers.Add("access-control-max-age", "3600");
