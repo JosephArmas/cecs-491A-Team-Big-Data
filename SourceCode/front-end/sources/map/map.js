@@ -133,7 +133,7 @@
                 {
                     pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }
-
+                
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
                 if (localStorage.getItem("role")== "Admin User" || localStorage.getItem("id") == currResponse.userID)
                 {
@@ -145,6 +145,7 @@
                 const infowindow = new google.maps.InfoWindow({
                     content: pinContent
                 });
+                
 
                 pinsInfo.push(response.data[i])
                 pinsMarker.push(pin);
@@ -164,11 +165,16 @@
                             map,
                             shouldFocus: false,
                         });
-                        downloadPicture(x);
+                        downloadPicture(x, (updateContent) =>
+                        {
+                            infoWindows[i].setContent(updateContent);
+                        });
                     });
                 }
             }
         });
+
+        
     }
 
     // David
@@ -197,7 +203,7 @@
                 //rebuild content
                 content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
                 content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("role")=="Regular User" || localStorage.getItem("role")== "Reputable User"|| localStorage.getItem("id") == pinsInfo[pos].userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -230,7 +236,7 @@
         }
     }
 
-    window.downloadPicture = function(pos)
+    window.downloadPicture = function(pos, updateContent)
     {
         let pinID = pinsInfo[pos].pinID;
         // Rebuild content
@@ -263,14 +269,18 @@
                     // Picture stored as a DataURL for easy access
                     content += "<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
                     content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                    if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
+                    if (localStorage.getItem("role")=="Admin User"  || localStorage.getItem("id") == pinsInfo[pos].userID)
                     {
                         content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
                         content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
                     }
                     infoWindows[pos].setContent(content);
+                    updateContent(content);
                 })
+            }
+            else{
+                updateContent(content);
             }
         })
     }
