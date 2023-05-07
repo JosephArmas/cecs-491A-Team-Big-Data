@@ -1,0 +1,17 @@
+-- auto-generated definition
+create table dbo.Events
+(
+    title          char(30)      not null,
+    description    char(150)     not null,
+    eventID        int identity (200, 1)
+        constraint Events_pk
+            primary key,
+    eventCreated   date          not null,
+    count          int default 0 not null,
+    userID         int           not null,
+    disabled       int default 0 not null,
+    lat            float         not null,
+    lng            float         not null,
+    showAttendance int default 0 not null
+)
+go

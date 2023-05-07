@@ -1,0 +1,12 @@
+-- auto-generated definition
+create table dbo.EventsJoined
+(
+    userID  int not null,
+    eventID int not null
+        constraint EventsJoined_Events_eventID_fk
+            references dbo.Events
+            on delete cascade,
+    constraint EventsJoined_pk
+        primary key (userID, eventID)
+)
+go
