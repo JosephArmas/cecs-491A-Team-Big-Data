@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.AccountServices\TeamBigData.Utification.AccountServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.AlertManagers\TeamBigData.Utification.AlertManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.AnalysisManager\TeamBigData.Utification.AnalysisManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Cryptography\TeamBigData.Utification.Cryptography.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.EventsManager\TeamBigData.Utification.EventsManager.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.FileManager\TeamBigData.Utification.FileManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.FileService\TeamBigData.Utification.FileServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.PinManagers\TeamBigData.Utification.PinManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ReputationManager\TeamBigData.Utification.ReputationManager.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ReputationServices\TeamBigData.Utification.ReputationServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.SecurityManager\TeamBigData.Utification.Manager.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ServiceOfferingsManagers\TeamBigData.Utification.ServiceOfferingsManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ServiceOfferingsServices\TeamBigData.Utification.ServiceOfferingsServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
+  </ItemGroup>
+
+</Project>

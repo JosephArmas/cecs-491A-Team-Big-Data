@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ServiceOfferingsManagers\TeamBigData.Utification.ServiceOfferingsManagers.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ServiceOfferingsServices\TeamBigData.Utification.ServiceOfferingsServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utitification.SQLDataAccess\TeamBigData.Utification.SQLDataAccess.csproj" />
+  </ItemGroup>
+
+</Project>

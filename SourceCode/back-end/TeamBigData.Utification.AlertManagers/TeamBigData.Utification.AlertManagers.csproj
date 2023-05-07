@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TeamBigData.Utification.AlertServices\TeamBigData.Utification.AlertServices.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.ErrorResponse\TeamBigData.Utification.ErrorResponse.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Logging\TeamBigData.Utification.Logging.csproj" />
+    <ProjectReference Include="..\TeamBigData.Utification.Models\TeamBigData.Utification.Models.csproj" />
+  </ItemGroup>
+
+</Project>
