@@ -19,6 +19,11 @@ namespace TeamBigData.Utification.AccountServices
             var updateSql = "Update dbo.Users Set \"disabled\" = 3 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
             Console.WriteLine(result.ErrorMessage);
+            if(result.Data is null)
+            {
+                result.ErrorMessage = "Account doesnt exist";
+                return result;
+            }
             if ((int)result.Data == 1)
             {
                 result.IsSuccessful = true;
@@ -45,6 +50,11 @@ namespace TeamBigData.Utification.AccountServices
             result.IsSuccessful = false;
             var updateSql = "Update dbo.Users Set \"disabled\" = 0 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
+            if(result.Data is null)
+            {
+                result.ErrorMessage = "Account doesnt exist";
+                return result;
+            }
             if ((int)result.Data == 1)
             {
                 result.IsSuccessful = true;
