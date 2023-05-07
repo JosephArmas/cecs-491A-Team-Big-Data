@@ -151,7 +151,7 @@
                 infoWindows.push(infowindow);
                 
                 // Do not display disabled or complete pins
-                if (currResponse.Disabled === 1)
+                if (currResponse.disabled === 1)
                 {
                     pinsMarker[i].setMap(null);
                 }
@@ -196,7 +196,7 @@
                 let url = URL.createObjectURL(file);
                 //rebuild content
                 content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
-                content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
                 if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
@@ -262,8 +262,8 @@
                 {
                     // Picture stored as a DataURL for easy access
                     content += "<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
-                    content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                    if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos]._userID)
+                    content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                    if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
                     {
                         content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -299,7 +299,7 @@
                 let url = URL.createObjectURL(file);
                 //rebuild content
                 content += "<img id=\"PinPic\"style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
-                content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
                 if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
