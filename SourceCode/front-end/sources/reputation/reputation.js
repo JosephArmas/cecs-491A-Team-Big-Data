@@ -110,7 +110,11 @@ function reputationView(id)
         userProfile.ReportingUserID = localStorage.getItem("id");
         userProfile.ButtonCommand = "";
         
-        let reputationRequest = axios.post(reputationUrl, userProfile, {});
+        let reputationRequest = axios.post(reputationUrl, userProfile, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+            }
+        });
         reputationRequest.then(function(response)
         {
             for(let i = 0; i < Math.floor(response.data); i++)

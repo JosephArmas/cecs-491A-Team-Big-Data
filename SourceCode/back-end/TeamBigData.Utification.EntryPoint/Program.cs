@@ -107,6 +107,7 @@ builder.Services.AddTransient<FileManager>();
 
 // Reputation dependencies
 builder.Services.AddDbContext<ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
 builder.Services.AddTransient<ReputationService>();
 builder.Services.AddTransient<ReputationManager>();
 

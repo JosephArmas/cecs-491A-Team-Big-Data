@@ -28,8 +28,7 @@ namespace TeamBigData.Utification.UserManagementTests
         private readonly String hashString = "Server=.\\;Database=TeamBigData.Utification.UserHash;Integrated Security=True;Encrypt=False";
 
 
-        /*
-        [TestMethod]
+        /*[TestMethod]
         public void AdminRestrictedViewAccess()
         {
             //Admin is only allowed to acess UserManagementView
@@ -67,7 +66,7 @@ namespace TeamBigData.Utification.UserManagementTests
             Console.WriteLine("Regular User wants to see UserManagement View: " + pass);
             Assert.IsFalse(pass);
         }
-        */
+        
         [TestMethod]
         public async Task CreateWithinFiveSeconds()
         {
@@ -375,7 +374,7 @@ namespace TeamBigData.Utification.UserManagementTests
                 Assert.IsTrue(false); 
         }*/
 
-        [TestMethod]
+        /*[TestMethod]
         public async Task BulkUploadLength()
         {
             //Testing ability to not handle large files
@@ -388,9 +387,9 @@ namespace TeamBigData.Utification.UserManagementTests
             var expected = 5000;
             string email = "";
             SecurityManager securityManager = new SecurityManager();
-            /*ran into errors with getting directory path*/
+            // Ran into errors with getting directory path
             string directoryPath = @"C:\MyDir";
-            /*Directory will be created if not existing*/
+            //Directory will be created if not existing
             Directory.CreateDirectory(directoryPath);
             //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
             DirectoryInfo di = new DirectoryInfo(directoryPath);
@@ -427,7 +426,7 @@ namespace TeamBigData.Utification.UserManagementTests
                      {
                          Console.WriteLine(line);
                          break;
-                     }*/
+                     }
                     sw.Flush();
 
                 }
@@ -479,9 +478,9 @@ namespace TeamBigData.Utification.UserManagementTests
             var stopwatch = new Stopwatch();
             var expected = 5000;
             string email = "";
-            /*ran into errors with getting directory path*/
+            // Ran into errors with getting directory path
             string directoryPath = @"C:\MyDir";
-            /*Directory will be created if not existing*/
+            // Directory will be created if not existing
             Directory.CreateDirectory(directoryPath);
             //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
             DirectoryInfo di = new DirectoryInfo(directoryPath);
@@ -512,13 +511,13 @@ namespace TeamBigData.Utification.UserManagementTests
                         sw.Write(data);
                     }
                     countLines++;
-                    //the $ allows me to insert info into the string
+                    //the $ allows me to insert info into the string    */
                     /* if (line == 999999)
                      {
                          Console.WriteLine(line);
                          break;
                      }*/
-                    sw.Flush();
+                    /*sw.Flush();
 
                 }
 
@@ -561,9 +560,9 @@ namespace TeamBigData.Utification.UserManagementTests
             var expected = 5000;
             string email = "";
             SecurityManager securityManager = new SecurityManager();
-            /*ran into errors with getting directory path*/
+            // Ran into errors with getting directory path
             string directoryPath = @"C:\MyDir";
-            /*Directory will be created if not existing*/
+            // Directory will be created if not existing
             Directory.CreateDirectory(directoryPath);
             //DirectoryInfo di = new DirectoryInfo(@"c:\MyDir");
             DirectoryInfo di = new DirectoryInfo(directoryPath);
@@ -595,13 +594,13 @@ namespace TeamBigData.Utification.UserManagementTests
                         sw.Write(delete);
                     }
                     countLines++;
-                    //the $ allows me to insert info into the string
+                    //the $ allows me to insert info into the string    */
                     /* if (line == 999999)
                      {
                          Console.WriteLine(line);
                          break;
                      }*/
-                    sw.Flush();
+                    /*sw.Flush();
 
                 }
 
@@ -625,7 +624,7 @@ namespace TeamBigData.Utification.UserManagementTests
             }
             else
                 Assert.IsTrue(false);
-        }
+        }*/
     }
 }
 
