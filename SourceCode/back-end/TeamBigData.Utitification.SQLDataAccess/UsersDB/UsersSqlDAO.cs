@@ -484,11 +484,11 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change SelectEventCount to return DataResponse with the proper datatype for the response
-        public async Task<Response> SelectUserProfileRole(int userID)
+        public async Task<DataResponse<String>> SelectUserProfileRole(int userID)
         {
             string sqlStatement = "SELECT role FROM dbo.UserProfiles WHERE userID = @userID";
             // var connection = new SqlConnection(_connectionString);
-            var response = new Response();
+            var response = new DataResponse<String>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
@@ -501,7 +501,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         while (reader.Read())
                         {
                             string role = reader.GetString(reader.GetOrdinal("role"));
-                            //response.data = role;
+                            response.Data = role;
                             response.IsSuccessful = true;
                         }
                     }
@@ -518,10 +518,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change SelectEventCount to return DataResponse with the proper datatype for the response
-        public async Task<Response> SelectUserHash(int userID)
+        public async Task<DataResponse<String>> SelectUserHash(int userID)
         {
             var sqlstatement = "SELECT userHash FROM dbo.Users WHERE userID = @userID";
-            var response = new Response();
+            var response = new DataResponse<String>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 // Open the connection async
@@ -539,7 +539,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             string userHash = reader.GetString(reader.GetOrdinal("userHash"));
 
                             // Response obj stores the userHash value inside of the data property
-                            //response.data = userHash;
+                            response.Data = userHash;
                             response.IsSuccessful = true;
 
                         }
@@ -556,10 +556,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change SelectEventCount to return DataResponse with the proper datatype for the response
-        public async Task<Response> SelectUserID(string email)
+        public async Task<DataResponse<int>> SelectUserID(string email)
         {
             var sqlstatement = "SELECT userID FROM dbo.Users WHERE username = @email";
-            var response = new Response();
+            var response = new DataResponse<int>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 // Open the connection async
@@ -577,7 +577,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             int userID = reader.GetInt32(reader.GetOrdinal("userID"));
 
                             // Response obj stores the userHash value inside of the data property
-                            //response.data = userID;
+                            response.Data = userID;
                             response.IsSuccessful = true;
 
                         }

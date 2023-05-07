@@ -153,10 +153,10 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
     // Select Event Pin
     // TODO: Change SelectEventPin to return DataResponse with the proper datatype for the response
-    public async Task<Response> SelectEventPin(int eventID)
+    public async Task<DataResponse<int>> SelectEventPin(int eventID)
     {
         var sqlstatement = "SELECT eventID FROM dbo.Events WHERE eventID = @eventID";
-        var response = new Response();
+        var response = new DataResponse<int>();
         using (var connection = new SqlConnection(_connectionString))
         {
             // Open the connection async
@@ -173,7 +173,7 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
                         int eventPin = reader.GetInt32(reader.GetOrdinal("eventID"));
 
-                        //response.Data = eventPin;
+                        response.Data = eventPin;
                         response.IsSuccessful = true;
 
                     }
@@ -246,10 +246,10 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
     // Select Event ID
     // TODO: Change SelectEventID to return DataResponse with the proper datatype for the response
-    public async Task<Response> SelectEventID(int userID)
+    public async Task<DataResponse<int>> SelectEventID(int userID)
     {
         var sqlstatement = "SELECT eventID FROM dbo.Events WHERE userID = @userID";
-        var response = new Response();
+        var response = new DataResponse<int>();
         using (var connection = new SqlConnection(_connectionString))
         {
             // Open the connection async
@@ -266,7 +266,7 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
                         int eventID = reader.GetInt32(reader.GetOrdinal("eventID"));
 
-                        //response.data = eventID;
+                        response.Data = eventID;
                         response.IsSuccessful = true;
 
                     }
@@ -284,10 +284,10 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
     // Select Event Count
     // TODO: Change SelectEventCount to return DataResponse with the proper datatype for the response
-    public async Task<Response> SelectEventCount(int eventID)
+    public async Task<DataResponse<int>> SelectEventCount(int eventID)
     {
         var sqlstatement = "SELECT count FROM dbo.Events WHERE eventID = @eventID";
-        var response = new Response();
+        var response = new DataResponse<int>();
         using (var connection = new SqlConnection(_connectionString))
         {
             // Open the connection async
@@ -305,7 +305,7 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
                         int count = reader.GetInt32(reader.GetOrdinal("count"));
 
-                        //response.data = count;
+                        response.Data = count;
                         response.IsSuccessful = true;
 
                     }
@@ -323,10 +323,10 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
     // Select Event Owner
     // TODO: Change SelectEventOwner to return DataResponse with the proper datatype for the response
-    public async Task<Response> SelectEventOwner(int eventID)
+    public async Task<DataResponse<int>> SelectEventOwner(int eventID)
     {
         var sqlstatement = "SELECT userID FROM dbo.Events WHERE eventID = @eventID";
-        var response = new Response();
+        var response = new DataResponse<int>();
         using (var connection = new SqlConnection(_connectionString))
         {
             // Open the connection async
@@ -344,7 +344,7 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
                         int owner = reader.GetInt32(reader.GetOrdinal("userID"));
 
                         // Response obj stores the userHash value inside of the data property
-                        //response.data = owner;
+                        response.Data = owner;
                         response.IsSuccessful = true;
 
                     }
@@ -362,10 +362,10 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
     // Select Attendance
     // TODO: Change SelectEventCount to return DataResponse with the proper datatype for the response
-    public async Task<Response> SelectAttendance(int eventID)
+    public async Task<DataResponse<int>> SelectAttendance(int eventID)
     {
         var sqlstatement = "SELECT showAttendance FROM dbo.Events WHERE eventID = @eventID";
-        var response = new Response();
+        var response = new DataResponse<int>();
         using (var connection = new SqlConnection(_connectionString))
         {
             // Open the connection async
@@ -381,7 +381,7 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
                     while (reader.Read())
                     {
                         // Date stored in type obj
-                        //response.data = reader.GetInt32(reader.GetOrdinal("showAttendance"));
+                        response.Data = reader.GetInt32(reader.GetOrdinal("showAttendance"));
                         response.IsSuccessful = true;
                     }
                 }
@@ -398,10 +398,10 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
 
     // Select Event Date
     // TODO: Change SelectEventDate to return DataResponse with the proper datatype for the response
-    public async Task<Response> SelectEventDate(int userID)
+    public async Task<DataResponse<DateTime>> SelectEventDate(int userID)
     {
         var sqlstatement = "SELECT eventCreated FROM dbo.Events WHERE userID = @userID";
-        var response = new Response();
+        var response = new DataResponse<DateTime>();
         using (var connection = new SqlConnection(_connectionString))
         {
             // Open the connection async
@@ -417,7 +417,7 @@ public class EventsSqlDAO : DbContext, IEventDBInsert, IEventDBSelect, IEventDBU
                     while (reader.Read())
                     {
                         // Date stored in type obj
-                        //response.data = reader.GetDateTime(reader.GetOrdinal("eventCreated"));
+                        response.Data = reader.GetDateTime(reader.GetOrdinal("eventCreated"));
                         response.IsSuccessful = true;
                     }
                 }

@@ -965,6 +965,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.ErrorMessage = e.Message;
                 }
+
+                result.Data = rows;
                 tcs.SetResult(result);
                 return tcs.Task;
             }
@@ -1003,6 +1005,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.ErrorMessage = e.Message;
                 }
+
+                result.Data = rows;
                 tcs.SetResult(result);
                 return tcs.Task;
             }
@@ -1041,6 +1045,8 @@ namespace TeamBigData.Utification.SQLDataAccess
                 {
                     result.ErrorMessage = e.Message;
                 }
+
+                result.Data = rows;
                 tcs.SetResult(result);
                 return tcs.Task;
             }

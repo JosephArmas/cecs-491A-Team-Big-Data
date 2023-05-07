@@ -34,20 +34,20 @@ namespace TeamBigData.Utification.EventsServices
         //------------------------
 
         // Read Role
-        public async Task<Response> ReadRole(int userID)
+        public async Task<DataResponse<string>> ReadRole(int userID)
         {
             return await _dbSelecter.SelectUserProfileRole(userID).ConfigureAwait(false);
         }
 
         // Read Event Count
-        public async Task<Response> ReadEventCount(int eventID)
+        public async Task<DataResponse<int>> ReadEventCount(int eventID)
         {
 
             return await _iEventDbSelect.SelectEventCount(eventID).ConfigureAwait(false);
         }
 
         // Read Event Owner
-        public async Task<Response> ReadEventOwner(int eventID)
+        public async Task<DataResponse<int>> ReadEventOwner(int eventID)
         {
             return await _iEventDbSelect.SelectEventOwner(eventID);
         }
@@ -61,7 +61,7 @@ namespace TeamBigData.Utification.EventsServices
         }
 
         // Read Event Date Created
-        public async Task<Response> ReadEventDateCreated(int userID)
+        public async Task<DataResponse<DateTime>> ReadEventDateCreated(int userID)
         {
 
             return await _iEventDbSelect.SelectEventDate(userID).ConfigureAwait(false);
@@ -75,13 +75,13 @@ namespace TeamBigData.Utification.EventsServices
         }
 
         // Read Event
-        public async Task<Response> ReadEvent(int userID)
+        public async Task<DataResponse<int>> ReadEvent(int userID)
         {
             return await _iEventDbSelect.SelectEventPin(userID).ConfigureAwait(false);
         }
 
         // Read Attendance
-        public async Task<Response> ReadAttendance(int eventID)
+        public async Task<DataResponse<int>> ReadAttendance(int eventID)
         {
             return await _iEventDbSelect.SelectAttendance(eventID).ConfigureAwait(false);
         }
@@ -104,11 +104,11 @@ namespace TeamBigData.Utification.EventsServices
 
             var hashObj = await _dbSelecter.SelectUserHash(eventDto.UserID).ConfigureAwait(false);
             // Convert from obj to string
-            //string userHash = hashObj.Data.ToString();
+            string userHash = hashObj.Data.ToString();
             var result = await _iEventDbInsert.InsertEvent(eventDto).ConfigureAwait(false);
             if (result.IsSuccessful)
             {
-                //await _logger.Logs(new Log(1, "Info", userHash, "EventService.CreateEvent()", "Data", "Event Created Successful"));
+                await _logger.Logs(new Log(1, "Info", userHash, "EventService.CreateEvent()", "Data", "Event Created Successful"));
             }
 
             return result;

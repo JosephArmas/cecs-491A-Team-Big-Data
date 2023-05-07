@@ -1,4 +1,3 @@
-const errorsDiv = document.querySelector("#errors");
 function addProfilePic()
 {
     let userID = localStorage.getItem("id");
@@ -32,7 +31,7 @@ function addProfilePic()
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                errorsDiv.innerHTML = cleanError; 
+                timeOut(cleanError, 'red', errorsDiv)
             }).then(function(key)
             {
                 if(key === undefined)
@@ -81,7 +80,7 @@ function updateProfilePic()
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                errorsDiv.innerHTML = cleanError; 
+                timeOut(cleanError, 'red', errorsDiv)
             }).then(function(key)
             {
                 if(key === undefined)
@@ -108,7 +107,7 @@ function downloadProfilePic()
     {
         let errorAfter = error.response.data;
         let cleanError = errorAfter.replace(/"/g,"");
-        errorsDiv.innerHTML = errorAfter; 
+        timeOut(cleanError, 'red', errorsDiv)
     }).then(function(key)
     {
         if(key === undefined)
@@ -122,7 +121,7 @@ function downloadProfilePic()
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
-                errorsDiv.innerHTML = cleanError; 
+                timeOut(cleanError, 'red', errorsDiv)
             }).then(function(file)
             {
                 let picture = document.getElementById("profilePicture");
@@ -147,7 +146,7 @@ function deleteProfilePic()
     {
         let errorAfter = error.response.data;
         let cleanError = errorAfter.replace(/"/g,"");
-        errorsDiv.innerHTML = cleanError; 
+        timeOut(cleanError, 'red', errorsDiv)
     }).then(function(key)
     {
         deleteFromS3(key.data);

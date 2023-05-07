@@ -65,5 +65,77 @@ namespace TeamBigData.Utification.ErrorResponse
         {
             return authorizedRoles.Contains(role);
         }
+        
+        // Check if event is created within 7 days
+        public static bool IsValidCreateDate(DateTime date)
+        {
+            TimeSpan diff = DateTime.Now - date;
+            if (diff.TotalDays > 7)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        // Check if eventID is atleast over 200 -> some sort of validation that its "legitimate"
+        public static bool IsValidEventID(DataResponse<int> response)
+        {
+            var result = Convert.ToInt32(response.Data);
+            if (result >= 200 && response.IsSuccessful)
+                return true;
+            else
+                return false;
+        }
+        
+        // Using the bounds that Ghabe wrote in the front end
+        // Checking lat and lng here again because front end can be insecure
+
+        public static bool IsValidPinBound(double lat, double lng)
+        {
+            if ((lat < 42.009517 && lat > 39) && (lng < -124 || lng > -120))
+            {
+                return false;
+            }
+            else if ((lat < 39 && lat > 38) && (lng < -124 || lng > -119))
+            {
+                return false;
+            }
+            else if ((lat < 38 && lat > 37) && (lng < -123 || lng > -118))
+            {
+                return false;
+            }
+            else if ((lat < 37 && lat > 36) && (lng < -122 || lng > -117))
+            {
+                return false;
+            }
+            else if ((lat < 36 && lat > 35) && (lng < -121 || lng > -116))
+            {
+                return false;
+            }
+            else if ((lat < 35 && lat > 34) && (lng < -120 || lng > -115))
+            {
+                return false;
+            }
+            else if ((lat < 34 && lat > 33) && (lng < -119 || lng > -114))
+            {
+                return false;
+            }
+            else if ((lat < 33 && lat > 32.528832) && (lng < -118 || lng > -114))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            } 
+            
+        }
+        
+        
+        
+        
     }
 }

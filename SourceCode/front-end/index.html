@@ -15,14 +15,134 @@
         <link rel="stylesheet" href="styles/recovery.css">
         <link rel="stylesheet" href="styles/profile.css">
         <link rel="stylesheet" href="styles/reputation.css">
+        <link rel="stylesheet" href="styles/analytics.css">
+        <link rel="stylesheet" href="styles/nav-profile-events.css">
+        <link rel="stylesheet" href="styles/home-admin.css">
+        <link rel="stylesheet" href="styles/events.css">
+
     </head>
     <body>
         <div id="test-data"></div>
+        <div id="errors"></div>
+        
+         <!-- * Events Dropdown view -->
+        <div class="event-dropdown-container">
+            <div class="event-form">
+                <div class="event-dropdown-box"></div>
+                    <div class="title"></div>
+                    <div class="event-inputs"></div>
+                    <div class="confirm-btn"></div>
+            </div>
+        </div>
+
+        <!-- * Events -->
+        <div class="events-container">
+            <div class="top-button-container"></div> 
+            <div class="title"></div>
+            <div class="options"></div>
+        </div>
+        
+          <!-- * Analytics -->
+        <div class="analytics-container" >
+            <div class="analytics-home">
+            <div class="analytics-header"></div>
+            <div class ="chart-options"></div>
+            </div>
+            <div class="charts">
+                <div class="analytics-header"></div>
+                <div class ="analytics-maps-view">
+                    <h1>Analytics Maps</h1>
+                    <div class="analytics-chart-maps"></div>
+                </div>
+                <div class ="analytics-registration-view" >
+                    <h1>Analytics Registration</h1>
+                    <div class="analytics-chart-registration"></div>
+                </div>
+                <div class ="analytics-logins-view">
+                    <h1>Analytics Logins</h1>
+                    <div class="analytics-chart-logins"></div>
+                </div>
+                <div class ="analytics-pins-view">
+                    <h1>Analytics Pins</h1>
+                    <div class="analytics-chart-pins"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- * Nav Profile -->
+        <div class="nav-profile-container" id="profile-container">
+            <div class="top-button-container"></div> 
+            <div class="options-container"></div>
+            <div id="container">
+                <div class="box-container"></div>
+            </div>
+        </div>
+
+
+        <!-- * Events Created -->
+        <div class="events-created-container">
+            <div class="top-button-container"></div> 
+            <div class="title"></div>
+            <!-- * Injecting needs to be done-->
+            <div class="events-created"></div>
+        </div>
+
+        <!-- * Events Joined-->
+        <div class="events-joined-container">
+            <div class="top-button-container"></div> 
+            <div class="title"></div>
+            <!-- * Injecting needs to be done-->
+            <div class="events-joined"></div>
+        </div>
+
+
+     <!-- * Admin view -->
+    <div class="home-admin-container" hidden>
+        <div class="home-header-container">
+            <div class="menu-container">
+                <nav class="ham-menu-container">
+                    <ul class="features"></ul>
+                </nav>
+            </div>
+                <div class="title"></div>
+            <div class="profile-container">
+                <div id="profile"></div>
+                <div id="logout"></div>
+            </div>
+        </div>
+        <div class="map" id="map"></div>
+    </div>
+
+    <!-- * Home View -->
+    <div class="home-container" hidden>
+        <div class="home-header-container">
+            <div class="menu-container">
+                <nav class="ham-menu-container">
+                    <ul class="features"></ul>
+                </nav>
+            </div>
+                <h1>Utification</h1>
+            <div class="profile-container">
+                <div id="profile"></div>
+                <div id="logout"></div>
+            </div>
+        </div>
+        <div class="map" id="map"></div>
+            <div class="misc">
+                <div class="reg-contact-home">
+                    <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
+                </div>
+            </div>
+        <div class="footer">
+            <footer>&copy; 2023 Utification</footer>
+        </div>
+    </div>
+
 
         <!-- * Home view -->
-        <div id="errors"></div>
+        <!-- * 
         <div class="home-container" hidden>
-            <!-- reused from anon  -->
             <div class="home-header-container">
                 <div class="menu-container">
                     <nav class="ham-menu-container">
@@ -43,7 +163,6 @@
                 </div>
                 <div class="header-container">
                     <div>
-                        <!-- to not be bloated have a ajax call for the profile-nav -->
                         <button type="button" id="profileBtn" onclick="profileClicked()">Profile</button>
                     </div>
                     <div>
@@ -61,6 +180,7 @@
                 <footer>&copy; 2023 Utification</footer>
             </div>
         </div>
+        -->
 
         <!--* Create Report View-->
         <div class="create-report-container" hidden>
@@ -346,23 +466,30 @@
 
         <!-- Thirdparty dependency -->
         <script src="node_modules/axios/dist/axios.js"></script>
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 
         <!-- App Dependency -->
-        <script src="sources/login/login.js"> </script>
+        <script src="sources/end-point/endpoint.js"></script>
+        <script src="sources/login/login.js"></script>
         <script src="sources/registration/register.js"> </script>
-        <!--<script src="sources/otp/otp.js"> </script>-->
         <script src="sources/otp/recOTP.js"></script>
         <script src="sources/recovery/recovery.js"> </script>
         <script src="sources/fileUpload/file.js"></script>
         <script src="sources/profile/profile.js"></script>
         <script src="sources/reputation/reputation.js"></script>
         <script src="sources/services/servicelist.js"></script>
+        <script src="sources/analytics/analytics.js"></script>
+        <script src="sources/event/event.js"></script>
 
         <!-- * only uncomment the below if you have the map API key set up -->
         <script src="sources/map/map.js"></script>
 
         <!-- page specific (js file) -->
         <script src="sources/main.js"> </script>
+        <script src="sources/response/response.js"></script>
+        <script src="sources/roles/roles.js"></script> 
+        <script src="sources/profile/nav-profile.js"></script>
+
 
     </body>
 </html>

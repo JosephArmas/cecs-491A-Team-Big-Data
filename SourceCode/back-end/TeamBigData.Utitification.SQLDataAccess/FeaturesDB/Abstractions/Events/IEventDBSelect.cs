@@ -8,13 +8,13 @@ public interface IEventDBSelect
 {
     public Task<List<EventDTO>> SelectUserCreatedEvents(int userID);
     public Task<List<EventDTO>> SelectAllEvents();
-    public Task<Response> SelectEventPin(int eventID);
+    public Task<DataResponse<int>> SelectEventPin(int eventID);
     public Task<List<EventDTO>> SelectUserEvents(int userID);
     public Task<List<EventDTO>> SelectJoinedEvents(int userID);
-    public Task<Response> SelectEventID(int userID);
-    public Task<Response> SelectEventCount(int eventID);
-    public Task<Response> SelectEventOwner(int eventID);
-    public Task<Response> SelectAttendance(int eventID);
-    public Task<Response> SelectEventDate(int userID);
+    public Task<DataResponse<int>> SelectEventID(int userID);
+    public Task<DataResponse<int>> SelectEventCount(int eventID);
+    public Task<DataResponse<int>> SelectEventOwner(int eventID);
+    public Task<DataResponse<int>> SelectAttendance(int eventID);
+    public Task<DataResponse<DateTime>> SelectEventDate(int userID);
 
 }

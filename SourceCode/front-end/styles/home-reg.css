@@ -41,3 +41,31 @@
     padding-right: 25px;
 
 }
+
+
+.menu-container button:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}
+
+
+/* Nav styling  */
+.features 
+{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.features button
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.features button:hover
+{
+    background-color: #eb61ff;
+    color: white;
+}

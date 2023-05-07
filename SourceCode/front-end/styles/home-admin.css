@@ -1,0 +1,76 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#admin-home
+{
+    text-align: center;
+}
+.logout-container 
+{
+    display: flex;
+    justify-content: flex-end; 
+    padding-top: 20px; 
+    padding-right: 20px;
+}
+
+
+.logout-container button
+{
+    min-width: 100px;
+    background-color: #00ACB7;
+    color: white
+}
+
+.logout-container button:hover
+{
+    background-color: #85f7ff;
+    color: white
+}
+
+
+.admin-features
+{
+    display: flex;
+    /* justify-content: space-around; */
+    flex-direction: column;
+}
+
+.admin-features button:hover
+{
+    background-color: #ca74ff;
+    color: white;
+}
+
+.user-management button
+{
+    min-width: 200px;
+    min-height: 30px;
+}
+
+.usage-analysis button
+{
+    min-width: 200px;
+    min-height: 30px;
+} 
+
+.user-management
+{
+    display: flex;
+    padding-top: 100px;
+    padding-left: 20px;
+}
+
+.usage-analysis
+{
+    display: flex;
+    padding-top: 100px;
+    padding-left: 20px;
+}
+
+
+.home-admin-container
+{
+    display: none;
+}

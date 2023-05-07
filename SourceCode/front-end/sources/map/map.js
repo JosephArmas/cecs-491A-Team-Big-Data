@@ -37,7 +37,6 @@
     let pinsMarker = []
     let infoWindows = []
 
-    let errorsDiv = document.getElementById('errors');
 
     // Checks if within California State Borders
     function pinBounds(latLng) {
@@ -97,7 +96,7 @@
         return true;
     }
 
-    function getMarkerHandler() {
+    function getMarkerHandler(map) {
         const webServiceUrl = 'https://localhost:7259/Pin/GetAllPins';
 
         pinsInfo = []
@@ -125,7 +124,7 @@
 
                 //Users can mark a pin complete
                 var pinContent = currResponse.description + `<br>Created: ${currResponse.dateCreated}<br>`;
-                if (currResponse.UserID != localStorage.getItem("id"))
+                if (currResponse.userID != localStorage.getItem("id"))
                 {
                     pinContent += `<button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`;
                 }
@@ -134,9 +133,9 @@
                 {
                     pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }
-                console.log(localStorage.getItem("id"));
+
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == currResponse.userID)
+                if (localStorage.getItem("role")== "Admin User" || localStorage.getItem("id") == currResponse.userID)
                 {
                     pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
@@ -175,8 +174,8 @@
     // David
     window.uploadPicture = function(pos)
     {
-        let pinID = pinsInfo[pos].PinID;
-        let content = pinsInfo[pos].Description;
+        let pinID = pinsInfo[pos].pinID;
+        let content = pinsInfo[pos].description;
         let fileSelector = document.getElementById("fileSelector");
         let file = fileSelector.files[0];
         if(file === undefined)
@@ -198,7 +197,7 @@
                 //rebuild content
                 content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
                 content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -215,7 +214,7 @@
                 {
                     let errorAfter = error.response.data;
                     let cleanError = errorAfter.replace(/"/g,"");
-                    errorsDiv.innerHTML = cleanError; 
+                    timeOut(cleanError, 'red', errorsDiv)
                 }).then(function(key)
                 {
                     if(key === undefined)
@@ -233,9 +232,9 @@
 
     window.downloadPicture = function(pos)
     {
-        let pinID = pinsInfo[pos].PinID;
+        let pinID = pinsInfo[pos].pinID;
         // Rebuild content
-        let content = pinsInfo[pos].Description;
+        let content = pinsInfo[pos].description;
         let config = {
             headers : {"ID": pinID}
         };
@@ -244,7 +243,7 @@
         {
             let errorAfter = error.response.data;
             let cleanError = errorAfter.replace(/"/g,"");
-            errorsDiv.innerHTML = errorAfter; 
+            timeOut(cleanError, 'red', errorsDiv)
         }).then(function(key)
         {
             if(key === undefined)
@@ -258,7 +257,7 @@
                 {
                     let errorAfter = error.response.data;
                     let cleanError = errorAfter.replace(/"/g,"");
-                    errorsDiv.innerHTML = cleanError; 
+                    timeOut(cleanError, 'red', errorsDiv)
                 }).then(function(file)
                 {
                     // Picture stored as a DataURL for easy access
@@ -278,8 +277,8 @@
 
     window.updatePicture = function(pos)
     {
-        let pinID = pinsInfo[pos].PinID;
-        let content = pinsInfo[pos].Description;
+        let pinID = pinsInfo[pos].pinID;
+        let content = pinsInfo[pos].description;
         let fileSelector = document.getElementById("fileSelector");
         let file = fileSelector.files[0];
         if(file === undefined)
@@ -301,7 +300,7 @@
                 //rebuild content
                 content += "<img id=\"PinPic\"style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
                 content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -317,7 +316,7 @@
                 {
                     let errorAfter = error.response.data;
                     let cleanError = errorAfter.replace(/"/g,"");
-                    errorsDiv.innerHTML = cleanError; 
+                    timeOut(cleanError, 'red', errorsDiv)
                 }).then(function(key)
                 {
                     if(key === undefined)
@@ -335,11 +334,11 @@
 
     window.deletePicture = function(pos)
     {
-        let pinID = pinsInfo[pos].PinID;
+        let pinID = pinsInfo[pos].pinID;
         //rebuild content
-        let content = pinsInfo[pos].Description;
-        content += `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
+        let content = pinsInfo[pos].description;
+        content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+        if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
         {
             content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
             content += `<button id='uploadPic' onclick='uploadPicture(${pos})'>Upload Picture</button>`;
@@ -356,7 +355,7 @@
         {
             let errorAfter = error.response.data;
             let cleanError = errorAfter.replace(/"/g,"");
-            errorsDiv.innerHTML = cleanError; 
+            timeOut(cleanError, 'red', errorsDiv)
         }).then(function(key)
         {
             if(key === undefined)
@@ -378,17 +377,17 @@
         const webServiceUrl = 'https://localhost:7259/Pin/CompleteUserPin';
         
         const pin = {}
-        pin.PinID = pinsInfo[pos].PinID;
-        pin.UserID = pinsInfo[pos].UserID;
-        pin.Lat = pinsInfo[pos].Lat;
-        pin.Lng = pinsInfo[pos].Lng;
-        pin.PinType = pinsInfo[pos].PinType;
-        pin.Description = pinsInfo[pos].Description;
+        pin.PinID = pinsInfo[pos].pinID;
+        pin.UserID = pinsInfo[pos].userID;
+        pin.Lat = pinsInfo[pos].lat;
+        pin.Lng = pinsInfo[pos].lng;
+        pin.PinType = pinsInfo[pos].pinType;
+        pin.Description = pinsInfo[pos].description;
         pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
         })
         .then(function (responseAfter){
@@ -403,12 +402,11 @@
     window.modifyPinHandler = function(pos)
     {
         infoWindows[pos].close();
-        errorsDiv.innerHTML = "";
 
         let userAction = prompt("1. Modify Pin Type\n2. Modify Pin Content\n3. Delete Pin\nPick Options 1-3: ");
         if (!(userAction == "1" || userAction == "2" || userAction == "3")||userAction == null)
         {
-            errorsDiv.innerHTML = "Invalid Pin Input...";
+            timeOut("Invalid Pin Input...", 'red', errorsDiv)
             return;
         };
         switch (userAction) { 
@@ -428,27 +426,26 @@
     function modifyPinTypeHandler(pos)
     {
         const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinType';
-        errorsDiv.innerHTML = "";
 
         let pinType = prompt("Modifying Pin Type\n1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
-            errorsDiv.innerHTML = "Invalid Pin Input...";
+            timeOut("Invalid Pin Input...", 'red', errorsDiv)
             return;
         };
 
         const pin = {}
-        pin.PinID = pinsInfo[pos].PinID;
-        pin.UserID = pinsInfo[pos].UserID;
-        pin.Lat = pinsInfo[pos].Lat;
-        pin.Lng = pinsInfo[pos].Lng;
-        pin.PinType = pinType;
-        pin.Description = pinsInfo[pos].Description;
+        pin.PinID = pinsInfo[pos].pinID;
+        pin.UserID = pinsInfo[pos].userID;
+        pin.Lat = pinsInfo[pos].lat;
+        pin.Lng = pinsInfo[pos].lng;
+        pin.PinType = pinsInfo[pos].pinType;
+        pin.Description = pinsInfo[pos].description;
         pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
         })
         .then(function (responseAfter){
@@ -464,40 +461,40 @@
         let title = prompt("Modifying Pin Content\nEnter pin title.");
         if (title == null || !titleLimit(title))
         {
-            errorsDiv.innerHTML = "Invalid Title Input...";
+            timeOut("Invalid Title Input...", 'red', errorsDiv)
             return;
         };
 
         let description = prompt("Modifying Pin Content\nEnter pin description");
         if (description == null || !descriptionLimit(description))
         {
-            errorsDiv.innerHTML = "Invalid Description Input...";
+            timeOut('Invalid Description Input...', 'red', errorsDiv)
             return;
         };
 
         let content = `<h1>${title}</h1><p>${description}</p>`;
 
         const pin = {}
-        pin.PinID = pinsInfo[pos].PinID;
-        pin.UserID = pinsInfo[pos].UserID;
-        pin.Lat = pinsInfo[pos].Lat;
-        pin.Lng = pinsInfo[pos].Lng;
-        pin.PinType = pinsInfo[pos].PinType;
+        pin.PinID = pinsInfo[pos].pinID;
+        pin.UserID = pinsInfo[pos].userID;
+        pin.Lat = pinsInfo[pos].lat;
+        pin.Lng = pinsInfo[pos].lng;
+        pin.PinType = pinsInfo[pos].pinType;
         pin.Description = content;
         pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
         })
         .then(function (responseAfter){
             infoWindows[pos].close();
 
-            content = content + `<br>Created: ${pinsInfo[pos].DateTime}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
+            content = content + `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
 
             //User can delete their pins and admin can delete anyone's pin
-            if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].UserID)
+            if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
             {
                 content = content + `<button id='modifyPin' onclick='modifyPinHandler(${pos});'>Modify Pin</button>`;
             }
@@ -518,17 +515,17 @@
         pinsMarker[pos].setMap(null);
         
         const pin = {}
-        pin.PinID = pinsInfo[pos].PinID;
-        pin.UserID = pinsInfo[pos].UserID;
-        pin.Lat = pinsInfo[pos].Lat;
-        pin.Lng = pinsInfo[pos].Lng;
-        pin.PinType = pinsInfo[pos].PinType;
-        pin.Description = pinsInfo[pos].Description;
+        pin.PinID = pinsInfo[pos].pinID;
+        pin.UserID = pinsInfo[pos].userID;
+        pin.Lat = pinsInfo[pos].lat;
+        pin.Lng = pinsInfo[pos].lng;
+        pin.PinType = pinsInfo[pos].pinType;
+        pin.Description = pinsInfo[pos].description;
         pin.Userhash = localStorage.getItem("userhash");
 
         axios.post(webServiceUrl, pin, {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
         })
         .then(function (responseAfter){
@@ -539,25 +536,29 @@
 
     function placeNewPin(latLng, map) {
         const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
-        errorsDiv.innerHTML = "";
 
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" ||pinType == "3" ||pinType == "4" ||pinType == "5")||pinType == null)
         {
-            errorsDiv.innerHTML = "Invalid Pin Input...";
+            timeOut("Invalid Pin Input...", 'red', errorsDiv)
             return;
         };
+
+        if (pinType == "2")
+        {
+            return showEventMenu(latLng);
+        }
 
         let title = prompt("Enter pin title.");
         if (title == null || !titleLimit(title))
         {
-            errorsDiv.innerHTML = "Invalid Title Input...";
+            timeOut("Invalid Title Input...", 'red', errorsDiv)
             return;
         };
         let description = prompt("Enter pin description");
         if (description == null || !descriptionLimit(description))
         {
-            errorsDiv.innerHTML = "Invalid Description Input...";
+            timeOut('Invalid Description Input...', 'red', errorsDiv)
             return;
         };
 
@@ -577,9 +578,9 @@
 
         marker.addListener("click", () => {
             infowindow.open({
-              anchor: marker,
-              map,
-              shouldFocus: false,
+                anchor: marker,
+                map,
+                shouldFocus: false,
             });
         });
 
@@ -603,15 +604,17 @@
             initMap();
         })
         .catch(function (error){
-            errorsDiv.innerHTML = error.data;
+            timeOut(error.data, 'red', errorsDiv)
         });
     }
 
     root.Utification = root.Utification || {};
    
     window.initMap = function() {
-        errorsDiv.innerHTML = "";
-        map = new google.maps.Map(document.getElementById('map'), {
+        const mapElements = document.querySelectorAll('.map');
+        mapElements.forEach((mapElement) => {
+        map = new google.maps.Map(mapElement, 
+            {
             center: CSULB,
             minZoom: 8,
             maxZoom: 18,
@@ -623,17 +626,20 @@
             },
             mapTypeControl: false,
             clickableIcons: false
+            });
+            
+            placeMarker(map,localStorage.getItem("id"));
+            getMarkerHandler(map);
         });
 
-        getMarkerHandler();
+        // getMarkerHandler();
         //checks jwt signature for role
         if (localStorage.getItem("role")==="Admin User" || localStorage.getItem("role")==="Reputable User"){
             //user can add pins to map
             map.addListener("click", (e) => 
             {
                 if (!pinBounds(e.latLng)){
-                    errorsDiv.innerHTML = "Pin is placed out of bounds... "; 
-                    return;
+                    return timeOut("Pin is placed out of bounds.. ", 'red',errorsDiv)
                 }
                 placeNewPin(e.latLng, map);
             });

@@ -16,8 +16,8 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
         public Task<DataResponse<UserProfile>> SelectUserProfile(int userID);
         public Task<DataResponse<List<RecoveryRequests>>> SelectRecoveryRequestsTable();
         public Task<DataResponse<ValidRecovery>> SelectRecoveryUser(int userID);
-        public Task<Response> SelectUserProfileRole(int userID);
-        public Task<Response> SelectUserHash(int userID);
-        public Task<Response> SelectUserID(string email);
+        public Task<DataResponse<String>> SelectUserProfileRole(int userID);
+        public Task<DataResponse<String>> SelectUserHash(int userID);
+        public Task<DataResponse<int>> SelectUserID(string email);
     }
 }

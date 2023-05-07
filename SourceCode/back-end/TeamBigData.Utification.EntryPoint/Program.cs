@@ -7,6 +7,7 @@ using Microsoft.Net.Http.Headers;
 using System.Linq;
 using System.Text;
 using TeamBigData.Utification.AccountServices;
+using TeamBigData.Utification.AnalysisManagers;
 using TeamBigData.Utification.FileServices;
 using TeamBigData.Utification.FileManagers;
 using TeamBigData.Utification.Logging;
@@ -30,6 +31,7 @@ using TeamBigData.Utification.ReputationServices;
 using TeamBigData.Utification.DeletionService;
 using TeamBigData.Utification.EventsManager;
 using TeamBigData.Utification.EventsServices;
+using TeamBigData.Utification.SQLDataAccess.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +84,10 @@ var sqlDAOFactory = new SqlDAOFactory();
 builder.Services.AddDbContext<LogsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
 builder.Services.AddTransient<ILogger, Logger>();
 
+// Analytics
+builder.Services.AddDbContext<IDBAnalysis, SqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LogsSQLDBConnection")));
+builder.Services.AddTransient<AnalysisManager>();
+
 // Security manager dependencies
 builder.Services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
 builder.Services.AddTransient<AccountRegisterer>();
@@ -118,7 +124,7 @@ builder.Services.AddTransient<ServiceOfferingManager>();
 builder.Services.AddTransient<ServiceRequestManager>();
 
 // Events dependencies
-builder.Services.AddDbContext<EventsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DevSqlFeatures")));
+builder.Services.AddDbContext<EventsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<EventService>();
 builder.Services.AddTransient<EventManager>();
 
