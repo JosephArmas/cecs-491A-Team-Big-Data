@@ -43,7 +43,6 @@ function buildDropDown(lat, lng)
         checkMark.id = 'checkmark-label'
         titleLabel.setAttribute('for','titleEvent');
         descriptionLabel.setAttribute('for','descriptionEvent');
-        // markLabel.setAttribute('for','checkmark-label');
         titleEvent.setAttribute('type','text');
         titleEvent.minLength = 8;
         titleEvent.style.placeholder = "Title";
@@ -55,14 +54,10 @@ function buildDropDown(lat, lng)
         titleLabel.style.color = "white";
         descriptionLabel.textContent = "Description";
         descriptionLabel.style.color = "white";
-        // markLabel.textContent= "Check to display attendance"
-        // markLabel.style.color= "white"
         inputDiv.appendChild(titleLabel);
         inputDiv.appendChild(titleEvent);
         inputDiv.appendChild(descriptionLabel);
         inputDiv.appendChild(descriptionEvent);
-        // inputDiv.appendChild(markLabel);
-        // inputDiv.appendChild(checkMark);
         boxDiv.appendChild(inputDiv);
         boxDiv.appendChild(btnDiv);
         let userID = localStorage.getItem('id');
@@ -71,13 +66,16 @@ function buildDropDown(lat, lng)
         submitBtn.addEventListener('click', function (event)
         {
             createEvent(titleEvent.value, descriptionEvent.value, userID, lat, lng); 
+            titleEvent.value = "";
+            descriptionEvent.value = "";
             eventDropdown.style.display = "none";
 
         });
         cancelBtn.addEventListener('click', function (event)
         {
             let homeDiv = document.querySelector(".home-container");
-
+            titleEvent.value = "";
+            descriptionEvent.value = "";
             eventDropdown.style.display = "none";
             homeDiv.style.display = "block";
         })
