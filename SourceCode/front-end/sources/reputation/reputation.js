@@ -5,17 +5,6 @@ const reputationContainer = document.querySelector(".reputation-reports-containe
 const reportsContainer = document.querySelector(".reports-box");
 const createReportBtn = document.getElementById("create-report-btn")
 const createReportView = document.querySelector(".create-report-container");
-const viewOwnReportsBtn = document.getElementById("view-own-reports");
-const profileContainer = document.querySelector(".profileContainer");
-const submitReportBtn = document.getElementById("submit-report-btn");
-
-submitReportBtn.addEventListener('click', function()
-{
-    let newReport = {}
-    newReport.Rating = document.getElementById("new-rating").textContent;
-    newReport.Feedback = document.getElementById("new-feedback").textContent;
-    console.log(newReport.Rating + " " + newReport.Feedback);
-})
 
 createReportBtn.addEventListener('click', function()
 {   
@@ -23,11 +12,6 @@ createReportBtn.addEventListener('click', function()
     createReportView.style.display = "block";
 });
 
-viewOwnReportsBtn.addEventListener('click', function()
-{
-    reputationView(localStorage.getItem("id"))
-    profileContainer.style.display = "none";
-});
 
 function organizeReports(response)
 {
@@ -62,7 +46,7 @@ function organizeReports(response)
         ratingTitle.id = "reputation-title-" + i;
         ratingTitle.innerHTML = "Rating: " + response.data[i - 1].rating.toString();
         ratingTitle.style.color = "blue";
-        ratingTitle.style.marginLeft = "20%";
+        ratingTitle.style.marginLeft = "10%";
         reportNumber.appendChild(ratingTitle);
 
         /*const ratingNumber = document.createElement("span");
@@ -76,7 +60,7 @@ function organizeReports(response)
         creationDate.id = "report-date-" + i;
         creationDate.style.color = "red";
         creationDate.style.fontSize = "25px";
-        creationDate.style.marginLeft = "20%";
+        creationDate.style.marginLeft = "10%";
         creationDate.innerHTML = response.data[i - 1].createDate;
         reportNumber.appendChild(creationDate);
 
@@ -96,22 +80,13 @@ function organizeReports(response)
 
 function reputationView(id)
 {
-    if(id === localStorage.getItem("id"))
-    {
-        createReportBtn.style.display = "none";
-    }
-    else
-    {
-        createReportBtn.style.display = "block";
-    }
-
     const reputationUrl = "https://localhost:7259/Reputation/GetReputation";
     
     reputationBox.style.border = "1px solid";
     reputationBox.style.height = "50px";
     reputationBox.style.margin = "50px";
-    reputationBox.style.marginLeft = "40%";
-    reputationBox.style.width = "25%";
+    reputationBox.style.marginLeft = "37%";
+    reputationBox.style.width = "29%";
     reputationBox.style.overflow = "hidden";
 
 
@@ -135,11 +110,7 @@ function reputationView(id)
         userProfile.ReportingUserID = localStorage.getItem("id");
         userProfile.ButtonCommand = "";
         
-        let reputationRequest = axios.post(reputationUrl, userProfile, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
-            }
-        });
+        let reputationRequest = axios.post(reputationUrl, userProfile, {});
         reputationRequest.then(function(response)
         {
             for(let i = 0; i < Math.floor(response.data); i++)
