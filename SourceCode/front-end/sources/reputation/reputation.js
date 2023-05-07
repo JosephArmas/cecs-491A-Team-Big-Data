@@ -5,6 +5,17 @@ const reputationContainer = document.querySelector(".reputation-reports-containe
 const reportsContainer = document.querySelector(".reports-box");
 const createReportBtn = document.getElementById("create-report-btn")
 const createReportView = document.querySelector(".create-report-container");
+const viewOwnReportsBtn = document.getElementById("view-own-reports");
+const profileContainer = document.querySelector(".profileContainer");
+const submitReportBtn = document.getElementById("submit-report-btn");
+
+submitReportBtn.addEventListener('click', function()
+{
+    let newReport = {}
+    newReport.Rating = document.getElementById("new-rating").textContent;
+    newReport.Feedback = document.getElementById("new-feedback").textContent;
+    console.log(newReport.Rating + " " + newReport.Feedback);
+})
 
 createReportBtn.addEventListener('click', function()
 {   
@@ -12,6 +23,11 @@ createReportBtn.addEventListener('click', function()
     createReportView.style.display = "block";
 });
 
+viewOwnReportsBtn.addEventListener('click', function()
+{
+    reputationView(localStorage.getItem("id"))
+    profileContainer.style.display = "none";
+});
 
 function organizeReports(response)
 {
@@ -80,6 +96,15 @@ function organizeReports(response)
 
 function reputationView(id)
 {
+    if(id === localStorage.getItem("id"))
+    {
+        createReportBtn.style.display = "none";
+    }
+    else
+    {
+        createReportBtn.style.display = "block";
+    }
+
     const reputationUrl = "https://localhost:7259/Reputation/GetReputation";
     
     reputationBox.style.border = "1px solid";
@@ -230,12 +255,12 @@ function resetReportsView()
         reputationBox.removeChild(removeStars);
     }
 
-    resetReports();
     let resetReputationTitle = document.getElementById("reputation-title");
     reputationBox.removeChild(resetReputationTitle);
     let resetReputationNumber = document.getElementById("reputation-number");
     reputationBox.removeChild(resetReputationNumber);
-    
+
+    resetReports();
 }
 /*(function (userID){
 
