@@ -64,7 +64,7 @@ CREATE TABLE [dbo].[Services](
 	[CreatedBy] [int] NULL,
 	[LastModifiedBy] [int] NOT NULL,
 	[ApprovedBy] [int] NULL,
-	[disabled] [int] NOT NULL,
+	[disabled] [int] Disabled,
  CONSTRAINT [IX_Services] UNIQUE NONCLUSTERED 
 (
 	[CreatedBy] ASC,
