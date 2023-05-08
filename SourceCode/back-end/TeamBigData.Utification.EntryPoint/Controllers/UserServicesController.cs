@@ -169,7 +169,7 @@ namespace Utification.EntryPoint.Controllers
             {
                 if (_role == "Service User")
                 {
-                    //requestresponse = await _servRequestManager.GetOfferRequests().ConfigureAwait(false);
+                    requestresponse = await _servRequestManager.GetOfferRequests(_userId).ConfigureAwait(false);
                 }
                 else
                 {

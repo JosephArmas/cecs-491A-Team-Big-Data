@@ -214,10 +214,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// Gets the requests for a service provider
         /// </summary>
         /// <returns>Returns all of the requests for a service provider</returns>
-        /// <exception cref="NotImplementedException"></exception>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<DataResponse<List<ArrayList>>> GetProviderRequests(ServiceModel serv)
+        public async Task<DataResponse<List<ArrayList>>> GetProviderRequests(int serv)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -226,7 +225,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 var selectSql = "GetProviderRequests";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@ServiceID", serv.ServiceID));
+                command.Parameters.Add(new SqlParameter("@UserID", serv));
                 List<ArrayList> requests = new List<ArrayList>();
                 SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
                 if (reader.HasRows)

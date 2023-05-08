@@ -139,7 +139,8 @@
                 {
                     pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
-                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;                    
+                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;   
+		    pinContent = pinContent + `<button id='requestService' onclick='requestingService(${i})'>Request Service</button>`;                 
                 }
     
                 const infowindow = new google.maps.InfoWindow({
@@ -432,6 +433,139 @@
         }
         initMap();
     }
+window.requestingService = function(pos) {
+   let servicelistContainer = document.querySelector(".servicelist-container");
+   let homeContainer = document.querySelector(".home-container");
+   homeContainer.style.display = "none";
+   servicelistContainer.style.display = "block";
+
+   let distanceInput = document.createElement("input");
+   distanceInput.setAttribute("id", "distance");
+   distanceInput.setAttribute("type", "number");
+distanceInput.setAttribute("max", 20);
+distanceInput.setAttribute("min", 1);
+
+   let distContBtn = document.createElement("button");
+   distContBtn.setAttribute("id", "distancecontinue");
+   distContBtn.innerText = "Continue";
+
+   let cancelBtn = document.createElement("button");
+   cancelBtn.setAttribute("id", "requestCancelBtn");
+   cancelBtn.innerText = "Exit";
+
+   let distanceLabel = document.createElement("label");
+distanceLabel.innerText = "Insert the distance for a list of services";
+
+document.getElementById("ResponseButtons").appendChild(distanceLabel);
+document.getElementById("ResponseButtons").appendChild(document.createElement("br"));
+document.getElementById("ResponseButtons").appendChild(distanceInput);
+document.getElementById("ResponseButtons").appendChild(distContBtn);
+document.getElementById("ResponseButtons").appendChild(document.createElement("br"));
+   document.getElementById("ResponseButtons").appendChild(cancelBtn);
+
+   document.getElementById("requestCancelBtn").addEventListener('click', () => {
+
+     homeContainer.style.display = "block";
+     servicelistContainer.style.display = "none";
+
+     let container = document.querySelector('#ResponseButtons');
+     container.innerHTML = "";
+     document.getElementById("serviceList").innerHTML = "";
+   });
+
+   let data = [];
+   let list = document.getElementById("serviceList");
+   let choice = "";
+
+   function lister(x, y) {
+     x.forEach((service) => {
+       let button = document.createElement("button");
+       button.classList.add('servButton');
+       button.innerText = service.ServiceName;
+       y.appendChild(button);
+     });
+   }
+
+   function buttonlisten() {
+     document.querySelectorAll(".servButton").forEach(item => {
+       item.addEventListener('click', event => {
+         data.forEach((service) => {
+           document.getElementById('infoTab').style.visibility = 'visible';
+           if (item.innerText == service.ServiceName) {
+             document.getElementById('infoTitle').innerText = service.ServiceName;
+             document.getElementById('infoDesc').innerText = service.ServiceDescription;
+             document.getElementById('infoNum').innerText = service.ServicePhone;
+             choice = service;
+           }
+         })
+       });
+     });
+   }
+
+   function regularRequests() {
+     let requestBtn = document.createElement("button");
+     requestBtn.setAttribute("id", "requestBtn");
+     requestBtn.innerText = "Request";
+     document.getElementById("ResponseButtons").appendChild(requestBtn)
+
+     requestBtn.addEventListener("click", event => {
+       axios.post('https://localhost:7259/UserServices/CreateRequest', {
+         RequestID: 0,
+         ServiceID: choice.ServiceID,
+         ServiceName: choice.ServiceName,
+         Requester: localStorage.getItem("id"),
+         RequestLat: pinsInfo[pos].lat,
+         RequestLong: pinsInfo[pos].lng,
+         PinType: pinsInfo[pos].pinType,
+         Accept: 2,
+         Distance: document.getElementById("distance").value
+       }, {
+         headers: {
+           'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+         }
+       });
+     });
+   }
+
+
+   document.getElementById('infoTab').style.visibility = 'hidden';
+   let parent = document.getElementById("distanceForm");
+   let distance = document.getElementById("distance");
+   //distance.value = 20;
+   function distanceBtn() {
+     document.getElementById("serviceList").innerHTML = "";
+     if (distance.value >= 1 && distance.value <= 25) {
+let request = axios.post('https://localhost:7259/UserServices/GetServices', {
+         RequestID: 0,
+         ServiceID: 0,
+         ServiceName: "",
+         Requester: localStorage.getItem("id"),
+         RequestLat: pinsInfo[pos].lat,
+         RequestLong: pinsInfo[pos].lng,
+         PinType: pinsInfo[pos].pinType,
+         Accept: 2,
+         Distance: distance.value
+       }, {
+         headers: {
+           'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+         }
+       }).then(function(response) {
+         data = response.data;
+         lister(data, list);
+         buttonlisten();
+	if(data.length == 0){
+	list.innerHTML = "No local services";
+}
+       });
+       //parent.close();
+
+     }
+   }
+   document.getElementById("distancecontinue").addEventListener('click', distanceBtn);
+   //parent.showModal();
+   regularRequests();
+
+ }
 
     function modifyPinTypeHandler(pos)
     {

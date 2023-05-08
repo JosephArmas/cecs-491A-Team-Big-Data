@@ -14,7 +14,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.UserServ
         public Task<DataResponse<List<ArrayList>>> getnearbyservice(RequestModel request);
         public Task<DataResponse<int>> GetServiceCount();
 
-        public Task<DataResponse<List<ArrayList>>> GetProviderRequests(ServiceModel serv);
+        public Task<DataResponse<List<ArrayList>>> GetProviderRequests(int serv);
 
         public Task<DataResponse<List<ArrayList>>> GetUserRequests(int user);
 

@@ -89,7 +89,7 @@ namespace TeamBigData.Utification.ServiceOfferingsServices
         }
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<DataResponse<List<RequestModel>>> GetOfferRequests(ServiceModel serv)
+        public async Task<DataResponse<List<RequestModel>>> GetOfferRequests(int serv)
         {
             var result = await _servicesDBSelecter.GetProviderRequests(serv).ConfigureAwait(false);
             List<RequestModel> provrequests = new List<RequestModel>();
@@ -98,12 +98,6 @@ namespace TeamBigData.Utification.ServiceOfferingsServices
             foreach (var item in requests)
             {
                 RequestModel requestModel = new RequestModel() { RequestID = (int)item[0], ServiceID = (int)item[1], ServiceName = (string)item[2], Requester = (int)item[3], RequestLat = (string)item[4], RequestLong = (string)item[5], PinType = (int)item[6], Accept = (int)item[7] };
-                if (requestModel.ServiceID != serv.ServiceID || requestModel.ServiceName != serv.ServiceName)
-                {
-                    response.ErrorMessage = "Failed to get correct service requests";
-                    response.IsSuccessful = false;
-                    return response;
-                }
                 provrequests.Add(requestModel);
             }
             response.IsSuccessful = true;

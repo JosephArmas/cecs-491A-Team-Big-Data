@@ -79,7 +79,6 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
                 requestresponse.ErrorMessage = "Distance is outside of permitted area";
                 return requestresponse;
             }
-            Console.WriteLine(request.RequestLat + "Erm");
             requestresponse = await _servService.getservice(request).ConfigureAwait(false);
 
             return requestresponse;
@@ -99,7 +98,7 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
 
             return requestresponse;
         }
-        public async Task<DataResponse<List<RequestModel>>> GetOfferRequests(ServiceModel serv)
+        public async Task<DataResponse<List<RequestModel>>> GetOfferRequests(int serv)
         {
             var requestresponse = new DataResponse<List<RequestModel>>();
 
