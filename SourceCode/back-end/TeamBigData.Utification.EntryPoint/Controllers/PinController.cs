@@ -126,7 +126,7 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> ModifyPinContent([FromBody] Pins pin)
         {
             await LoadUser().ConfigureAwait(false);
-            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinContent"]) || _userId != pin.UserID)
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinContent"]) || (_userId != pin.UserID && _role != "Admin User"))
             {
                 return Unauthorized("Unsupported User.");
             }
@@ -156,7 +156,7 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> ModifyPinType([FromBody] Pins pin)
         {
             await LoadUser().ConfigureAwait(false);
-            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinType"]) || _userId != pin.UserID)
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinType"]) || (_userId != pin.UserID && _role != "Admin User"))
             {
                 return Unauthorized("Unsupported User.");
             }

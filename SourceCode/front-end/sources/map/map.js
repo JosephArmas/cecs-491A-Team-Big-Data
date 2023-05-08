@@ -295,7 +295,7 @@
         let pinID = pinsInfo[pos].pinID;
         //rebuild content
         let content = pinsInfo[pos].description;
-        content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+        content += `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
         if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
             content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
             content += `<button id='uploadPic' onclick='uploadPicture(${pos})'>Upload Picture</button>`;
@@ -353,6 +353,7 @@
 
     window.modifyPinHandler = function (pos) {
         infoWindows[pos].close();
+        pinsMarker[pos].setMap(null);
 
         let userAction = prompt("1. Modify Pin Type\n2. Modify Pin Content\n3. Delete Pin\nPick Options 1-3: ");
         if (!(userAction == "1" || userAction == "2" || userAction == "3") || userAction == null) {
@@ -387,7 +388,7 @@
         pin.UserID = pinsInfo[pos].userID;
         pin.Lat = pinsInfo[pos].lat;
         pin.Lng = pinsInfo[pos].lng;
-        pin.PinType = pinsInfo[pos].pinType;
+        pin.PinType = pinType - 1;
         pin.Description = pinsInfo[pos].description;
         pin.Userhash = localStorage.getItem("userhash");
 
@@ -436,7 +437,7 @@
             .then(function (responseAfter) {
                 infoWindows[pos].close();
 
-                content = content + `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
+                content = content + `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
 
                 //User can delete their pins and admin can delete anyone's pin
                 if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
