@@ -73,6 +73,7 @@ var loginContainer = document.querySelector(".login-container");
     {
         user.Username = email.value;
         user.Password = password.value;
+        getProfileUsername(email.value)
         axios.post(authenticationServer, user).then(function (responseAfter)
         {
             // turning jwt signature from the response into a json object
@@ -145,7 +146,13 @@ var loginContainer = document.querySelector(".login-container");
                 timeOut(cleanError, 'red', errorsDiv)
             });
     }
-
+    
+    //
+    function getProfileUsername(username)
+    {
+        let name = username.substring(0,username.lastIndexOf("@"));
+        return localStorage.setItem('profileUsername',name);
+    }
     // Getters
     function getUserID()
     {

@@ -127,6 +127,7 @@
                 if (currResponse.userID != localStorage.getItem("id"))
                 {
                     pinContent += `<button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`;
+
                 }
 
                 if(localStorage.getItem("role")=="Regular User")
@@ -202,8 +203,9 @@
                 let url = URL.createObjectURL(file);
                 //rebuild content
                 content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + url + ">";
-                content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("role")=="Regular User" || localStorage.getItem("role")== "Reputable User"|| localStorage.getItem("id") == pinsInfo[pos].userID)
+                content += `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                content += `<button id='completePin' onclick='reputationView(pinsInfo[pos].userID)'>View Reputation</button>`
+                if (localStorage.getItem("role")=="Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID)
                 {
                     content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                     content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
@@ -233,6 +235,7 @@
                     }
                 })
             }
+            initMap();
         }
     }
 
@@ -268,13 +271,15 @@
                 {
                     // Picture stored as a DataURL for easy access
                     content += "<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=" + file.data + ">";
-                    content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                    content += `<br>Created: ${pinsInfo[pos].eventCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+                    content += `<button id='reputation-view-btn' onclick='reputationView(${pinsInfo[pos].userID})'>View Reputation</button>`
                     if (localStorage.getItem("role")=="Admin User"  || localStorage.getItem("id") == pinsInfo[pos].userID)
                     {
                         content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
                         content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
                     }
+                    if(localStorage.getItem)
                     infoWindows[pos].setContent(content);
                     updateContent(content);
                 })
