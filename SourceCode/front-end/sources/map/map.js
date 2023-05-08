@@ -212,7 +212,6 @@
                     }
                 })
             }
-            initMap();
         }
     }
 
@@ -248,20 +247,12 @@
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
                         content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
                     }
-                    else
-                    {
-                        content += `<b3>"done"<b3>`;
-                    }
-
                     infoWindows[pos].setContent(content);
-                    //updateContent(content);
                 })
-            }
-            else {
-                updateContent(content);
             }
         })
     }
+
 
     window.updatePicture = function (pos) {
         let pinID = pinsInfo[pos].pinID;
@@ -607,5 +598,4 @@
             });
         }
     }
-})(window, window.ajaxClient);
-
+})(window, window.ajaxClient)
