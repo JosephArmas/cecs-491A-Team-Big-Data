@@ -33,7 +33,6 @@ namespace TeamBigData.Utification.ReputationTests
             // Act
             var act = repMan.RecordNewUserReportAsync("A2-C6-C9-5C-77-40-3F-ED-C3-45-37-ED-80-BE-B8-A7-6D-26-62-E8-49-6F-50-70-25-79-56-B9-CD-70-54-21-EA-8E-24-D7-73-E5-B8-B2-63-F8-E6-4C-7A-1C-AC-90-CD-3D-EA-F5-0A-4A-85-CE-EA-D6-13-26-69-2B-80-48", report, 4.2);
 
-            Console.WriteLine(act.Result.ErrorMessage);
             // Assert
             Assert.IsTrue(act.Result.IsSuccessful);
         }
@@ -68,7 +67,6 @@ namespace TeamBigData.Utification.ReputationTests
 
             // Act
             var getReputation = repMan.ViewCurrentReputationAsync("A2-C6-C9-5C-77-40-3F-ED-C3-45-37-ED-80-BE-B8-A7-6D-26-62-E8-49-6F-50-70-25-79-56-B9-CD-70-54-21-EA-8E-24-D7-73-E5-B8-B2-63-F8-E6-4C-7A-1C-AC-90-CD-3D-EA-F5-0A-4A-85-CE-EA-D6-13-26-69-2B-80-48", 1001);
-            Console.WriteLine(getReputation.Result.Data);
 
             // Assert
             Assert.IsTrue(getReputation.Result.IsSuccessful);

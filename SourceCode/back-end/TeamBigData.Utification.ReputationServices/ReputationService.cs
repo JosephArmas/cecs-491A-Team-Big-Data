@@ -25,12 +25,10 @@ namespace TeamBigData.Utification.ReputationServices
             _selectUserProfile = userSqlDAO;
         }
 
-        public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, string buttonCommand)
+        public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, string buttonCommand, int amount)
         {
             DataResponse<List<Reports>> result = new DataResponse<List<Reports>>();
             List<Reports> dataReports = new List<Reports>();
-            int amount = 0;
-
             var getReports = await _selectReports.SelectUserReportsAsync(user).ConfigureAwait(false);
 
             if (!getReports.IsSuccessful)
@@ -38,8 +36,9 @@ namespace TeamBigData.Utification.ReputationServices
                 result.ErrorMessage = "Failed to retrieve user's reports";
                 return result;
             }
-
-            if (buttonCommand == "Next" && 5 <= getReports.Data.Tables[0].Rows.Count)
+            
+            
+            if(buttonCommand == "Next" && amount <= getReports.Data.Tables[0].Rows.Count)
             {
                 amount += 5;
             }
@@ -53,7 +52,6 @@ namespace TeamBigData.Utification.ReputationServices
             int max = 5 + amount;
             Range range = new Range(start, max);
             Console.WriteLine(range.ToString());
-
             foreach (DataRow report in data.Take(range))
             {
                 Reports reports = new();
@@ -113,8 +111,15 @@ namespace TeamBigData.Utification.ReputationServices
 
         // TODO: Change GetCurrentReputationAsync to return DataResponse with the proper datatype for the response
         public async Task<DataResponse<UserProfile>> CalculateNewUserReputationAsync(Report report)
-        {
-            DataResponse<UserProfile> result = new DataResponse<UserProfile>();            
+        {            
+            DataResponse<UserProfile> result = new DataResponse<UserProfile>();
+
+            if (report.Rating > 5.0 || report.Rating < 0)
+            {
+                result.ErrorMessage = "Please enter a rating between 0.0 and 5.0";
+                return result;
+            }
+
             var getNewReputation = await _selectReports.SelectNewReputationAsync(report).ConfigureAwait(false);            
 
             if (!getNewReputation.IsSuccessful)
@@ -137,11 +142,9 @@ namespace TeamBigData.Utification.ReputationServices
 
             result.IsSuccessful = getOldReputation.IsSuccessful;
 
-            var newRatings = getNewReputation.Data as Tuple<double, int>;
-
             double currentReputation = getOldReputation.Data.Reputation;
-            double cumulativeRatings = (double)newRatings.Item1;
-            double numberOfReports = (double)newRatings.Item2;
+            double cumulativeRatings = (double)getNewReputation.Data.Item1;
+            double numberOfReports = (double)getNewReputation.Data.Item2;
 
             double newReputation = (double)((currentReputation + cumulativeRatings) / (numberOfReports + 1));
             result.Data = new UserProfile(report.ReportedUser, newReputation, getOldReputation.Data.Identity.AuthenticationType);

@@ -130,7 +130,7 @@
                     pinContent += `<button id='completePin' onclick='completePinHandler(${i})'>Complete Pin</button>`;
                 }
 
-                if(localStorage.getItem("role")=="Regular User")
+                if((localStorage.getItem("role")==="Regular User" || localStorage.getItem("role")==="Reputable User") && localStorage.getItem("id") !== currResponse.userID)
                 {
                     pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }

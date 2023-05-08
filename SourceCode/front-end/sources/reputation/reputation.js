@@ -9,12 +9,13 @@ const submitReportBtn = document.getElementById("submit-report-btn");
 const viewOwnReportsBtn = document.getElementById("view-own-reports");
 const reportsViewReturnBtn = document.getElementById("cancel-report-creation");
 const profileView = document.querySelector(".profileContainer");
+const reportForm = document.querySelector(".new-report");
 
 viewOwnReportsBtn.addEventListener('click', function()
 {
     profileView.style.display = "none";
-    resetReportsView();
-    reputationView(localStorage.getItem("reportedUserID"));
+    //resetReportsView();
+    reputationView(localStorage.getItem("id"));
 });
 
 reportsViewReturnBtn.addEventListener('click', function()
@@ -43,6 +44,7 @@ submitReportBtn.addEventListener('click', function()
     newReportRequest.then(function(response)
     {
         createReportView.style.display = "none";
+        reportForm.reset();
         resetReportsView();
         reputationView(localStorage.getItem("reportedUserID"));
     })
@@ -124,7 +126,7 @@ function organizeReports(response)
 }
 
 function reputationView(id)
-{
+{    
     if(id === localStorage.getItem("id"))
     {
         createReportBtn.style.display = "none";
@@ -165,8 +167,13 @@ function reputationView(id)
         userProfile.CreateDate = "";
         userProfile.ReportingUserID = localStorage.getItem("id");
         userProfile.ButtonCommand = "";
+        userProfile.Partition = 0;
         
-        let reputationRequest = axios.post(reputationUrl, userProfile, {});
+        let reputationRequest = axios.post(reputationUrl, userProfile, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+            }
+        });
         reputationRequest.then(function(response)
         {
             for(let i = 0; i < Math.floor(response.data); i++)
@@ -201,15 +208,16 @@ function reportsView(id)
 {    
     const reportsUrl = "https://localhost:7259/Reputation/ViewReports";
 
-    const userReport = {};
-    userReport.UserID = id;
+    let userReport = {};
+    userReport.UserID = Number(id);
     userReport.Rating = 0.0;
     userReport.Feedback = "";
     userReport.CreateDate = "";
     userReport.ReportingUserID = localStorage.getItem("id");
     userReport.ButtonCommand = "";
+    userReport.Partition = 0;
+    console.log("Current User's Reputation: " + userReport.UserID);
 
-    
     reportsContainer.style.border = "2px solid";
     reportsContainer.style.backgroundColor = "gray";
     reportsContainer.style.height = "1000px";
@@ -217,7 +225,11 @@ function reportsView(id)
     reportsContainer.style.marginLeft = "27%";    
     reportsContainer.style.overflow = "hidden";
 
-    let reportsRequest = axios.post(reportsUrl, userReport, {});
+    let reportsRequest = axios.post(reportsUrl, userReport, {
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+        }
+    });
     reportsRequest.then(function(response)
     {   
         localStorage.setItem("numberOfReports", response.data.length);     
@@ -228,28 +240,47 @@ function reportsView(id)
     const previousReportsBtn = document.getElementById("previous-reports");
     previousReportsBtn.addEventListener('click', function()
     {
-            userReport.ButtonCommand = "Previous";
-            const previousReports = axios.post(reportsUrl, userReport, {});
-            previousReports.then(function(response)
+        userReport.UserID = Number(id);
+        console.log("Current User's Reputation: " + userReport.UserID);
+        userReport.ButtonCommand = "Previous";
+        const previousReports = axios.post(reportsUrl, userReport, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+            }
+        });
+        previousReports.then(function(response)
+        {
+            if(response.data.length > 0 && userReport.Partition != 0)
             {
+                userReport.Partition -= 5;
                 resetReports();
                 localStorage.setItem("numberOfReports", response.data.length);                
                 organizeReports(response);
-            });
+            }
+        });
     });
 
     // Partitions and displays the next set of 5 reports
     const nextReportsBtn = document.getElementById("next-reports");
     nextReportsBtn.addEventListener('click', function()
     {
-        
+        userReport.UserID = Number(id);
+        console.log("Current User's Reputation: " + userReport.UserID);
         userReport.ButtonCommand = "Next";           
-        const previousReports = axios.post(reportsUrl, userReport, {});
-        previousReports.then(function(response)
-        {            
-            resetReports();
-            localStorage.setItem("numberOfReports", response.data.length);            
-            organizeReports(response);
+        const nextReports = axios.post(reportsUrl, userReport, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+            }
+        });
+        nextReports.then(function(response)
+        {   
+            if(response.data.length > 0)        
+            {
+                userReport.Partition += 5;
+                resetReports();
+                localStorage.setItem("numberOfReports", response.data.length);            
+                organizeReports(response);
+            }
         });    
     });
 }
