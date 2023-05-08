@@ -64,14 +64,19 @@ WHERE (3959 *
 END
 GO
 
-Create Procedure [dbo].[GetProviderRequests] @ServiceID int
+CREATE Procedure [dbo].[GetProviderRequests] @UserID int
 AS
 BEGIN
 SELECT RequestID,ServiceID,ServiceName,RequestedBy,RequestLat,RequestLong,PinType,Accept 
 FROM [TeamBigData.Utification.Features].[dbo].[ServiceRequests]
-WHERE ServiceID = @ServiceID AND Active = 1
+WHERE ServiceID in
+(SELECT ServiceID 
+From [TeamBigData.Utification.Features].[dbo].[Services]
+WHERE CreatedBy = @UserID
+)
 END
 GO
+
 
 
 Create Procedure [dbo].[GetUserRequests] @RequestedBy int
