@@ -721,12 +721,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> UpdateServiceRole(int userid)
+        public async Task<DataResponse<int>> UpdateServiceRole(int userid)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
 
                 var insertSql = "UpdateRoleService";
                 var command = new SqlCommand(insertSql, connection);
@@ -736,13 +736,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                 try
                 {
-                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
                 catch (Microsoft.Data.SqlClient.SqlException e)
                 {
                     result.ErrorMessage = e.ToString();
                     result.IsSuccessful = false;
-                    //result.data = 0;
+                    result.Data = 0;
                 }
                 return result;
             }
@@ -750,12 +750,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> UpdateRemoveServiceRole(int userid)
+        public async Task<DataResponse<int>> UpdateRemoveServiceRole(int userid)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
 
                 var insertSql = "UpdateRemoveServiceRole";
                 var command = new SqlCommand(insertSql, connection);
@@ -765,13 +765,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                 try
                 {
-                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
                 catch (Microsoft.Data.SqlClient.SqlException e)
                 {
                     result.ErrorMessage = e.ToString();
                     result.IsSuccessful = false;
-                    //result.data = 0;
+                    result.Data = 0;
                 }
                 return result;
             }
