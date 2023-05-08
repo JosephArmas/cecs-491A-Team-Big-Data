@@ -479,7 +479,8 @@
     }
 
     function placeNewPin(latLng, map) {
-        webServiceUrl = backend + 'Pin/PostNewPin';
+        webServiceUrl = backend + '/Pin/PostNewPin';
+        console.log(webServiceUrl);
 
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" || pinType == "3" || pinType == "4" || pinType == "5") || pinType == null) {
