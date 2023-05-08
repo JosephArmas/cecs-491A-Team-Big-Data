@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
+using TeamBigData.Utification.Models.ControllerModels;
 using TeamBigData.Utification.SQLDataAccess.DTO;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Alerts;
 
@@ -55,7 +57,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         }
         public async Task<Response> InsertAlert(Alert alert)
         {
-            var sql = "INSERT INTO dbo.Pins (userID,lat,lng,pinType,\"description\")" +
+            var sql = "INSERT INTO dbo.Alerts (userID,lat,lng,pinType,\"description\")" +
                 "values(@ID, @lat, @lng, @type, @d)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(sql, connection);
@@ -82,38 +84,86 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         {
             var result = new DataResponse<List<Alert>>();
             List<Alert> alerts = new List<Alert>();
-            string sqlStatement = "SELECT * FROM dbo.Alerts";
-            using (SqlConnection connect = new SqlConnection(_connectionString))
+            try
             {
-                try
+                using (var connection = new SqlConnection(_connectionString))
                 {
-                    connect.Open();
-                    using (var reader = (new SqlCommand(sqlStatement, connect)).ExecuteReader())
+                    await connection.OpenAsync().ConfigureAwait(false);
+                    string sqlStatement = "SELECT * FROM dbo.Alerts";
+                    var command = new SqlCommand(sqlStatement, connection);
+                    SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+                    Console.WriteLine(reader.GetOrdinal("alertID"));
+                    if (reader.HasRows)
                     {
-                        while (reader.Read())
+                        int alertID = 1;
+                        int userID = 1;
+                        String lat = "";
+                        String lng = "";
+                        int pinType = 0;
+                        String description = "";
+                        int read = 0;
+                        string dateTime = "";
+                        string zipcode = "California";
+                        int ordinal = reader.GetOrdinal("alertID");
+                        if (!reader.IsDBNull(ordinal))
                         {
-                            int alertID = reader.GetInt32(0);
-                            int userID = reader.GetInt32(1);
-                            String lat = reader.GetString(2);
-                            String lng = reader.GetString(3);
-                            int pinType = reader.GetInt32(4);
-                            String description = reader.GetString(5);
-                            int read = reader.GetInt32(7);
-                            string dateCreated = reader.GetDateTime(8).ToString();
-                            alerts.Add(new Alert(alertID, userID, lat, lng, pinType, description, read, dateCreated));
+                            alertID = reader.GetInt32(ordinal);
                         }
-                        reader.Close();
+                        ordinal = reader.GetOrdinal("userID");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            userID = reader.GetInt32(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("lat");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            lat = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("lng");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            lng = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("description");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            description = reader.GetString(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("read");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            read = reader.GetInt32(ordinal);
+                        }
+                        ordinal = reader.GetOrdinal("dateTime");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            dateTime = reader.GetDateTime(ordinal).ToString();
+                        }
+                        ordinal = reader.GetOrdinal("pinType");
+                        if (!reader.IsDBNull(ordinal))
+                        {
+                            pinType = reader.GetInt32(ordinal);
+                        }
+                        
+                        alerts.Add(new Alert(alertID, userID, lat, lng, pinType, description, read, dateTime,zipcode));
                     }
-                    connect.Close();
+                    await reader.CloseAsync().ConfigureAwait(false);
+                    
+                    result.Data = alerts;
+                    result.IsSuccessful = true;
+                    return result;
                 }
-                catch (SqlException s)
-                {
-                    result.ErrorMessage = s.Message;
-                }
-                catch (Exception e)
-                {
-                    result.ErrorMessage = e.Message;
-                }
+            }
+            catch (SqlException s)
+            {
+                result.ErrorMessage = s.Message;
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                Console.WriteLine(result.ErrorMessage);
+                return result;
+            }
                 if (alerts.Count > 0)
                 {
                     result.IsSuccessful = true;
@@ -126,7 +176,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     result.ErrorMessage = "Alerts don't exist";
                     result.Data = alerts;
                 }
-            }
+            
 
             return result;
         }

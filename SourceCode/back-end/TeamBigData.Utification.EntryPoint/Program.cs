@@ -32,6 +32,9 @@ using TeamBigData.Utification.DeletionService;
 using TeamBigData.Utification.EventsManager;
 using TeamBigData.Utification.EventsServices;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
+using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Alerts;
+using TeamBigData.Utification.AlertManagers;
+using TeamBigData.Utification.AlertServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,7 +100,6 @@ builder.Services.AddTransient<FileManager>();
 
 // Reputation dependencies
 builder.Services.AddDbContext<ReportsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
-builder.Services.AddDbContext<UsersSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersSQLDBConnection")));
 builder.Services.AddTransient<ReputationService>();
 builder.Services.AddTransient<ReputationManager>();
 
@@ -112,6 +114,12 @@ builder.Services.AddTransient<ServiceRequestManager>();
 builder.Services.AddDbContext<EventsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
 builder.Services.AddTransient<EventService>();
 builder.Services.AddTransient<EventManager>();
+
+//Alert dependencies
+builder.Services.AddDbContext<AlertsSqlDAO>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FeaturesSQLDBConnection")));
+builder.Services.AddTransient<AlertService>();
+builder.Services.AddTransient<AlertManager>();
+
 
 // Security Manager
 builder.Services.AddTransient<AccDeletionService>();

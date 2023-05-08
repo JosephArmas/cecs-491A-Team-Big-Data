@@ -17,9 +17,9 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
         }
         Response ReqResponse = new Response();
 
-        public async Task<DataResponse<int>> AcceptRequestOffer(RequestModel request)
+        public async Task<Response> AcceptRequestOffer(RequestModel request)
         {
-            var requestresponse = new DataResponse<int>();
+            var requestresponse = new Response();
 
             if (request == null)
             {
@@ -47,9 +47,9 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
             return requestresponse;
 
         }
-        public async Task<DataResponse<int>> CancelRequestOffer(RequestModel request, int userid)
+        public async Task<Response> CancelRequestOffer(RequestModel request)
         {
-            var requestresponse = new DataResponse<int>();
+            var requestresponse = new Response();
             if (request == null)
             {
                 requestresponse.IsSuccessful = false;
@@ -57,50 +57,51 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
                 return requestresponse;
             }
 
-            requestresponse = await _servService.CancelRequestOffer(request, userid).ConfigureAwait(false);
+            requestresponse = await _servService.CancelRequestOffer(request).ConfigureAwait(false);
 
             return requestresponse;
 
         }
-        public async Task<DataResponse<List<ServiceModel>>> getservice(RequestModel request)
+        public async Task<Response> getservice(Pin pin, int dist)
         {
-            var requestresponse = new DataResponse<List<ServiceModel>>();
+            var requestresponse = new Response();
 
-            if (request == null)
+            if (pin == null || dist == null)
             {
                 requestresponse.IsSuccessful = false;
                 requestresponse.ErrorMessage = "Manager parameter is null";
                 return requestresponse;
             }
 
-            if (request.Distance < 1 || request.Distance > 25)
+            if (dist < 1 || dist > 25)
             {
                 requestresponse.IsSuccessful = false;
                 requestresponse.ErrorMessage = "Distance is outside of permitted area";
                 return requestresponse;
             }
-            requestresponse = await _servService.getservice(request).ConfigureAwait(false);
+
+            requestresponse = await _servService.getservice(pin, dist).ConfigureAwait(false);
 
             return requestresponse;
         }
-        public async Task<DataResponse<int>> RequestService(RequestModel request)
+        public async Task<Response> RequestService(ServiceModel company, Pin pin)
         {
-            var requestresponse = new DataResponse<int>();
+            var requestresponse = new Response();
 
-            if (request == null)
+            if (company == null || pin == null)
             {
                 requestresponse.IsSuccessful = false;
                 requestresponse.ErrorMessage = "Manager parameter is null";
                 return requestresponse;
             }
 
-            requestresponse = await _servService.RequestService(request).ConfigureAwait(false);
+            requestresponse = await _servService.RequestService(company, pin).ConfigureAwait(false);
 
             return requestresponse;
         }
-        public async Task<DataResponse<List<RequestModel>>> GetOfferRequests(int serv)
+        public async Task<Response> GetOfferRequests(ServiceModel serv)
         {
-            var requestresponse = new DataResponse<List<RequestModel>>();
+            var requestresponse = new Response();
 
             if (serv == null)
             {
@@ -113,9 +114,9 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
 
             return requestresponse;
         }
-        public async Task<DataResponse<List<RequestModel>>> GetUserRequests(int user)
+        public async Task<Response> GetUserRequests(UserProfile user)
         {
-            var requestresponse = new DataResponse<List<RequestModel>>();
+            var requestresponse = new Response();
 
             if (user == null)
             {

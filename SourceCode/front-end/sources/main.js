@@ -19,7 +19,6 @@ function homeClicked()
     let loginContainer = document.querySelector(".login-container");
     let homeContainer = document.querySelector(".home-container")
     let recoveryContainer = document.querySelector(".recovery-container");
-    let adminrecoveryContainer = document.querySelector(".admin-recovery-container");
     let recoveryOTPContainer = document.querySelector(".recOTP-container");
     let profileContainer = document.querySelector(".profileContainer");
     anonContainer.style.display = "block";
@@ -29,7 +28,6 @@ function homeClicked()
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
-    adminrecoveryContainer.style.display = "none";
     profileContainer.style.display = "none";
 }
 
@@ -78,6 +76,12 @@ function regView()
     anonContainer.style.display = "none";
     reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
+
+    let script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
+    script.async = true;
+
+    document.head.appendChild(script);
 }
 
 // Admin View
@@ -94,7 +98,12 @@ function adminView()
     analyticsView.style.display = "none";
     otpContainer.style.display = "none";
     
-    
+    // anonContainer.style.display = "none";
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
+    script.async = true;
+
+    document.head.appendChild(script);
 }
 
 
@@ -170,9 +179,6 @@ function buildHomeUserView()
     let joinedEvent = document.createElement('button');
     joinedEvent.setAttribute('type','button');
     joinedEvent.textContent = 'Joined Events';
-    let serviceMenu = document.createElement('button');
-    serviceMenu.setAttribute('type','button');
-    serviceMenu.textContent = 'Service Offerings';
     let uploadBtn = document.createElement('input');
     uploadBtn.setAttribute('type','file');
     uploadBtn.setAttribute('accept','image/jpg');
@@ -182,7 +188,6 @@ function buildHomeUserView()
 
     features.appendChild(createdEvent)
     features.appendChild(joinedEvent)
-    features.appendChild(serviceMenu);
     features.appendChild(uploadBtn);
     let userID = localStorage.getItem('id');
 
@@ -206,8 +211,6 @@ function buildHomeUserView()
         homeDiv.style.display = "none";
         createEventDiv.style.display = "block";
     })
-
-    serviceMenu.addEventListener('click', serviceClicked);
     
     // upload profile pic listener
 
@@ -289,12 +292,6 @@ function buildAdminView()
         analyticsBtn.addEventListener('click', showAnalytics)
         features.appendChild(analyticsBtn);
 
-        let recoveryBtn = document.createElement('button');
-        recoveryBtn.setAttribute('type','button');
-        recoveryBtn.textContent = 'Account Recovery';
-        recoveryBtn.addEventListener('click', showRecovery)
-        features.appendChild(recoveryBtn);
-
         features.style.display = 'none';
         nav.append(features);
     
@@ -320,21 +317,5 @@ function buildAdminView()
         adminViewBuild = true;
 
     }
-}
 
-function showRecovery()
-{
-    let recoveryView = document.querySelector(".admin-recovery-container")
-    let adminView = document.querySelector(".home-admin-container")
-    recoveryView.style.display = "block";
-    adminView.style.display = "none";
-    GetRecoveryRequests();
-}
-
-function recoveryBack()
-{
-    let recoveryView = document.querySelector(".admin-recovery-container")
-    let adminView = document.querySelector(".home-admin-container")
-    recoveryView.style.display = "none";
-    adminView.style.display = "block";
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +10,12 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.UserServ
 {
     public interface IServicesDBSelecter
     {
-        public Task<DataResponse<List<ArrayList>>> getnearbyservice(RequestModel request);
-        public Task<DataResponse<int>> GetServiceCount();
+        public Task<Response> getnearbyservice(Pin pin, int dist);
+        public Task<Response> GetServiceCount();
 
-        public Task<DataResponse<List<ArrayList>>> GetProviderRequests(int serv);
+        public Task<Response> GetProviderRequests(ServiceModel serv);
 
-        public Task<DataResponse<List<ArrayList>>> GetUserRequests(int user);
+        public Task<Response> GetUserRequests(UserProfile user);
 
 
     }

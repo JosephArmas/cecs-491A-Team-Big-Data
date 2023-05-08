@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace TeamBigData.Utification.LoggingTests
 {
-    /*[TestClass]
+    [TestClass]
     public class DataAccessTest
     {
         [TestMethod]
@@ -53,5 +53,5 @@ namespace TeamBigData.Utification.LoggingTests
             Assert.IsTrue(actual >= 0);
             Assert.IsTrue(logResult.IsSuccessful);
         }
-    }*/
+    }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TeamBigData.Utification.PinTests
 {
-    /*[TestClass]
+    [TestClass]
     public class PinUnitTest
     {
         private IServiceCollection _services;
@@ -79,5 +79,5 @@ namespace TeamBigData.Utification.PinTests
             //Assert
             Assert.IsTrue(result.IsSuccessful);
         }
-    }*/
+    }
 }

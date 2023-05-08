@@ -13,22 +13,30 @@ namespace TeamBigData.Utification.ReputationServices
 {
     public class ReputationService
     {
+        private readonly Response _result = new Response();
         private readonly IReportsDBInserter _insertReport;
         private readonly IReportsDBSelecter _selectReports;
         private readonly IUsersDBUpdater _updateUserProfile;
         private readonly IUsersDBSelecter _selectUserProfile;
-        public ReputationService(ReportsSqlDAO reportsSqlDAO, UsersSqlDAO userSqlDAO)
+        private readonly Report _report;
+        private readonly ILogger _logger;
+        private UserAccount _userAccount = new UserAccount();
+        private UserProfile _userProfile = new UserProfile();
+        public ReputationService(ReportsSqlDAO reportsSqlDAO, UsersSqlDAO usersSqlDAO, ILogger logger)
         {
             _insertReport = reportsSqlDAO;
             _selectReports = reportsSqlDAO;
-            _updateUserProfile = userSqlDAO;
-            _selectUserProfile = userSqlDAO;
+            _updateUserProfile = usersSqlDAO;
+            _selectUserProfile = usersSqlDAO;
+            _logger = logger;
         }
 
-        public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, string buttonCommand, int amount)
+        public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, string buttonCommand)
         {
             DataResponse<List<Reports>> result = new DataResponse<List<Reports>>();
             List<Reports> dataReports = new List<Reports>();
+            int amount = 0;
+
             var getReports = await _selectReports.SelectUserReportsAsync(user).ConfigureAwait(false);
 
             if (!getReports.IsSuccessful)
@@ -36,9 +44,8 @@ namespace TeamBigData.Utification.ReputationServices
                 result.ErrorMessage = "Failed to retrieve user's reports";
                 return result;
             }
-            
-            
-            if(buttonCommand == "Next" && amount <= getReports.Data.Tables[0].Rows.Count)
+
+            if (buttonCommand == "Next" && amount <= getReports.Data.Tables[0].Rows.Count)
             {
                 amount += 5;
             }
@@ -52,14 +59,20 @@ namespace TeamBigData.Utification.ReputationServices
             int max = 5 + amount;
             Range range = new Range(start, max);
             Console.WriteLine(range.ToString());
+
             foreach (DataRow report in data.Take(range))
             {
                 Reports reports = new();
                 reports.Rating = Decimal.ToDouble((decimal)report["rating"]);
                 reports.Feedback = (string)report["feedback"];
-                reports.CreateDate = ((DateTime)report["createDate"]).ToUniversalTime().ToString();
+                reports.CreateDate = ((DateTime)report["createDate"]).ToUniversalTime().ToShortDateString().ToString();
                 reports.ReportingUserID = (int)report["reportingUserID"];
                 dataReports.Add(reports);
+            }
+
+            for (int i = 0; i < dataReports.Count; i++)
+            {
+                Console.WriteLine(dataReports[i].Rating.ToString() + " " + dataReports[i].Feedback + " " + dataReports[i].CreateDate + " " + dataReports[i].ReportingUserID);
             }
 
             result.IsSuccessful = true;
@@ -70,38 +83,50 @@ namespace TeamBigData.Utification.ReputationServices
         }
 
         // TODO: Change GetCurrentReputationAsync to return DataResponse with the proper datatype for the response
-        public async Task<DataResponse<UserProfile>> GetCurrentReputationAsync(int user)
+        public async Task<Response> GetCurrentReputationAsync(int user)
         {
             var getReputation = await _selectUserProfile.SelectUserProfile(user).ConfigureAwait(false);
-                        
-            return getReputation;
+
+            _result.IsSuccessful = getReputation.IsSuccessful;
+            //_result.Data = getReputation.Data.Reputation;
+
+            return _result;
         }
 
         public async Task<Response> UpdateRoleAsync(UserProfile userProfile, string role)
         {
-            userProfile = new UserProfile(userProfile.UserID, role);
+            Log log;
+            _userProfile = new UserProfile(userProfile.UserID, role);
 
-            var updateResult = await _updateUserProfile.UpdateUserRoleAsync(userProfile).ConfigureAwait(true);
+            var update = await _updateUserProfile.UpdateUserRoleAsync(_userProfile).ConfigureAwait(true);
 
-            if (!updateResult.IsSuccessful)
+            if (!update.IsSuccessful)
             {
-                updateResult.ErrorMessage = "Failed to update user role";
+                log = new Log(1, "Error", _userAccount.UserHash, "UpdateUserRole()", "Data Store", $"Failed to update users role to {role}");
             }
 
-            return updateResult;
+            log = new Log(1, "Info", _userAccount.UserHash, "UpdateUserRole()", "Data Store", $"Successfully updated users role to {role}");
+            await _logger.Logs(log).ConfigureAwait(false);
+
+            _result.IsSuccessful = true;
+
+            return _result;
         }
 
         public async Task<Response> UpdateReputationAsync(int user, double reputation)
         {
-            var updateResult = await _updateUserProfile.UpdateUserReputationAsync(user, reputation).ConfigureAwait(false);
+            var update = await _updateUserProfile.UpdateUserReputationAsync(user, reputation).ConfigureAwait(false);
 
-            if (!updateResult.IsSuccessful)
+            if (!update.IsSuccessful)
             {
-                updateResult.ErrorMessage += "Failed to update user's reputation";
-                return updateResult;
+                _result.IsSuccessful = false;
+                _result.ErrorMessage = "Failed to update user's reputation";
+                return _result;
             }
 
-            return updateResult;
+            _result.IsSuccessful = true;
+
+            return _result;
         }
 
         /// <summary>
@@ -110,46 +135,39 @@ namespace TeamBigData.Utification.ReputationServices
         /// <returns><see cref="UserProfile"/></returns>
 
         // TODO: Change GetCurrentReputationAsync to return DataResponse with the proper datatype for the response
-        public async Task<DataResponse<UserProfile>> CalculateNewUserReputationAsync(Report report)
-        {            
-            DataResponse<UserProfile> result = new DataResponse<UserProfile>();
-
-            if (report.Rating > 5.0 || report.Rating < 0)
-            {
-                result.ErrorMessage = "Please enter a rating between 0.0 and 5.0";
-                return result;
-            }
-
-            var getNewReputation = await _selectReports.SelectNewReputationAsync(report).ConfigureAwait(false);            
-
-            if (!getNewReputation.IsSuccessful)
-            {
-               getNewReputation.ErrorMessage += "Failed to retrieve user's ratings";
-               result.ErrorMessage = getNewReputation.ErrorMessage;
-
-               return result;
-            }
+        public async Task<Response> CalculateNewUserReputationAsync(Report report)
+        {
+            /*
+            var getNewReputation = await _selectReports.SelectNewReputationAsync(report).ConfigureAwait(false);
 
             var getOldReputation = await _selectUserProfile.SelectUserProfile(report.ReportedUser);
 
-            if (!getOldReputation.IsSuccessful)
+            if (!getNewReputation.IsSuccessful)
             {
-                getOldReputation.ErrorMessage += "Failed to retrieve user's current reputation";
-                result.ErrorMessage = getOldReputation.ErrorMessage;
-
-                return result;
+                _result.ErrorMessage = "Failed to retrieve user's ratings";
+                return _result;
             }
 
-            result.IsSuccessful = getOldReputation.IsSuccessful;
+            if (!getOldReputation.IsSuccessful)
+            {
+                _result.ErrorMessage = "Failed to retrieve user's current reputation";
+                return _result;
+            }
+
+            _result.IsSuccessful = getOldReputation.IsSuccessful;
+
+            var newRatings = getNewReputation.Data as Tuple<double, int>;
 
             double currentReputation = getOldReputation.Data.Reputation;
-            double cumulativeRatings = (double)getNewReputation.Data.Item1;
-            double numberOfReports = (double)getNewReputation.Data.Item2;
+            double cumulativeRatings = (double)newRatings.Item1;
+            double numberOfReports = (double)newRatings.Item2;
 
             double newReputation = (double)((currentReputation + cumulativeRatings) / (numberOfReports + 1));
-            result.Data = new UserProfile(report.ReportedUser, newReputation, getOldReputation.Data.Identity.AuthenticationType);
+            _result.Data = new UserProfile(report.ReportedUser, newReputation, getOldReputation.Data.Identity.AuthenticationType);
 
-            return result;
+            return _result;*/
+
+            throw new NotImplementedException();
         }
 
         public async Task<Response> StoreNewReportAsync(Report report)
@@ -159,25 +177,26 @@ namespace TeamBigData.Utification.ReputationServices
 
             if (!insertReport.IsSuccessful)
             {
-                insertReport.ErrorMessage = "Failed to store report on user";
-                return insertReport;
+                _result.ErrorMessage = "Failed to store report on user";
+                return _result;
             }
 
-            return insertReport;
+            _result.IsSuccessful = true;
+
+            return _result;
         }
 
-        public async Task<Response> ResetUserReputation(UserProfile userProfile, double defaultReputation)
+        public async Task<Response> ResetUserReputation()
         {
-            if (!((IPrincipal)userProfile).IsInRole("Admin User"))
+            if (!((IPrincipal)_userProfile).IsInRole("Admin User"))
             {
-                Response error = new Response();
-                error.ErrorMessage = "Unauthorized Request";
-                return error;
+                _result.ErrorMessage = "Unauthorized Request";
+                return _result;
             }
 
-            var updateResult = await _updateUserProfile.UpdateUserReputationAsync(userProfile.UserID, defaultReputation).ConfigureAwait(false);
+            await _updateUserProfile.UpdateUserReputationAsync(_userProfile.UserID, 2.0).ConfigureAwait(false);
 
-            return updateResult;
+            return _result;
         }
     }
 }

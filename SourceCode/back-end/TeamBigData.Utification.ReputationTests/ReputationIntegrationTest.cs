@@ -18,58 +18,57 @@ namespace TeamBigData.Utification.ReputationTests
     [TestClass]
     public class ReputationIntegrationTest
     {
-        [TestMethod]
-        public void SubmitReportAndAffectReputation()
+        private readonly string featureString = @"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True";
+        private readonly string userString = @"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True";
+        private readonly string logString = @"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
+        private readonly ReputationService repSer;
+        private readonly ReputationManager repMan;
+
+        public ReputationIntegrationTest()
         {
-            // Arrange
-            ReportsSqlDAO reportsDAO = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            UsersSqlDAO usersDAO = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(reportsDAO, usersDAO);
-            ReputationManager repMan = new ReputationManager(repSer, logger);
+            var reportsDAO = new ReportsSqlDAO(featureString);
+            var usersDAO = new UsersSqlDAO(userString);
+            var logger = new Logger(new LogsSqlDAO(logString));
+            repSer = new ReputationService(reportsDAO, usersDAO, logger);
+            repMan = new ReputationManager(repSer, logger);
+        }
+
+        [TestMethod]
+        public async Task SubmitReportAndAffectReputation()
+        {
+            //Arrange
             // The report's user IDs vary upon the device and the users that are in the DB
             Report report = new Report(0.5, 1010, 1011, "This user sucks.");
 
             // Act
-            var act = repMan.RecordNewUserReportAsync("A2-C6-C9-5C-77-40-3F-ED-C3-45-37-ED-80-BE-B8-A7-6D-26-62-E8-49-6F-50-70-25-79-56-B9-CD-70-54-21-EA-8E-24-D7-73-E5-B8-B2-63-F8-E6-4C-7A-1C-AC-90-CD-3D-EA-F5-0A-4A-85-CE-EA-D6-13-26-69-2B-80-48", report, 4.2);
+            var act = await repMan.RecordNewUserReportAsync(report, 4.2);
 
+            Console.WriteLine(act.ErrorMessage);
             // Assert
-            Assert.IsTrue(act.Result.IsSuccessful);
+            Assert.IsTrue(act.IsSuccessful);
         }
 
         [TestMethod]
-        public void GetReports()
+        public async Task GetReports()
         {
-            // Arrange
-            ReportsSqlDAO reportsDAO = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            UsersSqlDAO usersDAO = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(reportsDAO, usersDAO);
-            ReputationManager repMan = new ReputationManager(repSer, logger);
-            
+            //Arrange
             // Act
-            var getReports = repSer.GetUserReportsAsync(1001, "");
+            var getReports = await repSer.GetUserReportsAsync(1001, "");
               
 
             // Assert
-            Assert.IsTrue(getReports.Result.IsSuccessful);
+            Assert.IsTrue(getReports.IsSuccessful);
         }
 
         [TestMethod]
-        public void GetReputation()
+        public async Task GetReputation()
         {
-            // Arrange
-            ReportsSqlDAO reportsDAO = new ReportsSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Features;User=AppUser;Password=t;TrustServerCertificate=True");
-            UsersSqlDAO usersDAO = new UsersSqlDAO(@"Server=.\;Database=TeamBigData.Utification.Users;User=AppUser;Password=t;TrustServerCertificate=True");
-            ILogger logger = new Logger(new LogsSqlDAO(@"Server=.;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True"));
-            ReputationService repSer = new ReputationService(reportsDAO, usersDAO);
-            ReputationManager repMan = new ReputationManager(repSer, logger);
-
+            //Arrange
             // Act
-            var getReputation = repMan.ViewCurrentReputationAsync("A2-C6-C9-5C-77-40-3F-ED-C3-45-37-ED-80-BE-B8-A7-6D-26-62-E8-49-6F-50-70-25-79-56-B9-CD-70-54-21-EA-8E-24-D7-73-E5-B8-B2-63-F8-E6-4C-7A-1C-AC-90-CD-3D-EA-F5-0A-4A-85-CE-EA-D6-13-26-69-2B-80-48", 1001);
+            var getReputation = await repMan.ViewCurrentReputationAsync(1001);
 
             // Assert
-            Assert.IsTrue(getReputation.Result.IsSuccessful);
+            Assert.IsTrue(getReputation.IsSuccessful);
 
         }
     }

@@ -6,7 +6,7 @@ using TeamBigData.Utification.FileServices;
 
 namespace TeamBigData.Utification.FileTests
 {
-    /*
+
     [TestClass]
     public class FileIntegrationTests
     {
@@ -54,5 +54,5 @@ namespace TeamBigData.Utification.FileTests
             Assert.IsTrue(data.Length > 10);
         }
 
-    }*/
+    }
 }

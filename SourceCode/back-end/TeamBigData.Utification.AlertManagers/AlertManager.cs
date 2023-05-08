@@ -6,16 +6,19 @@ using System.Reflection.Metadata;
 using System.Security.Claims;
 using TeamBigData.Utification.SQLDataAccess.Abstractions;
 using TeamBigData.Utification.SQLDataAccess;
+using TeamBigData.Utification.Logging.Abstraction;
 
 namespace TeamBigData.Utification.AlertManagers
 {
     public class AlertManager
     {
         private readonly AlertService _alertService;
-        /* public AlertManager(AlertService alertService)
+        private readonly ILogger _logger;
+        public AlertManager(AlertService alertService, ILogger logger)
          {
-             _alertService = alertService;
-         }*/
+            _alertService = alertService;
+            _logger = logger;
+        }
         //private readonly string _logConnectionString = @"Server=.\;Database=TeamBigData.Utification.Logs;User=AppUser;Password=t;TrustServerCertificate=True;Encrypt=True";
         //private readonly string _logs = @"LogsSQLDBConnection";
         /*public async Task<DataResponse<List<Alert>>> GetListOfAllAlerts(string userHash)
@@ -26,21 +29,35 @@ namespace TeamBigData.Utification.AlertManagers
         }*/
         public async Task<DataResponse<List<Alert>>> GetListOfAllAlerts(String userHash)
         {
-            // TODO: Check if process time follows business rules
+            await _logger.Logs(new Log(0, "Info", userHash, "Get List Of All Alerts", "Data", "User is attempting to get list of all alerts"));
+            try
+            { // TODO: Check if process time follows business rules
 
-            var result = await _alertService.GetAlertTable(userHash).ConfigureAwait(false);
-            if (!result.IsSuccessful)
-            {
-                result.IsSuccessful = false;
-                result.ErrorMessage = "Failed to get Alert Table";
+                var result = await _alertService.GetAlertTable(userHash).ConfigureAwait(false);
+                if (!result.IsSuccessful)
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Failed to get Alert Table";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccessful = true;
+                }
+
                 return result;
             }
-            else
+            catch(Exception ex)
             {
-                result.IsSuccessful = true;
+                await _logger.Logs(new Log(0, "Error", userHash, "_alertService.GetAlertTable", "Data", "Failed to get alerts."));
+                var result = new DataResponse<List<Alert>>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                };
+                //result.ErrorMessage += ex.Message;
+                return result;
             }
-
-            return result;
         }
         /*public async Task<int[]> GetAlertsAdded()
         {
@@ -51,20 +68,30 @@ namespace TeamBigData.Utification.AlertManagers
         }*/
         public async Task<Response> SaveNewAlert(Alert alert, string userHash)
         {
-
-            var result = await _alertService.StoreNewAlert(alert, userHash).ConfigureAwait(false);
-            if (!result.IsSuccessful)
+            await _logger.Logs(new Log(0, "Info", userHash, "Save New Alert Attempt", "Data", "User is attempting to save new alert."));
+            try
             {
-                result.IsSuccessful = false;
-                result.ErrorMessage = "Failed to save Alert";
+
+                var result = await _alertService.StoreNewAlert(alert, userHash).ConfigureAwait(false);
+                if (!result.IsSuccessful)
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage += "Failed to save Alert";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccessful = true;
+                }
+
+                return result;
+            }catch(Exception ex)
+            {
+                await _logger.Logs(new Log(0, "Error", userHash, "_alertService.StoreNewAlert", "Data", "Failed to store new alert."));
+                var result = new Response();
+                result.ErrorMessage += ex.Message;
                 return result;
             }
-            else
-            {
-                result.IsSuccessful = true;
-            }
-
-            return result;
         }
         /*public Response SaveNewAlert(Alert alert, string userHash)
         {

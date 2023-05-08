@@ -1,5 +1,5 @@
 'use strict';
-var recoveryServer= backend + '/recovery/request';
+const recoveryServer= 'https://localhost:7259/recovery/request';
 const recoveryForm = document.getElementById('recovery-form');
 const recoveryHome = document.getElementById('recovery-home');
 const username = document.getElementById('username');
@@ -8,13 +8,6 @@ const recoveryBtn = document.getElementById('recoveryButton');
 const homeBtn = document.getElementById('recovery-home');
 const errors = document.getElementById('errors');
 const request = {};
-
-var backend = "";
-fetch("./config.json").then((response) => response.json()).then((json) => 
-{
-backend = json.backend;
-recoveryServer= backend + '/recovery/request';
-})
 
 recoveryBtn.addEventListener('click', function(event)
 {
@@ -46,9 +39,8 @@ recoveryHome.addEventListener('click', function (event)
 
 function SendRecoveryRequest(u,p)
 {
-    request.Username = u
-    request.NewPassword = p
-    request.AdminID = 0
+    request.username = u
+    request.newPassword = p
     axios.post(recoveryServer, request).then(function (responseAfter)
     {
         alert("Request Sent, Please Wait for an Admin to Approve It");
@@ -65,48 +57,4 @@ function SendRecoveryRequest(u,p)
         {
             errors.innerHTML = error;
         });
-}
-
-function GetRecoveryRequests()
-{
-    let dataPlaceholder = document.getElementById("recoveryData")
-    request.Username = ""
-    request.NewPassword = ""
-    request.AdminID = localStorage.getItem("id")
-    axios.post(backend + "/recovery/admin/get", request).catch(function (error) {
-        if(error.response !== undefined)
-        {
-            let errorAfter = error.response.data;
-            let cleanError = errorAfter.replace(/"/g, "");
-            timeOut(cleanError, 'red', errorsDiv) 
-        }
-    }).then(function(response)
-    {
-        dataPlaceholder.innerHTML = "<ul>"
-        response.data.forEach(element =>
-        {
-            dataPlaceholder.innerHTML += "<li>"
-            dataPlaceholder.innerHTML += "Username:  " + element.username + "\tTimeStamp:   " + element.timestamp;
-            dataPlaceholder.innerHTML += "</li>"
-        })
-        dataPlaceholder.innerHTML += "</ul>"
-    })
-}
-
-function RecoverAccount()
-{
-    request.NewPassword = ""
-    request.Username = document.getElementById("recoveryInput").value;
-    request.AdminID = localStorage.getItem("id")
-    axios.post(backend + "/recovery/admin/complete", request).catch(function (error) {
-    if(error === undefined)
-    {
-        let errorAfter = error.response.data;
-        let cleanError = errorAfter.replace(/"/g, "");
-        timeOut(cleanError, 'red', errorsDiv)
-    }
-    }).then(function()
-    {
-        timeOut("Account Successfully Recovered", 'green', errorsDiv)
-    })
 }

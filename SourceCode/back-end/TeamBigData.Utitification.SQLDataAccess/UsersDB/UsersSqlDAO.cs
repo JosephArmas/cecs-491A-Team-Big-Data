@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Security.Principal;
@@ -16,11 +15,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
     public class UsersSqlDAO : DbContext, IUsersDBInserter, IUsersDBSelecter, IUsersDBUpdater, IUsersDBDeleter
     {
         private readonly String _connectionString;
-        private readonly IConfiguration _configuration;
-        public UsersSqlDAO(DbContextOptions<UsersSqlDAO> options, IConfiguration configuration) : base(options) 
+
+        public UsersSqlDAO(DbContextOptions<UsersSqlDAO> options) : base(options) 
         {
             _connectionString = this.Database.GetDbConnection().ConnectionString;
-            _configuration = configuration;
         }
 
         public UsersSqlDAO(string connectionString)
@@ -99,7 +97,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@ln", ""));
             command.Parameters.Add(new SqlParameter("@add", ""));
             command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
-            command.Parameters.Add(new SqlParameter("@reputation", Convert.ToDecimal(_configuration["Reputation:DefaultReputation"])));
+            command.Parameters.Add(new SqlParameter("@reputation", (decimal)2.0));
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (!result.IsSuccessful)
@@ -114,13 +112,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             return result;
         }
 
-        public async Task<Response> InsertRecoveryRequest(int userID, String digest, String salt)
+        public async Task<Response> InsertRecoveryRequest(int userID, String password, String salt)
         {
-            String insertSql = "Insert into dbo.RecoveryRequests(userID, digest, salt) values (@ID, @d, @salt)";
+            String insertSql = "Insert into dbo.RecoveryRequests(userID, newPassword, salt) values (@ID, @newP, @salt)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(insertSql, connection);
             command.Parameters.Add(new SqlParameter("@ID", userID));
-            command.Parameters.Add(new SqlParameter("@d", digest));
+            command.Parameters.Add(new SqlParameter("@newP", password));
             command.Parameters.Add(new SqlParameter("@salt", salt));
             var response = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (response.ErrorMessage.Contains("conflicted with the FOREIGN KEY constraint \"RR_ForeignKey_01\""))
@@ -399,7 +397,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         public async Task<DataResponse<ValidRecovery>> SelectRecoveryUser(int userID)
         {
             DataResponse<ValidRecovery> validRecovery = new DataResponse<ValidRecovery>();
-            string sqlStatement = "Select TOP 1 digest, salt FROM dbo.RecoveryRequests WHERE fulfilled = 0 AND userID = @ID Order by [timestamp] desc";
+            string sqlStatement = "Select TOP 1 newPassword, salt FROM dbo.RecoveryRequests WHERE fulfilled = 0 AND userID = @ID Order by [timestamp] desc";
             using (SqlConnection connect = new SqlConnection(_connectionString))
             {
                 try
@@ -414,7 +412,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         // read through all rows
                         while (reader.Read())
                         {
-                            int ordinal = reader.GetOrdinal("digest");
+                            int ordinal = reader.GetOrdinal("newPassword");
                             if (!reader.IsDBNull(ordinal))
                             {
                                 password = reader.GetString(ordinal);
@@ -659,10 +657,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         using (SqlCommand command = new SqlCommand())
                         {
                             command.Connection = connection;
-                            command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeRole:Name"]);
+                            command.CommandText = "UpdateUserRole";
                             command.CommandType = CommandType.StoredProcedure;
-                            command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeRole:Parameter1"]), userProfile.UserID);
-                            command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeRole:Parameter2"]), userProfile.Identity.AuthenticationType);
+                            command.Parameters.AddWithValue("@reportedUser", userProfile.UserID);
+                            command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
 
                             int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
@@ -701,10 +699,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
-                        command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeReputation:Name"]);
+                        command.CommandText = "UpdateUserReputation";
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeReputation:Parameter1"]), user);
-                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeReputation:Parameter2"]), newReputation);
+                        command.Parameters.AddWithValue("@reportedUser", user);
+                        command.Parameters.AddWithValue("@newReputation", newReputation);
 
                         int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
 
@@ -723,12 +721,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<DataResponse<int>> UpdateServiceRole(int userid)
+        public async Task<Response> UpdateServiceRole(int userid)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new DataResponse<int>();
+                var result = new Response();
 
                 var insertSql = "UpdateRoleService";
                 var command = new SqlCommand(insertSql, connection);
@@ -738,13 +736,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                 try
                 {
-                    result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
                 catch (Microsoft.Data.SqlClient.SqlException e)
                 {
                     result.ErrorMessage = e.ToString();
                     result.IsSuccessful = false;
-                    result.Data = 0;
+                    //result.data = 0;
                 }
                 return result;
             }
@@ -752,12 +750,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         }
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<DataResponse<int>> UpdateRemoveServiceRole(int userid)
+        public async Task<Response> UpdateRemoveServiceRole(int userid)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new DataResponse<int>();
+                var result = new Response();
 
                 var insertSql = "UpdateRemoveServiceRole";
                 var command = new SqlCommand(insertSql, connection);
@@ -767,13 +765,13 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
 
                 try
                 {
-                    result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
                 catch (Microsoft.Data.SqlClient.SqlException e)
                 {
                     result.ErrorMessage = e.ToString();
                     result.IsSuccessful = false;
-                    result.Data = 0;
+                    //result.data = 0;
                 }
                 return result;
             }

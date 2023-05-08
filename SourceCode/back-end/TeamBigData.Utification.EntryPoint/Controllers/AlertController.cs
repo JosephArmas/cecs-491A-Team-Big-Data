@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 using TeamBigData.Utification.Models.ControllerModels;
+using TeamBigData.Utification.ErrorResponse;
 
 namespace Utification.EntryPoint.Controllers
 {
@@ -27,9 +28,31 @@ namespace Utification.EntryPoint.Controllers
 
         }*/
         private readonly AlertManager _alertManager;
-        public AlertController(AlertManager alertManager)
+        private String _role;
+        private String _userhash;
+        private int _userId;
+        private string _lat;
+        private string _lng;
+        private string _description;
+        private int _pinType;
+        private int _read;
+        private string? _zipcode;
+        private readonly IConfiguration _configuration;
+        //private readonly ILogger _logger;
+        public AlertController(AlertManager alertManager, IConfiguration configuration)
         {
             _alertManager = alertManager;
+            _configuration = configuration;
+            _role = "Anonymous User";
+            _userhash = "";
+            _userId = 0;
+            _lat = "";
+            _lng = "";
+            _description = "";
+            _pinType = 0;
+            _read = 0;
+            _zipcode = "";
+            //_logger = logger;
         }
 
 
@@ -44,9 +67,9 @@ namespace Utification.EntryPoint.Controllers
 
         }
 
-        [Authorize]
-        [Route("GetAllAlerts")]
-        [HttpGet]
+        //[Authorize]
+        //[Route("GetAllAlerts")]
+        [HttpGet("GetAllAlerts")]
         public async Task<IActionResult> GetAllAlerts()
         {
             var result = await _alertManager.GetListOfAllAlerts("userhash").ConfigureAwait(false);
@@ -90,13 +113,19 @@ namespace Utification.EntryPoint.Controllers
                 return Conflict(result.errorMessage);
             }*/
         }
-        [Authorize]
-        [Route("PostNewAlert")]
-        [HttpPost]
+        //[Authorize]
+        //[Route("PostNewAlert")]
+        [HttpPost("PostNewAlert")]
         public async Task<IActionResult> PostNewAlert([FromBody] AlertInfo newAlert)
         {
             try
             {
+                /*await LoadUser().ConfigureAwait(false);
+                if (!InputValidation.AuthorizedUser(_role, _configuration["AlertAuthorization:PostNewAlert"]))
+                {
+                    return Unauthorized("Unsupported User.");
+                }*/
+
                 Alert alert = new Alert(newAlert.UserID, newAlert.Lat, newAlert.Lng, newAlert.Description);
 
                 var result = await _alertManager.SaveNewAlert(alert, "temp hash").ConfigureAwait(false);
@@ -138,9 +167,9 @@ namespace Utification.EntryPoint.Controllers
             tcs.SetResult(Ok(response));
             return tcs.Task;*/
         }
-        [Authorize]
-        [Route("ReadUserAlert")]
-        [HttpPost]
+        //[Authorize]
+        //[Route("ReadUserAlert")]
+        [HttpPost("ReadUserAlert")]
         public async Task<IActionResult> ReadUserAlert([FromBody] AlertInfo newAlert)
         {
             var result = await _alertManager.MarkAsRead(newAlert.AlertID, newAlert.UserID, "temp hash").ConfigureAwait(false);
@@ -177,9 +206,9 @@ namespace Utification.EntryPoint.Controllers
             return tcs.Task;*/
         }
 
-        [Authorize]
-        [Route("ModifyAlert")]
-        [HttpPost]
+        //[Authorize]
+        //[Route("ModifyAlert")]
+        [HttpPost("ModifyAlert")]
         public async Task<IActionResult> ModifyAlert(AlertInfo newAlert)
         {
             var result = await _alertManager.ModifyAlert(newAlert.AlertID, newAlert.UserID, newAlert.Description, "userhash").ConfigureAwait(false);
@@ -215,6 +244,24 @@ namespace Utification.EntryPoint.Controllers
             tcs.SetResult(Ok(response));
             return tcs.Task;*/
         }
+        private async Task LoadUser()
+        {
+            const string HeaderKeyName = "HeaderKey";
+            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
+            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
 
+            // Get role from JWT signature.
+            string clean = authorizationToken;
+            clean = clean.Remove(0, 7);
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(clean);
+            IEnumerable<Claim> claims = token.Claims;
+
+            // Get whats needed from JWT.
+            _role = claims.ElementAt(2).Value;
+            _userhash = claims.ElementAt(6).Value;
+            _userId = Convert.ToInt32(claims.ElementAt(0).Value);
+        }
     }
 }

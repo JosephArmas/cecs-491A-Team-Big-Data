@@ -10,8 +10,8 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers.Interfaces
 {
     public interface IServiceOfferingManager
     {
-        public Task<DataResponse<int>> unregister(ServiceModel Serv);
-        public Task<DataResponse<int>> CreateService(ServiceModel Serv);
-        public Task<DataResponse<int>> UpdateService(ServiceModel Serv);
+        public Task<Response> unregister(ServiceModel Serv);
+        public Task<Response> CreateService(ServiceModel Serv);
+        public Task<Response> UpdateService(ServiceModel Serv);
     }
 }

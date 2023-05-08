@@ -1,9 +1,3 @@
-var backend = "";
-fetch("./config.json").then((response) => response.json()).then((json) => 
-{
-backend = json.backend;
-})
-
 function addProfilePic()
 {
     let userID = localStorage.getItem("id");
@@ -18,11 +12,6 @@ function addProfilePic()
         let filename = file.name;
         let length = filename.length;
         let ext = filename.substring(length - 4, length)
-        if(file.size > 1000000)
-            {
-                alert("File too big");
-                return 0;
-            }
         if(ext != ".jpg" && ext != ".png" && ext != ".JPG" && ext != ".PNG")
         {
             alert("Incorrect File Extension");
@@ -38,7 +27,7 @@ function addProfilePic()
                 role: localStorage.getItem("role"),
                 userID: userID
             }
-            axios.post(backend + "/File/profileUpload", params).catch(function (error)
+            axios.post(backend + "profileUpload", params).catch(function (error)
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
@@ -72,11 +61,6 @@ function updateProfilePic()
         let filename = file.name;
         let length = filename.length;
         let ext = filename.substring(length - 4, length)
-        if(file.size > 1000000)
-            {
-                alert("File too big");
-                return 0;
-            }
         if(ext != ".jpg" && ext != ".png" && ext != ".JPG" && ext != ".PNG")
         {
             alert("Incorrect File Extension");
@@ -92,7 +76,7 @@ function updateProfilePic()
                 role: localStorage.getItem("role"),
                 userID: userID
             }
-            axios.post(backend + "/File/profileUpdate", params).catch(function (error)
+            axios.post(backend + "profileUpdate", params).catch(function (error)
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
@@ -119,7 +103,7 @@ function downloadProfilePic()
         headers : {"ID": userID}
     };
     // Get the key from the backend SQL Server
-    axios.post(backend + "/File/profileDownload", 0, config).catch(function (error)
+    axios.post(backend + "profileDownload", 0, config).catch(function (error)
     {
         let errorAfter = error.response.data;
         let cleanError = errorAfter.replace(/"/g,"");
@@ -133,7 +117,7 @@ function downloadProfilePic()
         else if(key.data.length > 0)
         {
             // Download file from S3
-            axios.get(s3 + "/" + key.data).catch(function (error)
+            axios.get(s3 + key.data).catch(function (error)
             {
                 let errorAfter = error.response.data;
                 let cleanError = errorAfter.replace(/"/g,"");
@@ -158,7 +142,7 @@ function deleteProfilePic()
         role: localStorage.getItem("role"),
         userID: userID
     }
-    axios.post(backend + "/profileDelete", params).catch(function (error)
+    axios.post(backend + "profileDelete", params).catch(function (error)
     {
         let errorAfter = error.response.data;
         let cleanError = errorAfter.replace(/"/g,"");

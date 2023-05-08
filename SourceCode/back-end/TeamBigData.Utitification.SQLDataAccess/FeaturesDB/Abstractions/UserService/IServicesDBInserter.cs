@@ -10,8 +10,8 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.UserServ
 {
     public interface IServicesDBInserter
     {
-        public Task<DataResponse<int>> InsertProvider(ServiceModel serv);
+        public Task<Response> InsertProvider(ServiceModel serv);
 
-        public Task<DataResponse<int>> InsertServiceReq(RequestModel request);
+        public Task<Response> InsertServiceReq(ServiceModel serv, Pin pin);
     }
 }

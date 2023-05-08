@@ -25,46 +25,52 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
             _servService = servService;
             _logger = logger;
         }
-        DataResponse<int> managerresult = new DataResponse<int>();
+        Response managerresult = new Response();
         /// <summary>
         /// Validates all of the required textual inputs for the ServModel
         /// </summary>
         /// <param name="server">The Service that needs to be validated</param>
         /// <returns>A Response. True being passing all test, false passing one test</returns>
-        private DataResponse<int> ValidateServiceText(ServiceModel server)
-        {
 
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        private Response ValidateServiceText(ServiceModel server)
+        {
+            /*
             Regex listofAcceptable = new Regex(@"^[\s\da-zA-Z.@áéíóúüñ¿¡ÁÉÍÓÚÜÑ/-]*$");
             Regex spaces = new Regex(@"[ ]");
             Regex phone = new Regex(@"^[\+]?(1)[(]?(209|213|310|323|408|415|424|442|510|530|559|562|619|626|650|657|661|669
                                     |707|714|747|760|805|818|831|858|909|916|925|949|951)[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}$");
             MatchCollection titlematches = listofAcceptable.Matches(server.ServiceName);
             MatchCollection descmatches = listofAcceptable.Matches(server.ServiceDescription);
-            var response = new DataResponse<int>();
+            var response = new Response();
             response.IsSuccessful = true;
 
             if (server.ServiceName.Length > 30 || server.ServiceName.Length < 4)
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "title length";
+                response.data = server.ServiceName;
             }
 
             if (titlematches.Count != 1)
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "title char";
+                response.data = server.ServiceName;
             }
 
             if (server.ServiceDescription.Length > 1000 || spaces.Matches(server.ServiceDescription).Count > 150)
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "desc length";
+                response.data = server.ServiceDescription;
             }
 
             if (descmatches.Count != 1)
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "desc char";
+                response.data = server.ServiceDescription;
             }
 
 
@@ -72,20 +78,27 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "phone area or country code";
+                response.data = server.ServicePhone;
             }
             if (server.ServicePhone.Length > 20)
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "phone length";
+                response.data = server.ServicePhone;
             }
 
-            return response;
+            return response;*/
+
+            throw new NotImplementedException();
         }
 
-        private DataResponse<int> ValidatePinTypes(string pinStr)
+
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        private Response ValidatePinTypes(string pinStr)
         {
-            var response = new DataResponse<int>();
-            string validPins = @"^(?!.*(.).*\1)[0-4]+$";
+            /*
+            var response = new Response();
+            string validPins = @"^(?!.*(.).*\1)[1-5]+$";
             Regex pinLimit = new Regex(validPins);
 
             MatchCollection pins = pinLimit.Matches(pinStr);
@@ -96,9 +109,12 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
             {
                 response.IsSuccessful = false;
                 response.ErrorMessage = "Invalid Pin Types";
+                response.data = pinStr;
             }
 
-            return response;
+            return response;*/
+
+            throw new NotImplementedException();
         }
 
 
@@ -107,11 +123,11 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
         /// </summary>
         /// <param name="serv">The service that is going to be unregistered</param>
         /// <returns>Response from the service layer</returns>
-        public async Task<DataResponse<int>> unregister(ServiceModel serv)
+
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        public async Task<Response> unregister(ServiceModel serv)
         {
-
-
-
+            /*
             if (serv == null)
             {
                 managerresult.IsSuccessful = false;
@@ -132,7 +148,10 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
             Log log;
             log = new Log(1, "Error", "User", "ServiceProviderManager.unregister()", "Data", "Error Select Pint Table returns empty.");
             await _logger.Logs(log).ConfigureAwait(false);
-            return managerresult;
+            return managerresult;*/
+
+
+            throw new NotImplementedException();
         }
 
 
@@ -141,9 +160,11 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
         /// </summary>
         /// <param name="serv">The service that is going to be registered</param>
         /// <returns>A response either from the service layer or the valid service text</returns>
-        public async Task<DataResponse<int>> CreateService(ServiceModel serv)
+
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        public async Task<Response> CreateService(ServiceModel serv)
         {
-            if (serv == null)
+            /*if (serv == null)
             {
                 managerresult.IsSuccessful = false;
                 managerresult.ErrorMessage = "Manager ServiceModel parameter is null";
@@ -171,7 +192,10 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
 
             managerresult = await _servService.CreateServiceProv(serv).ConfigureAwait(false);
 
-            return managerresult;
+            return managerresult;*/
+
+
+            throw new NotImplementedException();
         }
 
 
@@ -180,9 +204,11 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
         /// </summary>
         /// <param name="serv">The Service being updated</param>
         /// <returns>Response of success or failure</returns>
-        public async Task<DataResponse<int>> UpdateService(ServiceModel serv)
+
+        // TODO: Change to DataResponse with the the datatype you want to return back
+        public async Task<Response> UpdateService(ServiceModel serv)
         {
-            if (serv == null)
+            /*if (serv == null)
             {
                 managerresult.IsSuccessful = false;
                 managerresult.ErrorMessage = "Manager ServiceModel parameter is null";
@@ -210,7 +236,9 @@ namespace TeamBigData.Utification.ServiceOfferingsManagers
 
             managerresult = await _servService.UpdateServiceProv(serv).ConfigureAwait(false);
 
-            return managerresult;
+            return managerresult;*/
+
+            throw new NotImplementedException();
         }
     }
 }

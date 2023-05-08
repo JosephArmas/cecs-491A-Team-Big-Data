@@ -8,7 +8,7 @@ using TeamBigData.Utification.Manager;
 
 namespace TeamBigData.Utification.LogoutTests
 {
-    /*[TestClass]
+    [TestClass]
     public class LogoutUnitTest
     {
         [TestMethod]
@@ -24,5 +24,5 @@ namespace TeamBigData.Utification.LogoutTests
             Assert.IsFalse(result.IsSuccessful);
             Assert.AreEqual(expected, result.ErrorMessage);
         }
-    }*/
+    }
 }

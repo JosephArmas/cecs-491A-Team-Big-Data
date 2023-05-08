@@ -14,6 +14,5 @@ namespace TeamBigData.Utification.Models.ControllerModels
         public string CreateDate { get; set; }
         public int ReportingUserID { get; set; }
         public string ButtonCommand { get; set; }
-        public int Partition { get; set; }
     }
 }

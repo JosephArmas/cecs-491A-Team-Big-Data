@@ -26,11 +26,6 @@ namespace TeamBigData.Utification.AccountServices
             _userDBUpdater = usersSqlDAO;
         }
 
-        public async Task<DataResponse<int>> GetUserIDbyName(String username)
-        {
-            return await _usersDBSelecter.SelectUserID(username);
-        }
-
         public async Task<Response> RequestRecoveryNewPassword(String username, String password)
         {
             // validate is a user

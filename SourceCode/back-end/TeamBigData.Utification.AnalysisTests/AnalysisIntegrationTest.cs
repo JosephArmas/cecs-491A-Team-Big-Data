@@ -8,7 +8,7 @@ using TeamBigData.Utification.Models;
 
 namespace TeamBigData.Utification.AnalysisTests
 {
-    /*[TestClass]
+    [TestClass]
     public class AnalysisIntegrationTest
     {
         private readonly String connectionString;
@@ -48,5 +48,5 @@ namespace TeamBigData.Utification.AnalysisTests
             Assert.IsTrue(response.IsSuccessful);
             Assert.AreEqual(before.Data[0] + 1, after.Data[0]);
         }
-    }*/
+    }
 }

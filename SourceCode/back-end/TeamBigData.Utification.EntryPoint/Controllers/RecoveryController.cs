@@ -32,7 +32,7 @@ namespace Utification.EntryPoint.Controllers
 
 
             // Make recovery request
-            var response = await _securityManager.RecoverAccountPassword(user.Username, user.NewPassword).ConfigureAwait(false);
+            var response = await _securityManager.RecoverAccountPassword(user.Username, user.NewPassword, user.Userhash).ConfigureAwait(false);
 
             if (!response.IsSuccessful)
             {
@@ -45,15 +45,32 @@ namespace Utification.EntryPoint.Controllers
             {
                 return Ok(response.ErrorMessage);
             }
+
+            /*
+            var tcs = new TaskCompletionSource<IActionResult>();
+            //var manager = new SecurityManager();
+            var encryptor = new Encryptor();
+            var digest = encryptor.encryptString(r._newPassword);
+            var response = new Response();//= manager.RecoverAccount(r.username, digest, encryptor).Result;
+            if (response.isSuccessful)
+            {
+                tcs.SetResult(Ok());
+            }
+            else
+            {
+                tcs.SetResult(Conflict(response.errorMessage));
+            }
+            return tcs.Task;
+            */
         }
 
-        [Route("admin/get")]
-        [HttpPost]
+        [Route("admin")]
+        [HttpGet]
         //admin only
         public async Task<IActionResult> GetRequests([FromBody] RequestBody user)
         {
             // Validate user to be admin
-            var dataResponse = await _securityManager.GetRecoveryRequests(user.AdminID).ConfigureAwait(false);
+            var dataResponse = await _securityManager.GetRecoveryRequests(user.Userhash).ConfigureAwait(false);
 
             if (!dataResponse.IsSuccessful)
             {
@@ -63,9 +80,21 @@ namespace Utification.EntryPoint.Controllers
             {
                 return Ok(dataResponse.Data);
             }
+            /*var tcs = new TaskCompletionSource<IActionResult>();
+            //var manager = new SecurityManager();
+            var adminUser = new UserProfile(7780, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
+            var response = new Response();//= await manager.GetRecoveryRequests(adminUser);
+            if (response.isSuccessful)
+            {
+                return Ok(response.data);
+            }
+            else
+            {
+                return Conflict(response.errorMessage);
+            }*/
         }
 
-        [Route("admin/complete")]
+        [Route("admin")]
         [HttpPost]
         //admin only
         public async Task<IActionResult> CompleteRequest([FromBody] RequestBody body)
@@ -73,15 +102,27 @@ namespace Utification.EntryPoint.Controllers
             // Validate user
             // Validate inputs
             // Reset account
-            var response = await _securityManager.ResetAccount(body.Username, body.AdminID).ConfigureAwait(false);
+            var response = await _securityManager.ResetAccount(body.UserID,body.Userhash).ConfigureAwait(false);
             if (!response.IsSuccessful)
             {
                 return Conflict(response.ErrorMessage);
             }
+            else 
+            { 
+                return Ok(response.ErrorMessage); 
+            }
+            /*
+            //var manager = new SecurityManager();
+            var adminUser = new UserProfile(7780, "", "", "", System.DateTime.UtcNow, new GenericIdentity("Admin User"));
+            var response = new Response();//= await manager.ResetAccount(userID, adminUser);
+            if (response.isSuccessful)
+            {
+                return(Ok());
+            }
             else
             {
-                return Ok(response.ErrorMessage);
-            }
+                return Conflict(response.errorMessage);
+            }*/
         }
     }
 }

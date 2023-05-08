@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text.Json;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Models;
@@ -20,45 +15,22 @@ namespace Utification.EntryPoint.Controllers
     {
         private readonly ServiceOfferingManager _serviceProviderManager;
         private readonly ServiceRequestManager _servRequestManager;
-        private readonly IConfiguration _configuration;
-        private String _role;
-        private String _userhash;
-        private int _userId;
-
-        public UserServicesController(ServiceRequestManager servRequestManager, ServiceOfferingManager servProviderService, IConfiguration configuration)
+        public UserServicesController(ServiceRequestManager servRequestManager, ServiceOfferingManager servProviderService)
         {
-            _configuration = configuration;
             _serviceProviderManager = servProviderService;
             _servRequestManager = servRequestManager;
-            _role = "Anonymous User";
-            _userhash = "";
-            _userId = 0;
-            _configuration = configuration;
         }
         #region Service Creation
         [Route("CreateService")]
         [HttpPost]
         public async Task<IActionResult> CreateService([FromBody] ServiceModel serv)
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<int> ProvResponse = new DataResponse<int>();
-            if (!InputValidation.AuthorizedUser(_role, _configuration["ServiceOfferingAuthorization:CreateService"]))
-            {
-                return Unauthorized("Unsupported User.");
-            }
+            Response ProvResponse = new Response();
+            var tcs = new TaskCompletionSource<IActionResult>();
+            ServiceModel Serv = new ServiceModel();
+            ProvResponse = await _serviceProviderManager.CreateService(serv).ConfigureAwait(false);
 
-            try
-            {
-                ProvResponse = await _serviceProviderManager.CreateService(serv).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured creating a service account");
-            }
-            if (ProvResponse.IsSuccessful == false)
-            {
-                return Conflict(ProvResponse.ErrorMessage);
-            }
+            //return (IActionResult)tcs;
             return Ok(ProvResponse.ErrorMessage);
         }
 
@@ -66,39 +38,22 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteService([FromBody] ServiceModel serv)
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<int> ProvResponse = new DataResponse<int>();
+            Response ProvResponse = new Response();
             var tcs = new TaskCompletionSource<IActionResult>();
             ServiceModel model = new ServiceModel();
-            try
-            {
-                ProvResponse = await _serviceProviderManager.unregister(serv).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured removing a service account");
-            }
-            return Ok(ProvResponse);
+            ProvResponse = await _serviceProviderManager.unregister(serv).ConfigureAwait(false);
+            return Ok(ProvResponse.ErrorMessage);
         }
 
         [Route("UpdateService")]
         [HttpPost]
         public async Task<IActionResult> UpdateService([FromBody] ServiceModel serv)
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<int> ProvResponse = new DataResponse<int>();
+            Response ProvResponse = new Response();
             var tcs = new TaskCompletionSource<IActionResult>();
             ServiceModel model = new ServiceModel();
-            try
-            {
-                ProvResponse = await _serviceProviderManager.UpdateService(serv).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured updating a service account");
-            }
-
-            return Ok(ProvResponse);
+            ProvResponse = await _serviceProviderManager.UpdateService(serv).ConfigureAwait(false);
+            return Ok(ProvResponse.ErrorMessage);
         }
         #endregion
         #region Service Requests
@@ -106,134 +61,67 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRequest([FromBody] RequestModel request)
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<int> requestresponse = new DataResponse<int>();
-            try
-            {
-                requestresponse = await _servRequestManager.RequestService(request).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured creating a request");
-            }
-
-            return Ok(requestresponse);
+            return Ok(request.Distance);
         }
         [Route("AcceptRequest")]
         [HttpPost]
-        public async Task<IActionResult> AcceptRequest([FromBody] RequestModel request)
+        public async Task<IActionResult> AcceptRequest()
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<int> requestresponse = new DataResponse<int>();
-            try
-            {
-                requestresponse = await _servRequestManager.AcceptRequestOffer(request).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured accepting a request");
-            }
-
             return Ok("Request Accepted");
         }
         [Route("DenyRequest")]
         [HttpPost]
-        public async Task<IActionResult> DenyRequest([FromBody] RequestModel request)
+        public async Task<IActionResult> DenyRequest()
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<int> requestresponse = new DataResponse<int>();
-            try
-            {
-                requestresponse = await _servRequestManager.CancelRequestOffer(request, _userId).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured denying a request");
-            }
             return Ok("Request Denied");
         }
         [Route("CancelRequest")]
         [HttpPost]
-        public async Task<IActionResult> CancelRequest([FromBody] RequestModel request)
+        public async Task<IActionResult> CancelRequest()
         {
-            await LoadUser().ConfigureAwait(false);
-            Response requestresponse = new Response();
-            try
-            {
-                requestresponse = await _servRequestManager.CancelRequest(request).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured canceling ");
-            }
-
-            return Ok("Request Canceled");
+            List<RequestModel> jsonlist = new List<RequestModel>();
+            RequestModel request = new RequestModel();
+            request.RequestID = 3;
+            request.ServiceName = "Ager";
+            request.Accept = 2;
+            request.RequestLat = "0.0";
+            request.RequestLong = "0.0";
+            request.Requester = 4;
+            request.Distance = 3;
+            request.PinType = 1;
+            request.ServiceID = 8;
+            RequestModel request2 = new RequestModel();
+            request2.RequestID = 3;
+            request2.ServiceName = "TiresAreGone";
+            request2.Accept = 2;
+            request2.RequestLat = "5.0";
+            request2.RequestLong = "0.0";
+            request2.Requester = 6;
+            request2.Distance = 7;
+            request2.PinType = 1;
+            request2.ServiceID = 8;
+            var jsonstr = JsonSerializer.Serialize<RequestModel>(request);
+            var jsonstr2 = JsonSerializer.Serialize<RequestModel>(request2);
+            jsonlist.Add(request);
+            jsonlist.Add(request2);
+            var jsonstr3 = JsonSerializer.Serialize<List<RequestModel>>(jsonlist);
+            return Ok(jsonstr3);
 
         }
         [Route("GetRequests")]
         [HttpGet]
         public async Task<IActionResult> GetRequests()
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<List<RequestModel>> requestresponse = new DataResponse<List<RequestModel>>();
-            try
-            {
-                if (_role == "Service User")
-                {
-                    requestresponse = await _servRequestManager.GetOfferRequests(_userId).ConfigureAwait(false);
-                }
-                else
-                {
-                    requestresponse = await _servRequestManager.GetUserRequests(_userId).ConfigureAwait(false);
-                }
-                
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured getting requests");
-            }
 
-            var dataResponse = JsonSerializer.Serialize<List<RequestModel>>(requestresponse.Data);
-            return Ok(dataResponse);
+            return Ok("Requests Gotten");
         }
         [Route("GetServices")]
-        [HttpPost]
-        public async Task<IActionResult> GetServices([FromBody] RequestModel request)
+        [HttpGet]
+        public async Task<IActionResult> GetServices()
         {
-            await LoadUser().ConfigureAwait(false);
-            DataResponse<List<ServiceModel>> requestresponse = new DataResponse<List<ServiceModel>>();
-            try
-            {
-                requestresponse = await _servRequestManager.getservice(request).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                return Conflict("An unknown error has occured getting services");
-            }
-
-            var dataResponse = JsonSerializer.Serialize<List<ServiceModel>>(requestresponse.Data);
-            return Ok(dataResponse);
+            return Ok("Services Gotten");
         }
 
         #endregion
-        private async Task LoadUser()
-        {
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-
-            // Get role from JWT signature.
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-
-            // Get whats needed from JWT.
-            _role = claims.ElementAt(2).Value;
-            _userhash = claims.ElementAt(6).Value;
-            _userId = Convert.ToInt32(claims.ElementAt(0).Value);
-        }
     }
 }

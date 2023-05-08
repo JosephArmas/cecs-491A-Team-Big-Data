@@ -1,12 +1,6 @@
 
 let buildEventDropdown = false
 
-var backend = "";
-fetch("./config.json").then((response) => response.json()).then((json) => 
-{
-backend = json.backend;
-})
-
 
 function showEventMenu(latlng)
 {

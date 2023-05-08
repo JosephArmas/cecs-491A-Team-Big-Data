@@ -12,6 +12,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports
     public interface IReportsDBSelecter
     {
         public Task<DataResponse<DataSet>> SelectUserReportsAsync(int user);
-        public Task<DataResponse<Tuple<double, int>>> SelectNewReputationAsync(Report report);
+        public Task<Response> SelectNewReputationAsync(Report report);
     }
 }

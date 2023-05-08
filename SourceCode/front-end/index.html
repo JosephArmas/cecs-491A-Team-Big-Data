@@ -111,7 +111,7 @@
                 <div id="logout"></div>
             </div>
         </div>
-        <div class="map" id="adminMap"></div>
+        <div class="map" id="map"></div>
     </div>
 
     <!-- * Home View -->
@@ -129,7 +129,6 @@
             </div>
         </div>
         <div class="map" id="map"></div>
-            <div id="picture"></div>
             <div class="misc">
                 <div class="reg-contact-home">
                     <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
@@ -140,20 +139,62 @@
         </div>
     </div>
 
+
+        <!-- * Home view -->
+        <!-- * 
+        <div class="home-container" hidden>
+            <div class="home-header-container">
+                <div class="menu-container">
+                    <nav class="ham-menu-container">
+                        <button type="button">ham-menu</button>
+                        <ul class="features" >
+                            <li>feature 1</li>
+                            <li>feature 2</li>
+                            <li>feature 3</li>
+                            <li>feature 4</li>
+                            <li>feature 5</li>
+                            <li>File Selector</li>
+                            <li><input type="file" id="fileSelector" name="Select File" accept="image/jpg, image/png"></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="title">
+                    <h1>Utification</h1>
+                </div>
+                <div class="header-container">
+                    <div>
+                        <button type="button" id="profileBtn" onclick="profileClicked()">Profile</button>
+                    </div>
+                    <div>
+                        <button type="button" id="home-logoutBtn" onclick="homeClicked()">Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div class="map" id="map"></div>
+                <div class="misc">
+                    <div class="reg-contact-home">
+                        <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
+                    </div>
+                </div>
+            <div class="footer">
+                <footer>&copy; 2023 Utification</footer>
+            </div>
+        </div>
+        -->
+
         <!--* Create Report View-->
         <div class="create-report-container" hidden>
             <div class="report-creation-header">
                 <header class="rating-instructions">Enter a rating from 0.0-5.0</header>
             </div>
-            <form class="new-report">    
+            <form id="new-report-form">    
                 <div class="rating-box">
-                    <input type="text" id="new-rating" placeholder="0.0-5.0" maxlength="3" required>
+                    <input type="text" id="new-rating" maxlength="3" required>
                 </div>
                 <div class="feedback-box">                        
-                    <textarea id="new-feedback" placeholder="Please enter a minimum of 8 character feedback." minlength="8" maxlength="150" required></textarea>    
+                    <textarea id="new-feedback" required></textarea>    
                 </div>
                 <button type="button" id="submit-report-btn">Submit Report</button>
-                <button type="button" id="cancel-report-creation">Cancel</button>
             </form>
         </div>
         
@@ -164,9 +205,10 @@
             </div>
             <div class="reputation"></div>
             <div class="reports-box"></div>
-            <div class="reputation-controls"></div>
-            <div class="new-report-btn">
+            <div class="reputation-controls">
+                <button type="button" id="previous-reports">Previous</button>
                 <button type="button" id="create-report-btn">Create New Report</button>
+                <button type="button" id ="next-reports">Next</button>
             </div>
         </div>
 
@@ -178,7 +220,6 @@
             <div class="buttonContainer" id="profileButtons">
                     <button type = "button" id="p-BackButton" onclick=backToMap()>Back</button>
                     <input type="file" id="p-fileSelector" name="Select File" accept="image/jpg, image/png">
-                    <button type = "button" id="view-own-reports">View Your Reports</button>
                     <button class="profileButton" type="button" id="p-AddPic" onclick=addProfilePic()>Add Profile Picture</button>
                     <button class="profileButton" type="button" id="p-UpdatePic" onclick=updateProfilePic()>Update Profile Picture</button>
                     <button class="profileButton" type="button" id="p-DeletePic" onclick=deleteProfilePic()>Delete Profile Picture</button>
@@ -201,14 +242,6 @@
                 <li><button type="button" onclick=updateProfile()>Submit</button> 
                 </ul>
             </div>
-        </div>
-
-        <!-- * AdminRecovery View-->
-        <div class="admin-recovery-container" hidden>
-            <button type="button" id="recoveryBack" onclick=recoveryBack()>Back</button>
-            <div class="data" id="recoveryData"></div>
-            <input type="recoveredID" id="recoveryInput" placeholder="Username">
-            <button type="button" onclick=RecoverAccount()>Recover User</button>
         </div>
 
         <!-- * OTP -->
@@ -247,7 +280,7 @@
             </div>
 
             <div class="submit">
-                <button type="button" id="recOTP-submit">Submit</button>
+                <button type="button" id="recOTP-submit" onclick="">Submit</button>
             </div>
             </form>
         </div>
@@ -263,8 +296,8 @@
                 <h1>Login</h1>
             </div>
             <div class="input-field">
-                <input type="email" id ="email" placeholder="email address" required>
-                <input type="password" id="password" placeholder="password" minlength="8" required>
+                <input type="email" id ="email" placeholder="email address" required data-error="email required" />
+                <input type="password" id="password" placeholder="password" minlength="8" required  />
                 <button type="button" id="sub-login" >Submit</button>
             </div>
 
@@ -290,7 +323,6 @@
                 <input type="email" id ="r-email" placeholder="email address">
                 <input type="password" id="r-pw" placeholder="password" minlength="8">
                 <input type="password" id="r-cpw" placeholder="confirm password" minlength="8">
-                <input type="number" id="age" placeholder="age" min="14" max="100" required>
                 <button type="button" id="regBtn-submit">Submit</button>
             </div>
             <div class="reg-contact">
@@ -313,7 +345,7 @@
             <div class="input-field">
                 <input type="username" id ="username" placeholder="email address" required data-error="email required" />
                 <input type="password" id="newPassword" placeholder="perferred new password" minlength="8" required  />
-                <button type="button" id="recoveryButton">Submit</button>
+                <button type="button" id="recoveryButton" >Submit</button>
             </div>
             </div>
             </form>
@@ -335,40 +367,10 @@
             </div>
             <div class="content-container">
                 <div class="box-1">
-                    <h1>Join the Movement to Raise Awareness and Beaufity Our Communites</h1>
+
                 </div>
-            </div>
-            <div class="feature-anon">
-                <div class="anon-map">
-                    <h1>Map</h1>
-                    <br>
-                    <p>Interactive map of California</p>
-                </div>
-                <div class="anon-pins">
-                    <h1>Pins</h1>
-                    <br>
-                    <p>Interact with the map by dropping pins with various pin types</p>
-                </div>
-                <div class="anon-services">
-                    <h1>Services</h1>
-                    <br>
-                    <p>Become a service provider and provide services based on users pintypes</p>
-                </div>
-                <div class="anon-events">
-                    <h1>Events</h1>
-                    <br>
-                    <p>Host Events for those who are interested and lead to more community engagement</p>
-                </div>
-                <div class="anon-alerts">
-                    <h1>Alerts</h1>
-                    <br>
-                    <p>Notify other users when a preferred pintype drops</p>
-                </div>
-                <div class="anon-reputation">
-                    <h1>Reputation</h1>
-                    <br>
-                    <pr>Climb the ranks to become a reputable user</pr>
-                </div>
+                <div class="box-2" id="file-container">
+                </div> 
             </div>
             <div class="quote">
                 <h4>"Unify communities. Together we build cleaner and comfortable environments" </h4>

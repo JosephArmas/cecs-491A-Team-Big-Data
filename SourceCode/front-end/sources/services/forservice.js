@@ -37,7 +37,7 @@ function serviceClicked() {
       x.forEach((service) => {
         let button = document.createElement("button");
         button.classList.add('servButton');
-        button.innerText = service.ServiceName;
+        button.innerText = service.title;
         y.appendChild(button);
       });
     }
@@ -47,8 +47,8 @@ function serviceClicked() {
         item.addEventListener('click', event => {
           data.forEach((service) => {
             document.getElementById('infoTab').style.visibility = 'visible';
-            if (item.innerText == service.ServiceName) {
-              document.getElementById('infoTitle').innerText = service.ServiceName;
+            if (item.innerText == service.title) {
+              document.getElementById('infoTitle').innerText = service.title;
               document.getElementById('infoDesc').innerText = service.desc;
               document.getElementById('infoNum').innerText = service.num;
             }

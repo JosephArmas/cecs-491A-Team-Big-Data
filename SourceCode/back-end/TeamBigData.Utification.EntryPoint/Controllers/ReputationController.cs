@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using TeamBigData.Utification.Manager;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.Models.ControllerModels;
@@ -13,15 +10,9 @@ namespace Utification.EntryPoint.Controllers
     public class ReputationController : ControllerBase
     {
         private readonly ReputationManager _reputationManager;
-        private String _role;
-        private String _userHash;
-        private int _userID;
-        private readonly IConfiguration _configuration;
-        private readonly UserAccount _userAccount;
-        public ReputationController(ReputationManager reputationManager, IConfiguration configuration)
+        public ReputationController(ReputationManager reputationManager)
         {
             _reputationManager = reputationManager;
-            _configuration = configuration;
         }
 
 #if DEBUG
@@ -42,18 +33,12 @@ namespace Utification.EntryPoint.Controllers
         // TODO: Change ViewCurrentReputationAsync to return DataResponse with the proper datatype for the response
         public async Task<IActionResult> GetReputationAsync([FromBody] Reports reports)
         {
-            await LoadUser().ConfigureAwait(false);
+            var result = await _reputationManager.ViewCurrentReputationAsync(reports.UserID).ConfigureAwait(false);
 
-            if (_role == "Anonymous User")
-            {
-                return Unauthorized();
-            }
-
-            var result = await _reputationManager.ViewCurrentReputationAsync(_userHash, reports.UserID).ConfigureAwait(false);
-            
             if (result.IsSuccessful)
             {
-                return Ok(result.Data);
+                //return Ok(result.Data);
+                return Unauthorized();
             }
             else
             {
@@ -65,24 +50,12 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewReportAsync([FromBody] Reports reports)
         {
-            await LoadUser().ConfigureAwait(false);
-
-            if (_role == "Anonymous User" || _userID == reports.UserID)
-            {
-                return Unauthorized();
-            }
-
             Report report = new Report(reports.Rating, reports.UserID, reports.ReportingUserID, reports.Feedback);
-            
-            if(reports.Rating.GetType().ToString() != "System.Double" || report.Feedback.Length < 8)
-            {
-                return Conflict("Invalid report inputs. Please Try Again.");
-            }
-            var result = await _reputationManager.RecordNewUserReportAsync(_userHash, report, Convert.ToDouble(_configuration["Reputation:MinimumRoleThreshold"])).ConfigureAwait(false);
+            var result = await _reputationManager.RecordNewUserReportAsync(report, 4.2).ConfigureAwait(false);
 
             if (!result.IsSuccessful)
             {
-                IActionResult error = StatusCode(500, result.ErrorMessage);
+                IActionResult error = Unauthorized(result.ErrorMessage);
                 switch (result.ErrorMessage)
                 {
                     case "Bad Request":
@@ -103,14 +76,8 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ViewReportsAsync([FromBody] Reports reports)
         {
-            await LoadUser().ConfigureAwait(false);
-
-            if(_role == "Anonymous User")
-            {
-                return Unauthorized();
-            }
-            Console.WriteLine("Current User's Reports: " + reports.UserID);
-            var result = await _reputationManager.ViewUserReportsAsync(_userHash, reports.UserID, reports.ButtonCommand, reports.Partition).ConfigureAwait(false);
+            Console.WriteLine("Partition: " + reports.ButtonCommand);
+            var result = await _reputationManager.ViewUserReportsAsync(reports.UserID, reports.ButtonCommand).ConfigureAwait(false);
 
             if (!result.IsSuccessful)
             {
@@ -127,32 +94,6 @@ namespace Utification.EntryPoint.Controllers
                 return error;
             }
             return Ok(result.Data);
-        }
-
-        private async Task LoadUser()
-        {
-            if(Request == null)
-            {
-                _role = "Anonymous User";
-                _userHash = "";
-                _userID = 0;
-            }
-            const string HeaderKeyName = "HeaderKey";
-            Request.Headers.TryGetValue(HeaderKeyName, out StringValues headerValue);
-            HttpContext.Request.Headers.TryGetValue("Authorization", out StringValues authorizationToken);
-
-            // Get role from JWT signature.
-            string clean = authorizationToken;
-            clean = clean.Remove(0, 7);
-
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(clean);
-            IEnumerable<Claim> claims = token.Claims;
-
-            // Get whats needed from JWT.
-            _role = claims.ElementAt(2).Value;
-            _userHash = claims.ElementAt(6).Value;
-            _userID = Convert.ToInt32(claims.ElementAt(0).Value);
         }
     }
 }

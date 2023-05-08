@@ -43,33 +43,26 @@ namespace Utification.EntryPoint.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPins()
         {
-            try
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:GetAllPins"]))
             {
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:GetAllPins"]))
-                {
-                    return Unauthorized("Unsupported User.");
-                }
-
-                var result = await _pinManager.GetListOfAllEnabledPins(_userhash).ConfigureAwait(false);
-
-                if (!result.IsSuccessful)
-                {
-                    result.IsSuccessful = false;
-                    result.ErrorMessage += ", {failed: _pinManager.GetListOfAllPins}";
-                    return Conflict(result.ErrorMessage);
-                }
-                else
-                {
-                    result.IsSuccessful = true;
-                }
-
-                return Ok(result.Data);
+                return Unauthorized("Unsupported User.");
             }
-            catch (Exception ex)
+
+            var result = await _pinManager.GetListOfAllEnabledPins(_userhash).ConfigureAwait(false);
+
+            if (!result.IsSuccessful)
             {
-                return Conflict(ex.Message);
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {failed: _pinManager.GetListOfAllPins}";
+                return Conflict(result.ErrorMessage);
             }
+            else
+            {
+                result.IsSuccessful = true;
+            }
+
+            return Ok(result.Data);
         }
 
 
@@ -77,36 +70,29 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewPin([FromBody] Pins newPin)
         {
-            try
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:PostNewPin"]))
             {
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:PostNewPin"]))
-                {
-                    return Unauthorized("Unsupported User.");
-                }
-
-                if (!InputValidation.IsValidTitle(newPin.Description) || !InputValidation.IsValidDescription(newPin.Description))
-                {
-                    return Conflict("Invalid Pin Content.");
-                }
-
-                Pin pin = new Pin(newPin.UserID, newPin.Lat, newPin.Lng, newPin.PinType, newPin.Description);
-
-                var result = await _pinManager.SaveNewPin(pin, newPin.Userhash).ConfigureAwait(false);
-
-                if (!result.IsSuccessful)
-                {
-                    result.ErrorMessage += ", {failed: _pinManager.SaveNewPin}";
-                    return Conflict(result.ErrorMessage);
-                }
-                else
-                {
-                    return Ok(result.ErrorMessage);
-                }
+                return Unauthorized("Unsupported User.");
             }
-            catch (Exception ex)
+
+            if (!InputValidation.IsValidTitle(newPin.Description) || !InputValidation.IsValidDescription(newPin.Description))
             {
-                return Conflict(ex.Message);
+                return Conflict("Invalid Pin Content.");
+            }
+
+            Pin pin = new Pin(newPin.UserID, newPin.Lat, newPin.Lng, newPin.PinType, newPin.Description);
+
+            var result = await _pinManager.SaveNewPin(pin, newPin.Userhash).ConfigureAwait(false);
+
+            if (!result.IsSuccessful)
+            {
+                result.ErrorMessage += ", {failed: _pinManager.SaveNewPin}";
+                return Conflict(result.ErrorMessage);
+            }
+            else
+            {
+                return Ok(result.ErrorMessage);
             }
         }
 
@@ -115,30 +101,23 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> CompleteUserPin([FromBody] Pins pin)
         {
-            try
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:CompleteUserPin"]))
             {
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:CompleteUserPin"]))
-                {
-                    return Unauthorized("Unsupported User.");
-                }
-
-                var result = await _pinManager.DeleteUserPin(pin.PinID, pin.Userhash).ConfigureAwait(false);
-
-                if (!result.IsSuccessful)
-                {
-                    result.IsSuccessful = false;
-                    result.ErrorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
-                    return Conflict(result.ErrorMessage);
-                }
-                else
-                {
-                    return Ok(result.ErrorMessage);
-                }
+                return Unauthorized("Unsupported User.");
             }
-            catch (Exception ex)
+
+            var result = await _pinManager.DeleteUserPin(pin.PinID, pin.Userhash).ConfigureAwait(false);
+
+            if (!result.IsSuccessful)
             {
-                return Conflict(ex.Message);
+                result.IsSuccessful = false;
+                result.ErrorMessage += ", {false: _pinManager.MarkAsCompletedPin}";
+                return Conflict(result.ErrorMessage);
+            }
+            else
+            {
+                return Ok(result.ErrorMessage);
             }
         }
 
@@ -146,72 +125,58 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> ModifyPinContent([FromBody] Pins pin)
         {
-            try
-            {   
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinContent"]) || (_userId != pin.UserID && _role != "Admin User"))
-                {
-                    return Unauthorized("Unsupported User.");
-                }
-
-                if (!InputValidation.IsValidTitle(pin.Description) || !InputValidation.IsValidDescription(pin.Description) || !(pin.PinType >= 0 || pin.PinType <= 5))
-                {
-                    return Conflict("Invalid Pin Description.");
-                }
-
-                var response = await _pinManager.ChangePinContent(pin.PinID, pin.UserID, pin.Description, pin.Userhash).ConfigureAwait(false);
-
-                if (!response.IsSuccessful)
-                {
-                    response.IsSuccessful = false;
-                    response.ErrorMessage += ", {failed: _pinManager.ChangePinContent}";
-                    return Conflict(response.ErrorMessage);
-                }
-                else
-                {
-                    return Ok(response.ErrorMessage);
-                }
-            }
-            catch (Exception ex)
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinContent"]) || _userId != pin.UserID)
             {
-                return Conflict(ex.Message);
+                return Unauthorized("Unsupported User.");
             }
-        }                                                       
+
+            if (!InputValidation.IsValidTitle(pin.Description) || !InputValidation.IsValidDescription(pin.Description) || !(pin.PinType >= 0 || pin.PinType <= 5))
+            {
+                return Conflict("Invalid Pin Description.");
+            }
+
+            var response = await _pinManager.ChangePinContent(pin.PinID, pin.UserID, pin.Description, pin.Userhash).ConfigureAwait(false);
+
+            if (!response.IsSuccessful)
+            {
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.ChangePinContent}";
+                return Conflict(response.ErrorMessage);
+            }
+            else
+            {
+                return Ok(response.ErrorMessage);
+            }
+        }
 
 
         [Route("ModifyPinType")]
         [HttpPost]
         public async Task<IActionResult> ModifyPinType([FromBody] Pins pin)
         {
-            try
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinType"]) || _userId != pin.UserID)
             {
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:ModifyPinType"]) || (_userId != pin.UserID && _role != "Admin User"))
-                {
-                    return Unauthorized("Unsupported User.");
-                }
-
-                if (!InputValidation.IsValidTitle(pin.Description) || !InputValidation.IsValidDescription(pin.Description) || !(pin.PinType >= 0 || pin.PinType <= 5))
-                {
-                    return Conflict("Invalid Pin.");
-                }
-
-                var response = await _pinManager.ChangePinType(pin.PinID, pin.UserID, pin.PinType, pin.Userhash);
-
-                if (!response.IsSuccessful)
-                {
-                    response.IsSuccessful = false;
-                    response.ErrorMessage += ", {failed: _pinManager.ChangePinType}";
-                    return Conflict(response.ErrorMessage);
-                }
-                else
-                {
-                    return Ok(response.ErrorMessage);
-                }
+                return Unauthorized("Unsupported User.");
             }
-            catch (Exception ex)
+
+            if (!InputValidation.IsValidTitle(pin.Description) || !InputValidation.IsValidDescription(pin.Description) || !(pin.PinType >= 0 || pin.PinType <= 5))
             {
-                return Conflict(ex.Message);
+                return Conflict("Invalid Pin.");
+            }
+
+            var response = await _pinManager.ChangePinType(pin.PinID, pin.UserID, pin.PinType, pin.Userhash);
+
+            if (!response.IsSuccessful)
+            {
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.ChangePinType}";
+                return Conflict(response.ErrorMessage);
+            }
+            else
+            {
+                return Ok(response.ErrorMessage);
             }
         }
 
@@ -219,54 +184,39 @@ namespace Utification.EntryPoint.Controllers
         [HttpPost]
         public async Task<IActionResult> DisablePin([FromBody] Pins pin)
         {
-            try
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:DisablePin"]))
             {
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:DisablePin"]))
-                {
-                    return Unauthorized("Unsupported User.");
-                }
-
-                var response = await _pinManager.DisablePin(pin.PinID, pin.UserID, pin.Userhash).ConfigureAwait(false);
-
-                if (!response.IsSuccessful)
-                {
-                    response.IsSuccessful = false;
-                    response.ErrorMessage += ", {failed: _pinManager.DisablePin}";
-                    return Conflict(response.ErrorMessage);
-                }
-                else
-                {
-                    return Ok(response.ErrorMessage);
-                }
-            }
-            catch (Exception ex)
-            {
-                return Conflict(ex.Message);
+                return Unauthorized("Unsupported User.");
             }
 
+            var response = await _pinManager.DisablePin(pin.PinID, pin.UserID, pin.Userhash).ConfigureAwait(false);
+
+            if (!response.IsSuccessful)
+            {
+                response.IsSuccessful = false;
+                response.ErrorMessage += ", {failed: _pinManager.DisablePin}";
+                return Conflict(response.ErrorMessage);
+            }
+            else
+            {
+                return Ok(response.ErrorMessage);
+            }
         }
 
         [Route("LoadMap")]
         [HttpGet]
         public async Task<IActionResult> GetMapApiKey()
         {
-            try
+            await LoadUser().ConfigureAwait(false);
+            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:DisablePin"]))
             {
-                await LoadUser().ConfigureAwait(false);
-                if (!InputValidation.AuthorizedUser(_role, _configuration["MapAuthorization:LoadMap"]))
-                {
-                    await _logger.Logs(new Log(0, "Error", _userhash, "GetMapApiKey", "Data", "Unsupported User is trying to access the map api key.")).ConfigureAwait(false);
-                    return Unauthorized("Unsupported User.");
-                }
+                await _logger.Logs(new Log(0, "Error", _userhash, "GetMapApiKey", "Data", "Unsupported User is trying to access the map api key.")).ConfigureAwait(false);
+                return Unauthorized("Unsupported User.");
+            }
 
-                await _logger.Logs(new Log(0, "Info", _userhash, "GetMapApiKey", "Data", "Authorized User is given access to the map api key.")).ConfigureAwait(false);
-                return Ok(_configuration["GoogleMapsApiKey"]);
-            }
-            catch (Exception ex)
-            {
-                return Conflict(ex.Message);
-            }
+            await _logger.Logs(new Log(0, "Info", _userhash, "GetMapApiKey", "Data", "Authorized User is given access to the map api key.")).ConfigureAwait(false);
+            return Ok(_configuration["GoogleMapsApiKey"]);
         }
 
         private async Task LoadUser()
