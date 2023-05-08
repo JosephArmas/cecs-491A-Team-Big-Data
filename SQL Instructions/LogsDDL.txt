@@ -5,7 +5,7 @@ LogID int IDENTITY,
 CorrelationID int,
 LogLevel varchar(10),
 UserHash varchar(200),
-[TimeStamp] datetime default getDate(),
+[TimeStamp] datetime default GetUtcDate(),
 [Event] varchar(70),
 Category varchar(10),
 [Message] varchar(100)
