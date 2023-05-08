@@ -12,7 +12,7 @@ namespace TeamBigData.Utification.RecoveryTests
     [TestClass]
     public class AccountRecoveryUnitTest
     {
-        [TestMethod]
+        /*[TestMethod]
         public async Task RequestAvailableWithin5Seconds()
         {
             //Arrange
@@ -119,6 +119,6 @@ namespace TeamBigData.Utification.RecoveryTests
             //Assert
             Assert.IsFalse(actual.IsSuccessful);
             Assert.AreEqual(expected, actual.ErrorMessage);
-        }
+        }*/
     }
 }

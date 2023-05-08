@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Security.Principal;
@@ -15,10 +16,11 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
     public class UsersSqlDAO : DbContext, IUsersDBInserter, IUsersDBSelecter, IUsersDBUpdater, IUsersDBDeleter
     {
         private readonly String _connectionString;
-
-        public UsersSqlDAO(DbContextOptions<UsersSqlDAO> options) : base(options) 
+        private readonly IConfiguration _configuration;
+        public UsersSqlDAO(DbContextOptions<UsersSqlDAO> options, IConfiguration configuration) : base(options) 
         {
             _connectionString = this.Database.GetDbConnection().ConnectionString;
+            _configuration = configuration;
         }
 
         public UsersSqlDAO(string connectionString)
@@ -97,7 +99,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@ln", ""));
             command.Parameters.Add(new SqlParameter("@add", ""));
             command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
-            command.Parameters.Add(new SqlParameter("@reputation", (decimal)2.0));
+            command.Parameters.Add(new SqlParameter("@reputation", Convert.ToDecimal(_configuration["Reputation:DefaultReputation"])));
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (!result.IsSuccessful)
@@ -657,10 +659,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                         using (SqlCommand command = new SqlCommand())
                         {
                             command.Connection = connection;
-                            command.CommandText = "UpdateUserRole";
+                            command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeRole:Name"]);
                             command.CommandType = CommandType.StoredProcedure;
-                            command.Parameters.AddWithValue("@reportedUser", userProfile.UserID);
-                            command.Parameters.AddWithValue("@updateRole", userProfile.Identity.AuthenticationType);
+                            command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeRole:Parameter1"]), userProfile.UserID);
+                            command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeRole:Parameter2"]), userProfile.Identity.AuthenticationType);
 
                             int updateRole = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
@@ -699,10 +701,10 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
-                        command.CommandText = "UpdateUserReputation";
+                        command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeReputation:Name"]);
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", user);
-                        command.Parameters.AddWithValue("@newReputation", newReputation);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeReputation:Parameter1"]), user);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ChangeReputation:Parameter2"]), newReputation);
 
                         int execute = await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
 

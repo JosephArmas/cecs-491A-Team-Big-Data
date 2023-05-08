@@ -144,14 +144,15 @@
             <div class="report-creation-header">
                 <header class="rating-instructions">Enter a rating from 0.0-5.0</header>
             </div>
-            <form id="new-report-form">    
+            <form class="new-report">    
                 <div class="rating-box">
-                    <input type="text" id="new-rating" maxlength="3" required>
+                    <input type="text" id="new-rating" placeholder="0.0-5.0" maxlength="3" required>
                 </div>
                 <div class="feedback-box">                        
-                    <textarea id="new-feedback" required></textarea>    
+                    <textarea id="new-feedback" placeholder="Please enter a minimum of 8 character feedback." minlength="8" maxlength="150" required></textarea>    
                 </div>
                 <button type="button" id="submit-report-btn">Submit Report</button>
+                <button type="button" id="cancel-report-creation">Cancel</button>
             </form>
         </div>
         
@@ -162,10 +163,9 @@
             </div>
             <div class="reputation"></div>
             <div class="reports-box"></div>
-            <div class="reputation-controls">
-                <button type="button" id="previous-reports">Previous</button>
+            <div class="reputation-controls"></div>
+            <div class="new-report-btn">
                 <button type="button" id="create-report-btn">Create New Report</button>
-                <button type="button" id ="next-reports">Next</button>
             </div>
         </div>
 
@@ -177,6 +177,7 @@
             <div class="buttonContainer" id="profileButtons">
                     <button type = "button" id="p-BackButton" onclick=backToMap()>Back</button>
                     <input type="file" id="p-fileSelector" name="Select File" accept="image/jpg, image/png">
+                    <button type = "button" id="view-own-reports">View Your Reports</button>
                     <button class="profileButton" type="button" id="p-AddPic" onclick=addProfilePic()>Add Profile Picture</button>
                     <button class="profileButton" type="button" id="p-UpdatePic" onclick=updateProfilePic()>Update Profile Picture</button>
                     <button class="profileButton" type="button" id="p-DeletePic" onclick=deleteProfilePic()>Delete Profile Picture</button>

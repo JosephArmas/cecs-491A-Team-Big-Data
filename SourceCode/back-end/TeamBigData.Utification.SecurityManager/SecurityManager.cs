@@ -233,7 +233,7 @@ namespace TeamBigData.Utification.Manager
             return response;
             
         }
-        public async Task<Response> RegisterUserAdmin(string email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfileA)
+        /*public async Task<Response> RegisterUserAdmin(string email, byte[] encryptedPassword, Encryptor encryptor, UserProfile userProfileA)
         {
             var tcs = new TaskCompletionSource<Response>();
             Response response = new Response();
@@ -724,7 +724,7 @@ namespace TeamBigData.Utification.Manager
             //      Add Salt
             response = await userDao.ChangePassword(updateUser, hashPassword);
             return response;
-        }
+        }*/
 
         /*
         public async Task<Response> DeleteProfile(String delUser, UserProfile userProfile)

@@ -4,16 +4,18 @@ using System.Data;
 using TeamBigData.Utification.Models;
 using TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.Reports;
 using TeamBigData.Utification.ErrorResponse;
-using TeamBigData.Utification.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 {
     public class ReportsSqlDAO : DbContext, IReportsDBInserter, IReportsDBSelecter, IReportsDBUpdater, IReportsDBDeleter
     {
         private readonly string _connectionString;
-        public ReportsSqlDAO(DbContextOptions<ReportsSqlDAO> options) : base(options)
+        private readonly IConfiguration _configuration;
+        public ReportsSqlDAO(DbContextOptions<ReportsSqlDAO> options, IConfiguration configuration) : base(options)
         {
             _connectionString = this.Database.GetDbConnection().ConnectionString;
+            _configuration = configuration;
         }
 
         public ReportsSqlDAO(string connectionString)
@@ -48,9 +50,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
-                        command.CommandText = "PartitionSelectUserReports";
+                        command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:ViewReports:Name"]);
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", user);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:ViewReports:Parameter1"]), user);
 
                         adapter.SelectCommand = command;
 
@@ -68,9 +70,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             return result;
         }
 
-        public async Task<Response> SelectNewReputationAsync(Report report)
+        public async Task<DataResponse<Tuple<double, int>>> SelectNewReputationAsync(Report report)
         {
-            Response result = new Response();
+            DataResponse<Tuple<double,int>> result = new DataResponse<Tuple<double,int>>();
             double newReputation = report.Rating;
             int numberOfReports = 1;
 
@@ -83,9 +85,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
-                        command.CommandText = "NumberOfUserReports";
+                        command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:CountReports:Name"]);
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@reportedUser", report.ReportedUser);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:CountReports:Parameter1"]), report.ReportedUser);
 
                         using (SqlDataReader execute = await command.ExecuteReaderAsync().ConfigureAwait(false))
                         {
@@ -109,7 +111,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 }
             }
 
+            Tuple<double, int> updateReputation = new Tuple<double, int>(newReputation, numberOfReports);
             result.IsSuccessful = true;
+            result.Data = updateReputation;
 
             return result;
         }
@@ -125,16 +129,17 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
                     using (SqlCommand command = new SqlCommand())
                     {
-                        command.Parameters.AddWithValue("@rating", (Decimal)report.Rating);
-                        command.Parameters.AddWithValue("@reportedUser", report.ReportedUser);
-                        command.Parameters.AddWithValue("@reportingUser", report.ReportingUser);
-                        command.Parameters.AddWithValue("@feedback", report.Feedback);
-                        command.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
-                        command.Parameters.AddWithValue("@updateDate", DateTime.UtcNow);
-                        command.Parameters.AddWithValue("@lastModifierUser", report.ReportingUser);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter1"]), (Decimal)report.Rating);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter2"]), report.ReportedUser);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter3"]), report.ReportingUser);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter4"]), report.Feedback);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter5"]), DateTime.UtcNow);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter6"]), DateTime.UtcNow);
+                        command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Parameter7"]), report.ReportingUser);
 
                         command.Connection = connection;
-                        command.CommandText = "InsertUserReport";
+                        command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Name"]);
+                        Console.WriteLine(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Name"]));
                         command.CommandType = CommandType.StoredProcedure;
 
                         int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);

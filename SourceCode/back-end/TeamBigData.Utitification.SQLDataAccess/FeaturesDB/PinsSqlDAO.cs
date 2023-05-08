@@ -1,7 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,10 +23,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
             _connectionString = this.Database.GetDbConnection().ConnectionString;
         }
 
-        public PinsSqlDAO(String connectionString)
-        {
-            _connectionString = connectionString;
-        }
 
 
         private async Task<Response> ExecuteSqlCommand(SqlConnection connection, SqlCommand command)
@@ -164,7 +162,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                         {
                             pinType = reader.GetInt32(ordinal);
                         }
-                        pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
+                        pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated.ToString()));
                     }
                     await reader.CloseAsync();
                     result.Data = pins;
@@ -250,7 +248,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                             }
                             if (disabled == 0)
                             {
-                                pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated));
+                                pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated.ToString()));
                             }
                             Console.WriteLine(pins[0].PinID);
                         }

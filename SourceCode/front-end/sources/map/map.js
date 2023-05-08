@@ -100,8 +100,6 @@
         pinsMarker = []
         infoWindows = []
 
-        alert(webServiceUrl);
-
         // Connect to backend to get markers as an authorized user
         axios.get(webServiceUrl, {
             headers: {
@@ -129,8 +127,8 @@
 
                 pinContent += `<button id='downloadPic' onclick='Utification.downloadPicture(${i})'>Download Picture</button>`;
 
-                if (localStorage.getItem("role") == "Regular User") {
-                    pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
+                if (((localStorage.getItem("role")==="Regular User" || localStorage.getItem("role")==="Reputable User") && localStorage.getItem("id") !== currResponse.userID)) {
+                    pinContent += `<button id='reputation-view-btn' onclick='window.Utification.reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }
 
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
