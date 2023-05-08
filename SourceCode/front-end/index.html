@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="styles/nav-profile-events.css">
         <link rel="stylesheet" href="styles/home-admin.css">
         <link rel="stylesheet" href="styles/events.css">
+        <link rel="stylesheet" href="styles/servicelist.css">
 
     </head>
     <body>
@@ -340,87 +341,94 @@
         </div>
 
         <!-- * services views-->
-        <div class="services-container" id="services-container" hidden>
-            <div class="back-button">
-                <button type="button" id="servicesBack-home">Back</button>
-            </div>
-            <h1>
-                Account Services
-            </h1>
-            <div>
-                <Button type="button" id="servReq">Request Service</Button>
-                <Button type="button" id="servCrea">Create service</Button>
-            </div>
-        </div>
+	 <div class="services-container" id="services-container" hidden>
+	   <div class="back-button">
+	     <button type="button" id="servicesBack-home">Back</button>
+	   </div>
+	   <h1>
+	     Account Services
+	   </h1>
+	   <div>
+	     <Button type="button" id="servReq">View Requests</Button>
+	     <Button type="button" id="servCrea">Create service</Button>
+	   </div>
+	 </div>
 
-        <div class="servicelist-container" id="servicelist-container" hidden>
-            <div class="back-button">
-                <button type="button" id="requestsBack-services">Back</button>
-            </div>
-            <h1>
-                Account Services
-            </h1>
-            <div id="fullStruct">
-                <div id="fullList">
-                    <nav>
-                        <ul id="serviceList"></ul>
-                    </nav>
-                </div>
-                <div id="infoTab">
-                    <h2 id="infoTitle"></h2>
-                    <div id="infoDesc"></div>
-                    <div id="infoNum"></div>
-                </div>
-            </div>
-            <div id="ResponseButtons"></div>
-            <dialog id="distanceForm">
-            <form method="dialog">
-                <h3>Service Distance</h3>
-                <div><label>Search for service offerings as far as the distance specified.</label></div>
-                
-                <input type="number" id="distance" name="distance" min="1" max="25" required>
-                <div><Button type="button" id="continue">Continue</Button></div>
-            </form>
-            </dialog>
-        </div>
+	 <div class="servicelist-container" id="servicelist-container" hidden>
+	   <div class="back-button">
+	     <button type="button" id="requestsBack-services">Back</button>
+	   </div>
+	   <h1>
+	     Account Services
+	   </h1>
+	   <div id="fullStruct">
+	     <div id="fullList">
+	       <nav>
+	         <ul id="serviceList"></ul>
+	       </nav>
+	     </div>
+	     <div id="infoTab">
+	       <h2 id="infoTitle"></h2>
+	       <div id="infoDesc"></div>
+	       <div id="infoNum"></div>
+	     </div>
+	   </div>
+	   <div id="ResponseButtons"><br>
 
-        <div class="servicecreation-container" id="servicecreation-container" hidden>
-            <div class="back-button">
-                <button type="button" id="servicecreationBack-services">Back</button>
-            </div>
-            <h1>
-                Service Account Creation
-            </h1>
-            <div id="serviceInputStruct">
-                <label>Service Title</label><br>
-                <input type="text" id="serviceTitle"><br><br>
-                <label>Service Description</label><br>
-                <textarea type="text" id="serviceDesc" required></textarea><br><br>
-                <label>Service Phone Number</label><br>
-                <input type="tel" id="servicePhone"><br><br>
-                <label>Service Website</label><br>
-                <input type="text" id="serviceWebsite"><br><br>
-                
-                <div class="pinOptionsClass" id="pinOptions">
-                    <input type="checkbox" id="servicePintype1" name="servicePintype1" value="1"><label>Pin1</label>
-                    <input type="checkbox" id="servicePintype2" name="servicePintype2" value="2"><label>Pin2</label>
-                    <input type="checkbox" id="servicePintype3" name="servicePintype3" value="3"><label>Pin3</label>
-                    <input type="checkbox" id="servicePintype4" name="servicePintype4" value="4"><label>Pin4</label>
-                    <input type="checkbox" id="servicePintype5" name="servicePintype5" value="5"><label>Pin5</label>
-                </div>
-                <div class="servicedistanceClass" id="servicedistance"><label>Enter the distance you wish to recieve requests from</label>
-                    <input type="number" id="servicedistanceValue" name="distanceValue" min="1" max="25" required>
-                </div>
-                <button id="submitBtn">Become a service provider</button>	     
-                <div id="serviceCreationBtns"></div>
-            </div>
-            <dialog id="responseBox">
-                <form method="dialog">
-                    <h3 id="Parentcon"></h3>
-                    <div><Button type="button" id="continue">Accept</Button></div>
-                </form>
-            </dialog>
-        </div>
+	   </div>
+<dialog id="distanceForm">
+<form method="dialog">
+    <h3>Service Distance</h3>
+    <div><label>Search for service offerings as far as the distance specified.</label></div>
+    
+    <input type="number" id="distance" name="distance" min="1" max="20" required>
+    <div><Button type="button" id="distancecontinue">Continue</Button></div>
+</form>
+</dialog>
+
+	 </div>
+
+	 <div class="servicecreation-container" id="servicecreation-container" hidden>
+	   <div class="back-button">
+	     <button type="button" id="servicecreationBack-services">Back</button>
+	   </div>
+	   <h1>
+	     Service Account Creation
+	   </h1>
+	   <div id="serviceInputStruct">
+	     <label>Service Title</label><br>
+	     <input type="text" id="serviceTitle"><br><br>
+	     <label>Service Description</label><br>
+	     <textarea type="text" id="serviceDesc" required></textarea><br><br>
+	     <label>Service Phone Number</label><br>
+	     <input type="tel" id="servicePhone"><br><br>
+	     <label>Service Website</label><br>
+	     <input type="text" id="serviceWebsite"><br><br>
+	     
+		<div class="pinOptionsClass" id="pinOptions">
+		  <input type="checkbox" id="servicePintype1" name="servicePintype1" value="1"><label>Pin1</label>
+<input type="checkbox" id="servicePintype2" name="servicePintype2" value="2"><label>Pin2</label>
+<input type="checkbox" id="servicePintype3" name="servicePintype3" value="3"><label>Pin3</label>
+<input type="checkbox" id="servicePintype4" name="servicePintype4" value="4"><label>Pin4</label>
+<input type="checkbox" id="servicePintype5" name="servicePintype5" value="5"><label>Pin5</label>
+		</div>
+		<div class="servicedistanceClass" id="servicedistance"><label>Enter the distance you wish to recieve requests from</label>
+    <input type="number" id="servicedistanceValue" name="distanceValue" min="1" max="25" required>
+<br><label>Latitude</label><input type="text" id="serviceLat"><br>
+<label>Longitude</label><input type="text" id="serviceLong">
+</div>
+<button id="submitBtn">Become a service provider</button>	     
+<div id="serviceCreationBtns">
+	     </div>
+	   </div>
+	   <dialog id="responseBox">
+	     <form method="dialog">
+	       <h3 id="Parentcon"></h3>
+
+	       <div><Button type="button" id="creationcontinue">Accept</Button></div>
+	     </form>
+	   </dialog>
+	 </div>
 
 
         <!-- Thirdparty dependency -->

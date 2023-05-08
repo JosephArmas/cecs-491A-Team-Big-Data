@@ -179,6 +179,9 @@ function buildHomeUserView()
     let joinedEvent = document.createElement('button');
     joinedEvent.setAttribute('type','button');
     joinedEvent.textContent = 'Joined Events';
+    let serviceMenu = document.createElement('button');
+    serviceMenu.setAttribute('type','button');
+    serviceMenu.textContent = 'Service Offerings';
     let uploadBtn = document.createElement('input');
     uploadBtn.setAttribute('type','file');
     uploadBtn.setAttribute('accept','image/jpg');
@@ -188,6 +191,7 @@ function buildHomeUserView()
 
     features.appendChild(createdEvent)
     features.appendChild(joinedEvent)
+    features.appendChild(serviceMenu);
     features.appendChild(uploadBtn);
     let userID = localStorage.getItem('id');
 
@@ -211,6 +215,8 @@ function buildHomeUserView()
         homeDiv.style.display = "none";
         createEventDiv.style.display = "block";
     })
+
+    serviceMenu.addEventListener('click', serviceClicked);
     
     // upload profile pic listener
 
