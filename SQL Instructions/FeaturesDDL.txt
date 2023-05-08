@@ -18,7 +18,7 @@ dateCreated DateTime default GetUtcDate(),
 dateLastModified DateTime default GetUtcDate(),
 userLastModified int,
 CONSTRAINT Pins_PK PRIMARY KEY (pinID),
-CONSTRAINT Pins_UK UNIQUE KEY (lat,lng)
+CONSTRAINT Pins_UK UNIQUE (lat,lng)
 );
 
 CREATE TABLE dbo.PinPic
