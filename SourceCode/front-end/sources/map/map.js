@@ -248,7 +248,7 @@
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
                         content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
                     }
-                    //if(localStorage.getItem)
+
                     infoWindows[pos].setContent(content);
                     //updateContent(content);
                 })
