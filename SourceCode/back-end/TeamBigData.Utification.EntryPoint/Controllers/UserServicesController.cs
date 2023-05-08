@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,16 +20,20 @@ namespace Utification.EntryPoint.Controllers
     {
         private readonly ServiceOfferingManager _serviceProviderManager;
         private readonly ServiceRequestManager _servRequestManager;
+        private readonly IConfiguration _configuration;
         private String _role;
         private String _userhash;
         private int _userId;
-        public UserServicesController(ServiceRequestManager servRequestManager, ServiceOfferingManager servProviderService)
+
+        public UserServicesController(ServiceRequestManager servRequestManager, ServiceOfferingManager servProviderService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _serviceProviderManager = servProviderService;
             _servRequestManager = servRequestManager;
             _role = "Anonymous User";
             _userhash = "";
             _userId = 0;
+            _configuration = configuration;
         }
         #region Service Creation
         [Route("CreateService")]
@@ -37,8 +42,11 @@ namespace Utification.EntryPoint.Controllers
         {
             await LoadUser().ConfigureAwait(false);
             DataResponse<int> ProvResponse = new DataResponse<int>();
-            var tcs = new TaskCompletionSource<IActionResult>();
-            ServiceModel Serv = new ServiceModel();
+            if (!InputValidation.AuthorizedUser(_role, _configuration["ServiceOfferingAuthorization:CreateService"]))
+            {
+                return Unauthorized("Unsupported User.");
+            }
+
             try
             {
                 ProvResponse = await _serviceProviderManager.CreateService(serv).ConfigureAwait(false);
@@ -47,8 +55,11 @@ namespace Utification.EntryPoint.Controllers
             {
                 return Conflict("An unknown error has occured creating a service account");
             }
-
-            return Ok(ProvResponse);
+            if (ProvResponse.IsSuccessful == false)
+            {
+                return Conflict(ProvResponse.ErrorMessage);
+            }
+            return Ok(ProvResponse.ErrorMessage);
         }
 
         [Route("DeleteService")]
