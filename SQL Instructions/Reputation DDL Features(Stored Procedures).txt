@@ -17,5 +17,5 @@ AS
 SELECT rating, feedback 
 FROM dbo.Reports 
 WHERE reportedUserID = @reportedUser 
-ORDER BY createDate;
+ORDER BY createDate DESC;
 Go
