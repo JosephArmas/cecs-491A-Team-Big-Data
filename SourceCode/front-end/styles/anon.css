@@ -30,47 +30,56 @@
 
 .login-register button
 {
-    /* min-width: 50px; */
-    /* min-width: 1.55rem; */
     color: white;
     font-size: 1.55rem;
     background-color: #ca74ff;
-    /* align-self: flex-end; */
 }
 
 .forgotPassword button
 {
-    /* min-width: 50px; */
-    /* min-width: 1.55rem; */
     color: white;
     font-size: 1.55rem;
     background-color: #ca74ff;
-    /* align-self: flex-end; */
 }
 
 .title 
 {
     display: flex;
     justify-content: center;
+    font-size: xx-large;
 
 }
 
 .content-container
 {
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    /* padding: 20px; */
     gap: 30px;
+    margin-top: 20px;
+    padding-left: 400px;
 }
 
 .box-1
 {
+    display: flex;
     padding:10px;
     border: 4px solid black;
-    width: 500px;
-    height: 100px;
+    width: 300px;
+    height: 200px;
+    background-color: #EF828F;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center;
 }
 
 .box-2
@@ -85,7 +94,7 @@
 .quote
 {
     display: flex;
-    padding-top: 10px;
+    padding-top: 100px;
     justify-content: center;
 }
 
@@ -104,3 +113,137 @@
     text-align: center;
 }
 
+.anon-container
+{
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(90deg, rgba(250,0,213,0.22032563025210083) 0%, rgba(165,0,221,0.20632002801120453) 36%, rgba(0,76,255,0.3715861344537815) 86%);
+
+}
+
+
+.anon-map 
+{
+    display: inline;
+    padding:10px;
+    border: 4px solid black;
+    width: 300px;
+    height: 200px;
+    background-color: #EF828F;
+    border-radius: 20px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center;
+}
+
+
+.feature-anon
+{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 500px;
+}
+
+.anon-services
+{
+    display: inline;
+    padding:10px;
+    border: 4px solid black;
+    width: 300px;
+    height: 200px;
+    background-color: #8C72DE;
+    border-radius: 20px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center
+
+}
+
+.anon-pins
+{
+    display: inline;
+    padding:10px;
+    border: 4px solid black;
+    width: 300px;
+    height: 200px;
+    background-color: #72DEC2;
+    border-radius: 20px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center
+}
+
+.anon-events
+{
+    display: inline;
+    padding:10px;
+    border: 4px solid black;
+    width: 300px;
+    height: 200px;
+    background-color: #C4DE72;
+    border-radius: 20px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center
+}
+.anon-alerts {
+    display: inline;
+    padding:10px;
+    border: 4px solid black;
+    width: 300px;
+    height: 200px;
+    background-color: #DEC272;
+    border-radius: 20px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center
+}
+
+.anon-reputation
+{
+    display: inline;
+    padding:10px;
+    border: 4px solid black;
+    width: 300px;
+    height: 200px;
+    background-color: #C272DE;
+    border-radius: 20px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: large;
+    color: white;
+    text-align: center
+}
+
+.footer
+{
+    margin-top: auto;
+}
