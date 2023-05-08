@@ -1,0 +1,120 @@
+USE [TeamBigData.Utification.Features]
+GO
+
+CREATE Procedure [dbo].[AcceptRequest] @RequestID int, @UserID int
+AS
+BEGIN
+UPDATE dbo.ServiceRequests SET Active = 1, Accept = 1,LastModified = GETUtcDATE(), LastModifiedBy = @UserID WHERE RequestID = @RequestID
+END
+GO
+
+CREATE Procedure [dbo].[AddRequest] @ServiceID int, @ServiceName nvarchar(30), @User int, @RequestLat varchar(50), @RequestLong varchar(50),@PinType int
+AS
+BEGIN
+INSERT INTO dbo.ServiceRequests([ServiceID], [ServiceName], RequestedBy, RequestLat, RequestLong, PinType, CreationDateTime, Active, Accept,LastModified,LastModifiedBy)
+VALUES (@ServiceID,@ServiceName,@User,@RequestLat,@RequestLong,@PinType,GETUtcDATE(),1,2,GETUtcDATE(),@User)
+END
+GO
+
+CREATE Procedure [dbo].[AddService] @ServiceName nvarchar(30), @ServiceDesc nvarchar(1000), @ServicePhone nvarchar(16), @ServiceURL nvarchar(2048), @ServiceLat varchar(50), @ServiceLong varchar(50), @PinTypes int,@Distance int, @CreatedBy int, @CreationDate date
+AS
+BEGIN
+INSERT INTO dbo.Services([CompanyName],[CompanyDesc],[CompanyPhone],[CompanyURL],[ServiceLat],[ServiceLong],[PinTypes],[Distance],[CreatedBy],[CreationDate],[LastModifiedBy]) VALUES (@ServiceName, @ServiceDesc, @ServicePhone, @ServiceURL, @ServiceLat, @ServiceLong, @PinTypes,@Distance, @CreatedBy,@CreationDate,@CreatedBy)
+END
+GO
+
+Create Procedure [dbo].[CountServices]
+AS
+BEGIN
+SELECT COUNT([disabled])
+FROM [TeamBigData.Utification.Features].[dbo].[Services]
+WHERE [disabled] = 0
+HAVING COUNT([disabled])<10000
+END
+GO
+
+CREATE Procedure [dbo].[DeleteService] @CreatedBy int
+AS
+BEGIN
+Delete from dbo.Services WHERE CreatedBy = @CreatedBy
+END
+GO
+
+CREATE Procedure [dbo].[DenyRequest] @RequestID int, @UserID int
+AS
+BEGIN
+UPDATE dbo.ServiceRequests SET Active = 0, Accept = 0,LastModified = GETUTCDATE(), LastModifiedBy = @UserID WHERE RequestID = @RequestID
+END
+GO
+
+CREATE Procedure [dbo].[GetNearbyServices] @RequestLat varchar(50),@RequestLong varchar(50),@Distance int, @PinType int
+AS
+BEGIN
+SELECT 
+CompanyName,CompanyDesc,CompanyPhone,CompanyURL,ServiceID,ServiceLat,ServiceLong,PinTypes,Distance
+FROM dbo.Services
+WHERE (3959 *
+   acos(cos(radians(@RequestLat)) * 
+   cos(radians(ServiceLat)) * 
+   cos(radians(ServiceLong) - 
+   radians(@RequestLong)) + 
+   sin(radians(@RequestLat)) * 
+   sin(radians(ServiceLat )))
+   ) < @Distance AND PinTypes LIKE '%['+CONVERT(nvarchar(2),@PinType)+']%';
+END
+GO
+
+CREATE Procedure [dbo].[GetProviderRequests] @UserID int
+AS
+BEGIN
+SELECT RequestID,ServiceID,ServiceName,RequestedBy,RequestLat,RequestLong,PinType,Accept 
+FROM [TeamBigData.Utification.Features].[dbo].[ServiceRequests]
+WHERE ServiceID in
+(SELECT ServiceID 
+From [TeamBigData.Utification.Features].[dbo].[Services]
+WHERE CreatedBy = @UserID
+)
+END
+GO
+
+
+
+Create Procedure [dbo].[GetUserRequests] @RequestedBy int
+AS
+BEGIN
+SELECT RequestID,ServiceID,ServiceName,RequestedBy,RequestLat,RequestLong,PinType,Accept 
+FROM [TeamBigData.Utification.Features].[dbo].[ServiceRequests]
+WHERE RequestedBy= @RequestedBy AND Active = 1
+END
+GO
+
+CREATE Procedure [dbo].[UpdateService] @ServiceName nvarchar(30), @ServiceDesc nvarchar(1000), @ServicePhone nvarchar(16), @ServiceURL nvarchar(2048), @ServiceLat varchar(50), @ServiceLong varchar(50), @PinTypes int, @Distance int, @Updater int
+AS
+BEGIN
+UPDATE dbo.Services
+SET [CompanyName] = @ServiceName,[CompanyDesc]=@ServiceDesc,[CompanyPhone]=@ServicePhone,[CompanyURL]=@ServiceURL,[ServiceLat]=@ServiceLat,[ServiceLong] = @ServiceLong,[PinTypes]=@PinTypes,[Distance]=@Distance,[LastModifiedBy]=@Updater 
+WHERE CreatedBy = @Updater
+END
+GO
+
+
+
+
+
+USE [TeamBigData.Utification.Users]
+GO
+
+
+Create procedure [dbo].[UpdateRoleService] @ID int
+AS
+Begin
+Update dbo.UserProfiles SET role = 'Service User' where userid = @ID;
+end
+GO
+
+Create procedure [dbo].[UpdateRemoveServiceRole] @ID int
+AS
+Begin
+Update dbo.UserProfiles SET role = 'Regular User' where userid = @ID;
+end
+GO

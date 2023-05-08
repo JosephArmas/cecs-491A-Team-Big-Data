@@ -10,13 +10,13 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB.Abstractions.UserServ
 {
     public interface IServicesDBUpdater
     {
-        public Task<Response> UpdateProvider(ServiceModel serv);
+        public Task<DataResponse<int>> UpdateProvider(ServiceModel serv);
 
-        public Task<Response> UpdateRequestAccept(RequestModel request);
+        public Task<DataResponse<int>> UpdateRequestAccept(RequestModel request);
 
-        public Task<Response> UpdateRequestDeny(RequestModel request);
+        public Task<DataResponse<int>> UpdateRequestDeny(RequestModel request, int userid);
 
-        public Task<Response> UpdateRequestCancel(ServiceModel serv);
-        public Task<Response> DeleteProvider(ServiceModel serv);
+        public Task<DataResponse<int>> UpdateRequestCancel(ServiceModel serv);
+        public Task<DataResponse<int>> DeleteProvider(ServiceModel serv);
     }
 }
