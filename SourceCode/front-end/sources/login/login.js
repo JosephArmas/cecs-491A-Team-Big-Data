@@ -120,7 +120,6 @@
                                 document.head.appendChild(script);
                             });
 
-
                             if (role.reg.includes(jsonObj.role) || role.service.includes(jsonObj.role)) {
                                 timeOut("OTP verified", 'green', errorsOtp);
                                 return regView();

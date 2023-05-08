@@ -137,12 +137,7 @@
                     pinContent += `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
                     pinContent += `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
                     pinContent += `<button id='updatePic' onclick='updatePicture(${i})'>Update Picture</button>`;
-                if (localStorage.getItem("role")== "Admin User" || localStorage.getItem("id") == currResponse.userID)
-                {
-                    pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
-                    pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
-                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;   
-		    pinContent = pinContent + `<button id='requestService' onclick='requestingService(${i})'>Request Service</button>`;                 
+                    pinContent += `<button id='requestService' onclick='requestingService(${i})'>Request Service</button>`;      
                 }
 
                 const infowindow = new google.maps.InfoWindow({

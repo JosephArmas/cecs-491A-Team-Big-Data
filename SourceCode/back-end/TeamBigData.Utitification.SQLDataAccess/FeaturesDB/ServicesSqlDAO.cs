@@ -60,7 +60,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync().ConfigureAwait(false);
                 var result = new DataResponse<int>();
 
                 var insertSql = "AddService";
