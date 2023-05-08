@@ -8,6 +8,6 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
 
         public Task<Response> InsertUserProfile(int userId);
 
-        public Task<Response> InsertRecoveryRequest(int userID, String password, String salt);
+        public Task<Response> InsertRecoveryRequest(int userID, String digest, String salt);
     }
 }

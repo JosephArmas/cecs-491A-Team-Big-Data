@@ -17,7 +17,6 @@ recOTPBtn.addEventListener('click', function (event)
     {
         errorsOtp.innerHTML = "";
         SendRecoveryRequest(rUsername, rNP);
-        homeClicked();
     } else 
     {
         errorsOtp.style.color = "red";

@@ -19,6 +19,7 @@ function homeClicked()
     let loginContainer = document.querySelector(".login-container");
     let homeContainer = document.querySelector(".home-container")
     let recoveryContainer = document.querySelector(".recovery-container");
+    let adminrecoveryContainer = document.querySelector(".admin-recovery-container");
     let recoveryOTPContainer = document.querySelector(".recOTP-container");
     let profileContainer = document.querySelector(".profileContainer");
     anonContainer.style.display = "block";
@@ -28,6 +29,7 @@ function homeClicked()
     loginContainer.style.display = "none";
     recoveryContainer.style.display = "none";
     recoveryOTPContainer.style.display = "none";
+    adminrecoveryContainer.style.display = "none";
     profileContainer.style.display = "none";
 }
 
@@ -292,6 +294,12 @@ function buildAdminView()
         analyticsBtn.addEventListener('click', showAnalytics)
         features.appendChild(analyticsBtn);
 
+        let recoveryBtn = document.createElement('button');
+        recoveryBtn.setAttribute('type','button');
+        recoveryBtn.textContent = 'Account Recovery';
+        recoveryBtn.addEventListener('click', showRecovery)
+        features.appendChild(recoveryBtn);
+
         features.style.display = 'none';
         nav.append(features);
     
@@ -317,5 +325,21 @@ function buildAdminView()
         adminViewBuild = true;
 
     }
+}
 
+function showRecovery()
+{
+    let recoveryView = document.querySelector(".admin-recovery-container")
+    let adminView = document.querySelector(".home-admin-container")
+    recoveryView.style.display = "block";
+    adminView.style.display = "none";
+    GetRecoveryRequests();
+}
+
+function recoveryBack()
+{
+    let recoveryView = document.querySelector(".admin-recovery-container")
+    let adminView = document.querySelector(".home-admin-container")
+    recoveryView.style.display = "none";
+    adminView.style.display = "block";
 }

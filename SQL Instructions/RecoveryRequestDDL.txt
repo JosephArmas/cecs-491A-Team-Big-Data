@@ -2,7 +2,8 @@
 CREATE TABLE RecoveryRequests       
 (
 userID int,
-"newPassword" varchar(200),
+digest varchar(200),
+salt varchar(50),
 fulfilled int default 0,  
 "timestamp" datetime default getDate(),
 Constraint RR_PrimaryKey Primary key(userID, "timestamp"),

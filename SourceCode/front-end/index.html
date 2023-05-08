@@ -129,6 +129,7 @@
             </div>
         </div>
         <div class="map" id="map"></div>
+            <div id="picture"></div>
             <div class="misc">
                 <div class="reg-contact-home">
                     <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
@@ -202,6 +203,14 @@
             </div>
         </div>
 
+        <!-- * AdminRecovery View-->
+        <div class="admin-recovery-container" hidden>
+            <button type="button" id="recoveryBack" onclick=recoveryBack()>Back</button>
+            <div class="data" id="recoveryData"></div>
+            <input type="recoveredID" id="recoveryInput" placeholder="Username">
+            <button type="button" onclick=RecoverAccount()>Recover User</button>
+        </div>
+
         <!-- * OTP -->
         <div class="otp-container" hidden>
             <form action="/" method="POST" id="otp-form">
@@ -238,7 +247,7 @@
             </div>
 
             <div class="submit">
-                <button type="button" id="recOTP-submit" onclick="">Submit</button>
+                <button type="button" id="recOTP-submit">Submit</button>
             </div>
             </form>
         </div>
@@ -304,7 +313,7 @@
             <div class="input-field">
                 <input type="username" id ="username" placeholder="email address" required data-error="email required" />
                 <input type="password" id="newPassword" placeholder="perferred new password" minlength="8" required  />
-                <button type="button" id="recoveryButton" >Submit</button>
+                <button type="button" id="recoveryButton">Submit</button>
             </div>
             </div>
             </form>

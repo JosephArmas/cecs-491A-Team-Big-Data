@@ -136,6 +136,7 @@
                     pinContent += `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent += `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
                     pinContent += `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
+                    pinContent += `<button id='updatePic' onclick='updatePicture(${i})'>Update Picture</button>`;
                 }
 
                 const infowindow = new google.maps.InfoWindow({
@@ -184,15 +185,8 @@
             else {
                 let url = URL.createObjectURL(file);
                 //rebuild content
-                content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=\"" + url + "\">";
-                content += `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                content += `<button id='completePin' onclick='reputationView(pinsInfo[pos].userID)'>View Reputation</button>`
-                if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
-                    content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
-                    content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                    content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
-                }
-                infoWindows[pos].setContent(content);
+                content += `<img  id=\"PinPic\" style=\"height:100%; object-fit:contain\" src=` + file.data + `>`;
+                let pic = document.getElementById("picture")
                 let params = {
                     fileName: filename,
                     ID: pinID,
@@ -239,15 +233,9 @@
                     timeOut(cleanError, 'red', errorsDiv)
                 }).then(function (file) {
                     // Picture stored as a DataURL for easy access
-                    content += `<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=` + file.data + `>`;
-                    content += `<br>Created: ${pinsInfo[pos].eventCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                    content += `<button id='reputation-view-btn' onclick='reputationView(${pinsInfo[pos].userID})'>View Reputation</button>`
-                    if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
-                        content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
-                        content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                        content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
-                    }
-                    infoWindows[pos].setContent(content);
+                    content += `<img  id=\"PinPic\" style=\"height:100%; object-fit:contain\" src=` + file.data + `>`;
+                    let pic = document.getElementById("picture")
+                    pic.innerHTML = content;
                 })
             }
         })
@@ -277,13 +265,10 @@
             else {
                 let url = URL.createObjectURL(file);
                 //rebuild content
-                content += "<img id=\"PinPic\"style=\"height:100%; width:100%; object-fit:contain\" src=\"" + url + "\">";
-                content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
-                    content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
-                    content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                }
-                infoWindows[pos].setContent(content);
+                // Picture stored as a DataURL for easy access
+                content += `<img  id=\"PinPic\" style=\"height:100%; object-fit:contain\" src=` + file.data + `>`;
+                let pic = document.getElementById("picture")
+                pic.innerHTML = content;
                 let params = {
                     fileName: filename,
                     ID: pinID,
