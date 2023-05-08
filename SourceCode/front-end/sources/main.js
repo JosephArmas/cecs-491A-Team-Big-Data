@@ -78,12 +78,6 @@ function regView()
     anonContainer.style.display = "none";
     reputationContainer.style.display = "none";
     homeContainer.style.display = "block";
-
-    let script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
-    script.async = true;
-
-    document.head.appendChild(script);
 }
 
 // Admin View
@@ -100,12 +94,7 @@ function adminView()
     analyticsView.style.display = "none";
     otpContainer.style.display = "none";
     
-    // anonContainer.style.display = "none";
-    var script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAAfbLnE9etZVZ0_ZqaAPUMl03BfKLN8kI&region=US&language=en&callback=initMap';
-    script.async = true;
-
-    document.head.appendChild(script);
+    
 }
 
 

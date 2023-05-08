@@ -209,7 +209,7 @@ namespace Utification.EntryPoint.Controllers
         public async Task<IActionResult> GetMapApiKey()
         {
             await LoadUser().ConfigureAwait(false);
-            if (!InputValidation.AuthorizedUser(_role, _configuration["PinAuthorization:DisablePin"]))
+            if (!InputValidation.AuthorizedUser(_role, _configuration["MapAuthorization:LoadMap"]))
             {
                 await _logger.Logs(new Log(0, "Error", _userhash, "GetMapApiKey", "Data", "Unsupported User is trying to access the map api key.")).ConfigureAwait(false);
                 return Unauthorized("Unsupported User.");
