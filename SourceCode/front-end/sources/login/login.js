@@ -19,14 +19,14 @@
     let otp = "";
     let otpCreated = "";
     let userhash = "";
+    
+    var otpContainer = document.querySelector(".otp-container");
+    var errorsOtp = document.getElementById("errors");
+    var otpInput = document.querySelector("#otp-input");
+    var otpContainer = document.querySelector(".otp-container");
+    var loginContainer = document.querySelector(".login-container");
 
-var otpContainer = document.querySelector(".otp-container");
-var errorsOtp = document.getElementById("errors");
-var otpInput = document.querySelector("#otp-input");
-var otpContainer = document.querySelector(".otp-container");
-var loginContainer = document.querySelector(".login-container");
-
-    const authenticationServer= 'https://localhost:7259/account/authentication';
+    const authenticationServer= "/account/authentication";
     const loginForm = document.getElementById('login-form');
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -34,6 +34,8 @@ var loginContainer = document.querySelector(".login-container");
     const loginHome = document.getElementById('login-home');
     const roles =  ['Regular User']
     const user = {}
+    var backend = "";
+    var s3;
     loginBtn.addEventListener('click', function (event)
     {
         event.preventDefault();
@@ -74,7 +76,11 @@ var loginContainer = document.querySelector(".login-container");
         user.Username = email.value;
         user.Password = password.value;
         getProfileUsername(email.value)
-        axios.post(authenticationServer, user).then(function (responseAfter)
+        fetch("./config.json").then((response) => response.json()).then((json) => 
+        {
+        backend = json.backend;
+        s3 = json.s3;
+        axios.post(json.backend + authenticationServer, user).then(function (responseAfter)
         {
             // turning jwt signature from the response into a json object
             var base64Url = responseAfter.data.split('.')[1];
@@ -144,7 +150,8 @@ var loginContainer = document.querySelector(".login-container");
                 let errorAfter = error.responseAfter.data;
                 let cleanError = errorAfter.replace(/"/g,"");
                 timeOut(cleanError, 'red', errorsDiv)
-            });
+            })
+        })
     }
     
     //

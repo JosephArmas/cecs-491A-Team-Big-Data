@@ -1,5 +1,5 @@
 'use strict';
-const recoveryServer= 'https://localhost:7259/recovery/request';
+const recoveryServer= backend + '/recovery/request';
 const recoveryForm = document.getElementById('recovery-form');
 const recoveryHome = document.getElementById('recovery-home');
 const username = document.getElementById('username');
@@ -8,6 +8,12 @@ const recoveryBtn = document.getElementById('recoveryButton');
 const homeBtn = document.getElementById('recovery-home');
 const errors = document.getElementById('errors');
 const request = {};
+
+var backend = "";
+fetch("./config.json").then((response) => response.json()).then((json) => 
+{
+backend = json.backend;
+})
 
 recoveryBtn.addEventListener('click', function(event)
 {

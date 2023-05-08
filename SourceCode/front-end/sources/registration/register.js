@@ -1,5 +1,5 @@
 
-const registrationServer= 'https://localhost:7259/account/registration';
+var registrationServer = "";
 const registerEmail = document.getElementById('r-email');
 const registerPassword = document.getElementById('r-pw');
 const confirmedPassword = document.getElementById('r-cpw');
@@ -8,6 +8,14 @@ const regBtn = document.getElementById('regBtn-submit');
 const regForm = document.getElementById('registration-form');
 var regHome = document.getElementById("reg-home");
 const newUser = {}
+
+var backend = "";
+fetch("./config.json").then((response) => response.json()).then((json) => 
+{
+backend = json.backend;
+registrationServer= backend + '/account/registration';
+})
+
 regBtn.addEventListener('click', function (event)
 {
    event.preventDefault();
@@ -66,7 +74,6 @@ function registerUser()
 
    });
    regForm.reset();
-   
 }
 
 

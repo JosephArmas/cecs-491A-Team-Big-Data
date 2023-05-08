@@ -7,12 +7,20 @@
     // Dependency check
     const isValid = root;
 
-    root.Utification = root.Utification || {};
+    root.Utification= root.Utification || {};
 
     if (!isValid) {
         // Handle missing dependencies
         alert("Missing dependencies");
     }
+
+    var backend = "";
+    fetch("./config.json").then((response) => response.json()).then((json) => 
+    {
+    backend = json.backend;
+    })
+
+    var webServiceUrl = "";
 
     const CALIFORNIA_BOUNDS = {
         north: 42.009517,
@@ -86,21 +94,22 @@
     }
 
     function getMarkerHandler(map) {
-        const webServiceUrl = 'https://localhost:7259/Pin/GetAllPins';
+        webServiceUrl = backend + '/Pin/GetAllPins';
 
         pinsInfo = []
         pinsMarker = []
         infoWindows = []
 
+        alert(webServiceUrl);
+
         // Connect to backend to get markers as an authorized user
-        var request = axios.get(webServiceUrl, {
+        axios.get(webServiceUrl, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
             }
-        });
-        request.then(function (response) {
+        }).then(function (response) {
 
-            for (var i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < response.data.length; i++) {
                 var currResponse = response.data[i]
 
                 const pin = new google.maps.Marker({
@@ -118,15 +127,17 @@
 
                 }
 
+                pinContent += `<button id='downloadPic' onclick='Utification.downloadPicture(${i})'>Download Picture</button>`;
+
                 if (localStorage.getItem("role") == "Regular User") {
                     pinContent += `<button id='reputation-view-btn' onclick='reputationView(${currResponse.userID})'>View Reputation</button>`;
                 }
 
                 //User can modify/delete their pins and admin can modify/delete anyone's pin
                 if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == currResponse.userID) {
-                    pinContent = pinContent + `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
-                    pinContent = pinContent + `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
-                    pinContent = pinContent + `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
+                    pinContent += `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
+                    pinContent += `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
+                    pinContent += `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
                 }
 
                 const infowindow = new google.maps.InfoWindow({
@@ -138,27 +149,13 @@
                 pinsMarker.push(pin);
                 infoWindows.push(infowindow);
 
-                let x = i;
                 pin.addListener("click", () => {
                     infowindow.open({
                         anchor: pin,
                         map,
                         shouldFocus: false,
                     });
-                    downloadPicture(x);
                 });
-
-                /*// Do not display disabled or complete pins
-                if (currResponse.disabled === 1) {
-                    pinsMarker[i].setMap(null);
-                }
-                else {
-
-                    // infowindow creater function
-
-
-                    
-                }*/
             }
         });
 
@@ -178,6 +175,11 @@
             let filename = file.name;
             let length = filename.length;
             let ext = filename.substring(length - 4, length)
+            if(file.size > 1000000)
+            {
+                alert("File too big");
+                return 0;
+            }
             if (ext != ".jpg" && ext != ".png" && ext != ".JPG" && ext != ".PNG") {
                 alert("Incorrect File Extension");
             }
@@ -199,7 +201,7 @@
                     role: localStorage.getItem("role"),
                     userID: localStorage.getItem("id")
                 }
-                axios.post(backend + "pinUpload", params).catch(function (error) {
+                axios.post(backend + "/File/pinUpload", params).catch(function (error) {
                     let errorAfter = error.response.data;
                     let cleanError = errorAfter.replace(/"/g, "");
                     timeOut(cleanError, 'red', errorsDiv)
@@ -216,7 +218,7 @@
         }
     }
 
-    window.downloadPicture = function (pos) {
+    window.Utification.downloadPicture = function (pos) {
         let pinID = pinsInfo[pos].pinID;
         // Rebuild content
         let content = pinsInfo[pos].description;
@@ -224,7 +226,7 @@
             headers: { "ID": pinID }
         };
         // Get the key from the backend SQL Server
-        axios.post(backend + "pinDownload", 0, config).catch(function (error) {
+        axios.post(backend + "/File/pinDownload", 0, config).catch(function (error) {
             let errorAfter = error.response.data;
             let cleanError = errorAfter.replace(/"/g, "");
             timeOut(cleanError, 'red', errorsDiv)
@@ -234,19 +236,23 @@
             }
             else if (key.data.length > 0) {
                 // Download file from S3
-                axios.get(s3 + key.data).catch(function (error) {
+                axios.get(s3 + "/" + key.data).catch(function (error) {
                     let errorAfter = error.response.data;
                     let cleanError = errorAfter.replace(/"/g, "");
                     timeOut(cleanError, 'red', errorsDiv)
                 }).then(function (file) {
                     // Picture stored as a DataURL for easy access
-                    content += "<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=\"" + file.data + "\">";
+                    content += `<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=` + file.data + `>`;
                     content += `<br>Created: ${pinsInfo[pos].eventCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
                     content += `<button id='reputation-view-btn' onclick='reputationView(${pinsInfo[pos].userID})'>View Reputation</button>`
                     if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
                         content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
                         content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
                         content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
+                    }
+                    else
+                    {
+                        content += `<b3>"done"<b3>`;
                     }
 
                     infoWindows[pos].setContent(content);
@@ -271,6 +277,11 @@
             let filename = file.name;
             let length = filename.length;
             let ext = filename.substring(length - 4, length)
+            if(file.size > 1000000)
+            {
+                alert("File too big");
+                return 0;
+            }
             if (ext != ".jpg" && ext != ".png" && ext != ".JPG" && ext != ".PNG") {
                 alert("Incorrect File Extension");
             }
@@ -290,7 +301,7 @@
                     role: localStorage.getItem("role"),
                     userID: localStorage.getItem("id")
                 }
-                axios.post(backend + "pinUpdate", params).catch(function (error) {
+                axios.post(backend + "/File/pinUpdate", params).catch(function (error) {
                     let errorAfter = error.response.data;
                     let cleanError = errorAfter.replace(/"/g, "");
                     timeOut(cleanError, 'red', errorsDiv)
@@ -341,7 +352,7 @@
         infoWindows[pos].close();
         pinsMarker[pos].setMap(null);
 
-        const webServiceUrl = 'https://localhost:7259/Pin/CompleteUserPin';
+        webServiceUrl = backend + '/Pin/CompleteUserPin';
 
         const pin = {}
         pin.PinID = pinsInfo[pos].pinID;
@@ -389,7 +400,7 @@
     }
 
     function modifyPinTypeHandler(pos) {
-        const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinType';
+       webServiceUrl = backend + '/Pin/ModifyPinType';
 
         let pinType = prompt("Modifying Pin Type\n1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" || pinType == "3" || pinType == "4" || pinType == "5") || pinType == null) {
@@ -418,7 +429,7 @@
     }
 
     function modifyPinContentHandler(pos) {
-        const webServiceUrl = 'https://localhost:7259/Pin/ModifyPinContent';
+        webServiceUrl = backend + '/Pin/ModifyPinContent';
 
         let title = prompt("Modifying Pin Content\nEnter pin title.");
         if (title == null || !titleLimit(title)) {
@@ -467,7 +478,7 @@
     }
 
     function deletePinHandler(pos) {
-        const webServiceUrl = 'https://localhost:7259/Pin/DisablePin';
+        webServiceUrl = backend + '/Pin/DisablePin';
 
         infoWindows[pos].close();
         pinsMarker[pos].setMap(null);
@@ -493,7 +504,7 @@
     }
 
     function placeNewPin(latLng, map) {
-        const webServiceUrl = 'https://localhost:7259/Pin/PostNewPin';
+        webServiceUrl = backend + 'Pin/PostNewPin';
 
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" || pinType == "3" || pinType == "4" || pinType == "5") || pinType == null) {

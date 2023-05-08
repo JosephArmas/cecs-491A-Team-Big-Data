@@ -80,7 +80,7 @@ function organizeReports(response)
 
 function reputationView(id)
 {
-    const reputationUrl = "https://localhost:7259/Reputation/GetReputation";
+    const reputationUrl = backend + "/Reputation/GetReputation";
     
     reputationBox.style.border = "1px solid";
     reputationBox.style.height = "50px";
