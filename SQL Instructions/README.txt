@@ -29,7 +29,10 @@ Step 4. Creating the Tables
 	Execute the UserProfilesDDL into the Users Database
 	Execute the FeaturesDDL into the Features Database
 	Execute the UserHashDDL into the UserHash Database
-Step 5. Granting Insert Permission on Logs
+Step 5. Execute the Stored Procedures for the Reputation Feature
+	Execute the Reputation DDL Features(Stored Procedures) in the Features Database
+	Execute the Reputation DDL Users(Stored Procedures) in the Users Database
+Step 6. Granting Insert Permission on Logs
 	Enter in the SQL query GRANT INSERT on dbo.Logs to AppUser
 
 *No manual data has to be inputed for testing, but you have to run Registration Tests before Authentication Tests for it to populate the database
