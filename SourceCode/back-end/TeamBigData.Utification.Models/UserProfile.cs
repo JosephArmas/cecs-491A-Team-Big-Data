@@ -17,6 +17,7 @@ namespace TeamBigData.Utification.Models
         public String Address { get; private set; }
         public DateTime Birthday { get; private set; }
         public double Reputation { get; private set; }
+        public int PinsCompleted { get; private set; }
         public IIdentity? Identity { get; private set; }
         public UserProfile() 
         {
@@ -60,6 +61,19 @@ namespace TeamBigData.Utification.Models
             Reputation=reputation;
             Identity = identity;
         }
+
+        public UserProfile(int userID, string firstName, string lastName, string address, DateTime birthday, double reputation, int pinsCompleted, GenericIdentity identity)
+        {
+            UserID = userID;
+            FirstName = firstName;
+            LastName = lastName;
+            Address = address;
+            Birthday = birthday;
+            Reputation = reputation;
+            PinsCompleted = pinsCompleted;
+            Identity = identity;
+        }
+
         public UserProfile(int userID, double reputation, string role)
         {
             UserID = userID;

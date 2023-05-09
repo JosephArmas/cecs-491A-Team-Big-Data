@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Security.Principal;
+using Microsoft.Extensions.Configuration;
 using TeamBigData.Utification.ErrorResponse;
 using TeamBigData.Utification.Logging.Abstraction;
 using TeamBigData.Utification.Models;
@@ -17,12 +18,14 @@ namespace TeamBigData.Utification.ReputationServices
         private readonly IReportsDBSelecter _selectReports;
         private readonly IUsersDBUpdater _updateUserProfile;
         private readonly IUsersDBSelecter _selectUserProfile;
-        public ReputationService(ReportsSqlDAO reportsSqlDAO, UsersSqlDAO userSqlDAO)
+        private readonly IConfiguration _configuration;
+        public ReputationService(ReportsSqlDAO reportsSqlDAO, UsersSqlDAO userSqlDAO, IConfiguration configuration)
         {
             _insertReport = reportsSqlDAO;
             _selectReports = reportsSqlDAO;
             _updateUserProfile = userSqlDAO;
             _selectUserProfile = userSqlDAO;
+            _configuration = configuration;
         }
 
         public async Task<DataResponse<List<Reports>>> GetUserReportsAsync(int user, string buttonCommand, int amount)
@@ -51,7 +54,6 @@ namespace TeamBigData.Utification.ReputationServices
             int start = 0 + amount;
             int max = 5 + amount;
             Range range = new Range(start, max);
-            Console.WriteLine(range.ToString());
             foreach (DataRow report in data.Take(range))
             {
                 Reports reports = new();
@@ -73,6 +75,11 @@ namespace TeamBigData.Utification.ReputationServices
         public async Task<DataResponse<UserProfile>> GetCurrentReputationAsync(int user)
         {
             var getReputation = await _selectUserProfile.SelectUserProfile(user).ConfigureAwait(false);
+
+            if(!getReputation.IsSuccessful)
+            {
+                getReputation.ErrorMessage += "Failed to retrieve user's current reputation";
+            }
                         
             return getReputation;
         }
@@ -104,6 +111,37 @@ namespace TeamBigData.Utification.ReputationServices
             return updateResult;
         }
 
+        public async Task<Response> CheckCompletionThresholdAsync(UserProfile userProfile)
+        {
+
+            Response result = new Response();
+
+            if (userProfile.PinsCompleted == Convert.ToInt32(_configuration["Reputation:PinCompletionRewardCap"]))
+            {
+                result.ErrorMessage = "You have reached the maximum threshold to earn reputation";
+
+                return result;
+            }
+
+            if (userProfile.Reputation == 5.0)
+            {
+                result.ErrorMessage = "You have the highest possible reputation.";
+
+                return result;
+            }
+            Console.WriteLine("UserID to mark the tally for: " + userProfile.UserID);
+            var updateResult = await _updateUserProfile.UpdatePinCompletionTallyAsync(userProfile.UserID, userProfile.PinsCompleted).ConfigureAwait(false);
+
+            if (!updateResult.IsSuccessful)
+            {
+                result.ErrorMessage = "Failed to increase reputation by 0.1";
+                return result;
+            }
+
+            updateResult.ErrorMessage = "Successfully increased reputation by 0.1";
+
+            return updateResult;
+        }
         /// <summary>
         /// Calculates a user's new reputation when a new report is submitted
         /// </summary>

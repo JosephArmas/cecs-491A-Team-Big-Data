@@ -14,12 +14,19 @@
     const reportForm = document.querySelector(".new-report");
     const reputationControls = document.querySelector(".reputation-controls");
 
+    var backend = "";
+    fetch("./config.json").then((response) => response.json()).then((json) => 
+    {
+    backend = json.backend;
+    })
+
     viewOwnReportsBtn.addEventListener('click', function()
     {
         profileView.style.display = "none";
         reputationView(localStorage.getItem("id"));
     });
 
+    
     reportsViewReturnBtn.addEventListener('click', function()
     {
         createReportView.style.display = "none";
@@ -28,9 +35,10 @@
         reputationView(localStorage.getItem("reportedUserID"));
     });
 
+    
     submitReportBtn.addEventListener('click', function()
     {
-        const insertReportURL = "https://localhost:7259/Reputation/PostNewReport";
+        const insertReportURL = backend + "/Reputation/PostNewReport";
         let newReport = {}
         newReport.Rating = document.getElementById("new-rating").value;
         newReport.Feedback = document.getElementById("new-feedback").value;
@@ -58,12 +66,14 @@
         })
     });
 
+    
     createReportBtn.addEventListener('click', function()
     {   
         reputationContainer.style.display = "none";
         createReportView.style.display = "block";
     });
 
+    
     function organizeReports(response)
     {
         for(let i = 1; i < response.data.length + 1; i++)
@@ -142,7 +152,7 @@
 
         localStorage.setItem("reportedUserID", id);
 
-        const reputationUrl = "https://localhost:7259/Reputation/GetReputation";
+        const reputationURL = backend + "/Reputation/GetReputation";
         
         reputationBox.style.border = "1px solid";
         reputationBox.style.height = "50px";
@@ -178,8 +188,6 @@
         nextReportBtn.style.marginLeft = "54%";
         reputationControls.appendChild(nextReportBtn);
 
-
-
         if(id !== "")
         {
             const userProfile = {}
@@ -191,7 +199,7 @@
             userProfile.ButtonCommand = "";
             userProfile.Partition = 0;
             
-            let reputationRequest = axios.post(reputationUrl, userProfile, {
+            let reputationRequest = axios.post(reputationURL, userProfile, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
                 }
@@ -228,7 +236,7 @@
 
     function reportsView(id)
     {    
-        const reportsUrl = "https://localhost:7259/Reputation/ViewReports";
+        const reportsURL = backend + "/Reputation/ViewReports";
 
         let userReport = {};
         userReport.UserID = Number(id);
@@ -238,7 +246,6 @@
         userReport.ReportingUserID = localStorage.getItem("id");
         userReport.ButtonCommand = "";
         userReport.Partition = 0;
-        console.log("Current User's Reputation: " + userReport.UserID);
 
         reportsContainer.style.border = "2px solid";
         reportsContainer.style.backgroundColor = "gray";
@@ -247,7 +254,7 @@
         reportsContainer.style.marginLeft = "27%";    
         reportsContainer.style.overflow = "hidden";
 
-        let reportsRequest = axios.post(reportsUrl, userReport, {
+        let reportsRequest = axios.post(reportsURL, userReport, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
             }
@@ -263,9 +270,8 @@
         previousReportsBtn.addEventListener('click', function()
         {
             userReport.UserID = Number(id);
-            console.log("Current User's Reputation: " + userReport.UserID);
             userReport.ButtonCommand = "Previous";
-            const previousReports = axios.post(reportsUrl, userReport, {
+            const previousReports = axios.post(reportsURL, userReport, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
                 }
@@ -287,9 +293,8 @@
         nextReportsBtn.addEventListener('click', function()
         {
             userReport.UserID = Number(id);
-            console.log("Current User's Reputation: " + userReport.UserID);
             userReport.ButtonCommand = "Next";           
-            const nextReports = axios.post(reportsUrl, userReport, {
+            const nextReports = axios.post(reportsURL, userReport, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
                 }

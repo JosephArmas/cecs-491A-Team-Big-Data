@@ -109,7 +109,6 @@ namespace Utification.EntryPoint.Controllers
             {
                 return Unauthorized();
             }
-            Console.WriteLine("Current User's Reports: " + reports.UserID);
             var result = await _reputationManager.ViewUserReportsAsync(_userHash, reports.UserID, reports.ButtonCommand, reports.Partition).ConfigureAwait(false);
 
             if (!result.IsSuccessful)
@@ -127,6 +126,27 @@ namespace Utification.EntryPoint.Controllers
                 return error;
             }
             return Ok(result.Data);
+        }
+
+        [Route("GainReputation")]
+        [HttpPost]
+        public async Task<IActionResult> GainReputationAsync()
+        {
+            await LoadUser().ConfigureAwait(false);
+
+            if (_role == "Anonymous User")
+            {
+                return Unauthorized("You do not have permission to do this.");
+            }
+
+            var increaseResult = await _reputationManager.IncreaseReputationByPointOneAsync(_userHash, _userID, Convert.ToDouble(_configuration["Reputation:MinimumRoleThreshold"]));
+
+            if (!increaseResult.IsSuccessful)
+            {
+                return StatusCode(500, "Reputation increase failed. Please try again.");
+            }
+
+            return Ok(increaseResult.ErrorMessage);
         }
 
         private async Task LoadUser()

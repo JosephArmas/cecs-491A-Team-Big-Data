@@ -250,7 +250,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                             {
                                 pins.Add(new PinResponse(pinID, userID, lat, lng, pinType, description, dateCreated.ToString()));
                             }
-                            Console.WriteLine(pins[0].PinID);
                         }
                     }
                     await reader.CloseAsync();

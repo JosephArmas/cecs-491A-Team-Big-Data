@@ -12,3 +12,9 @@ UPDATE dbo.UserProfiles
 SET role = @updateRole
 WHERE userID = @reportedUser
 GO
+--UpdatePinTally
+CREATE PROCEDURE UpdatePinTally @userID int, @pinTally int
+AS
+UPDATE dbo.UserProfiles
+SET tally = @pinTally
+WHERE userID = @userID

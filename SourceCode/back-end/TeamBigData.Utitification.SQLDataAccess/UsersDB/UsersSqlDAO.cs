@@ -90,8 +90,8 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
         public async Task<Response> InsertUserProfile(int userId)
         {
             //Creates an Insert SQL statements using the collumn names and values given
-            var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, reputation, \"role\") values" +
-                "(@uID, @n, @ln, @add, @bday, @reputation, @role)";
+            var insertSql = "INSERT into dbo.UserProfiles(userID, firstname, lastname, \"address\", birthday, reputation, tally, \"role\") values" +
+                "(@uID, @n, @ln, @add, @bday, @reputation, @tally, @role)";
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(insertSql, connection);
             command.Parameters.Add(new SqlParameter("@uID", userId));
@@ -100,6 +100,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             command.Parameters.Add(new SqlParameter("@add", ""));
             command.Parameters.Add(new SqlParameter("@bday", (new DateTime(2000, 1, 1)).ToString()));
             command.Parameters.Add(new SqlParameter("@reputation", Convert.ToDecimal(_configuration["Reputation:DefaultReputation"])));
+            command.Parameters.Add(new SqlParameter("@tally", SqlDbType.Int)).Value = 0;
             command.Parameters.Add(new SqlParameter("@role", "Regular User"));
             var result = await ExecuteSqlCommand(connection, command).ConfigureAwait(false);
             if (!result.IsSuccessful)
@@ -256,6 +257,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             String address = "";
                             DateTime birthday = new DateTime();
                             double reputation = 2.0;
+                            int pinsCompleted = 0;
                             String role = "";
 
                             int ordinal = reader.GetOrdinal("userID");
@@ -294,7 +296,12 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
                             {
                                 reputation = Decimal.ToDouble(reader.GetDecimal(ordinal));
                             }
-                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, reputation, new GenericIdentity(userID.ToString(), role));
+                            ordinal = reader.GetOrdinal("tally");
+                            if (!reader.IsDBNull (ordinal))
+                            {
+                                pinsCompleted = reader.GetInt32(ordinal);
+                            }
+                            userProfile = new UserProfile(userID, firstName, lastName, address, birthday, reputation, pinsCompleted, new GenericIdentity(userID.ToString(), role));
                         }
                         reader.Close();
                     }
@@ -644,6 +651,47 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB
             return response;
         }
 
+        public async Task<Response> UpdatePinCompletionTallyAsync(int userID, int completionTally)
+        {
+            Response result = new Response();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    try
+                    {
+                        await connection.OpenAsync().ConfigureAwait(false);
+
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = connection;
+                            command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:UpdateTally:Name"]);
+                            command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:UpdateTally:Parameter1"]), userID);
+                            command.Parameters.AddWithValue(Convert.ToString(_configuration["Reputation:StoredProcedures:UpdateTally:Parameter2"]), completionTally + 1);
+
+                            int updateToll = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                            if (updateToll > 0)
+                            {
+                                result.IsSuccessful = true;
+                            }
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+                        result.ErrorMessage = e.Message;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
         public async Task<Response> UpdateUserRoleAsync(UserProfile userProfile)
         {
             Response result = new Response();

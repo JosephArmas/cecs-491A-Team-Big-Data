@@ -7,6 +7,7 @@ lastname varchar(50),
 "address" varchar(50),
 birthday Date,
 reputation decimal(2,1) DEFAULT 2.0,
+tally int,
 "role" varchar(50),
 CONSTRAINT UserProfiles_Primary_Key PRIMARY KEY(userID),
 CONSTRAINT UserProfiles_Foreign_Key_01 FOREIGN KEY (userID) references dbo.Users(userID)

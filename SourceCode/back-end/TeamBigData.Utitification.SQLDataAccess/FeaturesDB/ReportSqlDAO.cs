@@ -139,7 +139,6 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
 
                         command.Connection = connection;
                         command.CommandText = Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Name"]);
-                        Console.WriteLine(Convert.ToString(_configuration["Reputation:StoredProcedures:StoreReport:Name"]));
                         command.CommandType = CommandType.StoredProcedure;
 
                         int execute = await command.ExecuteNonQueryAsync().ConfigureAwait(false);

@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using TeamBigData.Utification.ReputationServices;
 using TeamBigData.Utification.Logging;
+using System.Data;
 
 namespace TeamBigData.Utification.Manager
 {
@@ -77,10 +78,14 @@ namespace TeamBigData.Utification.Manager
             return result;
         }
         
-        public async Task<Response> IncreaseReputationByPointOneAsync(string userHash, int user)
+        public async Task<Response> IncreaseReputationByPointOneAsync(string userHash, int user, double minimumRating)
         {
             Log getReputationLog;
+            Log updateTallyLog;
             Log updateReputationLog;
+            Log updateRoleLog;
+            string role = "Regular User";
+            bool changeRole = false;
 
             var getReputation = await _reputationService.GetCurrentReputationAsync(user).ConfigureAwait(false);
 
@@ -99,6 +104,25 @@ namespace TeamBigData.Utification.Manager
             double newReputation = (double)getReputation.Data.Reputation + 0.1;
             getReputationLog = new Log(1, "Info", userHash, "ReputationServices.GetCurrentReputation()", "Data", "Successfully retrieved current user reputation");
 
+            var increaseTally = await _reputationService.CheckCompletionThresholdAsync(getReputation.Data).ConfigureAwait(false);
+
+            if(!increaseTally.IsSuccessful)
+            {
+                if(increaseTally.ErrorMessage != "Failed to increase reputation by 0.1")
+                {
+                    increaseTally.IsSuccessful = true;
+                    updateTallyLog = new Log(1, "Info", userHash, "ReputationServices.CheckCompletionThresholdAsync()", "Data", "User either reached maximum threshold or is currently at 5.0 reputation");
+                    await _logger.Logs(updateTallyLog).ConfigureAwait(false);
+
+                    return increaseTally;
+                }
+                updateTallyLog = new Log(1, "Error", userHash, "ReputationServices.CheckCompletionThresholdAsync()", "Data Store", "Failed to increase threshold tally");
+                await _logger.Logs(updateTallyLog).ConfigureAwait(false);   
+
+                return increaseTally;
+            }
+
+            updateTallyLog = new Log(1, "Info", userHash, "ReputationServices.CheckCompletionThresholdAync()", "Data", "Successfully update user's pin completion tally");
 
             var updateReputation = await _reputationService.UpdateReputationAsync(user, newReputation).ConfigureAwait(false);
 
@@ -112,8 +136,52 @@ namespace TeamBigData.Utification.Manager
                 return updateReputation;
             }
 
+            var getReputationAgain = await _reputationService.GetCurrentReputationAsync(user).ConfigureAwait(false);
+
+            if (!getReputationAgain.IsSuccessful)
+            {
+                getReputationLog = new Log(1, "Error", userHash, "ReputationServices.GetCurrentReputation()",
+                                           "Data", "Failed to retrieve current user reputation");
+
+                await _logger.Logs(getReputationLog).ConfigureAwait(false);
+
+                _result.ErrorMessage = getReputation.ErrorMessage;
+
+                return _result;
+            }
+
+            if (getReputationAgain.Data.Reputation >= minimumRating && getReputationAgain.Data.Identity.AuthenticationType == "Regular User")
+            {
+                role = "Reputable User";
+                changeRole = true;
+            }
+            else if (getReputationAgain.Data.Reputation < minimumRating && getReputationAgain.Data.Identity.AuthenticationType == "Reputable User")
+            {
+                role = "Regular User";
+                changeRole = true;
+            }
+
+
+            if (changeRole)
+            {
+                var updateRole = await _reputationService.UpdateRoleAsync(getReputationAgain.Data, role).ConfigureAwait(false);
+
+                if (!updateRole.IsSuccessful)
+                {
+                    updateRoleLog = new Log(1, "Error", userHash, "ReputationServices.UpdateRoleAsync()", "Data Store", $"Failed to update users role to {role}");
+                    await _logger.Logs(updateRoleLog).ConfigureAwait(false);
+
+                    return _result;
+                }
+                updateRoleLog = new Log(1, "Info", userHash, "ReputationServices.UpdateRoleAsync()", "Data Store", $"Successfully updated users role to {role}");
+                await _logger.Logs(updateRoleLog).ConfigureAwait(false);
+            }
+
             updateReputationLog = new Log(1, "Info", userHash, "ReputationServices.UpdateReputation()", "Data Store", "Successfully increased reputation by 0.1");
 
+            updateReputation.ErrorMessage = "Your reputation increased by 0.1";
+
+            await _logger.Logs(updateTallyLog).ConfigureAwait(false);
             await _logger.Logs(updateReputationLog).ConfigureAwait(false);
             await _logger.Logs(getReputationLog).ConfigureAwait(false);
 

@@ -18,7 +18,7 @@ namespace TeamBigData.Utification.AccountServices
             result.IsSuccessful = false;
             var updateSql = "Update dbo.Users Set \"disabled\" = 3 where username = '" + username + "';";
             result = await _dbo.Execute(updateSql);
-            Console.WriteLine(result.ErrorMessage);
+            //Console.WriteLine(result.ErrorMessage);
             if(result.Data is null)
             {
                 result.ErrorMessage = "Account doesnt exist";

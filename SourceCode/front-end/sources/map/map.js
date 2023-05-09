@@ -17,7 +17,7 @@
     var backend = "";
     fetch("./config.json").then((response) => response.json()).then((json) => 
     {
-    backend = json.backend;
+        backend = json.backend;
     })
 
     var webServiceUrl = "";
@@ -350,7 +350,7 @@
         infoWindows[pos].close();
         pinsMarker[pos].setMap(null);
 
-        webServiceUrl = backend + '/Pin/CompleteUserPin';
+        
 
         const pin = {}
         pin.PinID = pinsInfo[pos].pinID;
@@ -361,11 +361,24 @@
         pin.Description = pinsInfo[pos].description;
         pin.Userhash = localStorage.getItem("userhash");
 
-        axios.post(webServiceUrl, pin, {
+        webServiceUrl = backend + "/Reputation/GainReputation";
+
+        axios.post(webServiceUrl, {}, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+                "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
             }
-        })
+        }).then(function (response){
+            let successMessage = response.data;
+            //let formatMessage = successMessage.replace(/"/g,"");
+            timeOut(successMessage, "green", errorsDiv);
+
+            webServiceUrl = backend + '/Pin/CompleteUserPin';
+        
+            axios.post(webServiceUrl, pin, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+                }
+            })
             .then(function (responseAfter) {
                 initMap();
             })
@@ -373,7 +386,13 @@
                 console.log(error);
                 return
             });
-    }
+        })
+        .catch(function (error){
+            let errorMessage = error.data;
+            let formatMessage = errorMessage.replace(/"/g,"");
+            timeOut(formatMessage, "red", errorsDiv);
+        });
+    }        
 
     window.modifyPinHandler = function (pos) {
         infoWindows[pos].close();
@@ -502,7 +521,7 @@
     }
 
     function placeNewPin(latLng, map) {
-        webServiceUrl = backend + 'Pin/PostNewPin';
+        webServiceUrl = backend + '/Pin/PostNewPin';
 
         let pinType = prompt("1. Litter\n2. Group Event\n3. Junk\n4. Abandoned\n5. Vandalism\nWhich Pin Type?");
         if (!(pinType == "1" || pinType == "2" || pinType == "3" || pinType == "4" || pinType == "5") || pinType == null) {
