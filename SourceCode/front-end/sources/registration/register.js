@@ -67,10 +67,13 @@ function registerUser()
       timeOut(responseAfter + ". Please return to home screen to login", 'green', errorsDiv)
    }).catch(function (error)
    {
-      let errorAfter = error.data
+      if(error !== undefined)
+      {
+         let errorAfter = error.data
       let cleanError = errorAfter.replace(/"/g,"");
       // errorsCont.innerHTML = errorAfter; 
       timeOut(errorAfter, 'red', errorsDiv)
+      }
 
    });
    regForm.reset();
