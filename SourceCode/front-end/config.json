@@ -1,4 +1,0 @@
-{
-    "backend" : "https://localhost:7259",
-    "s3" : "https://utificationbucket.s3.amazonaws.com"
-}
