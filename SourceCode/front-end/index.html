@@ -129,6 +129,7 @@
             </div>
         </div>
         <div class="map" id="map"></div>
+            <div id="picture"></div>
             <div class="misc">
                 <div class="reg-contact-home">
                     <button type="button"  onclick="alert('redirect to contact support')">Contact Support</button>
@@ -202,6 +203,14 @@
             </div>
         </div>
 
+        <!-- * AdminRecovery View-->
+        <div class="admin-recovery-container" hidden>
+            <button type="button" id="recoveryBack" onclick=recoveryBack()>Back</button>
+            <div class="data" id="recoveryData"></div>
+            <input type="recoveredID" id="recoveryInput" placeholder="Username">
+            <button type="button" onclick=RecoverAccount()>Recover User</button>
+        </div>
+
         <!-- * OTP -->
         <div class="otp-container" hidden>
             <form action="/" method="POST" id="otp-form">
@@ -238,7 +247,7 @@
             </div>
 
             <div class="submit">
-                <button type="button" id="recOTP-submit" onclick="">Submit</button>
+                <button type="button" id="recOTP-submit">Submit</button>
             </div>
             </form>
         </div>
@@ -304,7 +313,7 @@
             <div class="input-field">
                 <input type="username" id ="username" placeholder="email address" required data-error="email required" />
                 <input type="password" id="newPassword" placeholder="perferred new password" minlength="8" required  />
-                <button type="button" id="recoveryButton" >Submit</button>
+                <button type="button" id="recoveryButton">Submit</button>
             </div>
             </div>
             </form>
@@ -326,10 +335,40 @@
             </div>
             <div class="content-container">
                 <div class="box-1">
-
+                    <h1>Join the Movement to Raise Awareness and Beaufity Our Communites</h1>
                 </div>
-                <div class="box-2" id="file-container">
-                </div> 
+            </div>
+            <div class="feature-anon">
+                <div class="anon-map">
+                    <h1>Map</h1>
+                    <br>
+                    <p>Interactive map of California</p>
+                </div>
+                <div class="anon-pins">
+                    <h1>Pins</h1>
+                    <br>
+                    <p>Interact with the map by dropping pins with various pin types</p>
+                </div>
+                <div class="anon-services">
+                    <h1>Services</h1>
+                    <br>
+                    <p>Become a service provider and provide services based on users pintypes</p>
+                </div>
+                <div class="anon-events">
+                    <h1>Events</h1>
+                    <br>
+                    <p>Host Events for those who are interested and lead to more community engagement</p>
+                </div>
+                <div class="anon-alerts">
+                    <h1>Alerts</h1>
+                    <br>
+                    <p>Notify other users when a preferred pintype drops</p>
+                </div>
+                <div class="anon-reputation">
+                    <h1>Reputation</h1>
+                    <br>
+                    <pr>Climb the ranks to become a reputable user</pr>
+                </div>
             </div>
             <div class="quote">
                 <h4>"Unify communities. Together we build cleaner and comfortable environments" </h4>

@@ -159,34 +159,34 @@ namespace TeamBigData.Utification.Manager
         // RecoveryController
         //------------------------------------------------------------------------
 
-        public async Task<Response> RecoverAccountPassword(String username, String password, String userhash)
+        public async Task<Response> RecoverAccountPassword(String username, String password)
         {
-            await _logger.Logs(new Log(0, "Info", userhash, "Recover Account Password Attempt", "Data", "User is attempting to login."));
+            await _logger.Logs(new Log(0, "Info", username, "Recover Account Password Attempt", "Data", "User is attempting to login."));
             
             var response = await _recoveryServices.RequestRecoveryNewPassword(username, password);
             if (!response.IsSuccessful)
             {
-                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.RequestRecoveryNewPassword", "Data", "User failed to login."));
+                await _logger.Logs(new Log(0, "Error", username, "_recoveryServices.RequestRecoveryNewPassword", "Data", "User failed to login."));
 
                 return new Response(false, response.ErrorMessage + ", {failed: _recoveryServices.RequestRecoveryNewPassword}");
             }
             else
             {
-                await _logger.Logs(new Log(0, "Info", userhash, "Passed Recover Account Password Attempt", "Data", "User is attempting to login."));
+                await _logger.Logs(new Log(0, "Info", username, "Passed Recover Account Password Attempt", "Data", "User is attempting to login."));
 
                 return new Response(true, response.ErrorMessage);
             }
 
         }
 
-        public async Task<DataResponse<List<RecoveryRequests>>> GetRecoveryRequests(String userhash)
+        public async Task<DataResponse<List<RecoveryRequests>>> GetRecoveryRequests(int userID)
         {
-            await _logger.Logs(new Log(0, "Info", userhash, "Get Recovery Requests Attempt", "Data", "Admin is attempting to get recovery requests."));
+            await _logger.Logs(new Log(0, "Info", userID.ToString(), "Get Recovery Requests Attempt", "Data", "Admin is attempting to get recovery requests."));
 
             var dataResponse = await _recoveryServices.GetRecoveryRequestsTable().ConfigureAwait(false);
             if (!dataResponse.IsSuccessful)
             {
-                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.GetRecoveryRequestsTable", "Data", "Admin failed to get recovery requests."));
+                await _logger.Logs(new Log(0, "Error", userID.ToString(), "_recoveryServices.GetRecoveryRequestsTable", "Data", "Admin failed to get recovery requests."));
 
                 dataResponse.IsSuccessful = false;
                 dataResponse.ErrorMessage += ", {failed: _recoveryServices.GetRecoveryRequestsTable}";
@@ -194,7 +194,7 @@ namespace TeamBigData.Utification.Manager
             }
             else
             {
-                await _logger.Logs(new Log(0, "Info", userhash, "Passed Get Recovery Requests Attempt", "Data", "User is attempting to login."));
+                await _logger.Logs(new Log(0, "Info", userID.ToString(), "Passed Get Recovery Requests Attempt", "Data", "User is attempting to login."));
 
                 dataResponse.IsSuccessful = true;
             }
@@ -202,15 +202,16 @@ namespace TeamBigData.Utification.Manager
             return dataResponse;
         }
 
-        public async Task<Response> ResetAccount(int disabledUserId, String userhash)
+        public async Task<Response> ResetAccount(string disabledUsername, int adminID)
         {
-            await _logger.Logs(new Log(0, "Info", userhash, "Reset Account Attempt", "Data", "Admin is attempting to reset account."));
-
+            await _logger.Logs(new Log(0, "Info", adminID.ToString(), "Reset Account Attempt", "Data", "Admin is attempting to reset account."));
+            
+            var disabledUserId = (await _recoveryServices.GetUserIDbyName(disabledUsername)).Data;
             //Find What they want to reset password to
             var validRecovery = await _recoveryServices.GetNewPassword(disabledUserId).ConfigureAwait(false);
             if (!validRecovery.IsSuccessful)
             {
-                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.GetNewPassword", "Data", "Admin failed to get new password."));
+                await _logger.Logs(new Log(0, "Error", adminID.ToString(), "_recoveryServices.GetNewPassword", "Data", "Admin failed to get new password."));
 
                 return new Response(false, validRecovery.ErrorMessage + ", {failed: _recoveryServices.GetNewPassword}");
             }
@@ -219,7 +220,7 @@ namespace TeamBigData.Utification.Manager
             var response = await _recoveryServices.SaveNewPassword(disabledUserId, validRecovery.Data.Password, validRecovery.Data.Salt).ConfigureAwait(false);
             if (!response.IsSuccessful)
             {
-                await _logger.Logs(new Log(0, "Error", userhash, "_recoveryServices.SaveNewPassword", "Data", "Admin failed to save new password."));
+                await _logger.Logs(new Log(0, "Error", adminID.ToString(), "_recoveryServices.SaveNewPassword", "Data", "Admin failed to save new password."));
 
                 response.IsSuccessful = false;
                 response.ErrorMessage += ", {failed: _recoveryServices.SaveNewPassword}";

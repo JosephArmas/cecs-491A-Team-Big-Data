@@ -136,6 +136,8 @@
                     pinContent += `<button id='modifyPin' onclick='modifyPinHandler(${i})'>Modify Pin</button>`;
                     pinContent += `<button id='uploadPic' onclick='uploadPicture(${i})'>Upload Picture</button>`;
                     pinContent += `<button id='deletePic' onclick='deletePicture(${i})'>Delete Picture</button>`;
+                    pinContent += `<button id='updatePic' onclick='updatePicture(${i})'>Update Picture</button>`;
+                    pinContent += `<button id='requestService' onclick='requestingService(${i})'>Request Service</button>`;      
                 }
 
                 const infowindow = new google.maps.InfoWindow({
@@ -184,15 +186,8 @@
             else {
                 let url = URL.createObjectURL(file);
                 //rebuild content
-                content += "<img id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=\"" + url + "\">";
-                content += `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                content += `<button id='completePin' onclick='reputationView(pinsInfo[pos].userID)'>View Reputation</button>`
-                if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
-                    content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
-                    content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                    content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
-                }
-                infoWindows[pos].setContent(content);
+                content += `<img  id=\"PinPic\" style=\"height:100%; object-fit:contain\" src=` + file.data + `>`;
+                let pic = document.getElementById("picture")
                 let params = {
                     fileName: filename,
                     ID: pinID,
@@ -212,7 +207,6 @@
                     }
                 })
             }
-            initMap();
         }
     }
 
@@ -240,28 +234,14 @@
                     timeOut(cleanError, 'red', errorsDiv)
                 }).then(function (file) {
                     // Picture stored as a DataURL for easy access
-                    content += `<img  id=\"PinPic\" style=\"height:100%; width:100%; object-fit:contain\" src=` + file.data + `>`;
-                    content += `<br>Created: ${pinsInfo[pos].eventCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                    content += `<button id='reputation-view-btn' onclick='reputationView(${pinsInfo[pos].userID})'>View Reputation</button>`
-                    if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
-                        content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
-                        content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                        content += `<button id='deletePic' onclick='deletePicture(${pos})'>Delete Picture</button>`;
-                    }
-                    else
-                    {
-                        content += `<b3>"done"<b3>`;
-                    }
-
-                    infoWindows[pos].setContent(content);
-                    //updateContent(content);
+                    content += `<img  id=\"PinPic\" style=\"height:100%; object-fit:contain\" src=` + file.data + `>`;
+                    let pic = document.getElementById("picture")
+                    pic.innerHTML = content;
                 })
-            }
-            else {
-                updateContent(content);
             }
         })
     }
+
 
     window.updatePicture = function (pos) {
         let pinID = pinsInfo[pos].pinID;
@@ -286,13 +266,10 @@
             else {
                 let url = URL.createObjectURL(file);
                 //rebuild content
-                content += "<img id=\"PinPic\"style=\"height:100%; width:100%; object-fit:contain\" src=\"" + url + "\">";
-                content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
-                if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
-                    content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
-                    content += `<button id='updatePic' onclick='updatePicture(${pos})'>Update Picture</button>`;
-                }
-                infoWindows[pos].setContent(content);
+                // Picture stored as a DataURL for easy access
+                content += `<img  id=\"PinPic\" style=\"height:100%; object-fit:contain\" src=` + file.data + `>`;
+                let pic = document.getElementById("picture")
+                pic.innerHTML = content;
                 let params = {
                     fileName: filename,
                     ID: pinID,
@@ -319,7 +296,7 @@
         let pinID = pinsInfo[pos].pinID;
         //rebuild content
         let content = pinsInfo[pos].description;
-        content += `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
+        content += `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos})'>Complete Pin</button>`
         if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
             content += `<button id='modifyPin' onclick='modifyPinHandler(${pos})'>Modify Pin</button>`;
             content += `<button id='uploadPic' onclick='uploadPicture(${pos})'>Upload Picture</button>`;
@@ -396,6 +373,7 @@
 
     window.modifyPinHandler = function (pos) {
         infoWindows[pos].close();
+        pinsMarker[pos].setMap(null);
 
         let userAction = prompt("1. Modify Pin Type\n2. Modify Pin Content\n3. Delete Pin\nPick Options 1-3: ");
         if (!(userAction == "1" || userAction == "2" || userAction == "3") || userAction == null) {
@@ -415,6 +393,139 @@
         }
         initMap();
     }
+window.requestingService = function(pos) {
+   let servicelistContainer = document.querySelector(".servicelist-container");
+   let homeContainer = document.querySelector(".home-container");
+   homeContainer.style.display = "none";
+   servicelistContainer.style.display = "block";
+
+   let distanceInput = document.createElement("input");
+   distanceInput.setAttribute("id", "distance");
+   distanceInput.setAttribute("type", "number");
+distanceInput.setAttribute("max", 20);
+distanceInput.setAttribute("min", 1);
+
+   let distContBtn = document.createElement("button");
+   distContBtn.setAttribute("id", "distancecontinue");
+   distContBtn.innerText = "Continue";
+
+   let cancelBtn = document.createElement("button");
+   cancelBtn.setAttribute("id", "requestCancelBtn");
+   cancelBtn.innerText = "Exit";
+
+   let distanceLabel = document.createElement("label");
+distanceLabel.innerText = "Insert the distance for a list of services";
+
+document.getElementById("ResponseButtons").appendChild(distanceLabel);
+document.getElementById("ResponseButtons").appendChild(document.createElement("br"));
+document.getElementById("ResponseButtons").appendChild(distanceInput);
+document.getElementById("ResponseButtons").appendChild(distContBtn);
+document.getElementById("ResponseButtons").appendChild(document.createElement("br"));
+   document.getElementById("ResponseButtons").appendChild(cancelBtn);
+
+   document.getElementById("requestCancelBtn").addEventListener('click', () => {
+
+     homeContainer.style.display = "block";
+     servicelistContainer.style.display = "none";
+
+     let container = document.querySelector('#ResponseButtons');
+     container.innerHTML = "";
+     document.getElementById("serviceList").innerHTML = "";
+   });
+
+   let data = [];
+   let list = document.getElementById("serviceList");
+   let choice = "";
+
+   function lister(x, y) {
+     x.forEach((service) => {
+       let button = document.createElement("button");
+       button.classList.add('servButton');
+       button.innerText = service.ServiceName;
+       y.appendChild(button);
+     });
+   }
+
+   function buttonlisten() {
+     document.querySelectorAll(".servButton").forEach(item => {
+       item.addEventListener('click', event => {
+         data.forEach((service) => {
+           document.getElementById('infoTab').style.visibility = 'visible';
+           if (item.innerText == service.ServiceName) {
+             document.getElementById('infoTitle').innerText = service.ServiceName;
+             document.getElementById('infoDesc').innerText = service.ServiceDescription;
+             document.getElementById('infoNum').innerText = service.ServicePhone;
+             choice = service;
+           }
+         })
+       });
+     });
+   }
+
+   function regularRequests() {
+     let requestBtn = document.createElement("button");
+     requestBtn.setAttribute("id", "requestBtn");
+     requestBtn.innerText = "Request";
+     document.getElementById("ResponseButtons").appendChild(requestBtn)
+
+     requestBtn.addEventListener("click", event => {
+       axios.post('https://localhost:7259/UserServices/CreateRequest', {
+         RequestID: 0,
+         ServiceID: choice.ServiceID,
+         ServiceName: choice.ServiceName,
+         Requester: localStorage.getItem("id"),
+         RequestLat: pinsInfo[pos].lat,
+         RequestLong: pinsInfo[pos].lng,
+         PinType: pinsInfo[pos].pinType,
+         Accept: 2,
+         Distance: document.getElementById("distance").value
+       }, {
+         headers: {
+           'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+         }
+       });
+     });
+   }
+
+
+   document.getElementById('infoTab').style.visibility = 'hidden';
+   let parent = document.getElementById("distanceForm");
+   let distance = document.getElementById("distance");
+   //distance.value = 20;
+   function distanceBtn() {
+     document.getElementById("serviceList").innerHTML = "";
+     if (distance.value >= 1 && distance.value <= 25) {
+let request = axios.post('https://localhost:7259/UserServices/GetServices', {
+         RequestID: 0,
+         ServiceID: 0,
+         ServiceName: "",
+         Requester: localStorage.getItem("id"),
+         RequestLat: pinsInfo[pos].lat,
+         RequestLong: pinsInfo[pos].lng,
+         PinType: pinsInfo[pos].pinType,
+         Accept: 2,
+         Distance: distance.value
+       }, {
+         headers: {
+           'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
+         }
+       }).then(function(response) {
+         data = response.data;
+         lister(data, list);
+         buttonlisten();
+	if(data.length == 0){
+	list.innerHTML = "No local services";
+}
+       });
+       //parent.close();
+
+     }
+   }
+   document.getElementById("distancecontinue").addEventListener('click', distanceBtn);
+   //parent.showModal();
+   regularRequests();
+
+ }
 
     function modifyPinTypeHandler(pos) {
        webServiceUrl = backend + '/Pin/ModifyPinType';
@@ -430,7 +541,7 @@
         pin.UserID = pinsInfo[pos].userID;
         pin.Lat = pinsInfo[pos].lat;
         pin.Lng = pinsInfo[pos].lng;
-        pin.PinType = pinsInfo[pos].pinType;
+        pin.PinType = pinType - 1;
         pin.Description = pinsInfo[pos].description;
         pin.Userhash = localStorage.getItem("userhash");
 
@@ -479,7 +590,7 @@
             .then(function (responseAfter) {
                 infoWindows[pos].close();
 
-                content = content + `<br>Created: ${pinsInfo[pos].dateTime}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
+                content = content + `<br>Created: ${pinsInfo[pos].dateCreated}<br><button id='completePin' onclick='completePinHandler(${pos});'>Complete Pin</button>`
 
                 //User can delete their pins and admin can delete anyone's pin
                 if (localStorage.getItem("role") == "Admin User" || localStorage.getItem("id") == pinsInfo[pos].userID) {
@@ -626,5 +737,4 @@
             });
         }
     }
-})(window, window.ajaxClient);
-
+})(window, window.ajaxClient)

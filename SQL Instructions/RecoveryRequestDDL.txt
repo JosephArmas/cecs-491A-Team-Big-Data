@@ -2,9 +2,10 @@
 CREATE TABLE RecoveryRequests       
 (
 userID int,
-"newPassword" varchar(200),
+digest varchar(200),
+salt varchar(50),
 fulfilled int default 0,  
-"timestamp" datetime default getDate(),
+"timestamp" datetime default GetUtcDate(),
 Constraint RR_PrimaryKey Primary key(userID, "timestamp"),
 Constraint RR_ForeignKey_01 Foreign Key (userID) references dbo.Users(userID)
 );

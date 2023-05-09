@@ -32,17 +32,17 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// <returns>int of rows counted</returns> 
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> GetServiceCount()
+        public async Task<DataResponse<int>> GetServiceCount()
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
 
                 var selectSql = "CountServices";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
-                //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 return result;
             }
         }
@@ -56,18 +56,17 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// <returns>int of rows inserted</returns>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> InsertProvider(ServiceModel serv)
+        public async Task<DataResponse<int>> InsertProvider(ServiceModel serv)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Open();
-                var result = new Response();
+                await connection.OpenAsync().ConfigureAwait(false);
+                var result = new DataResponse<int>();
 
                 var insertSql = "AddService";
                 var command = new SqlCommand(insertSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
 
-                //command.Parameters.Add(new SqlParameter("@ServiceID", serv.ServiceID));
                 command.Parameters.Add(new SqlParameter("@ServiceName", serv.ServiceName));
                 command.Parameters.Add(new SqlParameter("@ServiceDesc", serv.ServiceDescription));
                 command.Parameters.Add(new SqlParameter("@ServicePhone", serv.ServicePhone));
@@ -79,16 +78,15 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 command.Parameters.Add(new SqlParameter("@CreatedBy", serv.CreatedBy));
                 command.Parameters.Add(new SqlParameter("@CreationDate", DateTime.UtcNow));
 
-                //var result = await ExecuteSqlCommand(connection, command);
                 try
                 {
-                    //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
                 catch (Microsoft.Data.SqlClient.SqlException e)
                 {
                     result.ErrorMessage = e.ToString();
                     result.IsSuccessful = false;
-                    //result.data = 0;
+                    result.Data = 0;
                 }
                 return result;
             }
@@ -101,19 +99,18 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// <returns>int of rows "deleted"</returns>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> DeleteProvider(ServiceModel serv)
+        public async Task<DataResponse<int>> DeleteProvider(ServiceModel serv)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 var deleteSql = "DeleteService";
                 var command = new SqlCommand(deleteSql, connection);
-                var result = new Response();
+                var result = new DataResponse<int>();
                 command.CommandType = CommandType.StoredProcedure;
-                //command.Parameters.Add(new SqlParameter("@ServiceName", serv.ServiceName));
                 command.Parameters.Add(new SqlParameter("@CreatedBy", serv.CreatedBy));
 
-                //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 return result;
             }
         }
@@ -124,9 +121,9 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// <returns>int of rows updated</returns>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> UpdateProvider(ServiceModel serv)
+        public async Task<DataResponse<int>> UpdateProvider(ServiceModel serv)
         {
-            var result = new Response();
+            var result = new DataResponse<int>();
             var connection = new SqlConnection(_connectionString);
             var updateSql = "UpdateService";
             var command = new SqlCommand(updateSql, connection);
@@ -146,8 +143,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                 connection.Open();
 
 
-                //var result = await ExecuteSqlCommand(connection, command);
-                //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 return result;
             }
 
@@ -157,18 +153,19 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         #region Requests
         //Incomplete
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> getnearbyservice(Pin pin, int dist)
+        public async Task<DataResponse<List<ArrayList>>> getnearbyservice(RequestModel request)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<List<ArrayList>>();
                 var selectSql = "GetNearbyServices";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@RequestLat", pin.Lat));
-                command.Parameters.Add(new SqlParameter("@RequestLong", pin.Lng));
-                command.Parameters.Add(new SqlParameter("@Distance", dist));
+                command.Parameters.Add(new SqlParameter("@RequestLat", request.RequestLat));
+                command.Parameters.Add(new SqlParameter("@RequestLong", request.RequestLong));
+                command.Parameters.Add(new SqlParameter("@Distance", request.Distance));
+                command.Parameters.Add(new SqlParameter("@PinType", request.PinType));
                 List<ArrayList> services = new List<ArrayList>();
                 SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
                 if (reader.HasRows)
@@ -179,7 +176,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     }
                 }
                 await reader.CloseAsync();
-                //result.data = services;
+                result.Data = services;
                 return result;
             }
         }
@@ -191,25 +188,25 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// <returns></returns>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> InsertServiceReq(ServiceModel serv, Pin pin)
+        public async Task<DataResponse<int>> InsertServiceReq(RequestModel request)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
                 var insertSql = "AddRequest";
                 var command = new SqlCommand(insertSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.Add(new SqlParameter("@ServiceID", serv.ServiceID));
-                command.Parameters.Add(new SqlParameter("@ServiceName", serv.ServiceName));
-                command.Parameters.Add(new SqlParameter("@User", pin.UserID));
-                command.Parameters.Add(new SqlParameter("@RequestLat", pin.Lat));
-                command.Parameters.Add(new SqlParameter("@RequestLong", pin.Lng));
-                command.Parameters.Add(new SqlParameter("@PinType", pin.PinType));
+                command.Parameters.Add(new SqlParameter("@ServiceID", request.ServiceID));
+                command.Parameters.Add(new SqlParameter("@ServiceName", request.ServiceName));
+                command.Parameters.Add(new SqlParameter("@User", request.Requester));
+                command.Parameters.Add(new SqlParameter("@RequestLat", request.RequestLat));
+                command.Parameters.Add(new SqlParameter("@RequestLong", request.RequestLong));
+                command.Parameters.Add(new SqlParameter("@PinType", request.PinType));
 
 
-                //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 return result;
             }
         }
@@ -217,19 +214,18 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// Gets the requests for a service provider
         /// </summary>
         /// <returns>Returns all of the requests for a service provider</returns>
-        /// <exception cref="NotImplementedException"></exception>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> GetProviderRequests(ServiceModel serv)
+        public async Task<DataResponse<List<ArrayList>>> GetProviderRequests(int serv)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var result = new Response();
+                var result = new DataResponse<List<ArrayList>>();
                 var selectSql = "GetProviderRequests";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@ServiceID", serv.ServiceID));
+                command.Parameters.Add(new SqlParameter("@UserID", serv));
                 List<ArrayList> requests = new List<ArrayList>();
                 SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
                 if (reader.HasRows)
@@ -240,23 +236,23 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     }
                 }
                 await reader.CloseAsync();
-                //result.data = requests;
+                result.Data = requests;
                 return result;
             }
         }
         //Fix this it needs to have userprofile or something like that to have the userID
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> GetUserRequests(UserProfile user)
+        public async Task<DataResponse<List<ArrayList>>> GetUserRequests(int user)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var result = new Response();
+                var result = new DataResponse<List<ArrayList>>();
                 var selectSql = "GetUserRequests";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@RequestedBy", user.UserID));
+                command.Parameters.Add(new SqlParameter("@RequestedBy", user));
                 List<ArrayList> requests = new List<ArrayList>();
                 SqlDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
                 if (reader.HasRows)
@@ -267,7 +263,7 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
                     }
                 }
                 await reader.CloseAsync();
-                //result.data = requests;
+                result.Data = requests;
                 return result;
             }
         }
@@ -277,28 +273,28 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         /// <returns>int of rows updated</returns>
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> UpdateRequestAccept(RequestModel request)
+        public async Task<DataResponse<int>> UpdateRequestAccept(RequestModel request)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
                 var selectSql = "AcceptRequest";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@RequestID", request.RequestID));
-                command.Parameters.Add(new SqlParameter("@UserID", 8));
-                //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                command.Parameters.Add(new SqlParameter("@UserID", request.Requester));
+                result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 return result;
             }
         }
 
-        public async Task<Response> UpdateRequestCancel(ServiceModel serv)
+        public async Task<DataResponse<int>> UpdateRequestCancel(ServiceModel serv)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
                 var selectSql = "CancelRequest";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
@@ -309,18 +305,18 @@ namespace TeamBigData.Utification.SQLDataAccess.FeaturesDB
         }
 
         // TODO: Change to DataResponse with the the datatype you want to return back
-        public async Task<Response> UpdateRequestDeny(RequestModel request)
+        public async Task<DataResponse<int>> UpdateRequestDeny(RequestModel request, int userid)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Response();
+                var result = new DataResponse<int>();
                 var selectSql = "DenyRequest";
                 var command = new SqlCommand(selectSql, connection);
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@RequestID", request.RequestID));
-                command.Parameters.Add(new SqlParameter("@UserID", 8));
-                //result.data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                command.Parameters.Add(new SqlParameter("@UserID", userid));
+                result.Data = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 return result;
             }
         }

@@ -15,7 +15,7 @@ namespace TeamBigData.Utification.SQLDataAccess.UsersDB.Abstractions
         public Task<Response> UpdatePinCompletionTallyAsync(int userID, int completionTally);
         public Task<Response> UpdateUserRoleAsync(UserProfile userProfile);
         public Task<Response> UpdateUserReputationAsync(int user, double newReputation);
-        public Task<Response> UpdateServiceRole(int userid);
-        public Task<Response> UpdateRemoveServiceRole(int userid);
+        public Task<DataResponse<int>> UpdateServiceRole(int userid);
+        public Task<DataResponse<int>> UpdateRemoveServiceRole(int userid);
     }
 }

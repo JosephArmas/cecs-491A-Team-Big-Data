@@ -14,11 +14,11 @@ lng varchar(50),
 pinType int,
 "description" varchar(MAX),
 "disabled" int DEFAULT 0,
-dateCreated DateTime default DateUtcNow(),
-dateLastModified DateTime default DateUtcNow(),
+dateCreated DateTime default GetUtcDate(),
+dateLastModified DateTime default GetUtcDate(),
 userLastModified int,
 CONSTRAINT Pins_PK PRIMARY KEY (pinID),
-CONSTRAINT Pins_UK UNIQUE KEY (lat,lng)
+CONSTRAINT Pins_UK UNIQUE (lat,lng)
 );
 
 CREATE TABLE dbo.PinPic
@@ -50,8 +50,41 @@ updateDate datetime,
 lastModifierUserID int
 );
 
-CREATE TABLE dbo."Services"
+CREATE TABLE [dbo].[Services](
+	[ServiceID] [int] IDENTITY(1,1) NOT NULL,
+	[CompanyName] [nvarchar](30) NOT NULL,
+	[CompanyDesc] [nvarchar](1000) NOT NULL,
+	[CompanyPhone] [nvarchar](16) NULL,
+	[CompanyURL] [nvarchar](2048) NULL,
+	[ServiceLat] [varchar](50) NOT NULL,
+	[ServiceLong] [varchar](50) NOT NULL,
+	[PinTypes] [int] NOT NULL,
+	[Distance] [int] NOT NULL,
+	[CreationDate] [date] NOT NULL,
+	[CreatedBy] [int] NULL,
+	[LastModifiedBy] [int] NOT NULL,
+	[ApprovedBy] [int] NULL,
+	[disabled] [int] Disabled,
+ CONSTRAINT [IX_Services] UNIQUE NONCLUSTERED 
 (
-userID int NOT NULL,
-"disabled" int DEFAULT 0,
-);
+	[CreatedBy] ASC,
+	[CompanyName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[ServiceRequests](
+	[RequestID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceID] [int] NOT NULL,
+	[ServiceName] [nvarchar](30) NOT NULL,
+	[RequestedBy] [int] NOT NULL,
+	[RequestLat] [varchar](50) NOT NULL,
+	[RequestLong] [varchar](50) NOT NULL,
+	[PinType] [int] NOT NULL,
+	[CreationDateTime] [datetime] NOT NULL,
+	[Active] [int] NOT NULL,
+	[Accept] [int] NOT NULL,
+	[LastModified] [datetime] NOT NULL,
+	[LastModifiedBy] [int] NOT NULL
+) ON [PRIMARY]
+GO

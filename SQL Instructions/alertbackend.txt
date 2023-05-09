@@ -1,0 +1,12 @@
+CREATE TABLE dbo.Alerts (
+    alertID int NOT NULL Identity,
+    userID int NOT NULL,
+    lat VARCHAR(50),
+    lng VARCHAR(50),
+	pinType int,
+    "description" varchar(MAX),
+    "read" int DEFAULT 0,
+    "dateTime" dateTime default GetUtcDate(),
+    zipcode VARCHAR(50) default 'California',
+	CONSTRAINT Alerts_PK PRIMARY KEY (alertID),
+);
