@@ -1,14 +1,14 @@
 # cecs-491A-Team-Big-Data
-# [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
-# [Task Items](https://github.com/users/JosephArmas/projects/5)
-Team Lead: Joseph Armas\
+**Team Lead: Joseph Armas**\
 <br />
-Team Members:\
+**Team Members:**\
 Joshua Gherman <br /> 
 Rhoy Oviedo <br />
 Frank Curry <br />
 Ghabrille Ampo <br />
 David De Girolamo <br />
+# [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
+# [Task Items](https://github.com/users/JosephArmas/projects/5)
 # [Scrum](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum)
 * Milestone 1
   * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
