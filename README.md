@@ -1,4 +1,5 @@
 # cecs-491A-Team-Big-Data
+* **Timeline:** Fall 2022 - Spring 2023
 ## Team Lead: Joseph Armas
 
 ### Team Members:
