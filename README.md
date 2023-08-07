@@ -1,14 +1,14 @@
 # cecs-491A-Team-Big-Data
-**Team Lead: Joseph Armas**\
-<br />
-**Team Members:**\
-Joshua Gherman <br /> 
-Rhoy Oviedo <br />
-Frank Curry <br />
-Ghabrille Ampo <br />
-David De Girolamo <br />
+## Team Lead: Joseph Armas
+
+### Team Members:
+* Joshua Gherman 
+* Rhoy Oviedo
+* Frank Curry
+* Ghabrille Ampo
+* David De Girolamo 
 # [Project Backlog (click me)](https://github.com/users/JosephArmas/projects/1)
-# [Task Items](https://github.com/users/JosephArmas/projects/5)
+# [Low Level Designs](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/Diagrams)
 # [Scrum](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum)
 * Milestone 1
   * [includes sprint + daily stand up](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone1/sprint1)
@@ -17,7 +17,13 @@ David De Girolamo <br />
 * Milestone 3
   * [sprints](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/milestone3)
 * [Spring 2023](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/scrum/spring%202023)
-# [Project Plan](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/main/milestone%201/project%20plan/version%205/TeamBigData-ProjectPlanV5.pdf)
+# Documents
+ * [Request For Proposal](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/RFP)
+ * [Buisness Requirements Document](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/main/milestone%201/BRD/version%208/CECS491A-BRD%20V8.pdf)
+ * [Project Plan](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/main/milestone%201/project%20plan/version%205/TeamBigData-ProjectPlanV5.pdf)
+ * [Software Bill of Materials](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/blob/main/milestone%203/bill%20of%20materials/version%202/Software%20Bill%20of%20Materials%20v2.pdf)
+ * [DAR Reports](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/milestone%203/bill%20of%20materials/dar%20reports)
+ * [Peer Reviews](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/Peer%20Reviews)
 # [Sql Instructions](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/SQL%20Instructions)
 # Archived
   * [RFP](https://github.com/JosephArmas/cecs-491A-Team-Big-Data/tree/main/RFP)
